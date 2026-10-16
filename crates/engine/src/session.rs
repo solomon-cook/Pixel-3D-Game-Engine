@@ -136,7 +136,7 @@ impl Session {
                         bail!("id: supply section when selecting an object");
                     }
                     Ok(
-                        json!({"name":self.scene.name,"version":self.scene.version,"counts":{"objects":self.scene.objects.len(),"materials":self.scene.materials.len()},"render":self.scene.render,"environment":self.scene.environment,"lights":self.scene.lights,"emitters":self.scene.emitters,"cameras":self.scene.cameras,"routes":self.scene.routes.iter().map(|r|&r.id).collect::<Vec<_>>(),"camera":self.camera,"tick":self.tick,"seed":self.seed,"paused":self.paused}),
+                        json!({"name":self.scene.name,"version":self.scene.version,"counts":{"objects":self.scene.objects.len(),"materials":self.scene.materials.len()},"render":self.scene.render,"environment":self.scene.environment,"lights":self.scene.lights,"emitters":self.scene.emitters,"effects":self.scene.effects,"cameras":self.scene.cameras,"routes":self.scene.routes.iter().map(|r|&r.id).collect::<Vec<_>>(),"camera":self.camera,"tick":self.tick,"seed":self.seed,"paused":self.paused}),
                     )
                 }
             }
@@ -253,7 +253,12 @@ pub fn set_parameter(scene: &mut Scene, path: &str, value: Value, base: &Path) -
     let allowed = match segments.as_slice() {
         ["render", property] => matches!(
             *property,
-            "exposure" | "shading_steps" | "dither_strength" | "smoke_steps"
+            "exposure"
+                | "shading_steps"
+                | "dither_strength"
+                | "smoke_steps"
+                | "palette_strength"
+                | "bloom_strength"
         ),
         ["render", "experiments", property] => matches!(
             *property,
@@ -275,8 +280,33 @@ pub fn set_parameter(scene: &mut Scene, path: &str, value: Value, base: &Path) -
                 | "bubble_scale"
                 | "self_shadow_strength"
                 | "internal_glow"
+                | "effect_profile"
         ),
-        ["lights", _, property] => matches!(*property, "intensity" | "flicker" | "color"),
+        ["effects", _, "fire", property] => matches!(
+            *property,
+            "width"
+                | "height"
+                | "motion_speed"
+                | "curl"
+                | "edge_breakup"
+                | "tip_breakup"
+                | "fragment_size"
+                | "tongues"
+                | "segments"
+                | "fragment_rate"
+                | "fragment_lifetime"
+                | "ember_rate"
+                | "ember_lifetime"
+                | "emission"
+        ),
+        ["effects", _, "thermal", property] => {
+            matches!(*property, "heat_output" | "cooling_rate" | "lift")
+        }
+        ["effects", _, "palette", property] => matches!(*property, "outer" | "warm" | "hot"),
+        ["lights", _, property] => matches!(
+            *property,
+            "intensity" | "flicker" | "color" | "range" | "position"
+        ),
         _ => false,
     };
     if !allowed {
@@ -314,7 +344,7 @@ pub fn description() -> Value {
         "describe":{},"inspect_scene":{"section":"optional top-level scene field; omitted returns compact overview","id":"optional stable ID within selected array"},"get_metrics":{},"get_errors":{},
         "pause":{"paused":"boolean"},"step":{"ticks":"integer 0..36000"},"reset":{"seed":"u32"},
         "set_camera":{"id":"named camera, OR supply camera object matching scene schema"},
-        "set_parameter":{"path":"render.{exposure,shading_steps,dither_strength,smoke_steps}; render.experiments.{pixel_cluster_lighting,stable_smoke_detail,connected_motion}; environment.{wind,ambient,fog_density,sky_color,horizon_color}; emitters.<id>.{enabled,intensity,smoke_density,buoyancy,dissipation,style,secondary_bubbles,bubble_scale,self_shadow_strength,internal_glow}; lights.<id>.{intensity,flicker,color}","value":"typed JSON value"},
+        "set_parameter":{"path":"render.{exposure,shading_steps,dither_strength,smoke_steps,palette_strength,bloom_strength}; render.experiments.{pixel_cluster_lighting,stable_smoke_detail,connected_motion}; environment.{wind,ambient,fog_density,sky_color,horizon_color}; emitters.<id>.{enabled,intensity,smoke_density,buoyancy,dissipation,style,secondary_bubbles,bubble_scale,self_shadow_strength,internal_glow,effect_profile}; effects.<id>.fire.{width,height,motion_speed,curl,edge_breakup,tip_breakup,fragment_size,tongues,segments,fragment_rate,fragment_lifetime,ember_rate,ember_lifetime,emission}; effects.<id>.thermal.{heat_output,cooling_rate,lift}; effects.<id>.palette.{outer,warm,hot}; lights.<id>.{intensity,flicker,color,position,range}","value":"typed JSON value"},
         "get_window":{"availability":"native run only"},"set_window":{"availability":"native run only","size":"optional logical [width,height]","minimized":"optional boolean","fullscreen":"optional boolean"},"shutdown":{"availability":"native run only"},
         "capture_frame":{"path":"PNG output path","scale":"integer 1..8, default 4"},"reload_shaders":{}},
         "notes":["Start --agent-stdio paused for deterministic control. step advances even when paused.","Shader and effect mutations preserve smoke history; reset before A/B captures.","Topology, assets and resolution are startup settings. Restart to change them.","No floating point GPU bit-identity is promised between vendors."]})
@@ -337,6 +367,113 @@ mod tests {
         let original = s.render.exposure;
         assert!(set_parameter(&mut s, "render.exposure", json!(-1), Path::new(".")).is_err());
         assert_eq!(s.render.exposure, original);
+    }
+    #[test]
+    fn effect_profiles_validate_and_live_edits_are_transactional() {
+        let mut s = scene();
+        set_parameter(
+            &mut s,
+            "effects.effect-campfire.fire.motion_speed",
+            json!(0.3),
+            Path::new("."),
+        )
+        .unwrap();
+        assert_eq!(s.effects[0].fire.motion_speed, 0.3);
+        assert!(set_parameter(
+            &mut s,
+            "effects.effect-campfire.fire.segments",
+            json!(1000),
+            Path::new(".")
+        )
+        .is_err());
+        assert_eq!(s.effects[0].fire.segments, 6);
+        assert!(set_parameter(
+            &mut s,
+            "emitters.campfire.effect_profile",
+            json!("missing"),
+            Path::new(".")
+        )
+        .is_err());
+        set_parameter(
+            &mut s,
+            "emitters.campfire.effect_profile",
+            json!("effect-quiet"),
+            Path::new("."),
+        )
+        .unwrap();
+        assert_eq!(s.emitters[0].effect_profile, "effect-quiet");
+        assert!(set_parameter(
+            &mut s,
+            "effects.effect-quiet.thermal.cooling_rate",
+            json!(-1),
+            Path::new(".")
+        )
+        .is_err());
+    }
+    #[test]
+    fn original_v1_scenes_receive_default_effects() {
+        let mut data = serde_json::to_value(scene()).unwrap();
+        data.as_object_mut().unwrap().remove("effects");
+        data["emitters"][0]
+            .as_object_mut()
+            .unwrap()
+            .remove("effect_profile");
+        data["render"]
+            .as_object_mut()
+            .unwrap()
+            .remove("bloom_strength");
+        data["render"]
+            .as_object_mut()
+            .unwrap()
+            .remove("palette_strength");
+        let s: Scene = serde_json::from_value(data).unwrap();
+        s.validate(Path::new(".")).unwrap();
+        assert_eq!(s.effects.len(), 1);
+        assert_eq!(s.effects[0].id, s.emitters[0].effect_profile);
+        assert_eq!(s.render.bloom_strength, 0.);
+    }
+    #[test]
+    fn point_light_budget_and_source_binding_are_validated() {
+        let mut s = scene();
+        let base = s
+            .lights
+            .iter()
+            .find(|l| l.kind == crate::scene::LightKind::Point)
+            .unwrap()
+            .clone();
+        for i in 0..7 {
+            let mut light = base.clone();
+            light.id = format!("test-light-{i}");
+            light.position[0] += i as f32 + 1.;
+            s.lights.push(light);
+        }
+        s.validate(Path::new(".")).unwrap();
+        let mut extra = base.clone();
+        extra.id = "too-many".into();
+        s.lights.push(extra);
+        assert!(s
+            .validate(Path::new("."))
+            .unwrap_err()
+            .to_string()
+            .contains("1..8"));
+        s.lights.pop();
+        s.lights.last_mut().unwrap().range = 0.;
+        assert!(s
+            .validate(Path::new("."))
+            .unwrap_err()
+            .to_string()
+            .contains(".range"));
+        let mut s = scene();
+        s.lights
+            .iter_mut()
+            .find(|l| l.kind == crate::scene::LightKind::Point)
+            .unwrap()
+            .position[0] += 1.;
+        assert!(s
+            .validate(Path::new("."))
+            .unwrap_err()
+            .to_string()
+            .contains("coincide"));
     }
     #[test]
     fn duplicate_id_is_rejected() {

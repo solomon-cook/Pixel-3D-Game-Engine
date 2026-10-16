@@ -1,3 +1,4 @@
+use crate::effects::{self, EffectProfile};
 use anyhow::{bail, Context, Result};
 use glam::{Mat4, Vec3};
 use schemars::JsonSchema;
@@ -15,6 +16,8 @@ pub struct Scene {
     pub objects: Vec<Object>,
     pub lights: Vec<Light>,
     pub emitters: Vec<Emitter>,
+    #[serde(default = "effects::default_profiles")]
+    pub effects: Vec<EffectProfile>,
     pub cameras: Vec<Camera>,
     pub routes: Vec<Route>,
 }
@@ -28,6 +31,14 @@ pub struct RenderSettings {
     pub dither_strength: f32,
     pub smoke_steps: u32,
     pub experiments: Experiments,
+    #[serde(default = "palette_strength")]
+    pub palette_strength: f32,
+    #[serde(default)]
+    pub bloom_strength: f32,
+}
+
+fn palette_strength() -> f32 {
+    0.55
 }
 
 #[derive(Default, Clone, Serialize, Deserialize, JsonSchema)]
@@ -102,7 +113,13 @@ pub struct Light {
     pub intensity: f32,
     #[serde(default)]
     pub flicker: f32,
+    #[serde(default = "light_range")]
+    pub range: f32,
 }
+fn light_range() -> f32 {
+    20.
+}
+
 #[derive(Clone, Serialize, Deserialize, JsonSchema, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum LightKind {
@@ -130,6 +147,8 @@ pub struct Emitter {
     pub self_shadow_strength: f32,
     #[serde(default)]
     pub internal_glow: f32,
+    #[serde(default = "effects::default_profile_id")]
+    pub effect_profile: String,
 }
 fn default_secondary_bubbles() -> u32 {
     4
@@ -256,6 +275,11 @@ impl Scene {
         if !(0.05..=8.).contains(&self.render.exposure) {
             bail!("render.exposure: expected 0.05..8");
         }
+        if !(0.0..=1.).contains(&self.render.palette_strength)
+            || !(0.0..=1.).contains(&self.render.bloom_strength)
+        {
+            bail!("render.palette_strength/bloom_strength: expected 0..1");
+        }
         if !(0.0..=1.).contains(&self.render.dither_strength) {
             bail!("render.dither_strength: expected 0..1");
         }
@@ -270,6 +294,7 @@ impl Scene {
             .chain(self.objects.iter().map(|x| ("object", &x.id)))
             .chain(self.lights.iter().map(|x| ("light", &x.id)))
             .chain(self.emitters.iter().map(|x| ("emitter", &x.id)))
+            .chain(self.effects.iter().map(|x| ("effect", &x.id)))
             .chain(self.cameras.iter().map(|x| ("camera", &x.id)))
             .chain(self.routes.iter().map(|x| ("route", &x.id)))
         {
@@ -332,19 +357,30 @@ impl Scene {
             .filter(|l| l.kind == LightKind::Directional)
             .count()
             != 1
-            || self
-                .lights
-                .iter()
-                .filter(|l| l.kind == LightKind::Point)
-                .count()
-                != 1
+            || !(1..=8).contains(
+                &self
+                    .lights
+                    .iter()
+                    .filter(|l| l.kind == LightKind::Point)
+                    .count(),
+            )
         {
-            bail!("lights: v1 requires one directional light and one point light");
+            bail!("lights: requires one directional light and 1..8 point lights");
         }
         if self.emitters.len() != 1 {
             bail!("emitters: v1 requires exactly one bounded fire/smoke emitter");
         }
+        for effect in &self.effects {
+            effect.validate()?;
+        }
         for e in &self.emitters {
+            if !self.effects.iter().any(|p| p.id == e.effect_profile) {
+                bail!(
+                    "emitter '{}'.effect_profile: unknown effect '{}'",
+                    e.id,
+                    e.effect_profile
+                );
+            }
             if !(0.0..=4.).contains(&e.self_shadow_strength)
                 || !(0.0..=4.).contains(&e.internal_glow)
             {
@@ -379,6 +415,9 @@ impl Scene {
             {
                 bail!("light '{}': invalid intensity/flicker", l.id);
             }
+            if !(0.1..=128.).contains(&l.range) {
+                bail!("light '{}'.range: expected finite 0.1..128", l.id);
+            }
             if l.kind == LightKind::Directional && Vec3::from(l.position).length() < 0.001 {
                 bail!(
                     "light '{}'.position: directional vector cannot be zero",
@@ -386,15 +425,13 @@ impl Scene {
                 );
             }
         }
-        let point = self
+        if !self
             .lights
             .iter()
-            .find(|l| l.kind == LightKind::Point)
-            .unwrap();
-        if point.position != self.emitters[0].position {
+            .any(|l| l.kind == LightKind::Point && l.position == self.emitters[0].position)
+        {
             bail!(
-                "light '{}'.position: v1 point light must coincide with emitter '{}'",
-                point.id,
+                "emitter '{}'.position: one point light must coincide with the fire source",
                 self.emitters[0].id
             );
         }

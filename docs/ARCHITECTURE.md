@@ -35,6 +35,25 @@ bounded approximation to metaball contacts, not exact smooth-union geometry.
 Volume bounds and conservative parent/child bounds skip missed intersections. This is an artistic
 surface representation of the volume, not a replacement fluid solver.
 
+## Reusable effect profiles
+
+Scene `effects` profiles own fire motion/budget, thermal settings and HDR palette;
+emitters refer to them by stable ID. `effects.rs` reconstructs bounded world-space
+curves/fragments/embers from seed and fixed tick. A cached storage buffer is
+shared by the inked and soft volume render paths, with analytic intersections
+and bounds/depth rejection. Fire geometry is not rebuilt by a ray-march search
+inside every pixel. This remains a one-emitter prototype, with explicit budgets
+and counters rather than a claim of arbitrary source scalability.
+
+Smoke density and heat advect together but dissipate/cool independently. Source
+heat and light flicker follow the same slow fire envelope. Profile switching
+preserves the smoke field until reset. Colour bands, dither, exposure and bounded
+HDR glow are presentation operations after world lighting. Up to eight local
+point lights illuminate geometry; smoke evaluates radial falloff and volume
+absorption from its two nearest active lights. Only the primary fire point
+light has a geometry shadow map. See EFFECTS.md for
+the public authoring contract and current approximations.
+
 ## Interface contract
 
 `Session::execute` is the shared authoring API. UI controls and JSON requests

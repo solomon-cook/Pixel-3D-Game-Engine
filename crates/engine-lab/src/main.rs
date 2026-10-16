@@ -84,6 +84,9 @@ pub struct Options {
     /// Comma separated experiment names, or all.
     #[arg(long)]
     pub experiments: Option<String>,
+    /// Select a named scene effect profile independently of rendering style.
+    #[arg(long)]
+    pub effect_profile: Option<String>,
     #[arg(long)]
     pub shaders: Option<PathBuf>,
 }
@@ -169,6 +172,9 @@ pub fn resolve_path(path: &Path) -> PathBuf {
 pub fn prepare(options: &Options) -> Result<(Scene, PathBuf, PathBuf)> {
     let path = resolve_path(&options.scene);
     let mut scene = Scene::load(&path)?;
+    if let Some(profile) = &options.effect_profile {
+        scene.emitters[0].effect_profile = profile.clone();
+    }
     if let Some(res) = &options.resolution {
         scene.render.resolution = match res.as_str() {
             "320x180" => [320, 180],

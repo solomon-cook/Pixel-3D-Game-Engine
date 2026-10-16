@@ -94,3 +94,30 @@ lower effect quality. Do not reduce scene resolution automatically.
 The next reference-led generation and scale pass is specified in
 [SMOKE_DIRECTION.md](SMOKE_DIRECTION.md). Its recommendations are design work;
 they do not imply that hierarchy/area emitters or many-source rendering exist.
+
+
+## Fire geometry baseline and transported-field proposal
+
+Implemented the reusable bounded curve/particle baseline described in EFFECTS.md:
+fixed-tick world-space state, cached GPU records, analytic intersections, HDR
+palette/glow controls and separate heat cooling. Matched still/motion captures
+are in artifacts/fire-profile.png and artifacts/fire-motion. The first capture
+exposed repeated per-segment hot beads; radial heating was changed to follow the
+continuous tongue axis. Shape/colour is game-authored, not a fixed engine style.
+
+The next alternative is documented in FIRE_FIELDS.md: a shallow/full 3D field
+with transported heat and burning state, guided by authored sources. That path
+is a proposal and has not been benchmarked or visually validated. Keep the
+current baseline for comparison and inexpensive effects. Do not equate a 2D
+presentation with a camera-facing simulation whose state changes with the view.
+
+
+Latest reference pass: added authorable edge/tip breakup and smaller, more
+frequent detached pieces, preserving the slower main motion. Breakup noise is
+advected in emitter-relative world coordinates; it is not re-randomised per
+frame. Smoke illumination now uses radial falloff from local point lights and
+absorption through the same body. Colour is no longer selected primarily by
+puff age. Up to eight local point sources are accepted; the nearest two receive
+smoke absorption sampling. Only the fire source casts geometry shadows.
+This preserves a bounded sample budget but leaves multi-light selection
+transitions and many-emitter scaling as explicit research limits.

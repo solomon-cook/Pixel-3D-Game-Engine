@@ -6,6 +6,11 @@ pub struct FrameMetrics {
     pub cpu_encode_ms: f64,
     pub gpu_ms: Option<f64>,
     pub gpu_timestamp_supported: bool,
+    pub effect_update_cpu_ms: f64,
+    pub fire_primitives: u32,
+    pub flame_fragments: u32,
+    pub embers: u32,
+    pub effect_events_dropped: u32,
 }
 
 pub fn percentile(values: &[f64], fraction: f64) -> f64 {

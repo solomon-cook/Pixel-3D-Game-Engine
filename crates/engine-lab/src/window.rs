@@ -479,7 +479,7 @@ impl Native {
 }
 
 fn draw_inspector(ctx: &egui::Context, session: &Session, commands: &mut Vec<(&str, Value)>) {
-    egui::Window::new("PIXEL ENGINE / EMBERWOOD").default_width(278.).show(ctx, |ui| {
+    egui::Window::new("PIXEL ENGINE / EMBERWOOD").default_width(278.).vscroll(true).show(ctx, |ui| {
         ui.label("Native rendering research lab");
         ui.separator();
         ui.label(format!("Tick {} · {}", session.tick, if session.paused {"paused"} else {"running"}));
@@ -518,6 +518,52 @@ fn draw_inspector(ctx: &egui::Context, session: &Session, commands: &mut Vec<(&s
         if ui.add(egui::Slider::new(&mut shadow,0.0..=4.).text("Smoke self-shadow")).changed() {commands.push(("set_parameter",json!({"path":format!("emitters.{}.self_shadow_strength",emitter.id),"value":shadow})));}
         let mut glow=emitter.internal_glow;
         if ui.add(egui::Slider::new(&mut glow,0.0..=4.).text("Internal glow")).changed() {commands.push(("set_parameter",json!({"path":format!("emitters.{}.internal_glow",emitter.id),"value":glow})));}
+        ui.collapsing("Fire / reusable effect profile", |ui| {
+            let profile=session.scene.effects.iter().find(|p|p.id==emitter.effect_profile).unwrap();
+            egui::ComboBox::from_label("Profile").selected_text(&profile.id).show_ui(ui, |ui| {
+                for p in &session.scene.effects {
+                    if ui.selectable_label(p.id==profile.id,&p.id).clicked() {commands.push(("set_parameter",json!({"path":format!("emitters.{}.effect_profile",emitter.id),"value":p.id})));}
+                }
+            });
+            for (property,label,initial,low,high) in [
+                ("motion_speed","Motion pace",profile.fire.motion_speed,0.05,3.),
+                ("curl","Curl",profile.fire.curl,0.,2.),
+                ("edge_breakup","Edge breakup",profile.fire.edge_breakup,0.,1.),
+                ("tip_breakup","Tip breakup",profile.fire.tip_breakup,0.,1.),
+                ("fragment_size","Fragment size",profile.fire.fragment_size,0.01,0.2),
+                ("width","Flame width",profile.fire.width,0.05,4.),
+                ("height","Flame height",profile.fire.height,0.1,8.),
+                ("fragment_rate","Breakaway rate",profile.fire.fragment_rate,0.,8.),
+                ("ember_rate","Ember rate",profile.fire.ember_rate,0.,32.),
+                ("emission","HDR emission",profile.fire.emission,0.,16.),
+            ] {
+                let mut value=initial;
+                if ui.add(egui::Slider::new(&mut value,low..=high).text(label)).changed() {commands.push(("set_parameter",json!({"path":format!("effects.{}.fire.{property}",profile.id),"value":value})));}
+            }
+            let mut segments=profile.fire.segments;
+            if ui.add(egui::Slider::new(&mut segments,3..=10).text("Curve segments")).changed() {commands.push(("set_parameter",json!({"path":format!("effects.{}.fire.segments",profile.id),"value":segments})));}
+            for (property,label,initial) in [("heat_output","Source heat",profile.thermal.heat_output),("cooling_rate","Cooling",profile.thermal.cooling_rate),("lift","Thermal lift",profile.thermal.lift)] {
+                let mut value=initial;
+                let high=match property {"heat_output"=>16.,"lift"=>4.,_=>10.};
+                if ui.add(egui::Slider::new(&mut value,0.0..=high).text(label)).changed() {commands.push(("set_parameter",json!({"path":format!("effects.{}.thermal.{property}",profile.id),"value":value})));}
+            }
+            ui.small(format!("{} primitives · {} fragments · {} embers\nEffect CPU {:.3} ms · dropped events {}",session.renderer.metrics.fire_primitives,session.renderer.metrics.flame_fragments,session.renderer.metrics.embers,session.renderer.metrics.effect_update_cpu_ms,session.renderer.metrics.effect_events_dropped));
+        });
+        ui.collapsing("Point lights / smoke gradients", |ui| {
+            for light in session.scene.lights.iter().filter(|l|l.kind==pixel_engine::scene::LightKind::Point) {
+                ui.label(&light.id);
+                let mut intensity=light.intensity;
+                if ui.add(egui::Slider::new(&mut intensity,0.0..=40.).text("Intensity")).changed() {commands.push(("set_parameter",json!({"path":format!("lights.{}.intensity",light.id),"value":intensity})));}
+                let mut range=light.range;
+                if ui.add(egui::Slider::new(&mut range,0.1..=40.).text("Range")).changed() {commands.push(("set_parameter",json!({"path":format!("lights.{}.range",light.id),"value":range})));}
+            }
+        });
+        ui.collapsing("Pixel / HDR presentation",|ui| {
+            for (property,label,initial) in [("palette_strength","Colour band strength",session.scene.render.palette_strength),("bloom_strength","HDR glow",session.scene.render.bloom_strength)] {
+                let mut value=initial;
+                if ui.add(egui::Slider::new(&mut value,0.0..=1.).text(label)).changed() {commands.push(("set_parameter",json!({"path":format!("render.{property}"),"value":value})));}
+            }
+        });
         ui.separator();
         ui.label("EXPERIMENTS / independent toggles");
         let e=&session.scene.render.experiments;

@@ -17,13 +17,23 @@ fn bayer(p:vec2<u32>)->f32 {
         }}
         if count>0. {let average=total/count;let l=max(dot(color,vec3(0.2126,0.7152,0.0722)),0.001);let a=dot(average,vec3(0.2126,0.7152,0.0722));color*=mix(1.,a/l,0.65);}
     }
+    // Small bounded HDR glow, evaluated on the selected pixel grid. Threshold
+    // removes ordinary diffuse colour; changing glow never changes simulation.
+    if g.presentation.y>0. {
+        var glow=vec3(0.);let size=vec2<i32>(textureDimensions(hdr));
+        for(var y=-1;y<=1;y++){for(var x=-1;x<=1;x++){
+            let q=clamp(p+vec2(x,y)*2,vec2(0),size-vec2(1));
+            glow+=max(textureLoad(hdr,q,0).rgb-vec3(1.),vec3(0.));
+        }}
+        color+=glow/9.*g.presentation.y;
+    }
     color*=g.params.x;
     color=(color*(2.51*color+0.03))/(color*(2.43*color+0.59)+0.14);
     // Quantise luminance in display space while preserving coloured lighting.
     let display=pow(clamp(color,vec3(0.),vec3(1.)),vec3(1./2.2));
     let l=max(dot(display,vec3(0.2126,0.7152,0.0722)),0.001);
     let levels=g.params.y;let quantized=floor(l*levels+bayer(vec2<u32>(p))*g.resolution.z+0.5)/levels;
-    let result=clamp(display*mix(1.,quantized/l,0.55),vec3(0.),vec3(1.));
+    let result=clamp(display*mix(1.,quantized/l,g.presentation.x),vec3(0.),vec3(1.));
     // Output target is sRGB; the GPU applies the display transfer function.
     return vec4(pow(result,vec3(2.2)),1.);
 }

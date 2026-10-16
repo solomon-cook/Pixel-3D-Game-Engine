@@ -14,7 +14,9 @@
       "pixel_cluster_lighting": false,
       "stable_smoke_detail": false,
       "connected_motion": false
-    }
+    },
+    "bloom_strength": 0.16,
+    "palette_strength": 0.55
   },
   "environment": {
     "sky_color": [
@@ -6304,7 +6306,8 @@
         0.38
       ],
       "intensity": 0.32,
-      "flicker": 0
+      "flicker": 0,
+      "range": 20.0
     },
     {
       "id": "fire-light",
@@ -6320,7 +6323,8 @@
         0.055
       ],
       "intensity": 10,
-      "flicker": 0.55
+      "flicker": 0.55,
+      "range": 20.0
     }
   ],
   "emitters": [
@@ -6338,7 +6342,8 @@
       "enabled": true,
       "style": "ink",
       "self_shadow_strength": 0.9,
-      "internal_glow": 0.0
+      "internal_glow": 0.0,
+      "effect_profile": "effect-campfire"
     }
   ],
   "cameras": [
@@ -6391,6 +6396,23 @@
       "projection": {
         "kind": "orthographic",
         "height": 13
+      }
+    },
+    {
+      "id": "fire-study",
+      "position": [
+        2.4,
+        1.35,
+        3.0
+      ],
+      "target": [
+        0.0,
+        1.05,
+        0.0
+      ],
+      "projection": {
+        "kind": "perspective",
+        "fov_degrees": 42
       }
     }
   ],
@@ -6478,6 +6500,131 @@
           ]
         }
       ]
+    }
+  ],
+  "effects": [
+    {
+      "id": "effect-campfire",
+      "fire": {
+        "width": 0.85,
+        "height": 1.5,
+        "motion_speed": 0.55,
+        "curl": 0.8,
+        "tongues": 7,
+        "segments": 6,
+        "fragment_rate": 1.5,
+        "fragment_lifetime": 1.8,
+        "ember_rate": 4.0,
+        "ember_lifetime": 4.5,
+        "emission": 1.25,
+        "edge_breakup": 0.5,
+        "tip_breakup": 0.8,
+        "fragment_size": 0.06
+      },
+      "thermal": {
+        "heat_output": 2.5,
+        "cooling_rate": 0.9,
+        "lift": 0.6
+      },
+      "palette": {
+        "outer": [
+          1.6,
+          0.085,
+          0.008
+        ],
+        "warm": [
+          3.0,
+          0.78,
+          0.045
+        ],
+        "hot": [
+          5.0,
+          2.8,
+          0.75
+        ]
+      }
+    },
+    {
+      "id": "effect-quiet",
+      "fire": {
+        "width": 0.85,
+        "height": 1.5,
+        "motion_speed": 0.32,
+        "curl": 0.55,
+        "tongues": 5,
+        "segments": 6,
+        "fragment_rate": 0.35,
+        "fragment_lifetime": 1.8,
+        "ember_rate": 2.0,
+        "ember_lifetime": 4.5,
+        "emission": 1.0,
+        "edge_breakup": 0.25,
+        "tip_breakup": 0.45,
+        "fragment_size": 0.06
+      },
+      "thermal": {
+        "heat_output": 2.5,
+        "cooling_rate": 0.9,
+        "lift": 0.6
+      },
+      "palette": {
+        "outer": [
+          1.6,
+          0.085,
+          0.008
+        ],
+        "warm": [
+          3.0,
+          0.78,
+          0.045
+        ],
+        "hot": [
+          5.0,
+          2.8,
+          0.75
+        ]
+      }
+    },
+    {
+      "id": "effect-bonfire",
+      "fire": {
+        "width": 1.8,
+        "height": 3.2,
+        "motion_speed": 0.42,
+        "curl": 0.8,
+        "tongues": 10,
+        "segments": 6,
+        "fragment_rate": 3.0,
+        "fragment_lifetime": 1.8,
+        "ember_rate": 9.0,
+        "ember_lifetime": 4.5,
+        "emission": 1.25,
+        "edge_breakup": 0.65,
+        "tip_breakup": 0.9,
+        "fragment_size": 0.06
+      },
+      "thermal": {
+        "heat_output": 5.0,
+        "cooling_rate": 0.9,
+        "lift": 0.85
+      },
+      "palette": {
+        "outer": [
+          1.6,
+          0.085,
+          0.008
+        ],
+        "warm": [
+          3.0,
+          0.78,
+          0.045
+        ],
+        "hot": [
+          5.0,
+          2.8,
+          0.75
+        ]
+      }
     }
   ]
 }

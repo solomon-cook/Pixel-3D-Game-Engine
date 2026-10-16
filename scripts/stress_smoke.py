@@ -17,11 +17,16 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--binary', type=Path, default=ROOT / 'target/release/engine-lab')
     parser.add_argument('--duration', type=float, default=120)
+    parser.add_argument('--lights', type=int, choices=range(1,9), default=1)
     args = parser.parse_args()
     scene = json.loads((ROOT / 'assets/scenes/clearing.json').read_text())
     scene['emitters'][0]['secondary_bubbles'] = 8
     scene['emitters'][0]['bubble_scale'] = 0.5
     scene['emitters'][0]['smoke_density'] = 8
+    for index in range(args.lights-1):
+        angle=index/max(args.lights-1,1)*math.tau
+        scene['lights'].append({'id':f'stress-light-{index}','kind':'point','position':[math.cos(angle)*2.2,2.0+index*.25,math.sin(angle)*2.2],'color':[0.15,0.3,1.0] if index%2 else [1.0,0.25,0.08],'intensity':4.0,'range':10.0})
+    output='smoke-stress-benchmark.json' if args.lights==1 else f'smoke-stress-{args.lights}-lights-benchmark.json'
     route = scene['routes'][0]
     route['id'] = 'smoke-stress'
     for keyframe in route['keyframes']:
@@ -33,7 +38,7 @@ def main():
         json.dump(scene, file)
         scene_path = Path(file.name)
     try:
-        subprocess.run([str(args.binary), 'benchmark', '--scene', str(scene_path), '--route', route['id'], '--duration', str(args.duration), '--output', str(ROOT / 'artifacts/smoke-stress-benchmark.json')], cwd=ROOT, check=True)
+        subprocess.run([str(args.binary), 'benchmark', '--scene', str(scene_path), '--route', route['id'], '--duration', str(args.duration), '--output', str(ROOT / 'artifacts' / output)], cwd=ROOT, check=True)
     finally:
         scene_path.unlink(missing_ok=True)
 

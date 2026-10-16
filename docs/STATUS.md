@@ -8,20 +8,29 @@ versioned/validated JSON scenes, static GLB/PNG assets, fixed-step smoke grid,
 seeded fire/embers, directional/point shadows, HDR pixel rendering, integer
 presentation, orthographic/perspective cameras, shared inspector/JSON-lines
 operations, exact-tick capture, transactional shader reload and route benchmarks.
+Named effect profiles now own bounded flame curves, cooling fragments, embers,
+HDR palettes, edge/tip breakup, curve quality and thermal source/cooling/lift.
+Smoke now has radial illumination/absorption from its nearest two local lights,
+with up to eight point lights per scene and geometry shadows on the fire light. Pixel style controls
+remain separate from world-space effect state. See EFFECTS.md.
 
 ## Verification on this host
 
-- Rust formatting, Clippy with warnings denied, nine unit tests, asset decoding,
+- Rust formatting, Clippy with warnings denied, 16 unit tests, asset decoding,
   schema discovery and scene validation passed.
 - Metal GPU integration passed: deterministic same-device replay, malformed
   commands/invalid edits, capture completion, orthographic rendering, visible
-  self-shadow/glow mutations and invalid-shader rollback.
+  self-shadow/glow mutations, profile/particle/HDR palette edits, and invalid world/
+  fire shader rollback. Additional checks exercise moving coloured lights and
+  the independent fire-breakup controls. Legacy scene defaults and invalid profile references pass
+  the unit checks.
 - Native resize, fullscreen, frame capture, command handling and shutdown passed.
   Automated minimization is unresolved on this macOS host: the OS keeps reporting
   `minimized: false` after the request. `verify.py --native` correctly fails that
   gate and saves partial results; do not report full native acceptance.
 - macOS ARM64 and Windows x64 GNU release builds succeeded. Windows PE executable
-  was cross-compiled here; CI definitions exist but no hosted CI result is claimed.
+  was cross-compiled here. Initial repository CI passed on both hosted platforms;
+  that result predates this effect-profile update and is not a visual GPU test.
 - Matched stills were inspected. Original puff shapes and child bubbles remain;
   contact normals/ink and shared density-grid shadowing are approximate. The
   current art still has an overly regular stacked silhouette. Owner acceptance
@@ -36,17 +45,20 @@ GPU timestamps exclude simulation compute; total frame work includes simulation
 submission and synchronous GPU completion. Raw samples are in artifacts; compact
 source hashes and metrics are in measurements.json.
 
-| Variant | Frame work median / p95 ms | GPU render median / p95 ms |
+| Current variant | Frame work median / p95 ms | GPU render median / p95 ms |
 |---|---:|---:|
-| baseline | 4.365 / 6.717 | 2.767 / 4.026 |
-| pixel_cluster_lighting | 4.400 / 7.978 | 2.765 / 4.338 |
-| stable_smoke_detail | 4.454 / 8.102 | 2.741 / 4.823 |
-| connected_motion | 4.403 / 7.820 | 2.619 / 4.643 |
-| Smoke-heavy close route | 5.681 / 9.964 | 3.633 / 5.689 |
+| campfire_radial | 3.110 / 5.478 | 1.570 / 2.893 |
+| smoke_heavy_8_lights | 4.526 / 7.289 | 2.268 / 3.327 |
 
 The stress route uses maximum supported child count/size and smoke source density
-with a close orbit. It exercises one large on-screen plume, not many emitters.
+with a close orbit and eight active point lights. It exercises one large on-screen
+plume, not many emitters.
 Experiments remain opt-in: timings alone do not justify promoting a visual mode.
+The earlier three-experiment report is preserved in measurements-smoke-baseline.json;
+those numbers predate the fire-profile update. Historical before/after reports compare
+complete renderer iterations, including changed heat, radial lights, edge breakup and glow; it does not isolate
+one algorithm. GPU p95 did not improve uniformly. The six-second fixed-camera
+motion capture measured effect CPU sampling/upload at a median 0.0103 ms; see measurements.json for its limited scope.
 
 ## Outstanding gates
 
@@ -56,8 +68,9 @@ Experiments remain opt-in: timings alone do not justify promoting a visual mode.
   target remains 60 fps at 1080p with a selected 480×270 scene buffer.
 - Fix/qualify native automated minimization and confirm restore behaviour.
 - Reference-led billow hierarchy, heat/soot transition and multiple source scales;
-  this is specified next work, not implemented multi-emitter support. The cheap
-  thermal model is proposed in HEAT_SYSTEM.md; its new controls are not implemented.
+  this remains further work. Basic thermal controls/independent cooling now run,
+  while heat-driven persistent smoke billows are still proposed. FIRE_FIELDS.md
+  specifies the transported-fire/shallow-volume alternative; it is not implemented.
 - Owner visual review, including silhouettes, self-shadowing, camera motion,
   temporal stability and all three experimental comparisons.
 

@@ -70,11 +70,28 @@ python3 scripts/experiments.py
 This generates matched views and a 120-second camera-route benchmark per variant.
 See docs/RESEARCH.md for hypotheses and docs/STATUS.md for actual validation.
 
+## Game-authored effects
+
+Named scene profiles expose flame proportions/pace/curl, detached fragments,
+embers, linear HDR palettes and simple thermal controls. Try
+`run --effect-profile effect-quiet` or `effect-bonfire`. The inspector and JSON
+commands edit the same validated profile data. Curve/particle budgets are separate
+from the selected pixel grid. `render.palette_strength` and `bloom_strength`
+control presentation after 3D HDR shading. See [EFFECTS.md](docs/EFFECTS.md).
+
+```sh
+python3 scripts/capture_motion.py --profile effect-campfire --gif
+```
+
+The motion script always writes PNG frames/metadata; optional previews use Pillow.
+
 ## Current contract
 
 V1 supports static opaque triangle GLB geometry, 8-bit embedded GLB base-colour
-textures, PNG scene textures, procedural geometry, one directional light, one
-shadowed point light and one bounded fire/smoke emitter. The smoke grid is
+textures, PNG scene textures, procedural geometry, one directional light, up to eight
+point lights (the fire source casts geometry shadows) and one bounded fire/smoke
+emitter. Smoke samples the nearest two active lights for radial illumination and
+shared volume absorption; additional fill lights do not cast geometry shadows. The smoke grid is
 48×64×48. Textures use a 128×128-per-layer nearest-filtered atlas. GLB animation,
 skins, alpha materials, water, clouds and a full scene editor are later work.
 
@@ -91,7 +108,7 @@ in the inspector or through `emitters.campfire.secondary_bubbles` (0..8) and
 `emitters.campfire.bubble_scale` (0.1..0.5). Parent motion and GPU advection remain
 unchanged. Local normal blending softens contact regions while preserving the
 individual billows. Six samples through the existing smoke grid estimate shared
-firelight occlusion; this is a cheap metaball-like lighting approximation, not
+local-light occlusion with radial distance falloff; this is a cheap metaball-like lighting approximation, not
 an implicit-surface ray marcher. `self_shadow_strength` (0..4) controls absorption
 and `internal_glow` (0..4, default 0) adds emission from within the plume.
 `emitters.campfire.style` switches between `ink` and `volume`.

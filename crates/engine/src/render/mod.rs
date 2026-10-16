@@ -1,6 +1,7 @@
 use crate::{
     assets::{self, Vertex},
     diagnostics::FrameMetrics,
+    effects::{FireFrame, FireKey, MAX_FIRE_PRIMITIVES},
     platform,
     scene::{Camera, LightKind, Scene},
     simulation,
@@ -19,6 +20,13 @@ pub const PIXEL_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Rgba8UnormSrg
 const HDR: wgpu::TextureFormat = wgpu::TextureFormat::Rgba16Float;
 const DEPTH: wgpu::TextureFormat = wgpu::TextureFormat::Depth32Float;
 const VOLUME: [u32; 3] = [48, 64, 48];
+
+#[repr(C)]
+#[derive(Clone, Copy, Pod, Zeroable)]
+struct PointLightGpu {
+    position_range: [f32; 4],
+    color_power: [f32; 4],
+}
 
 #[repr(C)]
 #[derive(Clone, Copy, Pod, Zeroable)]
@@ -42,6 +50,14 @@ struct Globals {
     experiments: [f32; 4],
     simulation: [f32; 4],
     effect_settings: [f32; 4],
+    thermal: [f32; 4],
+    fire_outer: [f32; 4],
+    fire_warm: [f32; 4],
+    fire_hot: [f32; 4],
+    presentation: [f32; 4],
+    fire_shape: [f32; 4],
+    light_info: [u32; 4],
+    point_lights: [PointLightGpu; 8],
 }
 
 struct Pipelines {
@@ -67,6 +83,9 @@ pub struct Renderer {
     pixel_texture: wgpu::Texture,
     resolution: [u32; 2],
     uniform: wgpu::Buffer,
+    fire_buffer: wgpu::Buffer,
+    fire_key: Option<FireKey>,
+    fire_frame: FireFrame,
     globals: wgpu::BindGroup,
     global_layout: wgpu::BindGroupLayout,
     textures: wgpu::BindGroup,
@@ -216,22 +235,42 @@ impl Renderer {
             .await?;
         let global_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("globals"),
-            entries: &[binding(
-                0,
-                wgpu::ShaderStages::VERTEX_FRAGMENT | wgpu::ShaderStages::COMPUTE,
-                wgpu::BindingType::Buffer {
-                    ty: wgpu::BufferBindingType::Uniform,
-                    has_dynamic_offset: false,
-                    min_binding_size: None,
-                },
-            )],
+            entries: &[
+                binding(
+                    0,
+                    wgpu::ShaderStages::VERTEX_FRAGMENT | wgpu::ShaderStages::COMPUTE,
+                    wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                ),
+                binding(
+                    1,
+                    wgpu::ShaderStages::FRAGMENT,
+                    wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: true },
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                ),
+            ],
+        });
+        let fire_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("bounded fire primitives"),
+            contents: bytemuck::bytes_of(&FireFrame::zeroed()),
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
         });
         let uniform = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("globals"),
             contents: bytemuck::bytes_of(&Globals::zeroed()),
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
         });
-        let globals = group(&device, &global_layout, &[uniform.as_entire_binding()]);
+        let globals = group(
+            &device,
+            &global_layout,
+            &[uniform.as_entire_binding(), fire_buffer.as_entire_binding()],
+        );
         let texture_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("lighting/materials"),
             entries: &[
@@ -608,6 +647,9 @@ impl Renderer {
                 ..Default::default()
             },
             uniform,
+            fire_buffer,
+            fire_key: None,
+            fire_frame: FireFrame::zeroed(),
             globals,
             global_layout,
             textures,
@@ -657,6 +699,7 @@ impl Renderer {
         let common = read("common.wgsl")?;
         let world = read("world.wgsl")?;
         let volume_source = read("volume.wgsl")?;
+        let fire_source = read("fire.wgsl")?;
         let post_source = read("post.wgsl")?;
         let smoke_source = read("smoke.wgsl")?;
         let shadow_source = read("shadow.wgsl")?;
@@ -665,7 +708,7 @@ impl Renderer {
         let volume_module = shader(
             device,
             "volumetrics",
-            format!("{common}\n{world}\n{}", volume_source),
+            format!("{common}\n{world}\n{fire_source}\n{}", volume_source),
         );
         let post_module = shader(
             device,
@@ -812,7 +855,7 @@ impl Renderer {
         Ok(())
     }
 
-    pub fn update_globals(&self, scene: &Scene, camera: &Camera, tick: u64, seed: u32) {
+    pub fn update_globals(&mut self, scene: &Scene, camera: &Camera, tick: u64, seed: u32) {
         let sun = scene
             .lights
             .iter()
@@ -821,7 +864,7 @@ impl Renderer {
         let fire = scene
             .lights
             .iter()
-            .find(|l| l.kind == LightKind::Point)
+            .find(|l| l.kind == LightKind::Point && l.position == scene.emitters[0].position)
             .unwrap();
         let emitter = &scene.emitters[0];
         let sun_direction = Vec3::from(sun.position).normalize();
@@ -852,7 +895,7 @@ impl Renderer {
         .into_iter()
         .enumerate()
         {
-            let m = Mat4::perspective_rh(std::f32::consts::FRAC_PI_2, 1., 0.05, 20.)
+            let m = Mat4::perspective_rh(std::f32::consts::FRAC_PI_2, 1., 0.05, fire.range)
                 * Mat4::look_at_rh(fire_position, fire_position + direction, up);
             self.queue.write_buffer(
                 &self.shadow_buffers[i + 1],
@@ -874,6 +917,54 @@ impl Renderer {
         } else {
             0.
         };
+        let profile = scene
+            .effects
+            .iter()
+            .find(|p| p.id == emitter.effect_profile)
+            .unwrap();
+        let key = FireKey {
+            tick,
+            seed,
+            source: emitter.position,
+            wind,
+            enabled,
+            profile: profile.clone(),
+        };
+        if self.fire_key.as_ref() != Some(&key) {
+            let started = Instant::now();
+            self.fire_frame = FireFrame::sample(&key);
+            self.queue
+                .write_buffer(&self.fire_buffer, 0, bytemuck::bytes_of(&self.fire_frame));
+            self.fire_key = Some(key);
+            self.metrics.effect_update_cpu_ms = started.elapsed().as_secs_f64() * 1000.;
+            self.metrics.fire_primitives = self.fire_frame.counts[0];
+            self.metrics.flame_fragments = self.fire_frame.counts[2];
+            self.metrics.embers = self.fire_frame.counts[3];
+            self.metrics.effect_events_dropped = self.fire_frame.bounds_max[3] as u32;
+        }
+        let power = self.fire_frame.bounds_min[3];
+        let mut point_lights = [PointLightGpu::zeroed(); 8];
+        let ordered = std::iter::once(fire).chain(
+            scene
+                .lights
+                .iter()
+                .filter(|l| l.kind == LightKind::Point && l.id != fire.id),
+        );
+        let mut light_count = 0;
+        for (i, light) in ordered.enumerate() {
+            let intensity = if i == 0 {
+                light.intensity * (1. - light.flicker + light.flicker * power) * enabled
+            } else {
+                light.intensity
+                    * (1. - light.flicker
+                        + light.flicker * simulation::flicker(tick, seed.wrapping_add(i as u32)))
+            };
+            point_lights[i] = PointLightGpu {
+                position_range: vec4(light.position, light.range),
+                color_power: vec4(light.color, intensity),
+            };
+            light_count += 1;
+        }
         let g = Globals {
             view_proj: vp.to_cols_array_2d(),
             inverse_view_proj: vp.inverse().to_cols_array_2d(),
@@ -882,12 +973,10 @@ impl Renderer {
             sun_direction: vec4(sun_direction.into(), 0.),
             sun_color: vec4(sun.color, sun.intensity),
             ambient: vec4(scene.environment.ambient, 0.),
-            fire_position: vec4(emitter.position, 0.),
+            fire_position: vec4(emitter.position, profile.fire.width),
             fire_color: vec4(
                 fire.color,
-                fire.intensity
-                    * (1. - fire.flicker + fire.flicker * simulation::flicker(tick, seed))
-                    * enabled,
+                fire.intensity * (1. - fire.flicker + fire.flicker * power) * enabled,
             ),
             sky: vec4(scene.environment.sky_color, 0.),
             horizon: vec4(
@@ -930,6 +1019,29 @@ impl Renderer {
                 emitter.bubble_scale,
                 emitter.self_shadow_strength,
                 emitter.internal_glow,
+            ],
+            thermal: [
+                profile.thermal.heat_output,
+                profile.thermal.cooling_rate,
+                profile.thermal.lift,
+                power,
+            ],
+            fire_outer: vec4(profile.palette.outer, profile.fire.emission),
+            fire_warm: vec4(profile.palette.warm, profile.fire.edge_breakup),
+            fire_hot: vec4(profile.palette.hot, profile.fire.tip_breakup),
+            fire_shape: [
+                profile.fire.width,
+                profile.fire.height,
+                profile.fire.motion_speed,
+                profile.fire.curl,
+            ],
+            light_info: [light_count, 0, 0, 0],
+            point_lights,
+            presentation: [
+                scene.render.palette_strength,
+                scene.render.bloom_strength,
+                0.,
+                0.,
             ],
         };
         self.queue
@@ -1187,7 +1299,7 @@ impl Renderer {
 
     pub fn capabilities(&self) -> serde_json::Value {
         let info = self.adapter.get_info();
-        serde_json::json!({"name":info.name,"backend":format!("{:?}",info.backend),"device_type":format!("{:?}",info.device_type),"gpu_timestamps":self.timing.is_some(),"resolution":self.resolution,"smoke_grid":VOLUME,"vertices":self.vertex_count})
+        serde_json::json!({"name":info.name,"backend":format!("{:?}",info.backend),"device_type":format!("{:?}",info.device_type),"gpu_timestamps":self.timing.is_some(),"resolution":self.resolution,"smoke_grid":VOLUME,"vertices":self.vertex_count,"max_fire_primitives":MAX_FIRE_PRIMITIVES,"max_point_lights":8,"smoke_lights_per_sample":2})
     }
 }
 

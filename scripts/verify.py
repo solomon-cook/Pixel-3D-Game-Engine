@@ -33,7 +33,13 @@ def main():
             temp = Path(temporary)
             shaders = temp / "shaders"
             shutil.copytree(ROOT / "crates/engine/src/render/shaders", shaders)
-            process = subprocess.Popen([binary, "serve", "--shaders", shaders], cwd=ROOT, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+            # Add a disabled fill light to exercise multiple-source gradients
+            # while preserving the reference fire's initial illumination.
+            scene=json.loads((ROOT / "assets/scenes/clearing.json").read_text())
+            scene["lights"].append({"id":"test-fill","kind":"point","position":[1.6,2.1,0.3],"color":[0.1,0.4,1.0],"intensity":0,"range":8})
+            scene_path=temp / "scene.json"
+            scene_path.write_text(json.dumps(scene))
+            process = subprocess.Popen([binary, "serve", "--scene", scene_path, "--shaders", shaders], cwd=ROOT, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
             counter = 0
 
             def request(method, **params):
@@ -70,6 +76,47 @@ def main():
                 assert (temp / "emission.png").read_bytes() != (temp / "shadowed.png").read_bytes(), "internal smoke emission has no visible effect"
                 assert "error" in request("set_parameter", path="emitters.campfire.self_shadow_strength", value=-1)
                 request("set_parameter", path="emitters.campfire.internal_glow", value=0)
+                request("capture_frame", path=str(temp / "local-light-before.png"), scale=1)
+                assert "result" in request("set_parameter", path="lights.test-fill.intensity", value=8)
+                request("capture_frame", path=str(temp / "local-light-after.png"), scale=1)
+                assert (temp / "local-light-before.png").read_bytes() != (temp / "local-light-after.png").read_bytes(), "secondary point light has no visible effect"
+                request("set_parameter", path="lights.test-fill.position", value=[-1.6,3.0,0.3])
+                request("capture_frame", path=str(temp / "local-light-moved.png"), scale=1)
+                assert (temp / "local-light-after.png").read_bytes() != (temp / "local-light-moved.png").read_bytes(), "local light gradient did not move"
+                assert "error" in request("set_parameter", path="lights.test-fill.range", value=0)
+                request("set_parameter", path="lights.test-fill.intensity", value=0)
+                request("set_camera", id="fire-study")
+                request("capture_frame", path=str(temp / "fire.png"), scale=1)
+                metrics=request("get_metrics")["result"]["frame"]
+                assert metrics["fire_primitives"] <= 256 and metrics["embers"] > 0
+                assert "result" in request("set_parameter", path="effects.effect-campfire.fire.fragment_rate", value=0)
+                assert "result" in request("set_parameter", path="effects.effect-campfire.fire.ember_rate", value=0)
+                request("capture_frame", path=str(temp / "no-particles.png"), scale=1)
+                metrics=request("get_metrics")["result"]["frame"]
+                assert metrics["flame_fragments"] == 0 and metrics["embers"] == 0
+                assert "error" in request("set_parameter", path="effects.effect-campfire.fire.motion_speed", value=0)
+                request("set_parameter", path="effects.effect-campfire.palette.hot", value=[0.2,4,5])
+                request("capture_frame", path=str(temp / "palette.png"), scale=1)
+                assert (temp / "palette.png").read_bytes() != (temp / "no-particles.png").read_bytes(), "HDR palette did not reach renderer"
+                request("set_parameter", path="effects.effect-campfire.palette.hot", value=[5,2.8,0.75])
+                request("set_parameter", path="effects.effect-campfire.fire.fragment_rate", value=1.5)
+                request("set_parameter", path="effects.effect-campfire.fire.ember_rate", value=4)
+                request("set_parameter", path="emitters.campfire.effect_profile", value="effect-quiet")
+                request("capture_frame", path=str(temp / "quiet.png"), scale=1)
+                assert request("get_metrics")["result"]["capabilities"]["resolution"] == [640,360]
+                request("set_parameter", path="emitters.campfire.effect_profile", value="effect-campfire")
+                # Material-space breakup can be independently disabled.
+                request("capture_frame", path=str(temp / "rough.png"), scale=1)
+                assert "result" in request("set_parameter", path="effects.effect-campfire.fire.edge_breakup", value=0)
+                request("set_parameter", path="effects.effect-campfire.fire.tip_breakup", value=0)
+                request("capture_frame", path=str(temp / "smooth.png"), scale=1)
+                assert (temp / "rough.png").read_bytes() != (temp / "smooth.png").read_bytes(), "flame breakup did not change coverage"
+                request("set_parameter", path="effects.effect-campfire.fire.edge_breakup", value=0.5)
+                request("set_parameter", path="effects.effect-campfire.fire.tip_breakup", value=0.8)
+                # Exercise the same fire geometry in soft-volume treatment too.
+                request("set_parameter", path="emitters.campfire.style", value="volume")
+                request("capture_frame", path=str(temp / "soft-fire.png"), scale=1)
+                request("set_parameter", path="emitters.campfire.style", value="ink")
                 request("set_camera", id="hero")
                 request("reset", seed=42)
                 request("step", ticks=120)
@@ -80,6 +127,14 @@ def main():
                 assert "result" in request("capture_frame", path=str(temp / "rollback.png"), scale=1)
                 assert (temp / "replay.png").read_bytes() == (temp / "rollback.png").read_bytes(), "failed reload replaced working pipeline"
                 shader_path.write_text(working)
+                assert "result" in request("reload_shaders")
+                fire_shader=shaders / "fire.wgsl"
+                working_fire=fire_shader.read_text()
+                fire_shader.write_text("invalid fire shader")
+                assert "error" in request("reload_shaders")
+                request("capture_frame", path=str(temp / "fire-rollback.png"), scale=1)
+                assert (temp / "replay.png").read_bytes() == (temp / "fire-rollback.png").read_bytes()
+                fire_shader.write_text(working_fire)
                 assert "result" in request("reload_shaders")
                 assert "result" in request("set_camera", id="orthographic")
                 assert "result" in request("capture_frame", path=str(temp / "ortho.png"), scale=1)

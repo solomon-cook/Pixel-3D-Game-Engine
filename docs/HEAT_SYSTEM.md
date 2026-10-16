@@ -1,13 +1,16 @@
 # A small thermal model for procedural smoke
 
-Design proposal, 16 October 2026. Existing code carries a temperature-like scalar;
-the model and authoring controls below are next work, not shipped schema fields.
+Design and partial implementation, 16 October 2026. Effect profiles now expose
+`thermal.heat_output`, `thermal.cooling_rate` and `thermal.lift`. Smoke temperature
+cools independently of density; heat injection and the local light share the
+fire envelope. See EFFECTS.md for implemented controls. Heat-driven persistent
+smoke billows, entrainment and multiple source regions below remain proposals.
 
 ## Start from what already exists
 
 `smoke.wgsl` stores density and a temperature-like value in a 48×64×48 texture.
-Both are advected; the latter adds upward velocity. They currently share one
-dissipation rate. The inked billows are generated mostly from age, a global
+Both are advected; the latter adds upward velocity. Heat now has its own
+cooling rate, separate from density dissipation. The inked billows are generated mostly from age, a global
 buoyancy setting and wind, using grid density to gate presence. Their visible
 motion and growth do not yet follow the evolving local heat.
 
@@ -53,8 +56,9 @@ unrelated heat clock as authoritative. Retain finite bounds and fixed steps.
 
 ## Cheap engine implementation
 
-Keep the existing coarse density/heat grid. Add separate validated cooling,
-thermal buoyancy, drag and entrainment settings through schema/Session/inspector.
+Keep the existing coarse density/heat grid. Validated cooling and thermal lift
+settings are now exposed through schema/Session/inspector. Drag and entrainment
+for smoke billows remain further work.
 First validate that the grid creates the intended rise/cool/spread behaviour.
 
 Then move parent billow state into a bounded GPU storage buffer. Update it once
