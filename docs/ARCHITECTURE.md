@@ -80,3 +80,14 @@ Timestamp writes use render-pass boundaries supported by Apple GPUs.
 Backend selection is native Metal on macOS and DX12 on Windows. Dependency lock
 and toolchain files make local and CI builds reproducible. CI tests compile and
 package both hosts; hardware visual/performance acceptance is a separate gate.
+
+## Optical materials
+
+Scene materials now use a shared GPU storage table. Geometry stores a stable
+material index plus relative vertex/GLB tint and roughness. Authoring changes
+upload the table on the next render boundary; topology stays immutable. The
+opaque pass preserves legacy material defaults. Optional optical surfaces use an
+HDR/normal-depth snapshot, bounded SSR/environment fallback and single-layer
+refractive background sampling. Their foreground smoke/fire integral is shared
+with the atmosphere shader. All optical/material/shadow pipelines participate
+in transactional reload. See MATERIALS.md for pass order and limitations.

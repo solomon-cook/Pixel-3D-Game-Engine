@@ -15,39 +15,75 @@ fn fire_visibility(p:vec3<f32>) -> f32 {
     let depth=far/(far-0.05)-(far*0.05)/((far-0.05)*max(major,0.051));
     return textureSampleCompareLevel(point_shadow,shadow_sampler,d,depth-0.004);
 }
-struct VertexIn { @location(0) position:vec3<f32>, @location(1) normal:vec3<f32>, @location(2) color:vec3<f32>, @location(3) uv:vec2<f32>, @location(4) texture:f32, @location(5) emission:f32, @location(6) roughness:f32 };
-struct Varying { @builtin(position) clip:vec4<f32>, @location(0) position:vec3<f32>, @location(1) normal:vec3<f32>, @location(2) color:vec3<f32>, @location(3) uv:vec2<f32>, @location(4) @interpolate(flat) texture:f32, @location(5) emission:f32, @location(6) roughness:f32 };
-@vertex fn vs(v:VertexIn)->Varying {
-    var o:Varying; o.clip=g.view_proj*vec4(v.position,1.);o.position=v.position;o.normal=v.normal;o.color=v.color;o.uv=v.uv;o.texture=v.texture;o.emission=v.emission;o.roughness=v.roughness;return o;
+struct VertexIn { @location(0) position:vec3<f32>, @location(1) normal:vec3<f32>, @location(2) color:vec3<f32>, @location(3) uv:vec2<f32>, @location(4) texture:f32, @location(5) emission:f32, @location(6) roughness:f32, @location(7) material:u32 };
+struct Varying { @builtin(position) clip:vec4<f32>, @location(0) position:vec3<f32>, @location(1) normal:vec3<f32>, @location(2) color:vec3<f32>, @location(3) uv:vec2<f32>, @location(4) @interpolate(flat) texture:f32, @location(5) emission:f32, @location(6) roughness:f32, @location(7) @interpolate(flat) material:u32 };
+@vertex fn vs(v:VertexIn)->Varying {return world_vertex(v);}
+fn world_vertex(v:VertexIn)->Varying {
+    var o:Varying; o.clip=g.view_proj*vec4(v.position,1.);o.position=v.position;o.normal=v.normal;o.color=v.color;o.uv=v.uv;o.texture=v.texture;o.emission=v.emission;o.roughness=v.roughness;o.material=v.material;return o;
 }
 struct Output { @location(0) color:vec4<f32>, @location(1) normal_depth:vec4<f32> };
-@fragment fn fs(v:Varying)->Output {
-    let n=normalize(v.normal);let view=normalize(g.camera.xyz-v.position);
-    let sun=max(dot(n,normalize(g.sun_direction.xyz)),0.0)*sun_visibility(v.position,n);
-    var local_light=vec3(0.);var specular=vec3(0.);
-    for(var i=0u;i<8u;i++) {if i>=g.light_info.x {break;}
-        let point=g.point_lights[i];let l=normalize(point.position_range.xyz-v.position+vec3(0.00001));
-        var visibility=1.;if i==0u {visibility=fire_visibility(v.position+n*0.025);}
-        let energy=point.color_power.w*point_falloff(v.position,point)*visibility;
-        local_light+=point.color_power.xyz*energy*max(dot(n,l),0.);
-        let h=normalize(l+view);
-        specular+=point.color_power.xyz*pow(max(dot(n,h),0.),mix(48.,6.,v.roughness))*(1.-v.roughness)*energy;
+fn surface_view(v:Varying)->vec3<f32> {
+    if g.camera.w>0.5 {
+        let a=g.inverse_view_proj*vec4(0.,0.,0.,1.);let b=g.inverse_view_proj*vec4(0.,0.,1.,1.);
+        return normalize(a.xyz/a.w-b.xyz/b.w);
     }
-    var albedo=v.color*textureSample(atlas,atlas_sampler,v.uv,i32(v.texture)).rgb;
-    // Surface-anchored clusters make material detail survive camera rotation.
-    // Detail frequency is bounded by the projected world footprint.
+    return normalize(g.camera.xyz-v.position);
+}
+fn surface_albedo(v:Varying,m:Material)->vec3<f32> {
+    return v.color*m.color_emission.rgb*textureSampleLevel(atlas,atlas_sampler,v.uv,i32(v.texture),0.).rgb;
+}
+fn scattered(m:Material,n:vec3<f32>,l:vec3<f32>)->vec3<f32> {
+    // Authorable thin-body approximation: wrap around the terminator and
+    // transmit backlight through an optical thickness. No diffusion solver.
+    let wrap=pow(clamp((dot(n,l)+0.45)/1.45,0.,1.),1.5)*0.35;
+    let back=pow(max(dot(-n,l),0.),1.5);
+    let attenuation=exp(-(m.absorption.rgb+vec3(0.7))*m.optical.y);
+    return m.scatter.rgb*m.optical.z*(vec3(wrap)+attenuation*back);
+}
+fn shade_surface(v:Varying)->Output {
+    let m=materials[v.material];let rough=clamp(m.surface.x*v.roughness,0.,1.);
+    let emission=m.color_emission.w*v.emission;
+    let n=normalize(v.normal);let view=surface_view(v);
+    var albedo=surface_albedo(v,m);
     let footprint=max(length(dpdx(v.position)),length(dpdy(v.position)));
     let frequency=min(9.,0.65/max(footprint,0.001));
     let mottle=noise(v.position*2.3);let grain=hash(floor(v.position*frequency));
-    if v.roughness>0.93 && n.y>0.6 && v.emission<0.01 {
+    if rough>0.93 && n.y>0.6 && emission<0.01 {
         let moss=step(0.58,mottle);let fleck=step(0.78,grain);
         albedo*=mix(vec3(0.72,0.7,0.64),vec3(1.02,1.12,0.83),moss);
         albedo*=mix(0.85,1.15,fleck);
-    } else if v.roughness>0.84 && v.emission<0.01 {
+    } else if rough>0.84 && emission<0.01 {
         albedo*=0.84+floor((mottle*0.7+grain*0.3)*4.)*0.085;
     }
+    let f0=material_f0(m,albedo);let advanced=optical_strength(m)>0.;
+    let sun_l=normalize(g.sun_direction.xyz);let sun_vis=sun_visibility(v.position,n);
+    let sun=max(dot(n,sun_l),0.)*sun_vis;
+    var local_light=vec3(0.);var specular=vec3(0.);var scatter=vec3(0.);
+    if advanced {specular+=microfacet(n,view,sun_l,f0,rough)*g.sun_color.rgb*g.sun_color.w*sun_vis;}
+    if m.optical.z>0. {
+        scatter+=scattered(m,n,sun_l)*g.sun_color.rgb*g.sun_color.w*sun_visibility(v.position+sun_l*m.optical.y,n);
+    }
+    for(var i=0u;i<8u;i++) {if i>=g.light_info.x {break;}
+        let point=g.point_lights[i];let l=normalize(point.position_range.xyz-v.position+vec3(0.00001));
+        var visibility=1.;if i==0u {visibility=fire_visibility(v.position+n*0.025);}
+        let power=point.color_power.w*point_falloff(v.position,point);
+        let energy=power*visibility;
+        local_light+=point.color_power.xyz*energy*max(dot(n,l),0.);
+        if advanced {specular+=point.color_power.rgb*energy*microfacet(n,view,l,f0,rough);}
+        else {specular+=point.color_power.xyz*pow(max(dot(n,normalize(l+view)),0.),mix(48.,6.,rough))*(1.-rough)*energy;}
+        if m.optical.z>0. {
+            var scatter_vis=1.;if i==0u {scatter_vis=fire_visibility(v.position+l*m.optical.y);}
+            scatter+=point.color_power.rgb*power*scattered(m,n,l)*scatter_vis;
+        }
+    }
     let ambient=g.ambient.xyz*mix(0.55,1.1,n.y*0.5+0.5);
-    var o:Output;
-    o.color=vec4(albedo*(ambient+g.sun_color.xyz*sun*g.sun_color.w+local_light)+specular+albedo*v.emission,1.);
+    var diffuse=albedo*(ambient+g.sun_color.xyz*sun*g.sun_color.w+local_light);
+    if advanced {diffuse*= (1.-m.surface.y)*(1.-transmission(m))*(vec3(1.)-fresnel(f0,max(dot(n,view),0.)));}
+    var o:Output;o.color=vec4(diffuse+specular+scatter+albedo*emission,1.);
     o.normal_depth=vec4(n,length(g.camera.xyz-v.position));return o;
+}
+@fragment fn fs(v:Varying)->Output {
+    let result=shade_surface(v);
+    if transmission(materials[v.material])>0. {discard;}
+    return result;
 }

@@ -479,7 +479,7 @@ impl Native {
 }
 
 fn draw_inspector(ctx: &egui::Context, session: &Session, commands: &mut Vec<(&str, Value)>) {
-    egui::Window::new("PIXEL ENGINE / EMBERWOOD").default_width(278.).vscroll(true).show(ctx, |ui| {
+    egui::Window::new("PIXEL ENGINE / INSPECTOR").default_width(278.).vscroll(true).show(ctx, |ui| {
         ui.label("Native rendering research lab");
         ui.separator();
         ui.label(format!("Tick {} · {}", session.tick, if session.paused {"paused"} else {"running"}));
@@ -556,6 +556,39 @@ fn draw_inspector(ctx: &egui::Context, session: &Session, commands: &mut Vec<(&s
                 if ui.add(egui::Slider::new(&mut intensity,0.0..=40.).text("Intensity")).changed() {commands.push(("set_parameter",json!({"path":format!("lights.{}.intensity",light.id),"value":intensity})));}
                 let mut range=light.range;
                 if ui.add(egui::Slider::new(&mut range,0.1..=40.).text("Range")).changed() {commands.push(("set_parameter",json!({"path":format!("lights.{}.range",light.id),"value":range})));}
+            }
+        });
+        ui.collapsing("Materials", |ui| {
+            let mut steps=session.scene.render.reflection_steps;
+            if ui.add(egui::Slider::new(&mut steps,0..=16).text("Reflection ray steps")).changed() {commands.push(("set_parameter",json!({"path":"render.reflection_steps","value":steps})));}
+
+            for material in &session.scene.materials {
+                ui.collapsing(&material.id, |ui| {
+                    let mut color=material.color;
+                    ui.horizontal(|ui| {ui.label("Base colour");
+                        if ui.color_edit_button_rgb(&mut color).changed() {commands.push(("set_parameter",json!({"path":format!("materials.{}.color",material.id),"value":color})));}
+                    });
+                    for (property,label,mut value,low,high) in [
+                        ("roughness","Roughness",material.roughness,0.,1.),
+                        ("metallic","Metallic",material.metallic,0.,1.),
+                        ("reflectivity","Reflections",material.reflectivity,0.,1.),
+                        ("transmission","Transmission",material.transmission,0.,1.),
+                        ("ior","Index of refraction",material.ior,1.,2.5),
+                        ("thickness","Optical thickness",material.thickness,0.,10.),
+                        ("subsurface","Subsurface wrap",material.subsurface,0.,1.),
+                        ("emission","Emission",material.emission,0.,8.),
+                    ] {
+                        if ui.add(egui::Slider::new(&mut value,low..=high).text(label)).changed() {commands.push(("set_parameter",json!({"path":format!("materials.{}.{property}",material.id),"value":value})));}
+                    }
+                    let mut scatter=material.scatter_color;
+                    ui.horizontal(|ui| {ui.label("Scatter colour");
+                        if ui.color_edit_button_rgb(&mut scatter).changed() {commands.push(("set_parameter",json!({"path":format!("materials.{}.scatter_color",material.id),"value":scatter})));}
+                    });
+                    let mut absorption=material.absorption;
+                    let mut changed=false;
+                    ui.horizontal(|ui| {ui.label("Absorption RGB"); for channel in &mut absorption {changed |= ui.add(egui::DragValue::new(channel).speed(0.02).range(0.0..=64.)).changed();}});
+                    if changed {commands.push(("set_parameter",json!({"path":format!("materials.{}.absorption",material.id),"value":absorption})));}
+                });
             }
         });
         ui.collapsing("Pixel / HDR presentation",|ui| {

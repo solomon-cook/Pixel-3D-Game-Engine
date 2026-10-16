@@ -1,0 +1,1220 @@
+{
+  "version": 1,
+  "name": "Material Atelier \u2014 metals, glass and scattering",
+  "render": {
+    "resolution": [
+      640,
+      360
+    ],
+    "exposure": 1.1,
+    "shading_steps": 24,
+    "dither_strength": 0.18,
+    "smoke_steps": 56,
+    "experiments": {
+      "pixel_cluster_lighting": false,
+      "stable_smoke_detail": false,
+      "connected_motion": false
+    },
+    "bloom_strength": 0.12,
+    "palette_strength": 0.3
+  },
+  "environment": {
+    "sky_color": [
+      0.04,
+      0.09,
+      0.18
+    ],
+    "horizon_color": [
+      0.16,
+      0.09,
+      0.1
+    ],
+    "ambient": [
+      0.065,
+      0.09,
+      0.14
+    ],
+    "wind": [
+      0.23,
+      0,
+      0.08
+    ],
+    "fog_density": 0.002
+  },
+  "materials": [
+    {
+      "id": "stage",
+      "color": [
+        0.065,
+        0.085,
+        0.12
+      ],
+      "roughness": 0.35,
+      "metallic": 0.5,
+      "reflectivity": 0.8
+    },
+    {
+      "id": "pedestal",
+      "color": [
+        0.16,
+        0.19,
+        0.22
+      ],
+      "roughness": 0.8
+    },
+    {
+      "id": "chrome",
+      "color": [
+        0.93,
+        0.96,
+        1.0
+      ],
+      "roughness": 0.1,
+      "metallic": 1
+    },
+    {
+      "id": "copper",
+      "color": [
+        0.95,
+        0.43,
+        0.19
+      ],
+      "roughness": 0.32,
+      "metallic": 1
+    },
+    {
+      "id": "wax",
+      "color": [
+        0.14,
+        0.35,
+        0.09
+      ],
+      "roughness": 0.6,
+      "subsurface": 0.75,
+      "thickness": 0.6,
+      "absorption": [
+        1.2,
+        0.25,
+        0.5
+      ],
+      "scatter_color": [
+        0.2,
+        0.65,
+        0.08
+      ]
+    },
+    {
+      "id": "ceramic",
+      "color": [
+        0.09,
+        0.22,
+        0.45
+      ],
+      "roughness": 0.16,
+      "reflectivity": 1
+    },
+    {
+      "id": "glass",
+      "color": [
+        0.96,
+        1.0,
+        1.0
+      ],
+      "roughness": 0.06,
+      "transmission": 1,
+      "ior": 1.5,
+      "thickness": 0.7,
+      "absorption": [
+        0.08,
+        0.015,
+        0.01
+      ]
+    },
+    {
+      "id": "amber",
+      "color": [
+        1.0,
+        0.85,
+        0.62
+      ],
+      "roughness": 0.28,
+      "transmission": 0.92,
+      "ior": 1.45,
+      "thickness": 0.9,
+      "absorption": [
+        0.02,
+        0.32,
+        1.5
+      ]
+    },
+    {
+      "id": "warm-panel",
+      "color": [
+        1.0,
+        0.3,
+        0.04
+      ],
+      "roughness": 0.5,
+      "emission": 1.2
+    },
+    {
+      "id": "cool-panel",
+      "color": [
+        0.06,
+        0.65,
+        1.0
+      ],
+      "roughness": 0.5,
+      "emission": 0.8
+    },
+    {
+      "id": "chalk",
+      "color": [
+        0.65,
+        0.72,
+        0.8
+      ],
+      "roughness": 0.8
+    },
+    {
+      "id": "coal",
+      "color": [
+        0.035,
+        0.025,
+        0.022
+      ],
+      "roughness": 0.9
+    }
+  ],
+  "objects": [
+    {
+      "id": "floor",
+      "material": "stage",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        0,
+        -0.18,
+        0
+      ],
+      "scale": [
+        18,
+        0.3,
+        15
+      ]
+    },
+    {
+      "id": "chrome-plinth",
+      "material": "pedestal",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        -3.25,
+        0.12,
+        -2.3
+      ],
+      "scale": [
+        2.6,
+        0.3,
+        2.6
+      ]
+    },
+    {
+      "id": "chrome-sample",
+      "material": "chrome",
+      "geometry": {
+        "kind": "smooth_sphere"
+      },
+      "position": [
+        -3.25,
+        1.35,
+        -2.3
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ]
+    },
+    {
+      "id": "copper-plinth",
+      "material": "pedestal",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        0.0,
+        0.12,
+        -2.3
+      ],
+      "scale": [
+        2.6,
+        0.3,
+        2.6
+      ]
+    },
+    {
+      "id": "copper-sample",
+      "material": "copper",
+      "geometry": {
+        "kind": "smooth_sphere"
+      },
+      "position": [
+        0.0,
+        1.35,
+        -2.3
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ]
+    },
+    {
+      "id": "wax-plinth",
+      "material": "pedestal",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        3.25,
+        0.12,
+        -2.3
+      ],
+      "scale": [
+        2.6,
+        0.3,
+        2.6
+      ]
+    },
+    {
+      "id": "wax-sample",
+      "material": "wax",
+      "geometry": {
+        "kind": "smooth_sphere"
+      },
+      "position": [
+        3.25,
+        1.35,
+        -2.3
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ]
+    },
+    {
+      "id": "ceramic-plinth",
+      "material": "pedestal",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        -3.25,
+        0.12,
+        1.7000000000000002
+      ],
+      "scale": [
+        2.6,
+        0.3,
+        2.6
+      ]
+    },
+    {
+      "id": "ceramic-sample",
+      "material": "ceramic",
+      "geometry": {
+        "kind": "smooth_sphere"
+      },
+      "position": [
+        -3.25,
+        1.35,
+        1.7000000000000002
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ]
+    },
+    {
+      "id": "glass-plinth",
+      "material": "pedestal",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        0.0,
+        0.12,
+        1.7000000000000002
+      ],
+      "scale": [
+        2.6,
+        0.3,
+        2.6
+      ]
+    },
+    {
+      "id": "glass-sample",
+      "material": "glass",
+      "geometry": {
+        "kind": "smooth_sphere"
+      },
+      "position": [
+        0.0,
+        1.35,
+        1.7000000000000002
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ]
+    },
+    {
+      "id": "amber-plinth",
+      "material": "pedestal",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        3.25,
+        0.12,
+        1.7000000000000002
+      ],
+      "scale": [
+        2.6,
+        0.3,
+        2.6
+      ]
+    },
+    {
+      "id": "amber-sample",
+      "material": "amber",
+      "geometry": {
+        "kind": "smooth_sphere"
+      },
+      "position": [
+        3.25,
+        1.35,
+        1.7000000000000002
+      ],
+      "scale": [
+        2.1,
+        2.1,
+        2.1
+      ]
+    },
+    {
+      "id": "panel-0",
+      "material": "chalk",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        -3.25,
+        1.35,
+        -0.15
+      ],
+      "scale": [
+        2.2,
+        2.1,
+        0.12
+      ]
+    },
+    {
+      "id": "stripe-0-0",
+      "material": "cool-panel",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        -4.15,
+        1.35,
+        -0.065
+      ],
+      "scale": [
+        0.16,
+        1.85,
+        0.08
+      ]
+    },
+    {
+      "id": "stripe-0-1",
+      "material": "warm-panel",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        -3.7,
+        1.35,
+        -0.065
+      ],
+      "scale": [
+        0.16,
+        1.85,
+        0.08
+      ]
+    },
+    {
+      "id": "stripe-0-2",
+      "material": "cool-panel",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        -3.2500000000000004,
+        1.35,
+        -0.065
+      ],
+      "scale": [
+        0.16,
+        1.85,
+        0.08
+      ]
+    },
+    {
+      "id": "stripe-0-3",
+      "material": "warm-panel",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        -2.8000000000000003,
+        1.35,
+        -0.065
+      ],
+      "scale": [
+        0.16,
+        1.85,
+        0.08
+      ]
+    },
+    {
+      "id": "stripe-0-4",
+      "material": "cool-panel",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        -2.3500000000000005,
+        1.35,
+        -0.065
+      ],
+      "scale": [
+        0.16,
+        1.85,
+        0.08
+      ]
+    },
+    {
+      "id": "panel-1",
+      "material": "chalk",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        0.0,
+        1.35,
+        -0.15
+      ],
+      "scale": [
+        2.2,
+        2.1,
+        0.12
+      ]
+    },
+    {
+      "id": "stripe-1-0",
+      "material": "cool-panel",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        -0.9,
+        1.35,
+        -0.065
+      ],
+      "scale": [
+        0.16,
+        1.85,
+        0.08
+      ]
+    },
+    {
+      "id": "stripe-1-1",
+      "material": "warm-panel",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        -0.45,
+        1.35,
+        -0.065
+      ],
+      "scale": [
+        0.16,
+        1.85,
+        0.08
+      ]
+    },
+    {
+      "id": "stripe-1-2",
+      "material": "cool-panel",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        0.0,
+        1.35,
+        -0.065
+      ],
+      "scale": [
+        0.16,
+        1.85,
+        0.08
+      ]
+    },
+    {
+      "id": "stripe-1-3",
+      "material": "warm-panel",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        0.45000000000000007,
+        1.35,
+        -0.065
+      ],
+      "scale": [
+        0.16,
+        1.85,
+        0.08
+      ]
+    },
+    {
+      "id": "stripe-1-4",
+      "material": "cool-panel",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        0.9,
+        1.35,
+        -0.065
+      ],
+      "scale": [
+        0.16,
+        1.85,
+        0.08
+      ]
+    },
+    {
+      "id": "panel-2",
+      "material": "chalk",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        3.25,
+        1.35,
+        -0.15
+      ],
+      "scale": [
+        2.2,
+        2.1,
+        0.12
+      ]
+    },
+    {
+      "id": "stripe-2-0",
+      "material": "cool-panel",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        2.35,
+        1.35,
+        -0.065
+      ],
+      "scale": [
+        0.16,
+        1.85,
+        0.08
+      ]
+    },
+    {
+      "id": "stripe-2-1",
+      "material": "warm-panel",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        2.8000000000000003,
+        1.35,
+        -0.065
+      ],
+      "scale": [
+        0.16,
+        1.85,
+        0.08
+      ]
+    },
+    {
+      "id": "stripe-2-2",
+      "material": "cool-panel",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        3.25,
+        1.35,
+        -0.065
+      ],
+      "scale": [
+        0.16,
+        1.85,
+        0.08
+      ]
+    },
+    {
+      "id": "stripe-2-3",
+      "material": "warm-panel",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        3.7,
+        1.35,
+        -0.065
+      ],
+      "scale": [
+        0.16,
+        1.85,
+        0.08
+      ]
+    },
+    {
+      "id": "stripe-2-4",
+      "material": "cool-panel",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        4.15,
+        1.35,
+        -0.065
+      ],
+      "scale": [
+        0.16,
+        1.85,
+        0.08
+      ]
+    },
+    {
+      "id": "wax-thin",
+      "material": "wax",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        4.8,
+        1.5,
+        -2.4
+      ],
+      "scale": [
+        0.13,
+        2.3,
+        1.4
+      ],
+      "rotation": [
+        0,
+        0.4,
+        0
+      ]
+    },
+    {
+      "id": "fuel-0",
+      "material": "coal",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        -6.0,
+        0.1,
+        1
+      ],
+      "scale": [
+        0.18,
+        0.18,
+        1.1
+      ],
+      "rotation": [
+        0,
+        0.0,
+        0
+      ]
+    },
+    {
+      "id": "fuel-1",
+      "material": "coal",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        -5.75,
+        0.1,
+        1
+      ],
+      "scale": [
+        0.18,
+        0.18,
+        1.1
+      ],
+      "rotation": [
+        0,
+        0.7,
+        0
+      ]
+    },
+    {
+      "id": "fuel-2",
+      "material": "coal",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        -5.5,
+        0.1,
+        1
+      ],
+      "scale": [
+        0.18,
+        0.18,
+        1.1
+      ],
+      "rotation": [
+        0,
+        1.4,
+        0
+      ]
+    },
+    {
+      "id": "fuel-3",
+      "material": "coal",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        -5.25,
+        0.1,
+        1
+      ],
+      "scale": [
+        0.18,
+        0.18,
+        1.1
+      ],
+      "rotation": [
+        0,
+        2.0999999999999996,
+        0
+      ]
+    },
+    {
+      "id": "fuel-4",
+      "material": "coal",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        -5.0,
+        0.1,
+        1
+      ],
+      "scale": [
+        0.18,
+        0.18,
+        1.1
+      ],
+      "rotation": [
+        0,
+        2.8,
+        0
+      ]
+    }
+  ],
+  "lights": [
+    {
+      "id": "sun",
+      "kind": "directional",
+      "position": [
+        -4,
+        8,
+        3
+      ],
+      "color": [
+        1.0,
+        0.84,
+        0.66
+      ],
+      "intensity": 1.2
+    },
+    {
+      "id": "fire-light",
+      "kind": "point",
+      "position": [
+        -5.6,
+        0.18,
+        1.0
+      ],
+      "color": [
+        1.0,
+        0.31,
+        0.05
+      ],
+      "intensity": 12,
+      "flicker": 0.2,
+      "range": 18
+    },
+    {
+      "id": "cool-key",
+      "kind": "point",
+      "position": [
+        -4,
+        5,
+        5
+      ],
+      "color": [
+        0.32,
+        0.62,
+        1.0
+      ],
+      "intensity": 10,
+      "range": 25
+    },
+    {
+      "id": "back-key",
+      "kind": "point",
+      "position": [
+        4,
+        2.6,
+        -4.4
+      ],
+      "color": [
+        1.0,
+        0.63,
+        0.27
+      ],
+      "intensity": 10,
+      "range": 14
+    }
+  ],
+  "emitters": [
+    {
+      "id": "campfire",
+      "position": [
+        -5.6,
+        0.18,
+        1.0
+      ],
+      "intensity": 1,
+      "smoke_density": 0.35,
+      "buoyancy": 0.95,
+      "dissipation": 0.28,
+      "enabled": true,
+      "style": "ink",
+      "self_shadow_strength": 0.9,
+      "internal_glow": 0.0,
+      "effect_profile": "effect-quiet"
+    }
+  ],
+  "cameras": [
+    {
+      "id": "hero",
+      "position": [
+        8,
+        7.6,
+        14
+      ],
+      "target": [
+        -0.4,
+        1.0,
+        0
+      ],
+      "projection": {
+        "kind": "perspective",
+        "fov_degrees": 44
+      }
+    },
+    {
+      "id": "metal-close",
+      "position": [
+        -0.8,
+        3.4,
+        3.4
+      ],
+      "target": [
+        -1.9,
+        1.2,
+        -2.3
+      ],
+      "projection": {
+        "kind": "perspective",
+        "fov_degrees": 48
+      }
+    },
+    {
+      "id": "glass-close",
+      "position": [
+        2.4,
+        2.5,
+        7
+      ],
+      "target": [
+        1.3,
+        1.3,
+        1.7
+      ],
+      "projection": {
+        "kind": "perspective",
+        "fov_degrees": 48
+      }
+    },
+    {
+      "id": "subsurface-close",
+      "position": [
+        5.6,
+        2.5,
+        2
+      ],
+      "target": [
+        3.7,
+        1.4,
+        -2.3
+      ],
+      "projection": {
+        "kind": "perspective",
+        "fov_degrees": 42
+      }
+    },
+    {
+      "id": "orthographic",
+      "position": [
+        7,
+        6.5,
+        13
+      ],
+      "target": [
+        -0.4,
+        1,
+        0
+      ],
+      "projection": {
+        "kind": "orthographic",
+        "height": 9
+      }
+    }
+  ],
+  "routes": [
+    {
+      "id": "material-orbit",
+      "duration_seconds": 120,
+      "keyframes": [
+        {
+          "time": 0,
+          "position": [
+            8,
+            7.6,
+            14
+          ],
+          "target": [
+            -0.4,
+            1.0,
+            0
+          ]
+        },
+        {
+          "time": 30,
+          "position": [
+            -7,
+            5.5,
+            13
+          ],
+          "target": [
+            -0.4,
+            1.0,
+            0
+          ]
+        },
+        {
+          "time": 60,
+          "position": [
+            -4,
+            3.5,
+            10
+          ],
+          "target": [
+            -0.4,
+            1.0,
+            0
+          ]
+        },
+        {
+          "time": 90,
+          "position": [
+            6,
+            4.5,
+            11
+          ],
+          "target": [
+            -0.4,
+            1.0,
+            0
+          ]
+        },
+        {
+          "time": 120,
+          "position": [
+            8,
+            7.6,
+            14
+          ],
+          "target": [
+            -0.4,
+            1.0,
+            0
+          ]
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "id": "effect-campfire",
+      "fire": {
+        "width": 0.85,
+        "height": 1.5,
+        "motion_speed": 0.55,
+        "curl": 0.8,
+        "tongues": 7,
+        "segments": 6,
+        "fragment_rate": 1.5,
+        "fragment_lifetime": 1.8,
+        "ember_rate": 4.0,
+        "ember_lifetime": 4.5,
+        "emission": 1.25,
+        "edge_breakup": 0.5,
+        "tip_breakup": 0.8,
+        "fragment_size": 0.06
+      },
+      "thermal": {
+        "heat_output": 2.5,
+        "cooling_rate": 0.9,
+        "lift": 0.6
+      },
+      "palette": {
+        "outer": [
+          1.6,
+          0.085,
+          0.008
+        ],
+        "warm": [
+          3.0,
+          0.78,
+          0.045
+        ],
+        "hot": [
+          5.0,
+          2.8,
+          0.75
+        ]
+      }
+    },
+    {
+      "id": "effect-quiet",
+      "fire": {
+        "width": 0.85,
+        "height": 1.5,
+        "motion_speed": 0.32,
+        "curl": 0.55,
+        "tongues": 5,
+        "segments": 6,
+        "fragment_rate": 0.35,
+        "fragment_lifetime": 1.8,
+        "ember_rate": 2.0,
+        "ember_lifetime": 4.5,
+        "emission": 1.0,
+        "edge_breakup": 0.25,
+        "tip_breakup": 0.45,
+        "fragment_size": 0.06
+      },
+      "thermal": {
+        "heat_output": 2.5,
+        "cooling_rate": 0.9,
+        "lift": 0.6
+      },
+      "palette": {
+        "outer": [
+          1.6,
+          0.085,
+          0.008
+        ],
+        "warm": [
+          3.0,
+          0.78,
+          0.045
+        ],
+        "hot": [
+          5.0,
+          2.8,
+          0.75
+        ]
+      }
+    },
+    {
+      "id": "effect-bonfire",
+      "fire": {
+        "width": 1.8,
+        "height": 3.2,
+        "motion_speed": 0.42,
+        "curl": 0.8,
+        "tongues": 10,
+        "segments": 6,
+        "fragment_rate": 3.0,
+        "fragment_lifetime": 1.8,
+        "ember_rate": 9.0,
+        "ember_lifetime": 4.5,
+        "emission": 1.25,
+        "edge_breakup": 0.65,
+        "tip_breakup": 0.9,
+        "fragment_size": 0.06
+      },
+      "thermal": {
+        "heat_output": 5.0,
+        "cooling_rate": 0.9,
+        "lift": 0.85
+      },
+      "palette": {
+        "outer": [
+          1.6,
+          0.085,
+          0.008
+        ],
+        "warm": [
+          3.0,
+          0.78,
+          0.045
+        ],
+        "hot": [
+          5.0,
+          2.8,
+          0.75
+        ]
+      }
+    }
+  ]
+}

@@ -85,9 +85,25 @@ python3 scripts/capture_motion.py --profile effect-campfire --gif
 
 The motion script always writes PNG frames/metadata; optional previews use Pillow.
 
+## Game-authored materials
+
+Metallic, reflective, refractive/transmissive and faux subsurface materials are
+live scene data. The comparison lab has chrome, copper, glazed ceramic, clear
+and amber glass, and backlit wax. Open Materials in the shared inspector to edit
+colour, roughness, metallic/reflection, transmission, IOR, absorption, thickness
+and scattering. Reflection quality is independent of pixel resolution.
+
+```sh
+cargo run --release -p engine-lab -- run --scene assets/scenes/materials.json
+python3 scripts/material_study.py
+```
+
+See [MATERIALS.md](docs/MATERIALS.md) for the model, scene layout, protocol examples,
+measured costs and the single-layer/screen-space limits.
+
 ## Current contract
 
-V1 supports static opaque triangle GLB geometry, 8-bit embedded GLB base-colour
+V1 supports static triangle GLB geometry with OPAQUE alpha mode, 8-bit embedded GLB base-colour
 textures, PNG scene textures, procedural geometry, one directional light, up to eight
 point lights (the fire source casts geometry shadows) and one bounded fire/smoke
 emitter. Smoke samples the nearest two active lights for radial illumination and

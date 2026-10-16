@@ -12,8 +12,10 @@ fn sky_color(direction:vec3<f32>)->vec3<f32> {
     return sky+g.sun_color.xyz*sun*0.7;
 }
 @fragment fn volume_fs(@builtin(position) pixel:vec4<f32>)->@location(0) vec4<f32> {
+    return atmosphere(pixel,textureLoad(scene_depth,vec2<i32>(pixel.xy),0));
+}
+fn atmosphere(pixel:vec4<f32>,z:f32)->vec4<f32> {
     let uv=pixel.xy/g.resolution.xy;let clip=uv*vec2(2.,-2.)+vec2(-1.,1.);
-    let z=textureLoad(scene_depth,vec2<i32>(pixel.xy),0);
     let near4=g.inverse_view_proj*vec4(clip,0.,1.);let near=near4.xyz/near4.w;
     let far4=g.inverse_view_proj*vec4(clip,1.,1.);let far=far4.xyz/far4.w;
     let direction=normalize(far-near);let surface4=g.inverse_view_proj*vec4(clip,z,1.);

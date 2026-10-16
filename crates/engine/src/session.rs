@@ -259,6 +259,7 @@ pub fn set_parameter(scene: &mut Scene, path: &str, value: Value, base: &Path) -
                 | "smoke_steps"
                 | "palette_strength"
                 | "bloom_strength"
+                | "reflection_steps"
         ),
         ["render", "experiments", property] => matches!(
             *property,
@@ -303,6 +304,20 @@ pub fn set_parameter(scene: &mut Scene, path: &str, value: Value, base: &Path) -
             matches!(*property, "heat_output" | "cooling_rate" | "lift")
         }
         ["effects", _, "palette", property] => matches!(*property, "outer" | "warm" | "hot"),
+        ["materials", _, property] => matches!(
+            *property,
+            "color"
+                | "roughness"
+                | "emission"
+                | "metallic"
+                | "reflectivity"
+                | "transmission"
+                | "ior"
+                | "thickness"
+                | "absorption"
+                | "subsurface"
+                | "scatter_color"
+        ),
         ["lights", _, property] => matches!(
             *property,
             "intensity" | "flicker" | "color" | "range" | "position"
@@ -344,7 +359,7 @@ pub fn description() -> Value {
         "describe":{},"inspect_scene":{"section":"optional top-level scene field; omitted returns compact overview","id":"optional stable ID within selected array"},"get_metrics":{},"get_errors":{},
         "pause":{"paused":"boolean"},"step":{"ticks":"integer 0..36000"},"reset":{"seed":"u32"},
         "set_camera":{"id":"named camera, OR supply camera object matching scene schema"},
-        "set_parameter":{"path":"render.{exposure,shading_steps,dither_strength,smoke_steps,palette_strength,bloom_strength}; render.experiments.{pixel_cluster_lighting,stable_smoke_detail,connected_motion}; environment.{wind,ambient,fog_density,sky_color,horizon_color}; emitters.<id>.{enabled,intensity,smoke_density,buoyancy,dissipation,style,secondary_bubbles,bubble_scale,self_shadow_strength,internal_glow,effect_profile}; effects.<id>.fire.{width,height,motion_speed,curl,edge_breakup,tip_breakup,fragment_size,tongues,segments,fragment_rate,fragment_lifetime,ember_rate,ember_lifetime,emission}; effects.<id>.thermal.{heat_output,cooling_rate,lift}; effects.<id>.palette.{outer,warm,hot}; lights.<id>.{intensity,flicker,color,position,range}","value":"typed JSON value"},
+        "set_parameter":{"path":"render.{exposure,shading_steps,dither_strength,smoke_steps,palette_strength,bloom_strength,reflection_steps}; render.experiments.{pixel_cluster_lighting,stable_smoke_detail,connected_motion}; environment.{wind,ambient,fog_density,sky_color,horizon_color}; emitters.<id>.{enabled,intensity,smoke_density,buoyancy,dissipation,style,secondary_bubbles,bubble_scale,self_shadow_strength,internal_glow,effect_profile}; effects.<id>.fire.{width,height,motion_speed,curl,edge_breakup,tip_breakup,fragment_size,tongues,segments,fragment_rate,fragment_lifetime,ember_rate,ember_lifetime,emission}; effects.<id>.thermal.{heat_output,cooling_rate,lift}; effects.<id>.palette.{outer,warm,hot}; lights.<id>.{intensity,flicker,color,position,range}; materials.<id>.{color,roughness,emission,metallic,reflectivity,transmission,ior,thickness,absorption,subsurface,scatter_color}","value":"typed JSON value"},
         "get_window":{"availability":"native run only"},"set_window":{"availability":"native run only","size":"optional logical [width,height]","minimized":"optional boolean","fullscreen":"optional boolean"},"shutdown":{"availability":"native run only"},
         "capture_frame":{"path":"PNG output path","scale":"integer 1..8, default 4"},"reload_shaders":{}},
         "notes":["Start --agent-stdio paused for deterministic control. step advances even when paused.","Shader and effect mutations preserve smoke history; reset before A/B captures.","Topology, assets and resolution are startup settings. Restart to change them.","No floating point GPU bit-identity is promised between vendors."]})
@@ -361,6 +376,55 @@ mod tests {
         )
         .unwrap()
     }
+    #[test]
+    fn material_edits_validate_transactionally() {
+        let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../assets/scenes/clearing.json");
+        let mut scene = Scene::load(&path).unwrap();
+        let base = path.parent().unwrap();
+        assert_eq!(scene.materials[0].metallic, 0.);
+        assert_eq!(scene.materials[0].transmission, 0.);
+        for (property, value) in [
+            ("metallic", json!(1.)),
+            ("reflectivity", json!(0.7)),
+            ("transmission", json!(0.8)),
+            ("ior", json!(1.33)),
+            ("thickness", json!(0.6)),
+            ("absorption", json!([0.1, 0.2, 0.3])),
+            ("subsurface", json!(0.75)),
+            ("scatter_color", json!([0.8, 0.4, 0.1])),
+        ] {
+            set_parameter(
+                &mut scene,
+                &format!("materials.earth.{property}"),
+                value,
+                base,
+            )
+            .unwrap();
+        }
+        let before = serde_json::to_value(&scene).unwrap();
+        for (property, value) in [
+            ("ior", json!(0.)),
+            ("metallic", json!(2.)),
+            ("thickness", json!(-1.)),
+            ("transmission", json!("glass")),
+            ("absorption", json!([-1., 0., 0.])),
+            ("subsurface", json!(1.1)),
+        ] {
+            let error = set_parameter(
+                &mut scene,
+                &format!("materials.earth.{property}"),
+                value,
+                base,
+            )
+            .unwrap_err();
+            assert!(format!("{error:#}").contains(property));
+            assert_eq!(serde_json::to_value(&scene).unwrap(), before);
+        }
+        assert!(
+            set_parameter(&mut scene, "materials.missing.roughness", json!(0.2), base).is_err()
+        );
+    }
+
     #[test]
     fn invalid_edit_is_transactional() {
         let mut s = scene();

@@ -35,6 +35,13 @@ pub struct RenderSettings {
     pub palette_strength: f32,
     #[serde(default)]
     pub bloom_strength: f32,
+    /// Zero uses only the environment fallback. Never changes the pixel grid.
+    #[serde(default = "reflection_steps")]
+    pub reflection_steps: u32,
+}
+
+fn reflection_steps() -> u32 {
+    16
 }
 
 fn palette_strength() -> f32 {
@@ -59,7 +66,7 @@ pub struct Environment {
     pub fog_density: f32,
 }
 
-#[derive(Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Material {
     pub id: String,
@@ -70,6 +77,32 @@ pub struct Material {
     pub roughness: f32,
     #[serde(default)]
     pub texture: Option<String>,
+    /// Conductor blend; base colour becomes the reflection tint.
+    #[serde(default)]
+    pub metallic: f32,
+    /// Environment/screen reflection strength for dielectrics. Zero preserves the legacy look.
+    #[serde(default)]
+    pub reflectivity: f32,
+    #[serde(default)]
+    pub transmission: f32,
+    #[serde(default = "material_ior")]
+    pub ior: f32,
+    /// Artist-authored optical thickness in world units, independent of mesh scale.
+    #[serde(default = "material_thickness")]
+    pub thickness: f32,
+    /// Beer-Lambert extinction per world unit, linear RGB.
+    #[serde(default)]
+    pub absorption: [f32; 3],
+    #[serde(default)]
+    pub subsurface: f32,
+    #[serde(default = "unit_scale")]
+    pub scatter_color: [f32; 3],
+}
+fn material_ior() -> f32 {
+    1.5
+}
+fn material_thickness() -> f32 {
+    0.25
 }
 fn roughness() -> f32 {
     0.8
@@ -96,6 +129,7 @@ fn unit_scale() -> [f32; 3] {
 pub enum Geometry {
     Cube,
     Sphere,
+    SmoothSphere,
     Cylinder,
     Cone,
     Pine { seed: u32 },
@@ -302,7 +336,36 @@ impl Scene {
                 bail!("{kind} '{id}'.id: empty or duplicate stable ID");
             }
         }
+        if self.render.reflection_steps > 16 {
+            bail!("render.reflection_steps: expected 0..16");
+        }
+        if self.materials.is_empty() || self.materials.len() > 256 {
+            bail!("materials: expected 1..256 entries");
+        }
         for m in &self.materials {
+            for (property, value, low, high) in [
+                ("metallic", m.metallic, 0., 1.),
+                ("reflectivity", m.reflectivity, 0., 1.),
+                ("transmission", m.transmission, 0., 1.),
+                ("ior", m.ior, 1., 2.5),
+                ("thickness", m.thickness, 0., 10.),
+                ("subsurface", m.subsurface, 0., 1.),
+            ] {
+                if !value.is_finite() || !(low..=high).contains(&value) {
+                    bail!("material '{}'.{property}: expected {low}..{high}", m.id);
+                }
+            }
+            for (property, values) in [
+                ("absorption", m.absorption),
+                ("scatter_color", m.scatter_color),
+            ] {
+                if !color(&values) {
+                    bail!(
+                        "material '{}'.{property}: expected finite RGB in 0..64",
+                        m.id
+                    );
+                }
+            }
             if !(0.0..=1.).contains(&m.roughness)
                 || !(0.0..=64.).contains(&m.emission)
                 || !color(&m.color)

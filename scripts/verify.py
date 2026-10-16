@@ -26,6 +26,7 @@ def main():
         run(cargo, *command)
     binary = ROOT / "target/debug" / ("engine-lab.exe" if os.name == "nt" else "engine-lab")
     run(binary, "validate")
+    run(binary,"validate","assets/scenes/materials.json")
     description = json.loads(subprocess.check_output([binary, "describe"], cwd=ROOT))
     assert description["protocol_version"] == 1
     if args.gpu:
@@ -146,6 +147,9 @@ def main():
                 process.stdin.close()
                 process.wait(timeout=30)
             assert process.returncode == 0
+    if args.gpu:
+        import sys
+        run(sys.executable, ROOT / "scripts/verify_materials.py", "--binary", binary)
     if args.native:
         import sys
         run(sys.executable, ROOT / "scripts/verify_native.py", "--binary", binary)

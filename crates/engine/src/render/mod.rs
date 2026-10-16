@@ -3,7 +3,7 @@ use crate::{
     diagnostics::FrameMetrics,
     effects::{FireFrame, FireKey, MAX_FIRE_PRIMITIVES},
     platform,
-    scene::{Camera, LightKind, Scene},
+    scene::{Camera, LightKind, Material, Scene},
     simulation,
 };
 use anyhow::{anyhow, Context, Result};
@@ -26,6 +26,44 @@ const VOLUME: [u32; 3] = [48, 64, 48];
 struct PointLightGpu {
     position_range: [f32; 4],
     color_power: [f32; 4],
+}
+
+// Five vec4s match materials.wgsl. One table upload only when authoring changes.
+#[repr(C)]
+#[derive(Clone, Copy, Pod, Zeroable)]
+struct MaterialGpu {
+    color_emission: [f32; 4],
+    surface: [f32; 4],
+    optical: [f32; 4],
+    absorption: [f32; 4],
+    scatter: [f32; 4],
+}
+fn material_table(scene: &Scene) -> Vec<MaterialGpu> {
+    let mut table = scene
+        .materials
+        .iter()
+        .map(|m| MaterialGpu {
+            color_emission: [m.color[0], m.color[1], m.color[2], m.emission],
+            surface: [m.roughness, m.metallic, m.reflectivity, m.transmission],
+            optical: [m.ior, m.thickness, m.subsurface, 0.],
+            absorption: [m.absorption[0], m.absorption[1], m.absorption[2], 0.],
+            scatter: [
+                m.scatter_color[0],
+                m.scatter_color[1],
+                m.scatter_color[2],
+                0.,
+            ],
+        })
+        .collect::<Vec<_>>();
+    // Procedural pine trunks keep their independent bark tint.
+    table.push(MaterialGpu {
+        color_emission: [1., 1., 1., 0.],
+        surface: [0.8, 0., 0., 0.],
+        optical: [1.5, 0.25, 0., 0.],
+        absorption: [0.; 4],
+        scatter: [1.; 4],
+    });
+    table
 }
 
 #[repr(C)]
@@ -62,9 +100,11 @@ struct Globals {
 
 struct Pipelines {
     mesh: wgpu::RenderPipeline,
+    optical: wgpu::RenderPipeline,
     volume: wgpu::RenderPipeline,
     post: wgpu::RenderPipeline,
     shadow: wgpu::RenderPipeline,
+    shadow_opaque: wgpu::RenderPipeline,
     smoke: wgpu::ComputePipeline,
 }
 struct Timing {
@@ -90,6 +130,18 @@ pub struct Renderer {
     global_layout: wgpu::BindGroupLayout,
     textures: wgpu::BindGroup,
     texture_layout: wgpu::BindGroupLayout,
+    material_buffer: wgpu::Buffer,
+    shadow_materials: wgpu::BindGroup,
+    shadow_material_layout: wgpu::BindGroupLayout,
+    material_cache: Vec<Material>,
+    optical_layout: wgpu::BindGroupLayout,
+    optical_group: wgpu::BindGroup,
+    optical_smoke_groups: [wgpu::BindGroup; 2],
+    optical_smoke_layout: wgpu::BindGroupLayout,
+    hdr_texture: wgpu::Texture,
+    normals_texture: wgpu::Texture,
+    scene_color: wgpu::Texture,
+    scene_normals: wgpu::Texture,
     volume_groups: [wgpu::BindGroup; 2],
     volume_layout: wgpu::BindGroupLayout,
     smoke_groups: [wgpu::BindGroup; 2],
@@ -192,7 +244,7 @@ fn shader(device: &wgpu::Device, label: &str, source: String) -> wgpu::ShaderMod
         source: wgpu::ShaderSource::Wgsl(source.into()),
     })
 }
-const ATTRIBUTES: [wgpu::VertexAttribute; 7] = wgpu::vertex_attr_array![0=>Float32x3,1=>Float32x3,2=>Float32x3,3=>Float32x2,4=>Float32,5=>Float32,6=>Float32];
+const ATTRIBUTES: [wgpu::VertexAttribute; 8] = wgpu::vertex_attr_array![0=>Float32x3,1=>Float32x3,2=>Float32x3,3=>Float32x2,4=>Float32,5=>Float32,6=>Float32,7=>Uint32];
 fn vertex_layout() -> wgpu::VertexBufferLayout<'static> {
     wgpu::VertexBufferLayout {
         array_stride: std::mem::size_of::<Vertex>() as u64,
@@ -271,6 +323,33 @@ impl Renderer {
             &global_layout,
             &[uniform.as_entire_binding(), fire_buffer.as_entire_binding()],
         );
+        let material_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+            label: Some("live material table"),
+            contents: bytemuck::cast_slice(&material_table(scene)),
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+        });
+        // Shadow passes must not bind the depth textures they are writing.
+        let shadow_material_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                label: Some("shadow materials only"),
+                entries: &[binding(
+                    5,
+                    wgpu::ShaderStages::VERTEX_FRAGMENT,
+                    wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: true },
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                )],
+            });
+        let shadow_materials = device.create_bind_group(&wgpu::BindGroupDescriptor {
+            label: Some("shadow materials only"),
+            layout: &shadow_material_layout,
+            entries: &[wgpu::BindGroupEntry {
+                binding: 5,
+                resource: material_buffer.as_entire_binding(),
+            }],
+        });
         let texture_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("lighting/materials"),
             entries: &[
@@ -307,6 +386,15 @@ impl Renderer {
                     4,
                     wgpu::ShaderStages::FRAGMENT,
                     wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
+                ),
+                binding(
+                    5,
+                    wgpu::ShaderStages::VERTEX_FRAGMENT,
+                    wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: true },
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
                 ),
             ],
         });
@@ -410,29 +498,30 @@ impl Renderer {
                 wgpu::BindingResource::Sampler(&comparison),
                 wgpu::BindingResource::TextureView(&atlas_view),
                 wgpu::BindingResource::Sampler(&atlas_sampler),
+                material_buffer.as_entire_binding(),
             ],
         );
         let [w, h] = scene.render.resolution;
         let use_color =
             wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING;
-        let hdr = texture(
+        let hdr_texture = texture(
             &device,
             "HDR",
             [w, h, 1],
             HDR,
-            use_color,
+            use_color | wgpu::TextureUsages::COPY_SRC,
             wgpu::TextureDimension::D2,
-        )
-        .create_view(&Default::default());
-        let normals = texture(
+        );
+        let hdr = hdr_texture.create_view(&Default::default());
+        let normals_texture = texture(
             &device,
             "normal/depth",
             [w, h, 1],
             HDR,
-            use_color,
+            use_color | wgpu::TextureUsages::COPY_SRC,
             wgpu::TextureDimension::D2,
-        )
-        .create_view(&Default::default());
+        );
+        let normals = normals_texture.create_view(&Default::default());
         let depth = texture(
             &device,
             "depth",
@@ -471,6 +560,58 @@ impl Renderer {
             min_filter: wgpu::FilterMode::Linear,
             ..Default::default()
         });
+        let snapshot_usage = wgpu::TextureUsages::COPY_DST | wgpu::TextureUsages::TEXTURE_BINDING;
+        let scene_color = texture(
+            &device,
+            "opaque + atmosphere snapshot",
+            [w, h, 1],
+            HDR,
+            snapshot_usage,
+            wgpu::TextureDimension::D2,
+        );
+        let scene_normals = texture(
+            &device,
+            "opaque normal/depth snapshot",
+            [w, h, 1],
+            HDR,
+            snapshot_usage,
+            wgpu::TextureDimension::D2,
+        );
+        let optical_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+            label: Some("single-layer optical surfaces"),
+            entries: &[
+                binding(
+                    0,
+                    wgpu::ShaderStages::FRAGMENT,
+                    sampled(
+                        wgpu::TextureViewDimension::D2,
+                        wgpu::TextureSampleType::Float { filterable: true },
+                    ),
+                ),
+                binding(
+                    1,
+                    wgpu::ShaderStages::FRAGMENT,
+                    sampled(
+                        wgpu::TextureViewDimension::D2,
+                        wgpu::TextureSampleType::Float { filterable: true },
+                    ),
+                ),
+                binding(
+                    2,
+                    wgpu::ShaderStages::FRAGMENT,
+                    wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
+                ),
+            ],
+        });
+        let optical_group = group(
+            &device,
+            &optical_layout,
+            &[
+                wgpu::BindingResource::TextureView(&scene_color.create_view(&Default::default())),
+                wgpu::BindingResource::TextureView(&scene_normals.create_view(&Default::default())),
+                wgpu::BindingResource::Sampler(&linear),
+            ],
+        );
         let volume_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("volumetrics"),
             entries: &[
@@ -507,6 +648,43 @@ impl Renderer {
                     wgpu::BindingResource::Sampler(&linear),
                 ],
             )
+        });
+        // Optical shading reuses the atmosphere integral to preserve foreground
+        // smoke/fire. Do not bind the active depth attachment in this pass.
+        let optical_smoke_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                label: Some("optical foreground atmosphere"),
+                entries: &[
+                    binding(
+                        1,
+                        wgpu::ShaderStages::FRAGMENT,
+                        sampled(
+                            wgpu::TextureViewDimension::D3,
+                            wgpu::TextureSampleType::Float { filterable: true },
+                        ),
+                    ),
+                    binding(
+                        2,
+                        wgpu::ShaderStages::FRAGMENT,
+                        wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
+                    ),
+                ],
+            });
+        let optical_smoke_groups = std::array::from_fn(|i| {
+            device.create_bind_group(&wgpu::BindGroupDescriptor {
+                label: Some("optical foreground atmosphere"),
+                layout: &optical_smoke_layout,
+                entries: &[
+                    wgpu::BindGroupEntry {
+                        binding: 1,
+                        resource: wgpu::BindingResource::TextureView(&smoke_views[i]),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 2,
+                        resource: wgpu::BindingResource::Sampler(&linear),
+                    },
+                ],
+            })
         });
         let smoke_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("advection"),
@@ -609,10 +787,13 @@ impl Renderer {
             &device,
             &global_layout,
             &texture_layout,
+            &optical_layout,
+            &optical_smoke_layout,
             &volume_layout,
             &smoke_layout,
             &post_layout,
             &shadow_layout,
+            &shadow_material_layout,
             &shader_directory,
         )?;
         let timing = timestamp.then(|| Timing {
@@ -654,6 +835,18 @@ impl Renderer {
             global_layout,
             textures,
             texture_layout,
+            material_buffer,
+            shadow_materials,
+            shadow_material_layout,
+            material_cache: scene.materials.clone(),
+            optical_layout,
+            optical_group,
+            optical_smoke_groups,
+            optical_smoke_layout,
+            hdr_texture,
+            normals_texture,
+            scene_color,
+            scene_normals,
             volume_groups,
             volume_layout,
             smoke_groups,
@@ -686,10 +879,13 @@ impl Renderer {
         device: &wgpu::Device,
         global: &wgpu::BindGroupLayout,
         textures: &wgpu::BindGroupLayout,
+        optical: &wgpu::BindGroupLayout,
+        optical_smoke: &wgpu::BindGroupLayout,
         volumes: &wgpu::BindGroupLayout,
         smoke: &wgpu::BindGroupLayout,
         post: &wgpu::BindGroupLayout,
         shadow: &wgpu::BindGroupLayout,
+        shadow_materials: &wgpu::BindGroupLayout,
         dir: &Path,
     ) -> Result<Pipelines> {
         let read = |name: &str| {
@@ -697,14 +893,23 @@ impl Renderer {
                 .with_context(|| format!("shader {}", dir.join(name).display()))
         };
         let common = read("common.wgsl")?;
-        let world = read("world.wgsl")?;
+        let world = format!("{}\n{}", read("materials.wgsl")?, read("world.wgsl")?);
+        let optical_source = read("optical.wgsl")?;
         let volume_source = read("volume.wgsl")?;
         let fire_source = read("fire.wgsl")?;
         let post_source = read("post.wgsl")?;
         let smoke_source = read("smoke.wgsl")?;
-        let shadow_source = read("shadow.wgsl")?;
+        let shadow_source = format!("{}\n{}", read("materials.wgsl")?, read("shadow.wgsl")?);
         device.push_error_scope(wgpu::ErrorFilter::Validation);
         let mesh_module = shader(device, "world", format!("{common}\n{world}"));
+        let optical_module = shader(
+            device,
+            "optical surfaces",
+            format!(
+                "{common}\n{world}\n{fire_source}\n{}\n{optical_source}",
+                volume_source.replace("@group(2)", "@group(3)")
+            ),
+        );
         let volume_module = shader(
             device,
             "volumetrics",
@@ -730,9 +935,10 @@ impl Renderer {
         };
         let mesh_layout = layout(&[global, textures]);
         let volume_layout = layout(&[global, textures, volumes]);
+        let optical_layout = layout(&[global, textures, optical, optical_smoke]);
         let post_layout = layout(&[global, post]);
         let smoke_layout = layout(&[global, smoke]);
-        let shadow_layout = layout(&[shadow]);
+        let shadow_layout = layout(&[shadow, shadow_materials]);
         let vertex_buffers = [vertex_layout()];
         let render = |label: &str,
                       module: &wgpu::ShaderModule,
@@ -767,8 +973,8 @@ impl Renderer {
                     depth_compare: wgpu::CompareFunction::LessEqual,
                     stencil: Default::default(),
                     bias: wgpu::DepthBiasState {
-                        constant: if fs.is_none() { 2 } else { 0 },
-                        slope_scale: if fs.is_none() { 2. } else { 0. },
+                        constant: if label == "shadow" { 2 } else { 0 },
+                        slope_scale: if label == "shadow" { 2. } else { 0. },
                         clamp: 0.,
                     },
                 }),
@@ -783,6 +989,16 @@ impl Renderer {
             &mesh_layout,
             "vs",
             Some("fs"),
+            &[color_target(HDR, None), color_target(HDR, None)],
+            true,
+            true,
+        );
+        let optical = render(
+            "optical surfaces",
+            &optical_module,
+            &optical_layout,
+            "optical_vs",
+            Some("optical_fs"),
             &[color_target(HDR, None), color_target(HDR, None)],
             true,
             true,
@@ -814,7 +1030,17 @@ impl Renderer {
             "shadow",
             &shadow_module,
             &shadow_layout,
-            "vs",
+            "shadow_vs",
+            Some("shadow_fs"),
+            &[],
+            true,
+            true,
+        );
+        let shadow_opaque = render(
+            "shadow",
+            &shadow_module,
+            &shadow_layout,
+            "shadow_vs",
             None,
             &[],
             true,
@@ -833,9 +1059,11 @@ impl Renderer {
         }
         Ok(Pipelines {
             mesh,
+            optical,
             volume,
             post,
             shadow,
+            shadow_opaque,
             smoke,
         })
     }
@@ -845,10 +1073,13 @@ impl Renderer {
             &self.device,
             &self.global_layout,
             &self.texture_layout,
+            &self.optical_layout,
+            &self.optical_smoke_layout,
             &self.volume_layout,
             &self.smoke_layout,
             &self.post_layout,
             &self.shadow_layout,
+            &self.shadow_material_layout,
             &self.shader_directory,
         )?;
         self.pipelines = replacement;
@@ -969,7 +1200,17 @@ impl Renderer {
             view_proj: vp.to_cols_array_2d(),
             inverse_view_proj: vp.inverse().to_cols_array_2d(),
             sun_matrix: sun_matrix.to_cols_array_2d(),
-            camera: vec4(camera.position, 0.),
+            camera: vec4(
+                camera.position,
+                if matches!(
+                    camera.projection,
+                    crate::scene::Projection::Orthographic { .. }
+                ) {
+                    1.
+                } else {
+                    0.
+                },
+            ),
             sun_direction: vec4(sun_direction.into(), 0.),
             sun_color: vec4(sun.color, sun.intensity),
             ambient: vec4(scene.environment.ambient, 0.),
@@ -1040,7 +1281,7 @@ impl Renderer {
             presentation: [
                 scene.render.palette_strength,
                 scene.render.bloom_strength,
-                0.,
+                scene.render.reflection_steps as f32,
                 0.,
             ],
         };
@@ -1119,6 +1360,14 @@ impl Renderer {
     pub fn render(&mut self, scene: &Scene, camera: &Camera, tick: u64, seed: u32) {
         self.poll_timing(false);
         let started = Instant::now();
+        if self.material_cache != scene.materials {
+            self.queue.write_buffer(
+                &self.material_buffer,
+                0,
+                bytemuck::cast_slice(&material_table(scene)),
+            );
+            self.material_cache.clone_from(&scene.materials);
+        }
         self.update_globals(scene, camera, tick, seed);
         let timed = self.timing.as_ref().is_some_and(|t| t.pending.is_none());
         let mut encoder = self.device.create_command_encoder(&Default::default());
@@ -1149,8 +1398,17 @@ impl Renderer {
                 },
                 occlusion_query_set: None,
             });
-            pass.set_pipeline(&self.pipelines.shadow);
+            let transparent_shadows = scene
+                .materials
+                .iter()
+                .any(|m| m.transmission * (1. - m.metallic) > 0.);
+            pass.set_pipeline(if transparent_shadows {
+                &self.pipelines.shadow
+            } else {
+                &self.pipelines.shadow_opaque
+            });
             pass.set_bind_group(0, &self.shadow_groups[i], &[]);
+            pass.set_bind_group(1, &self.shadow_materials, &[]);
             pass.set_vertex_buffer(0, self.vertex.slice(..));
             pass.draw(0..self.vertex_count, 0..1);
         }
@@ -1196,6 +1454,58 @@ impl Renderer {
             pass.set_bind_group(1, &self.textures, &[]);
             pass.set_bind_group(2, &self.volume_groups[self.smoke_index], &[]);
             pass.draw(0..3, 0..1);
+        }
+        // Skip the copies and extra draw entirely for existing diffuse scenes.
+        let optical_active = scene
+            .materials
+            .iter()
+            .any(|m| m.metallic > 0. || m.reflectivity > 0. || m.transmission > 0.);
+        if optical_active {
+            for (source, target) in [
+                (&self.hdr_texture, &self.scene_color),
+                (&self.normals_texture, &self.scene_normals),
+            ] {
+                encoder.copy_texture_to_texture(
+                    source.as_image_copy(),
+                    target.as_image_copy(),
+                    wgpu::Extent3d {
+                        width: self.resolution[0],
+                        height: self.resolution[1],
+                        depth_or_array_layers: 1,
+                    },
+                );
+            }
+            let attachment = |view| {
+                Some(wgpu::RenderPassColorAttachment {
+                    view,
+                    resolve_target: None,
+                    ops: wgpu::Operations {
+                        load: wgpu::LoadOp::Load,
+                        store: wgpu::StoreOp::Store,
+                    },
+                })
+            };
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("reflective and transmissive surfaces"),
+                color_attachments: &[attachment(&self.hdr), attachment(&self.normals)],
+                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                    view: &self.depth,
+                    depth_ops: Some(wgpu::Operations {
+                        load: wgpu::LoadOp::Load,
+                        store: wgpu::StoreOp::Store,
+                    }),
+                    stencil_ops: None,
+                }),
+                timestamp_writes: None,
+                occlusion_query_set: None,
+            });
+            pass.set_pipeline(&self.pipelines.optical);
+            pass.set_bind_group(0, &self.globals, &[]);
+            pass.set_bind_group(1, &self.textures, &[]);
+            pass.set_bind_group(2, &self.optical_group, &[]);
+            pass.set_bind_group(3, &self.optical_smoke_groups[self.smoke_index], &[]);
+            pass.set_vertex_buffer(0, self.vertex.slice(..));
+            pass.draw(0..self.vertex_count, 0..1);
         }
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -1299,7 +1609,7 @@ impl Renderer {
 
     pub fn capabilities(&self) -> serde_json::Value {
         let info = self.adapter.get_info();
-        serde_json::json!({"name":info.name,"backend":format!("{:?}",info.backend),"device_type":format!("{:?}",info.device_type),"gpu_timestamps":self.timing.is_some(),"resolution":self.resolution,"smoke_grid":VOLUME,"vertices":self.vertex_count,"max_fire_primitives":MAX_FIRE_PRIMITIVES,"max_point_lights":8,"smoke_lights_per_sample":2})
+        serde_json::json!({"name":info.name,"backend":format!("{:?}",info.backend),"device_type":format!("{:?}",info.device_type),"gpu_timestamps":self.timing.is_some(),"resolution":self.resolution,"smoke_grid":VOLUME,"vertices":self.vertex_count,"max_fire_primitives":MAX_FIRE_PRIMITIVES,"max_point_lights":8,"smoke_lights_per_sample":2,"max_materials":256,"reflection_ray_steps":16,"reflection_refinement_steps":4,"transmission_layers":1})
     }
 }
 

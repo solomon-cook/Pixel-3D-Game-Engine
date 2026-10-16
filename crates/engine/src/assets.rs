@@ -15,6 +15,7 @@ pub struct Vertex {
     pub texture: f32,
     pub emission: f32,
     pub roughness: f32,
+    pub material: u32,
 }
 
 pub struct MeshData {
@@ -30,6 +31,8 @@ struct Builder {
     texture: f32,
     emission: f32,
     roughness: f32,
+    material: u32,
+    trunk_material: u32,
 }
 impl Builder {
     fn vertex(&mut self, p: Vec3, n: Vec3, uv: Vec2) {
@@ -41,6 +44,7 @@ impl Builder {
             texture: self.texture,
             emission: self.emission,
             roughness: self.roughness,
+            material: self.material,
         });
     }
     fn tri(&mut self, a: Vec3, b: Vec3, c: Vec3) {
@@ -80,8 +84,11 @@ impl Builder {
         let original_color = self.color;
         self.transform = transform * Mat4::from_scale(Vec3::new(0.055, 0.98, 0.055));
         self.normal = Mat3::from_mat4(self.transform).inverse().transpose();
+        let material = self.material;
+        self.material = self.trunk_material;
         self.color = [0.16, 0.075, 0.045];
         self.round(false, false);
+        self.material = material;
         self.transform = transform;
         self.normal = normal;
         for tier in 0..7 {
@@ -132,6 +139,28 @@ impl Builder {
         self.transform = transform;
         self.normal = normal;
         self.color = original_color;
+    }
+    fn smooth_sphere(&mut self) {
+        for j in 0..16 {
+            for i in 0..32 {
+                let point = |x: u32, y: u32| {
+                    let a = x as f32 / 32. * std::f32::consts::TAU;
+                    let b = y as f32 / 16. * std::f32::consts::PI;
+                    Vec3::new(a.cos() * b.sin(), b.cos(), a.sin() * b.sin()) * 0.5
+                };
+                let a = point(i, j);
+                let b = point(i + 1, j);
+                let c = point(i + 1, j + 1);
+                let d = point(i, j + 1);
+                for [a, b, c] in [[a, b, c], [a, c, d]] {
+                    if (b - a).cross(c - a).length_squared() > 1e-10 {
+                        for p in [a, b, c] {
+                            self.vertex(p, p.normalize(), Vec2::new(p.x, p.z));
+                        }
+                    }
+                }
+            }
+        }
     }
     fn round(&mut self, cone: bool, sphere: bool) {
         let segments = if sphere { 12 } else { 10 };
@@ -203,7 +232,9 @@ pub fn load(scene: &Scene, base: &Path) -> Result<MeshData> {
         color: [1.; 3],
         texture: 0.,
         emission: 0.,
-        roughness: 0.8,
+        roughness: 1.,
+        material: 0,
+        trunk_material: scene.materials.len() as u32,
     };
     for o in &scene.objects {
         let m = scene
@@ -217,13 +248,15 @@ pub fn load(scene: &Scene, base: &Path) -> Result<MeshData> {
             o.position.into(),
         );
         builder.normal = Mat3::from_mat4(builder.transform).inverse().transpose();
-        builder.color = m.color;
-        builder.emission = m.emission;
-        builder.roughness = m.roughness;
+        builder.color = [1.; 3];
+        builder.emission = 1.;
+        builder.roughness = 1.;
+        builder.material = scene.materials.iter().position(|x| x.id == m.id).unwrap() as u32;
         builder.texture = *slots.get(&m.id).unwrap_or(&0.);
         match &o.geometry {
             Geometry::Cube => builder.cube(),
             Geometry::Sphere => builder.round(false, true),
+            Geometry::SmoothSphere => builder.smooth_sphere(),
             Geometry::Cylinder => builder.round(false, false),
             Geometry::Cone => builder.round(true, false),
             Geometry::Pine { seed } => builder.pine(*seed),
@@ -240,7 +273,7 @@ pub fn load(scene: &Scene, base: &Path) -> Result<MeshData> {
                         let c = p(x + 1, z + 1);
                         let d = p(x, z + 1);
                         let variation = 0.91 + 0.09 * ((x * 73 + z * 137) % 17) as f32 / 16.;
-                        builder.color = m.color.map(|c| c * variation);
+                        builder.color = [variation; 3];
                         builder.tri(a, c, b);
                         builder.tri(a, d, c);
                     }
@@ -391,8 +424,17 @@ mod tests {
             color: [1.; 3],
             texture: 0.,
             emission: 0.,
-            roughness: 0.8,
+            roughness: 1.,
+            material: 0,
+            trunk_material: 0,
         };
+        b.smooth_sphere();
+        for v in &b.vertices {
+            let p = Vec3::from(v.position);
+            let n = Vec3::from(v.normal);
+            assert!(p.dot(n) > 0.49 && (n.length() - 1.).abs() < 0.0001);
+        }
+        b.vertices.clear();
         b.round(false, true);
         for v in &b.vertices {
             assert!(

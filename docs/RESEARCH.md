@@ -121,3 +121,16 @@ puff age. Up to eight local point sources are accepted; the nearest two receive
 smoke absorption sampling. Only the fire source casts geometry shadows.
 This preserves a bounded sample budget but leaves multi-light selection
 transitions and many-emitter scaling as explicit research limits.
+
+## Material response beneath pixel treatment (16 October)
+
+Hypothesis: independent HDR metalness/refraction/scattering parameters retain
+material identity across palette strength and camera movement without increasing
+the selected scene resolution. The Material Atelier uses matched full, environment-
+only reflection and diffuse-baseline configurations, five cameras and a moving
+sequence. It adds bounded first-layer screen-space optics, Fresnel, exponential
+absorption and authored thin-body backlighting. Prior methods and explicit limits
+are in MATERIALS.md. Measurements are in measurements-materials.json; current
+Metal captures distinguish the materials, while SSR disocclusion and refracted
+smoke boundaries remain approximation limits. No claim of novel BRDFs, true
+multiple scattering, or cross-platform optical acceptance is made.
