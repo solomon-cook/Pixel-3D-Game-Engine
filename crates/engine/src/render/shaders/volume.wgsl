@@ -202,5 +202,22 @@ fn smoke_local_lights(p:vec3<f32>,normal:vec3<f32>,steps:u32)->vec3<f32> {
         if index==0u {shadow*=fire_visibility(p);}
         radiance+=light.color_power.xyz*light.color_power.w*point_falloff(p,light)*shadow*shape;
     }
+    // Keep authored fire/fill lighting, then budget two local particle sources
+    // by estimated received energy. Hot fragments can light smoke from within.
+    var best=12u;var runner=12u;var score=0.;var next_score=0.;
+    for(var i=0u;i<12u;i++) {if i>=fire.lighting.x {break;}
+        let light=particle_light_point(i);
+        let importance=light.color_power.w*point_falloff(p,light);
+        if importance>score {runner=best;next_score=score;best=i;score=importance;}
+        else if importance>next_score {runner=i;next_score=importance;}
+    }
+    for(var slot=0u;slot<2u;slot++) {
+        let index=select(best,runner,slot==1u);if index>=12u {continue;}
+        let light=particle_light_point(index);let direction=normalize(light.position_range.xyz-p+vec3(0.00001));
+        let form=clamp(dot(normal,direction)*0.5+0.5,0.,1.);
+        let shape=select(0.2+form*0.8,1.,dot(normal,normal)<0.1);
+        radiance+=light.color_power.rgb*light.color_power.w*point_falloff(p,light)*
+            smoke_light_transmittance(p,normal,light.position_range.xyz,steps)*shape;
+    }
     return radiance;
 }

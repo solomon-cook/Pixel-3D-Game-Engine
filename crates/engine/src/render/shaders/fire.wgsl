@@ -1,8 +1,5 @@
 // World-space effect geometry is prepared once per fixed tick. No surface-search
 // ray march, frame noise or camera-dependent simulation lives in this pass.
-struct FirePrimitive {center_radius:vec4<f32>,axis_length:vec4<f32>,heat_kind:vec4<f32>};
-struct FireFrame {counts:vec4<u32>,bounds_min:vec4<f32>,bounds_max:vec4<f32>,primitives:array<FirePrimitive,256>};
-@group(0) @binding(1) var<storage,read> fire:FireFrame;
 struct FireSample {color:vec3<f32>,alpha:f32,depth:f32};
 fn sample_fire(origin:vec3<f32>,direction:vec3<f32>,limit:f32)->FireSample {
     var result=FireSample(vec3(0.),0.,limit);

@@ -134,3 +134,17 @@ are in MATERIALS.md. Measurements are in measurements-materials.json; current
 Metal captures distinguish the materials, while SSR disocclusion and refracted
 smoke boundaries remain approximation limits. No claim of novel BRDFs, true
 multiple scattering, or cross-platform optical acceptance is made.
+
+## Rounded curve lobes and emitted particle lights (16 October)
+
+Hypothesis: short curved flame bodies with broader swept lobes and smaller
+upward branches give more rounded masses while retaining controlled licking
+motion. Deriving transient local lights from the exact detached-particle state
+should connect floating fragments to both surface and internal smoke lighting.
+The implementation keeps analytic ray/ellipsoid intersection and pure seeded
+trajectories; it adds no full combustion solver, screen sprite simulation or
+uncapped per-particle shadow lights. Twelve strongest emitted sources are kept;
+smoke shades the best two in addition to two authored sources. Light-free and
+long-curve alternatives remain data settings, compared by fire_study.py. Standard
+local-light attenuation/emission and curve-swept volumes are prior methods; the
+combination is an engine experiment, with no claim of unprecedented technique.

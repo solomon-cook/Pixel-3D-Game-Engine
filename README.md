@@ -77,7 +77,10 @@ embers, linear HDR palettes and simple thermal controls. Try
 `run --effect-profile effect-quiet` or `effect-bonfire`. The inspector and JSON
 commands edit the same validated profile data. Curve/particle budgets are separate
 from the selected pixel grid. `render.palette_strength` and `bloom_strength`
-control presentation after 3D HDR shading. See [EFFECTS.md](docs/EFFECTS.md).
+control presentation after 3D HDR shading. Rounded flame lobes can grow smaller
+upward branches; detached flickers/embers float in 3D and supply a capped set of
+moving lights to geometry and smoke. Use `inspect_effects` for their runtime
+positions/powers and stable identities. See [EFFECTS.md](docs/EFFECTS.md).
 
 ```sh
 python3 scripts/capture_motion.py --profile effect-campfire --gif

@@ -528,6 +528,9 @@ fn draw_inspector(ctx: &egui::Context, session: &Session, commands: &mut Vec<(&s
             for (property,label,initial,low,high) in [
                 ("motion_speed","Motion pace",profile.fire.motion_speed,0.05,3.),
                 ("curl","Curl",profile.fire.curl,0.,2.),
+                ("lobe_roundness","Rounded lobes",profile.fire.lobe_roundness,0.,1.),
+                ("particle_light_strength","Particle light",profile.fire.particle_light_strength,0.,16.),
+                ("particle_light_range","Particle light range",profile.fire.particle_light_range,0.1,8.),
                 ("edge_breakup","Edge breakup",profile.fire.edge_breakup,0.,1.),
                 ("tip_breakup","Tip breakup",profile.fire.tip_breakup,0.,1.),
                 ("fragment_size","Fragment size",profile.fire.fragment_size,0.01,0.2),
@@ -540,6 +543,10 @@ fn draw_inspector(ctx: &egui::Context, session: &Session, commands: &mut Vec<(&s
                 let mut value=initial;
                 if ui.add(egui::Slider::new(&mut value,low..=high).text(label)).changed() {commands.push(("set_parameter",json!({"path":format!("effects.{}.fire.{property}",profile.id),"value":value})));}
             }
+            for (property,label,mut value,high) in [("branches","Upward branches",profile.fire.branches,3),("particle_lights","Particle light budget",profile.fire.particle_lights,12)] {
+                if ui.add(egui::Slider::new(&mut value,0..=high).text(label)).changed() {commands.push(("set_parameter",json!({"path":format!("effects.{}.fire.{property}",profile.id),"value":value})));}
+            }
+            ui.small(format!("{} moving lights · {} omitted",session.renderer.metrics.particle_lights,session.renderer.metrics.particle_lights_dropped));
             let mut segments=profile.fire.segments;
             if ui.add(egui::Slider::new(&mut segments,3..=10).text("Curve segments")).changed() {commands.push(("set_parameter",json!({"path":format!("effects.{}.fire.segments",profile.id),"value":segments})));}
             for (property,label,initial) in [("heat_output","Source heat",profile.thermal.heat_output),("cooling_rate","Cooling",profile.thermal.cooling_rate),("lift","Thermal lift",profile.thermal.lift)] {

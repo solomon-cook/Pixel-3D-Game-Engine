@@ -11,6 +11,9 @@ pub struct FrameMetrics {
     pub flame_fragments: u32,
     pub embers: u32,
     pub effect_events_dropped: u32,
+    pub particle_lights: u32,
+    pub particle_lights_dropped: u32,
+    pub branch_segments_dropped: u32,
 }
 
 pub fn percentile(values: &[f64], fraction: f64) -> f64 {

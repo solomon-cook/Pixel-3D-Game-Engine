@@ -6506,11 +6506,11 @@
     {
       "id": "effect-campfire",
       "fire": {
-        "width": 0.85,
-        "height": 1.5,
+        "width": 1.1,
+        "height": 1.4,
         "motion_speed": 0.55,
         "curl": 0.8,
-        "tongues": 7,
+        "tongues": 5,
         "segments": 6,
         "fragment_rate": 1.5,
         "fragment_lifetime": 1.8,
@@ -6519,7 +6519,12 @@
         "emission": 1.25,
         "edge_breakup": 0.5,
         "tip_breakup": 0.8,
-        "fragment_size": 0.06
+        "fragment_size": 0.06,
+        "lobe_roundness": 0.9,
+        "branches": 2,
+        "particle_lights": 12,
+        "particle_light_strength": 2.5,
+        "particle_light_range": 2.0
       },
       "thermal": {
         "heat_output": 2.5,
@@ -6547,8 +6552,8 @@
     {
       "id": "effect-quiet",
       "fire": {
-        "width": 0.85,
-        "height": 1.5,
+        "width": 0.65,
+        "height": 1.0,
         "motion_speed": 0.32,
         "curl": 0.55,
         "tongues": 5,
@@ -6560,7 +6565,12 @@
         "emission": 1.0,
         "edge_breakup": 0.25,
         "tip_breakup": 0.45,
-        "fragment_size": 0.06
+        "fragment_size": 0.06,
+        "lobe_roundness": 0.9,
+        "branches": 1,
+        "particle_lights": 12,
+        "particle_light_strength": 2.5,
+        "particle_light_range": 2.0
       },
       "thermal": {
         "heat_output": 2.5,
@@ -6588,7 +6598,7 @@
     {
       "id": "effect-bonfire",
       "fire": {
-        "width": 1.8,
+        "width": 2.2,
         "height": 3.2,
         "motion_speed": 0.42,
         "curl": 0.8,
@@ -6601,7 +6611,12 @@
         "emission": 1.25,
         "edge_breakup": 0.65,
         "tip_breakup": 0.9,
-        "fragment_size": 0.06
+        "fragment_size": 0.06,
+        "lobe_roundness": 0.85,
+        "branches": 2,
+        "particle_lights": 12,
+        "particle_light_strength": 2.5,
+        "particle_light_range": 2.0
       },
       "thermal": {
         "heat_output": 5.0,

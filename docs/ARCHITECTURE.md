@@ -91,3 +91,11 @@ HDR/normal-depth snapshot, bounded SSR/environment fallback and single-layer
 refractive background sampling. Their foreground smoke/fire integral is shared
 with the atmosphere shader. All optical/material/shadow pipelines participate
 in transactional reload. See MATERIALS.md for pass order and limitations.
+
+The fire buffer also owns a capped derived-light list with stable particle event
+identities. Flame geometry, particle movement and emission come from the same
+fixed-tick reconstruction. Parent curves can sweep broad rounded lobes and grow
+upward branch curves. Secondary geometry has an explicit budget that reserves
+particle capacity. Geometry consumes at most 12 moving lights; smoke selects two
+of these in addition to its two authored sources, using shared density absorption.
+No GPU readback or additional per-particle shadow maps are required.

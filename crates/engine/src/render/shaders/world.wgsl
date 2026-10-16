@@ -76,6 +76,15 @@ fn shade_surface(v:Varying)->Output {
             scatter+=point.color_power.rgb*power*scattered(m,n,l)*scatter_vis;
         }
     }
+    // Bounded moving emission sources; no per-particle shadow maps.
+    for(var i=0u;i<12u;i++) {if i>=fire.lighting.x {break;}
+        let point=particle_light_point(i);let l=normalize(point.position_range.xyz-v.position+vec3(0.00001));
+        let energy=point.color_power.w*point_falloff(v.position,point);
+        local_light+=point.color_power.rgb*energy*max(dot(n,l),0.);
+        if advanced {specular+=point.color_power.rgb*energy*microfacet(n,view,l,f0,rough);}
+        else {specular+=point.color_power.rgb*energy*pow(max(dot(n,normalize(l+view)),0.),mix(48.,6.,rough))*(1.-rough);}
+        if m.optical.z>0. {scatter+=point.color_power.rgb*energy*scattered(m,n,l);}
+    }
     let ambient=g.ambient.xyz*mix(0.55,1.1,n.y*0.5+0.5);
     var diffuse=albedo*(ambient+g.sun_color.xyz*sun*g.sun_color.w+local_light);
     if advanced {diffuse*= (1.-m.surface.y)*(1.-transmission(m))*(vec3(1.)-fresnel(f0,max(dot(n,view),0.)));}

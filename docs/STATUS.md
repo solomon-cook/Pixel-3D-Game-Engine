@@ -21,7 +21,7 @@ Atelier comparison scene are implemented. See MATERIALS.md for explicit limits.
 
 ## Verification on this host
 
-- Rust formatting, Clippy with warnings denied, 17 unit tests, asset decoding,
+- Rust formatting, Clippy with warnings denied, 19 unit tests, asset decoding,
   schema discovery and scene validation passed.
 - Metal GPU integration passed: deterministic same-device replay, malformed
   commands/invalid edits, capture completion, orthographic rendering, visible
@@ -90,7 +90,7 @@ Water, clouds, browser support, gameplay frameworks and a full editor are later 
 ## Material comparison validation
 
 - The original clearing at seed 42 / hero / tick 300 was pixel-identical before
-  and after adding the material layer. All 17 unit tests, lint/formatting and the
+  and after adding the material layer. All 19 unit tests, lint/formatting and the
   Metal integration suites passed, including live metallic/roughness, transmission/
   IOR/absorption, subsurface/thickness/colour edits, exact restoration/replay,
   orthographic capture, invalid values and invalid optical shader rollback.
@@ -108,3 +108,44 @@ Water, clouds, browser support, gameplay frameworks and a full editor are later 
 | full | 5.574 / 10.396 | 2.573 / 4.353 |
 | environment-only | 4.542 / 8.282 | 2.227 / 3.590 |
 | diffuse-baseline | 3.528 / 6.213 | 1.528 / 2.472 |
+
+## Flame-cluster iteration
+
+Rounded swept lobes now follow short parent curves with smaller upward branches.
+Detached pieces can originate on either curve; fragments and embers use their
+actual world-space positions as derived local-light sources. The budget is 12
+active lights globally; geometry evaluates those sources and smoke adds its two
+most influential, with shared density absorption. Their colours/powers follow
+particle heat and lifetime. No per-particle solid-geometry shadows are generated.
+`inspect_effects`, live controls and omitted-work diagnostics expose the state.
+
+The material comparison table above describes commit 42d8af9 before adding
+particle lighting; it must not be treated as a timing of this fire revision.
+Current fire comparisons are in measurements-fire-clusters.json.
+
+| Fire variant | Frame work median / p95 ms | GPU render median / p95 ms |
+|---|---:|---:|
+| clustered-lit | 4.883 / 10.480 | 2.660 / 5.527 |
+| clustered-unlit | 3.358 / 9.452 | 1.839 / 5.068 |
+| long-curves-unlit | 3.307 / 9.291 | 1.809 / 4.944 |
+
+All variants used 7,200 moving-route frames after 600 warm-up frames on the
+M1 Max / 64 GB / Metal at 640×360. Timings are offscreen and unpaced; GPU render
+excludes smoke compute. Variance is substantial at p95; these are not target
+hardware or native presentation acceptance results. The clustered-lit versus
+clustered-unlit pair isolates enabling supplementary particle lighting within
+otherwise identical current flame/smoke settings.
+
+The final format/lint checks, 19 unit tests and both Metal GPU integration suites
+passed. Tests cover branch/particle capacity, stable moving light identities and
+three-axis motion, light-free geometry equality, visible illumination changes,
+invalid light/branch budgets, replay and shader rollback.
+
+The current macOS application and Windows x64 GNU executable bundles rebuilt
+successfully with assets/shaders/notices. The self-contained Mac bundle rendered
+the material scene from outside the checkout. Native Mac commands successfully
+resized to 1440×900 logical pixels, entered fullscreen, returned to the original
+window size, changed a material, captured a frame and shut down. The inspector
+and material scene were visually inspected in the native window. The earlier
+minimization gate is still unresolved; no full native-suite pass or Windows
+DX12 visual validation is claimed.

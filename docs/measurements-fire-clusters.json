@@ -1,0 +1,223 @@
+{
+  "version": 1,
+  "seed": 42,
+  "tick": 300,
+  "comparison": "Same geometry, camera route, lights, pixel grid and simulation. Comparing rounded curves/branches and particle lighting, not isolated per-pass timings. GPU timestamps exclude smoke compute; offscreen unpaced, no presentation/UI.",
+  "source_hashes": {
+    "Cargo.lock": "d7c859120ad11afefeec4a92d95c8fe84e159c64321902a7b2cc61ab8470e445",
+    "assets/scenes/clearing.json": "32eb14860880a824615ab02700bc0aa08606739ea6e043ffd396bed6dc6d5da3",
+    "crates/engine/src/assets.rs": "d144d0ab11cb35281a77f16c1d24e68c161544540f21bdf3ed8c2c87cf16afe6",
+    "crates/engine/src/diagnostics.rs": "d1ff45992e46dd51afa8f88d18cf5e0b1ab8373931a1048a872c8bd9ac306ad8",
+    "crates/engine/src/effects.rs": "6fe9a5337e88f7100f812a7d0ca5bb94bfe0558ad76e173710c071a2d4219836",
+    "crates/engine/src/lib.rs": "02c32c400fdf7fe1ff4940e9e8e988ae0586a5a538ccb0fddfb26ab19fdc695f",
+    "crates/engine/src/platform.rs": "132b0b07a7a18e786bcff5ffb24fb1f604a2873385f0b75561dede9b4ffe367d",
+    "crates/engine/src/render/mod.rs": "0fdeb4ca2c30966e7e44f6b467107c0e53eb45b226db666fb40ffd25c8cd4ee4",
+    "crates/engine/src/scene.rs": "eed8cccae1219e22b0c7df2fbe5c790ec559d189a1ad9cf7378f8f6b17eaf129",
+    "crates/engine/src/session.rs": "c322974c57abcbab759715b1e64adfdce6b7fc90b503ad116ddba97028f76b88",
+    "crates/engine/src/simulation.rs": "821e540415da359e7adc95826a036322530530f24f11adb9276fee633258aad7",
+    "crates/engine-lab/src/main.rs": "7b9b57086a61375aaabc55d813d5325aaa71413e72c3cec4708144d2faa533b4",
+    "crates/engine-lab/src/window.rs": "afc9dadcccad5a4f2134c51d09716ebe927e1c11db4e88d89a6ec135cc8227ba",
+    "crates/engine/src/render/shaders/common.wgsl": "b14030a07bcf62834fde89d91ee9215f90232eaf0a848f82fd95c6a32e570ab3",
+    "crates/engine/src/render/shaders/fire.wgsl": "0ed0619fcf8a24b3f11b0b7471da9c44d8c69890b91a63d35d86ef3614f09f60",
+    "crates/engine/src/render/shaders/materials.wgsl": "1ca29b0166dcf5e8a631aef40260daafa204241e349478c0ab73dc97bc5ee729",
+    "crates/engine/src/render/shaders/optical.wgsl": "afcf9e202c6f157b9488fda93bb954caae6baa65bf5c8cd906cfcb22564b8f42",
+    "crates/engine/src/render/shaders/post.wgsl": "7f34cdb0c2d6a02c7706d2a9e682281a09617f4bbfd08c60686365ee88537a7e",
+    "crates/engine/src/render/shaders/present.wgsl": "30ae713e4206df4af8d48dfe848dd72cd811d3d7064fdd8d96a9bed3bb0fdca5",
+    "crates/engine/src/render/shaders/shadow.wgsl": "c85ed631dbedd8394c09b59d54e15563a864c46d1aa52f0f5bc630b8cd8fb877",
+    "crates/engine/src/render/shaders/smoke.wgsl": "fc7d23a8902a8a781dd2a58630ea2d325fcd3c6af8bdd0a836422a0aaf9a73b5",
+    "crates/engine/src/render/shaders/volume.wgsl": "212db12b02b853df680e1ce3ee45741628b9cafde5d0ffd36808c890fd526e11",
+    "crates/engine/src/render/shaders/world.wgsl": "2903ccb54f5fc742c85dbc3aa044d11c0063b79feab7f12ee6fbf7d734e6b436"
+  },
+  "date": "2026-10-16",
+  "host": {
+    "chip": "Apple M1 Max",
+    "memory_gb": 64
+  },
+  "qualification": {
+    "metal_gpu_integration": true,
+    "windows_dx12_visual": false,
+    "base_m1_16gb": false,
+    "many_emitters": false,
+    "windows_cross_compile": true,
+    "mac_bundle_outside_checkout_capture": true
+  },
+  "variants": {
+    "clustered-lit": {
+      "benchmark": {
+        "scope": "offscreen renderer; includes simulation submission and synchronous GPU completion; excludes presentation, inspector and vsync",
+        "seed": 42,
+        "route_seconds": 120.0,
+        "sample_hz": 60,
+        "warmup_seconds": 10.0,
+        "capabilities": {
+          "backend": "Metal",
+          "device_type": "IntegratedGpu",
+          "gpu_timestamps": true,
+          "max_fire_primitives": 256,
+          "max_materials": 256,
+          "max_particle_lights": 12,
+          "max_point_lights": 8,
+          "name": "Apple M1 Max",
+          "reflection_ray_steps": 16,
+          "reflection_refinement_steps": 4,
+          "resolution": [
+            640,
+            360
+          ],
+          "smoke_grid": [
+            48,
+            64,
+            48
+          ],
+          "smoke_lights_per_sample": 2,
+          "transmission_layers": 1,
+          "vertices": 175662
+        },
+        "frame_work": {
+          "median_ms": 4.882875,
+          "p95_ms": 10.479916000000001,
+          "samples": 7200
+        },
+        "cpu_encode": {
+          "median_ms": 0.43425,
+          "p95_ms": 1.278875,
+          "samples": 7200
+        },
+        "simulation_cpu": {
+          "median_ms": 0.18425,
+          "p95_ms": 0.527542,
+          "samples": 7200
+        },
+        "gpu_render": {
+          "median_ms": 2.660333,
+          "p95_ms": 5.5265,
+          "samples": 7200
+        }
+      },
+      "captures": [
+        "clustered-lit/hero.png",
+        "clustered-lit/fire-study.png",
+        "clustered-lit/smoke-close.png",
+        "clustered-lit/orthographic.png"
+      ]
+    },
+    "clustered-unlit": {
+      "benchmark": {
+        "scope": "offscreen renderer; includes simulation submission and synchronous GPU completion; excludes presentation, inspector and vsync",
+        "seed": 42,
+        "route_seconds": 120.0,
+        "sample_hz": 60,
+        "warmup_seconds": 10.0,
+        "capabilities": {
+          "backend": "Metal",
+          "device_type": "IntegratedGpu",
+          "gpu_timestamps": true,
+          "max_fire_primitives": 256,
+          "max_materials": 256,
+          "max_particle_lights": 12,
+          "max_point_lights": 8,
+          "name": "Apple M1 Max",
+          "reflection_ray_steps": 16,
+          "reflection_refinement_steps": 4,
+          "resolution": [
+            640,
+            360
+          ],
+          "smoke_grid": [
+            48,
+            64,
+            48
+          ],
+          "smoke_lights_per_sample": 2,
+          "transmission_layers": 1,
+          "vertices": 175662
+        },
+        "frame_work": {
+          "median_ms": 3.357959,
+          "p95_ms": 9.452167,
+          "samples": 7200
+        },
+        "cpu_encode": {
+          "median_ms": 0.39725,
+          "p95_ms": 1.131584,
+          "samples": 7200
+        },
+        "simulation_cpu": {
+          "median_ms": 0.166542,
+          "p95_ms": 0.461917,
+          "samples": 7200
+        },
+        "gpu_render": {
+          "median_ms": 1.839208,
+          "p95_ms": 5.06825,
+          "samples": 7200
+        }
+      },
+      "captures": [
+        "clustered-unlit/hero.png",
+        "clustered-unlit/fire-study.png",
+        "clustered-unlit/smoke-close.png",
+        "clustered-unlit/orthographic.png"
+      ]
+    },
+    "long-curves-unlit": {
+      "benchmark": {
+        "scope": "offscreen renderer; includes simulation submission and synchronous GPU completion; excludes presentation, inspector and vsync",
+        "seed": 42,
+        "route_seconds": 120.0,
+        "sample_hz": 60,
+        "warmup_seconds": 10.0,
+        "capabilities": {
+          "backend": "Metal",
+          "device_type": "IntegratedGpu",
+          "gpu_timestamps": true,
+          "max_fire_primitives": 256,
+          "max_materials": 256,
+          "max_particle_lights": 12,
+          "max_point_lights": 8,
+          "name": "Apple M1 Max",
+          "reflection_ray_steps": 16,
+          "reflection_refinement_steps": 4,
+          "resolution": [
+            640,
+            360
+          ],
+          "smoke_grid": [
+            48,
+            64,
+            48
+          ],
+          "smoke_lights_per_sample": 2,
+          "transmission_layers": 1,
+          "vertices": 175662
+        },
+        "frame_work": {
+          "median_ms": 3.3072909999999998,
+          "p95_ms": 9.29125,
+          "samples": 7200
+        },
+        "cpu_encode": {
+          "median_ms": 0.38041699999999995,
+          "p95_ms": 0.926791,
+          "samples": 7200
+        },
+        "simulation_cpu": {
+          "median_ms": 0.161334,
+          "p95_ms": 0.39387500000000003,
+          "samples": 7200
+        },
+        "gpu_render": {
+          "median_ms": 1.809417,
+          "p95_ms": 4.943708,
+          "samples": 7200
+        }
+      },
+      "captures": [
+        "long-curves-unlit/hero.png",
+        "long-curves-unlit/fire-study.png",
+        "long-curves-unlit/smoke-close.png",
+        "long-curves-unlit/orthographic.png"
+      ]
+    }
+  }
+}

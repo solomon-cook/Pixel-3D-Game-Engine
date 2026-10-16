@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 use std::f32::consts::TAU;
 
 pub const MAX_FIRE_PRIMITIVES: usize = 256;
+pub const MAX_PARTICLE_LIGHTS: usize = 12;
 
 #[derive(Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(default, deny_unknown_fields)]
@@ -20,6 +21,12 @@ pub struct FireSettings {
     pub edge_breakup: f32,
     pub tip_breakup: f32,
     pub fragment_size: f32,
+    /// 0 retains long tongues, 1 uses broad rounded lobes on shorter curves.
+    pub lobe_roundness: f32,
+    pub branches: u32,
+    pub particle_lights: u32,
+    pub particle_light_strength: f32,
+    pub particle_light_range: f32,
     pub tongues: u32,
     pub segments: u32,
     /// Events per effect second; time is scaled by motion_speed.
@@ -39,6 +46,11 @@ impl Default for FireSettings {
             edge_breakup: 0.5,
             tip_breakup: 0.8,
             fragment_size: 0.06,
+            lobe_roundness: 0.,
+            branches: 0,
+            particle_lights: 12,
+            particle_light_strength: 2.5,
+            particle_light_range: 2.,
             tongues: 7,
             segments: 6,
             fragment_rate: 1.5,
@@ -113,6 +125,14 @@ impl EffectProfile {
     pub fn validate(&self) -> Result<()> {
         let f = &self.fire;
         for (name, value, low, high) in [
+            ("fire.lobe_roundness", f.lobe_roundness, 0., 1.),
+            (
+                "fire.particle_light_strength",
+                f.particle_light_strength,
+                0.,
+                16.,
+            ),
+            ("fire.particle_light_range", f.particle_light_range, 0.1, 8.),
             ("fire.edge_breakup", f.edge_breakup, 0., 1.),
             ("fire.tip_breakup", f.tip_breakup, 0., 1.),
             ("fire.fragment_size", f.fragment_size, 0.01, 0.2),
@@ -132,6 +152,12 @@ impl EffectProfile {
             if !value.is_finite() || !(low..=high).contains(&value) {
                 bail!("effect '{}'.{name}: expected {low}..{high}", self.id);
             }
+        }
+        if f.branches > 3 || f.particle_lights > MAX_PARTICLE_LIGHTS as u32 {
+            bail!(
+                "effect '{}'.fire: branches must be 0..3 and particle_lights 0..12",
+                self.id
+            );
         }
         if !(1..=16).contains(&f.tongues) || !(3..=10).contains(&f.segments) {
             bail!(
@@ -167,6 +193,14 @@ pub struct FirePrimitive {
     pub heat_kind: [f32; 4],
 }
 #[repr(C)]
+#[derive(Clone, Copy, Pod, Zeroable, Serialize)]
+pub struct ParticleLight {
+    pub position_range: [f32; 4],
+    pub color_power: [f32; 4],
+    /// Particle kind, event low/high words, seed: stable through pool reuse.
+    pub identity: [u32; 4],
+}
+#[repr(C)]
 #[derive(Clone, Copy, Pod, Zeroable)]
 pub struct FireFrame {
     /// Total, tongue segments, fragments, embers.
@@ -174,6 +208,9 @@ pub struct FireFrame {
     /// w stores source power and the number of events dropped by pool caps.
     pub bounds_min: [f32; 4],
     pub bounds_max: [f32; 4],
+    /// Active lights, candidates omitted by the budget, omitted branch segments, reserved.
+    pub lighting: [u32; 4],
+    pub lights: [ParticleLight; MAX_PARTICLE_LIGHTS],
     pub primitives: [FirePrimitive; MAX_FIRE_PRIMITIVES],
 }
 #[derive(Clone, PartialEq)]
@@ -200,14 +237,21 @@ fn random(seed: u32, index: u64, lane: u32) -> f32 {
 fn path(f: &FireSettings, seed: u32, tongue: u32, u: f32, time: f32, wind: Vec3) -> Vec3 {
     let phase = random(seed, tongue as u64, 0) * TAU;
     let angle = tongue as f32 * 2.399963 + phase * 0.2;
-    let rim = if tongue == 0 { 0. } else { f.width * 0.29 };
+    let rim = if tongue == 0 {
+        0.
+    } else {
+        f.width * (0.29 + f.lobe_roundness * 0.13)
+    };
     let root = Vec3::new(angle.cos() * rim, -0.35, angle.sin() * rim);
     let stature = if tongue == 0 {
         1.
     } else {
         0.55 + random(seed, tongue as u64, 1) * 0.35
     };
-    let height = f.height * stature * (0.88 + 0.12 * (time * 1.1 + phase).sin());
+    let height = f.height
+        * stature
+        * (1. - f.lobe_roundness * 0.48)
+        * (0.88 + 0.12 * (time * 1.1 + phase).sin());
     let wave = u * 4.8 - time * 1.45 + phase;
     let curl = f.curl * height * u.powf(1.6) * 0.22;
     root + Vec3::new(
@@ -215,6 +259,27 @@ fn path(f: &FireSettings, seed: u32, tongue: u32, u: f32, time: f32, wind: Vec3)
         height * u,
         (wave * 0.83 + phase).cos() * curl * 0.7,
     ) + wind * u * u * height * 0.17
+}
+fn branch_path(
+    f: &FireSettings,
+    seed: u32,
+    tongue: u32,
+    branch: u32,
+    u: f32,
+    time: f32,
+    wind: Vec3,
+) -> Vec3 {
+    let id = tongue as u64 * 4 + branch as u64;
+    let anchor = 0.3 + random(seed, id, 11) * 0.42;
+    let root = path(f, seed, tongue, anchor, time, wind);
+    let angle = random(seed, id, 12) * TAU;
+    let bend = (u * 3.8 - time * 1.1 + angle).sin() * u * u * f.curl * f.width * 0.11;
+    let spread = f.width * (0.12 + random(seed, id, 13) * 0.17) * u;
+    root + Vec3::new(
+        angle.cos() * spread + bend,
+        f.height * (0.22 + random(seed, id, 14) * 0.18) * u,
+        angle.sin() * spread + bend * 0.6,
+    ) + wind * u * u * 0.1
 }
 impl FireFrame {
     fn add(&mut self, center: Vec3, radius: f32, axis: Vec3, length: f32, heat_kind: [f32; 4]) {
@@ -236,6 +301,57 @@ impl FireFrame {
             self.bounds_max[j] = self.bounds_max[j].max((center + extent)[j]);
         }
     }
+    fn particle_light(&mut self, key: &FireKey, index: usize, event: u64, seed: u32) {
+        let f = &key.profile.fire;
+        let p = self.primitives[index];
+        let heat = p.heat_kind[0];
+        let fade = (1. - p.heat_kind[3]).max(0.);
+        let size = p.center_radius[3] / f.width;
+        let power = f.particle_light_strength
+            * f.emission
+            * key.enabled
+            * heat
+            * fade
+            * (0.035 + size * size * 180.);
+        if f.particle_lights == 0 || power < 0.0001 {
+            return;
+        }
+        let warm = Vec3::from(key.profile.palette.warm);
+        let hot = Vec3::from(key.profile.palette.hot);
+        let color = warm.lerp(hot, (heat - 0.35).max(0.) * 0.65);
+        let color = color / color.max_element().max(0.001);
+        let light = ParticleLight {
+            position_range: [
+                p.center_radius[0],
+                p.center_radius[1],
+                p.center_radius[2],
+                f.particle_light_range * (0.35 + size * 6.).clamp(0.35, 1.),
+            ],
+            color_power: [color.x, color.y, color.z, power],
+            identity: [
+                p.heat_kind[2] as u32,
+                event as u32,
+                (event >> 32) as u32,
+                seed,
+            ],
+        };
+        let count = self.lighting[0] as usize;
+        let capacity = f.particle_lights as usize;
+        if count < capacity {
+            self.lights[count] = light;
+            self.lighting[0] += 1;
+        } else {
+            self.lighting[1] += 1;
+            let slot = (0..capacity)
+                .min_by(|&a, &b| {
+                    self.lights[a].color_power[3].total_cmp(&self.lights[b].color_power[3])
+                })
+                .unwrap();
+            if power > self.lights[slot].color_power[3] {
+                self.lights[slot] = light;
+            }
+        }
+    }
     /// Pure seeded reconstruction: arbitrary fixed-tick captures need no particle
     /// history or GPU readback. Event identities survive slot reuse and reset.
     pub fn sample(key: &FireKey) -> Self {
@@ -254,9 +370,9 @@ impl FireFrame {
         for tongue in 0..f.tongues {
             let width = f.width
                 * if tongue == 0 {
-                    0.31
+                    0.31 + f.lobe_roundness * 0.06
                 } else {
-                    0.14 + random(key.seed, tongue as u64, 2) * 0.06
+                    0.14 + f.lobe_roundness * 0.12 + random(key.seed, tongue as u64, 2) * 0.06
                 };
             for segment in 0..f.segments {
                 let u = segment as f32 / f.segments as f32;
@@ -264,13 +380,21 @@ impl FireFrame {
                 let a = path(f, key.seed, tongue, u, time, wind);
                 let b = path(f, key.seed, tongue, v, time, wind);
                 let mid = (u + v) * 0.5;
-                let radius =
-                    width * (1. - mid).powf(0.8) * (0.94 + 0.06 * (mid * 9. - time * 1.4).sin());
+                let radius = width
+                    * (1. - mid).powf(0.8 - f.lobe_roundness * 0.27)
+                    * (0.94 + 0.06 * (mid * 9. - time * 1.4).sin());
+                let swelling = 1.
+                    + f.lobe_roundness
+                        * 0.22
+                        * (mid * TAU * 1.6 - time * 0.55
+                            + random(key.seed, tongue as u64, 9) * TAU)
+                            .cos();
+                let radius = radius * swelling;
                 frame.add(
                     source + (a + b) * 0.5,
                     radius,
                     b - a,
-                    (b - a).length() * 0.5 + radius * 1.2,
+                    ((b - a).length() * 0.5 + radius * (1.2 - f.lobe_roundness * 0.5)).max(radius),
                     [
                         1. - mid * 0.48,
                         1.3 * (1.
@@ -286,6 +410,37 @@ impl FireFrame {
                         mid,
                     ],
                 );
+            }
+        }
+        let branch_budget = MAX_FIRE_PRIMITIVES - 80;
+        for tongue in 0..f.tongues {
+            for branch in 0..f.branches {
+                let width = f.width
+                    * (0.09 + random(key.seed, tongue as u64 * 4 + branch as u64, 15) * 0.055);
+                for segment in 0..3 {
+                    if frame.counts[0] as usize >= branch_budget {
+                        frame.lighting[2] += 1;
+                        continue;
+                    }
+                    let u = segment as f32 / 3.;
+                    let v = (segment + 1) as f32 / 3.;
+                    let mid = (u + v) * 0.5;
+                    let a = branch_path(f, key.seed, tongue, branch, u, time, wind);
+                    let b = branch_path(f, key.seed, tongue, branch, v, time, wind);
+                    let radius = width * (1. - mid).powf(0.65);
+                    frame.add(
+                        source + (a + b) * 0.5,
+                        radius,
+                        b - a,
+                        ((b - a).length() * 0.5 + radius * 0.65).max(radius),
+                        [
+                            0.82 - mid * 0.35,
+                            1.1 * (1. - mid * 0.35),
+                            0.,
+                            0.45 + mid * 0.55,
+                        ],
+                    );
+                }
             }
         }
         for (kind, rate, lifetime, capacity) in [
@@ -315,10 +470,21 @@ impl FireFrame {
                 let angle = h * TAU;
                 let phase = age / lifetime;
                 let cool = (-key.profile.thermal.cooling_rate * age * 0.65).exp();
+                let before = frame.counts[0];
                 if kind == 1 {
                     let tongue = (h * f.tongues as f32).floor() as u32;
-                    let start = path(f, key.seed, tongue, 0.82, birth, wind);
-                    let tip = path(f, key.seed, tongue, 0.94, birth, wind);
+                    let branch = (random(seed, event, 3) * f.branches.max(1) as f32).floor() as u32;
+                    let on_branch = f.branches > 0 && random(seed, event, 4) > 0.45;
+                    let start = if on_branch {
+                        branch_path(f, key.seed, tongue, branch, 0.82, birth, wind)
+                    } else {
+                        path(f, key.seed, tongue, 0.82, birth, wind)
+                    };
+                    let tip = if on_branch {
+                        branch_path(f, key.seed, tongue, branch, 0.94, birth, wind)
+                    } else {
+                        path(f, key.seed, tongue, 0.94, birth, wind)
+                    };
                     let velocity =
                         (tip - start).normalize_or_zero() * f.height * 0.42 + wind * 0.25;
                     let roll = Vec3::new(
@@ -368,6 +534,9 @@ impl FireFrame {
                         [cool, 2.4 * (1. - phase), 2., phase],
                     );
                 }
+                if frame.counts[0] > before {
+                    frame.particle_light(key, frame.counts[0] as usize - 1, event, seed);
+                }
             }
         }
         frame
@@ -388,9 +557,66 @@ mod tests {
         }
     }
     #[test]
+    fn rounded_branches_and_particle_emission_remain_bounded() {
+        let mut k = key();
+        k.profile.fire.lobe_roundness = 1.;
+        k.profile.fire.branches = 3;
+        let with = FireFrame::sample(&k);
+        assert!(with.counts[1] > k.profile.fire.tongues * k.profile.fire.segments);
+        assert!(with.lighting[0] > 0 && with.lighting[0] <= MAX_PARTICLE_LIGHTS as u32);
+        for l in &with.lights[..with.lighting[0] as usize] {
+            assert!(l.position_range.iter().all(|v| v.is_finite()));
+            assert!(l.position_range[3] > 0. && l.color_power[3] > 0.);
+            assert!(l.identity[0] == 1 || l.identity[0] == 2);
+            assert!(with.primitives[..with.counts[0] as usize]
+                .iter()
+                .any(|p| p.heat_kind[2] as u32 == l.identity[0]
+                    && p.center_radius[..3] == l.position_range[..3]));
+        }
+        k.profile.fire.particle_lights = 0;
+        let dark = FireFrame::sample(&k);
+        assert_eq!(dark.lighting[0], 0);
+        assert_eq!(
+            bytemuck::cast_slice::<_, u8>(&with.primitives),
+            bytemuck::cast_slice::<_, u8>(&dark.primitives)
+        );
+        k.profile.fire.particle_lights = 12;
+        k.profile.fire.tongues = 16;
+        k.profile.fire.segments = 10;
+        k.profile.fire.fragment_rate = 8.;
+        k.profile.fire.fragment_lifetime = 6.;
+        k.profile.fire.ember_rate = 32.;
+        k.profile.fire.ember_lifetime = 8.;
+        k.tick = 36000;
+        let max = FireFrame::sample(&k);
+        assert!(max.counts[0] as usize <= MAX_FIRE_PRIMITIVES);
+        assert!(max.lighting[2] > 0 && max.counts[2] > 0 && max.counts[3] > 0);
+        assert!(max.lighting[0] <= 12);
+    }
+    #[test]
+    fn detached_lights_move_in_three_dimensions_with_stable_identities() {
+        let mut k = key();
+        let before = FireFrame::sample(&k);
+        k.tick += 12;
+        let after = FireFrame::sample(&k);
+        let (a, b) = before.lights[..before.lighting[0] as usize]
+            .iter()
+            .find_map(|a| {
+                after.lights[..after.lighting[0] as usize]
+                    .iter()
+                    .find(|b| b.identity == a.identity)
+                    .map(|b| (a, b))
+            })
+            .unwrap();
+        for axis in 0..3 {
+            assert!((a.position_range[axis] - b.position_range[axis]).abs() > 0.00001);
+        }
+    }
+    #[test]
     fn storage_layout_matches_wgsl_contract() {
         assert_eq!(std::mem::size_of::<FirePrimitive>(), 48);
-        assert_eq!(std::mem::size_of::<FireFrame>(), 48 + 256 * 48);
+        assert_eq!(std::mem::size_of::<ParticleLight>(), 48);
+        assert_eq!(std::mem::size_of::<FireFrame>(), 64 + 12 * 48 + 256 * 48);
     }
     #[test]
     fn seeded_fire_replays_and_is_camera_independent() {
@@ -461,9 +687,10 @@ mod tests {
         );
         k.profile.fire.emission = 0.;
         assert_eq!(
-            bytemuck::bytes_of(&a),
-            bytemuck::bytes_of(&FireFrame::sample(&k))
+            bytemuck::cast_slice::<_, u8>(&a.primitives),
+            bytemuck::cast_slice::<_, u8>(&FireFrame::sample(&k).primitives)
         );
+        assert_eq!(FireFrame::sample(&k).lighting[0], 0);
         k.profile.fire.motion_speed = f32::NAN;
         assert!(k.profile.validate().is_err());
     }

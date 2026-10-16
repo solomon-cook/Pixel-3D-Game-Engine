@@ -106,6 +106,18 @@ def main():
                 request("capture_frame", path=str(temp / "quiet.png"), scale=1)
                 assert request("get_metrics")["result"]["capabilities"]["resolution"] == [640,360]
                 request("set_parameter", path="emitters.campfire.effect_profile", value="effect-campfire")
+                # Lights derived from moving particles must affect shading while
+                # their own emitted glyphs/geometry stay unchanged.
+                lit=request("inspect_effects")["result"]
+                assert 0 < len(lit["particle_lights"]) <= 12
+                request("capture_frame",path=str(temp / "particle-lit.png"),scale=1)
+                assert "result" in request("set_parameter",path="effects.effect-campfire.fire.particle_lights",value=0)
+                assert not request("inspect_effects")["result"]["particle_lights"]
+                request("capture_frame",path=str(temp / "particle-unlit.png"),scale=1)
+                assert (temp / "particle-lit.png").read_bytes() != (temp / "particle-unlit.png").read_bytes(), "moving emission sources did not affect shading"
+                request("set_parameter",path="effects.effect-campfire.fire.particle_lights",value=12)
+                assert "error" in request("set_parameter",path="effects.effect-campfire.fire.particle_lights",value=13)
+                assert "error" in request("set_parameter",path="effects.effect-campfire.fire.branches",value=4)
                 # Material-space breakup can be independently disabled.
                 request("capture_frame", path=str(temp / "rough.png"), scale=1)
                 assert "result" in request("set_parameter", path="effects.effect-campfire.fire.edge_breakup", value=0)

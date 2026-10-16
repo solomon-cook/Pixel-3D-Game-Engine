@@ -1,7 +1,7 @@
 use crate::{
     assets::{self, Vertex},
     diagnostics::FrameMetrics,
-    effects::{FireFrame, FireKey, MAX_FIRE_PRIMITIVES},
+    effects::{FireFrame, FireKey, MAX_FIRE_PRIMITIVES, MAX_PARTICLE_LIGHTS},
     platform,
     scene::{Camera, LightKind, Material, Scene},
     simulation,
@@ -1172,6 +1172,9 @@ impl Renderer {
             self.metrics.flame_fragments = self.fire_frame.counts[2];
             self.metrics.embers = self.fire_frame.counts[3];
             self.metrics.effect_events_dropped = self.fire_frame.bounds_max[3] as u32;
+            self.metrics.particle_lights = self.fire_frame.lighting[0];
+            self.metrics.particle_lights_dropped = self.fire_frame.lighting[1];
+            self.metrics.branch_segments_dropped = self.fire_frame.lighting[2];
         }
         let power = self.fire_frame.bounds_min[3];
         let mut point_lights = [PointLightGpu::zeroed(); 8];
@@ -1289,6 +1292,11 @@ impl Renderer {
             .write_buffer(&self.uniform, 0, bytemuck::bytes_of(&g));
     }
 
+    pub fn effect_state(&self) -> serde_json::Value {
+        serde_json::json!({"counts":self.fire_frame.counts,"bounds_min":self.fire_frame.bounds_min,
+            "bounds_max":self.fire_frame.bounds_max,"lighting":self.fire_frame.lighting,
+            "particle_lights":&self.fire_frame.lights[..self.fire_frame.lighting[0] as usize]})
+    }
     pub fn reset_smoke(&mut self) {
         let bytes = vec![0u8; (VOLUME[0] * VOLUME[1] * VOLUME[2] * 8) as usize];
         for t in &self.smoke_textures {
@@ -1609,7 +1617,7 @@ impl Renderer {
 
     pub fn capabilities(&self) -> serde_json::Value {
         let info = self.adapter.get_info();
-        serde_json::json!({"name":info.name,"backend":format!("{:?}",info.backend),"device_type":format!("{:?}",info.device_type),"gpu_timestamps":self.timing.is_some(),"resolution":self.resolution,"smoke_grid":VOLUME,"vertices":self.vertex_count,"max_fire_primitives":MAX_FIRE_PRIMITIVES,"max_point_lights":8,"smoke_lights_per_sample":2,"max_materials":256,"reflection_ray_steps":16,"reflection_refinement_steps":4,"transmission_layers":1})
+        serde_json::json!({"name":info.name,"backend":format!("{:?}",info.backend),"device_type":format!("{:?}",info.device_type),"gpu_timestamps":self.timing.is_some(),"resolution":self.resolution,"smoke_grid":VOLUME,"vertices":self.vertex_count,"max_fire_primitives":MAX_FIRE_PRIMITIVES,"max_point_lights":8,"max_particle_lights":MAX_PARTICLE_LIGHTS,"smoke_lights_per_sample":2,"max_materials":256,"reflection_ray_steps":16,"reflection_refinement_steps":4,"transmission_layers":1})
     }
 }
 

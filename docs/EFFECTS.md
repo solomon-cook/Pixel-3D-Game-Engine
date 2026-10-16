@@ -113,3 +113,61 @@ smoke compositing uses coarse absorption and approximate emission ordering.
 The current scene contract still supports one emitter. Many-emitter batching,
 tile culling and shared sparse simulation require their own implementation and
 stress qualification; the fixed pool alone does not prove large-world scalability.
+
+## Rounded flame clusters and moving emission
+
+`lobe_roundness` (0..1) shortens the parent curves, broadens their swept lobes and
+adds coherent swelling along them. `branches` (0..3 per parent) grows smaller,
+narrowing curves from points on the parent and bends them upward through the
+same wind. Branches follow the animated parent at their root. Fragments can
+leave either a parent tip or a branch tip, then follow independent seeded
+world-space trajectories with lift, curl, cooling and fade. They pass through smoke and are not screen sprites. Solid-body particle
+collision is not implemented. The clearing profiles now use broad lobes and upward branches; zero
+roundness/branches retains the long-curve alternative.
+
+Detached flickers and embers also become emission sources. Each candidate light
+uses the actual particle position, size, heat, palette, emission and fading age.
+Its stable identity contains kind, event counter and seed. Cooling particles
+therefore lose light as well as visible flame colour. These are transient derived
+lights, separate from the eight authored scene point lights.
+
+- `particle_lights`: 0..12; zero disables their illumination without changing
+  their visible geometry or trajectories.
+- `particle_light_strength`: 0..16, relative artistic emission strength.
+- `particle_light_range`: 0.1..8 world units; actual range scales with piece size.
+- Up to 12 strongest candidates are uploaded once per fixed tick in the fire
+  storage buffer. Geometry evaluates these bounded local lights with diffuse,
+  specular and optional faux subsurface response.
+- Smoke keeps its two nearest authored lights and adds its two most influential
+  particle lights per shading sample, including density-grid attenuation between
+  the smoke surface/interior sample and each source. A fragment inside a plume
+  can illuminate it from within without enabling the optional heat-field glow.
+- Particle lights have no individual geometry shadow maps. Smoke absorption is
+  shared, but solid walls can leak this supplementary illumination. This avoids
+  twelve additional shadow cubemaps. Selection at the light budget threshold is
+  deterministic, but has no temporal crossfade guarantee.
+
+`inspect_effects` returns bounded runtime counts, bounds, light positions/ranges,
+colours/powers and stable event identities. Frame metrics include active/omitted
+particle lights and omitted branch segments. Primary curves get their requested
+budget first; branches stop at 176 segments so 16 fragments + 64 embers always
+retain capacity inside the 256-primitive pool. Additional candidates are thinned
+or omitted with diagnostics rather than growing work without a limit.
+
+```json
+{"id":7,"method":"set_parameter","params":{"path":"effects.effect-campfire.fire.lobe_roundness","value":0.9}}
+{"id":8,"method":"set_parameter","params":{"path":"effects.effect-campfire.fire.branches","value":2}}
+{"id":9,"method":"set_parameter","params":{"path":"effects.effect-campfire.fire.particle_lights","value":12}}
+{"id":10,"method":"inspect_effects"}
+```
+
+```sh
+python3 scripts/fire_study.py --benchmark
+python3 scripts/capture_motion.py --camera fire-study --output artifacts/flame-clusters/motion --gif
+```
+
+The study compares clustered-lit, clustered-unlit and long-curves-unlit at equal
+seed/tick/cameras, plus a 120-second route after warm-up. This is a procedural
+stylisation, not a fluid combustion solver or a claim that every hot visible
+piece receives its own uncapped light. The finest artistic tuning and Windows
+visual acceptance remain open.
