@@ -1,0 +1,186 @@
+{
+  "date": "2026-10-16",
+  "host": {
+    "chip": "Apple M1 Max",
+    "memory_gb": 64,
+    "os": "macOS-27.0.1-arm64-arm-64bit"
+  },
+  "scope": "Offscreen renderer. Frame work includes fixed-step simulation submission and GPU completion. GPU timestamps cover rendering, exclude simulation dispatch and window/UI/vsync. 120 second moving routes sampled at 60 Hz after 10 second warm-up; executed without real-time pacing. One emitter only.",
+  "variants": {
+    "baseline": {
+      "frame_work": {
+        "median_ms": 4.3655,
+        "p95_ms": 6.716875,
+        "samples": 7200
+      },
+      "cpu_encode": {
+        "median_ms": 0.356917,
+        "p95_ms": 0.643542,
+        "samples": 7200
+      },
+      "gpu_render": {
+        "median_ms": 2.767416,
+        "p95_ms": 4.026042,
+        "samples": 7200
+      },
+      "capabilities": {
+        "backend": "Metal",
+        "device_type": "IntegratedGpu",
+        "gpu_timestamps": true,
+        "name": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ],
+        "smoke_grid": [
+          48,
+          64,
+          48
+        ],
+        "vertices": 175662
+      }
+    },
+    "pixel_cluster_lighting": {
+      "frame_work": {
+        "median_ms": 4.40025,
+        "p95_ms": 7.978166999999999,
+        "samples": 7200
+      },
+      "cpu_encode": {
+        "median_ms": 0.358333,
+        "p95_ms": 0.943333,
+        "samples": 7200
+      },
+      "gpu_render": {
+        "median_ms": 2.764875,
+        "p95_ms": 4.337833,
+        "samples": 7200
+      },
+      "capabilities": {
+        "backend": "Metal",
+        "device_type": "IntegratedGpu",
+        "gpu_timestamps": true,
+        "name": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ],
+        "smoke_grid": [
+          48,
+          64,
+          48
+        ],
+        "vertices": 175662
+      }
+    },
+    "stable_smoke_detail": {
+      "frame_work": {
+        "median_ms": 4.453917,
+        "p95_ms": 8.102042,
+        "samples": 7200
+      },
+      "cpu_encode": {
+        "median_ms": 0.36162500000000003,
+        "p95_ms": 0.74,
+        "samples": 7200
+      },
+      "gpu_render": {
+        "median_ms": 2.740916,
+        "p95_ms": 4.822958,
+        "samples": 7200
+      },
+      "capabilities": {
+        "backend": "Metal",
+        "device_type": "IntegratedGpu",
+        "gpu_timestamps": true,
+        "name": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ],
+        "smoke_grid": [
+          48,
+          64,
+          48
+        ],
+        "vertices": 175662
+      }
+    },
+    "connected_motion": {
+      "frame_work": {
+        "median_ms": 4.4025419999999995,
+        "p95_ms": 7.820458,
+        "samples": 7200
+      },
+      "cpu_encode": {
+        "median_ms": 0.361958,
+        "p95_ms": 0.618292,
+        "samples": 7200
+      },
+      "gpu_render": {
+        "median_ms": 2.618667,
+        "p95_ms": 4.643375,
+        "samples": 7200
+      },
+      "capabilities": {
+        "backend": "Metal",
+        "device_type": "IntegratedGpu",
+        "gpu_timestamps": true,
+        "name": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ],
+        "smoke_grid": [
+          48,
+          64,
+          48
+        ],
+        "vertices": 175662
+      }
+    }
+  },
+  "smoke_stress": {
+    "frame_work": {
+      "median_ms": 5.681,
+      "p95_ms": 9.964,
+      "samples": 7200
+    },
+    "cpu_encode": {
+      "median_ms": 0.40299999999999997,
+      "p95_ms": 1.449667,
+      "samples": 7200
+    },
+    "gpu_render": {
+      "median_ms": 3.632875,
+      "p95_ms": 5.689125,
+      "samples": 7200
+    },
+    "capabilities": {
+      "backend": "Metal",
+      "device_type": "IntegratedGpu",
+      "gpu_timestamps": true,
+      "name": "Apple M1 Max",
+      "resolution": [
+        640,
+        360
+      ],
+      "smoke_grid": [
+        48,
+        64,
+        48
+      ],
+      "vertices": 175662
+    }
+  },
+  "source_hashes": {
+    "cargo_lock_sha256": "d7c859120ad11afefeec4a92d95c8fe84e159c64321902a7b2cc61ab8470e445",
+    "volume_wgsl_sha256": "1b111a7bad5f92c42f99d7e108485b020eecdd320e04020d7a14177fd5b2a48d"
+  },
+  "qualification": {
+    "base_m1_16gb": false,
+    "windows_dx12_rendering": false,
+    "many_emitters": false,
+    "owner_visual_acceptance": false
+  }
+}

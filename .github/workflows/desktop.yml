@@ -1,0 +1,25 @@
+name: Desktop checks and development bundles
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-14, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: dtolnay/rust-toolchain@1.99.1
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: python scripts/verify.py
+      - run: python scripts/package.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pixel-engine-${{ matrix.os }}
+          path: dist/*.zip
+  # Hosted runners do not establish real Metal/DX12 visual or performance parity.
