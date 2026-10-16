@@ -11,10 +11,14 @@ fn sky_color(direction:vec3<f32>)->vec3<f32> {
     let sun=pow(max(dot(direction,normalize(g.sun_direction.xyz)),0.),512.);
     return sky+g.sun_color.xyz*sun*0.7;
 }
-@fragment fn volume_fs(@builtin(position) pixel:vec4<f32>)->@location(0) vec4<f32> {
-    return atmosphere(pixel,textureLoad(scene_depth,vec2<i32>(pixel.xy),0));
+struct AtmosphereSample {color:vec4<f32>,depth:f32,flame:f32};
+struct AtmosphereOutput {@location(0) color:vec4<f32>,@location(1) effects:vec4<f32>};
+@fragment fn volume_fs(@builtin(position) pixel:vec4<f32>)->AtmosphereOutput {
+    let sample=atmosphere_info(pixel,textureLoad(scene_depth,vec2<i32>(pixel.xy),0));
+    var o:AtmosphereOutput;o.color=sample.color;o.effects=vec4(sample.depth,sample.flame,0.,0.);return o;
 }
-fn atmosphere(pixel:vec4<f32>,z:f32)->vec4<f32> {
+fn atmosphere(pixel:vec4<f32>,z:f32)->vec4<f32> {return atmosphere_info(pixel,z).color;}
+fn atmosphere_info(pixel:vec4<f32>,z:f32)->AtmosphereSample {
     let uv=pixel.xy/g.resolution.xy;let clip=uv*vec2(2.,-2.)+vec2(-1.,1.);
     let near4=g.inverse_view_proj*vec4(clip,0.,1.);let near=near4.xyz/near4.w;
     let far4=g.inverse_view_proj*vec4(clip,1.,1.);let far=far4.xyz/far4.w;
@@ -24,7 +28,7 @@ fn atmosphere(pixel:vec4<f32>,z:f32)->vec4<f32> {
     let inv=1./(direction+vec3(0.0000001));
     let a=(g.volume_min.xyz-near)*inv;let b=(g.volume_max.xyz-near)*inv;
     let lo=min(a,b);let hi=max(a,b);let enter=max(max(max(lo.x,lo.y),lo.z),0.);let exit=min(min(min(hi.x,hi.y),hi.z),distance);
-    var radiance=vec3(0.);var transmittance=1.;
+    var radiance=vec3(0.);var transmittance=1.;var first_smoke=distance;
     if exit>enter {
         let steps=u32(g.params.w);let ds=(exit-enter)/f32(steps);
         let screen_jitter=hash(vec3(floor(pixel.xy),17.));
@@ -43,7 +47,9 @@ fn atmosphere(pixel:vec4<f32>,z:f32)->vec4<f32> {
             }
             let light=g.ambient.xyz*1.5+g.sun_color.xyz*g.sun_color.w*exp(-optical*2.)*sun_visibility(p,vec3(0.))+fire_light;
             radiance+=transmittance*light*vec3(0.67,0.7,0.76)*alpha;
-            transmittance*=1.-alpha;if transmittance<0.015 {break;}
+            transmittance*=1.-alpha;
+            if transmittance<0.85 && first_smoke==distance {first_smoke=t;}
+            if transmittance<0.015 {break;}
         }
     }
     let flame=sample_fire(near,direction,distance);
@@ -62,15 +68,17 @@ fn atmosphere(pixel:vec4<f32>,z:f32)->vec4<f32> {
     radiance=flame.color*visibility+radiance*(1.-flame.alpha*visibility);
     transmittance*=1.-flame.alpha*visibility;
     let atmospheric=exp(-g.horizon.w*min(distance,flame.depth));
-    if z>=0.99999 {return vec4(radiance+transmittance*sky_color(direction),1.);}
+    let nearest=min(first_smoke,flame.depth);
+    let visible_depth=select(0.,length(near+direction*nearest-g.camera.xyz),nearest<distance);
+    if z>=0.99999 {return AtmosphereSample(vec4(radiance+transmittance*sky_color(direction),1.),visible_depth,flame.alpha*visibility);}
     radiance=radiance*atmospheric+sky_color(direction)*(1.-atmospheric);
-    return vec4(radiance,1.-transmittance*atmospheric);
+    return AtmosphereSample(vec4(radiance,1.-transmittance*atmospheric),visible_depth,flame.alpha*visibility);
 }
 
 
 // Sculpted, opaque pyro lobes are a 3D presentation of the advected smoke field.
 // All lobes ray-intersect in world space, so contours survive camera rotation.
-fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,z:f32)->vec4<f32> {
+fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,z:f32)->AtmosphereSample {
     var nearest=distance;var second=distance;var second_normal=vec3(0.,1.,0.);var hit_normal=vec3(0.,1.,0.);var hit_position=vec3(0.);var smoke_hit=false;var secondary_hit=false;var hit_radius=0.3;
     let time=g.wind_time.w;let source=g.fire_position.xyz;
     // Keep the original parent-puff motion and silhouette. Small attached
@@ -164,8 +172,9 @@ fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,
     nearest=min(nearest,flame.depth);
     let fog=exp(-g.horizon.w*min(nearest,distance));
     color=color*fog+sky_color(direction)*(1.-fog)*(1.-transmittance);
-    if z>=0.99999 {return vec4(color+transmittance*sky_color(direction),1.);}
-    return vec4(color,1.-transmittance);
+    let visible_depth=select(0.,length(origin+direction*nearest-g.camera.xyz),nearest<distance);
+    if z>=0.99999 {return AtmosphereSample(vec4(color+transmittance*sky_color(direction),1.),visible_depth,flame.alpha);}
+    return AtmosphereSample(vec4(color,1.-transmittance),visible_depth,flame.alpha);
 }
 
 

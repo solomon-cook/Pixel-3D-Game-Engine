@@ -171,3 +171,65 @@ seed/tick/cameras, plus a 120-second route after warm-up. This is a procedural
 stylisation, not a fluid combustion solver or a claim that every hot visible
 piece receives its own uncapped light. The finest artistic tuning and Windows
 visual acceptance remain open.
+
+## Solid pixel fire and hot-air distortion
+
+The clearing profiles now set `solid: true`, `color_bands: 4` and enable heat
+shimmer. The alternative continuous emissive treatment remains available by
+setting `solid: false`. Old profiles without the new fields keep that alternative
+and have distortion disabled, so game-authored looks do not silently change.
+
+Solid treatment thresholds flame coverage to opaque occupied pixels, then maps
+heat to a small HDR colour ramp. Overlapping curve sections no longer produce
+translucent, smoothly blended flame edges. The post treatment suppresses bloom
+and ordered dithering **inside visible solid flames**, while retaining optional
+surrounding glow and all existing lighting on the world/smoke. Fog and smoke can
+still obscure the fire. `color_bands` accepts 2..8; this controls the flame ramp,
+separately from the scene-wide shade count/palette strength. Flame geometry,
+detached trajectories, particle lights and heat simulation stay unchanged.
+
+`heat_distortion` is 0..4 scene pixels, independent of window size or presentation
+scale; zero bypasses the warp. `heat_distortion_height` is 0.1..12 world units
+above the source's lower hot-air region. Wind leans that bounded region. Eight
+samples of the existing temperature field modulate a procedural source envelope
+and a slowly advecting distortion pattern. The envelope bridges the coarse heat
+grid; this is not a physical refractive-index/pressure simulation.
+
+The atmosphere pass now records nearest visible effect depth and flame coverage
+in one additional low-resolution RGBA16F target (1.76 MiB at 640×360). Heat is
+clipped against scene/effect depth. Source and destination checks protect visible
+fire and foreground geometry/smoke. Opaque inked smoke contributes its nearest
+surface; soft volume uses the first 15% opacity crossing, a conservative depth
+approximation rather than layered refraction. Optical materials still resolve a
+single layer; heat behind glass does not receive a separate refracted ray path.
+
+Displacement samples HDR **with integer texture loads** before tone mapping and
+pixel presentation. It never bilinearly smears the selected pixel grid and uses
+no temporal accumulation. Small displacements can step between integer offsets;
+that pixel motion is deliberate. Source intensity is clamped when scaling the
+warp so the requested pixel displacement remains bounded. Screen edges clamp
+the lookup. Large distortion across depth discontinuities can leave unwarped
+pixels when the foreground rejection rule wins.
+
+The inspector and agent operations expose the same controls:
+
+```json
+{"id":11,"method":"set_parameter","params":{"path":"effects.effect-campfire.fire.solid","value":true}}
+{"id":12,"method":"set_parameter","params":{"path":"effects.effect-campfire.fire.color_bands","value":4}}
+{"id":13,"method":"set_parameter","params":{"path":"effects.effect-campfire.fire.heat_distortion","value":1.8}}
+{"id":14,"method":"set_parameter","params":{"path":"effects.effect-campfire.fire.heat_distortion_height","value":2.8}}
+```
+
+```sh
+python3 scripts/fire_study.py --study pixels --benchmark
+python3 scripts/verify_pixel_fire.py --binary target/release/engine-lab
+python3 scripts/capture_motion.py --camera fire-study --output artifacts/solid-fire/motion --gif
+```
+
+The pixel study compares solid+heat, solid without heat, and the continuous
+alternative without heat on the same route. The verification scene checks that
+an isolated four-band flame has at most four non-background colours, that the
+continuous alternative has gradients, that presentation leaves particles/lights
+unchanged, and that heat moves background stripes while preserving a foreground
+striped board. It also exercises fixed-tick replay, invalid settings and invalid
+post-shader rollback. These checks do not establish artistic approval.

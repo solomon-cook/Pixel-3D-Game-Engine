@@ -6524,7 +6524,11 @@
         "branches": 2,
         "particle_lights": 12,
         "particle_light_strength": 2.5,
-        "particle_light_range": 2.0
+        "particle_light_range": 2.0,
+        "solid": true,
+        "color_bands": 4,
+        "heat_distortion": 1.8,
+        "heat_distortion_height": 2.8
       },
       "thermal": {
         "heat_output": 2.5,
@@ -6570,7 +6574,11 @@
         "branches": 1,
         "particle_lights": 12,
         "particle_light_strength": 2.5,
-        "particle_light_range": 2.0
+        "particle_light_range": 2.0,
+        "solid": true,
+        "color_bands": 4,
+        "heat_distortion": 1.2,
+        "heat_distortion_height": 1.8
       },
       "thermal": {
         "heat_output": 2.5,
@@ -6616,7 +6624,11 @@
         "branches": 2,
         "particle_lights": 12,
         "particle_light_strength": 2.5,
-        "particle_light_range": 2.0
+        "particle_light_range": 2.0,
+        "solid": true,
+        "color_bands": 4,
+        "heat_distortion": 2.4,
+        "heat_distortion_height": 4.5
       },
       "thermal": {
         "heat_output": 5.0,

@@ -23,6 +23,12 @@ pub struct FireSettings {
     pub fragment_size: f32,
     /// 0 retains long tongues, 1 uses broad rounded lobes on shorter curves.
     pub lobe_roundness: f32,
+    /// Opaque, discrete-colour coverage on the selected scene pixel grid.
+    pub solid: bool,
+    pub color_bands: u32,
+    /// Maximum shimmer displacement in scene pixels, independent of window size.
+    pub heat_distortion: f32,
+    pub heat_distortion_height: f32,
     pub branches: u32,
     pub particle_lights: u32,
     pub particle_light_strength: f32,
@@ -47,6 +53,10 @@ impl Default for FireSettings {
             tip_breakup: 0.8,
             fragment_size: 0.06,
             lobe_roundness: 0.,
+            solid: false,
+            color_bands: 4,
+            heat_distortion: 0.,
+            heat_distortion_height: 2.8,
             branches: 0,
             particle_lights: 12,
             particle_light_strength: 2.5,
@@ -125,6 +135,13 @@ impl EffectProfile {
     pub fn validate(&self) -> Result<()> {
         let f = &self.fire;
         for (name, value, low, high) in [
+            ("fire.heat_distortion", f.heat_distortion, 0., 4.),
+            (
+                "fire.heat_distortion_height",
+                f.heat_distortion_height,
+                0.1,
+                12.,
+            ),
             ("fire.lobe_roundness", f.lobe_roundness, 0., 1.),
             (
                 "fire.particle_light_strength",
@@ -152,6 +169,9 @@ impl EffectProfile {
             if !value.is_finite() || !(low..=high).contains(&value) {
                 bail!("effect '{}'.{name}: expected {low}..{high}", self.id);
             }
+        }
+        if !(2..=8).contains(&f.color_bands) {
+            bail!("effect '{}'.fire.color_bands: expected 2..8", self.id);
         }
         if f.branches > 3 || f.particle_lights > MAX_PARTICLE_LIGHTS as u32 {
             bail!(
@@ -555,6 +575,24 @@ mod tests {
             enabled: 1.,
             profile: EffectProfile::default(),
         }
+    }
+    #[test]
+    fn pixel_treatment_does_not_change_particle_geometry_or_lights() {
+        let mut k = key();
+        let before = FireFrame::sample(&k);
+        k.profile.fire.solid = true;
+        k.profile.fire.color_bands = 3;
+        k.profile.fire.heat_distortion = 2.;
+        k.profile.fire.heat_distortion_height = 4.;
+        assert_eq!(
+            bytemuck::bytes_of(&before),
+            bytemuck::bytes_of(&FireFrame::sample(&k))
+        );
+        k.profile.fire.color_bands = 9;
+        assert!(k.profile.validate().is_err());
+        k.profile.fire.color_bands = 4;
+        k.profile.fire.heat_distortion = f32::NAN;
+        assert!(k.profile.validate().is_err());
     }
     #[test]
     fn rounded_branches_and_particle_emission_remain_bounded() {

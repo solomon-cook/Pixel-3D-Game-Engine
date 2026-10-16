@@ -162,6 +162,7 @@ def main():
     if args.gpu:
         import sys
         run(sys.executable, ROOT / "scripts/verify_materials.py", "--binary", binary)
+        run(sys.executable, ROOT / "scripts/verify_pixel_fire.py", "--binary", binary)
     if args.native:
         import sys
         run(sys.executable, ROOT / "scripts/verify_native.py", "--binary", binary)

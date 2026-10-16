@@ -148,3 +148,17 @@ smoke shades the best two in addition to two authored sources. Light-free and
 long-curve alternatives remain data settings, compared by fire_study.py. Standard
 local-light attenuation/emission and curve-swept volumes are prior methods; the
 combination is an engine experiment, with no claim of unprecedented technique.
+
+## Solid fire coverage and pixel-grid hot air (16 October)
+
+Hypothesis: opaque coverage and a discrete HDR heat ramp retain stronger pixel
+shapes than translucent, continuously shaded fire, while a separate hot-air warp
+communicates heat without softening the flame. The implementation retains the
+same world curves, branches, detached particles and lights. Atmosphere depth
+protects foreground smoke/geometry and the fire itself; the post warp uses eight
+bounded temperature samples and integer HDR lookups without temporal history.
+[GPU Gems 2, Generic Refraction Simulation](https://developer.nvidia.com/gpugems/gpugems2/part-ii-shading-lighting-and-shadows/chapter-19-generic-refraction-simulation)
+is prior work for scene-image coordinate perturbation and masking. The wind/heat
+envelope, depth rejection and fixed pixel offsets here are engine choices, not
+a claim of a new refraction technique. Matched soft/solid/no-heat captures, a
+moving sequence and the route comparison use fire_study.py --study pixels.

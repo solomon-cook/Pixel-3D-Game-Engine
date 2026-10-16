@@ -8,7 +8,7 @@ fn sample_fire(origin:vec3<f32>,direction:vec3<f32>,limit:f32)->FireSample {
     let a=(fire.bounds_min.xyz-origin)*inv;let b=(fire.bounds_max.xyz-origin)*inv;
     let lo=min(a,b);let hi=max(a,b);
     if min(min(min(hi.x,hi.y),hi.z),limit)<=max(max(max(lo.x,lo.y),lo.z),0.) {return result;}
-    var optical=0.;var energy=vec3(0.);
+    var optical=0.;var energy=vec3(0.);var peak_heat=0.;
     for(var i=0u;i<256u;i++) {
         if i>=fire.counts.x {break;}
         let p=fire.primitives[i];let center=p.center_radius.xyz;let radius=p.center_radius.w;
@@ -43,14 +43,24 @@ fn sample_fire(origin:vec3<f32>,direction:vec3<f32>,limit:f32)->FireSample {
             let tip=select(g.fire_hot.w*max(p.heat_kind.w-0.4,0.)*detail*0.7,0.,p.heat_kind.z>0.5);
             coverage=smoothstep(max(rim,tip),max(rim,tip)+0.035,core);
         }
+        if g.fire_pixels.x>0.5 {coverage=step(0.5,coverage);}
         if coverage<0.001 {continue;}
         result.depth=min(result.depth,enter);
         let depth=(exit-enter)/max(radius*2.,0.002)*p.heat_kind.y*g.simulation.w*coverage;
-        optical+=depth;energy+=color*depth;
+        optical+=depth;energy+=color*depth;peak_heat=max(peak_heat,heat);
     }
     // An order-independent homogeneous-emission approximation within the flame.
     // Opaque world/smoke depth clips intersections before this accumulation.
     result.alpha=1.-exp(-optical);
     result.color=energy/max(optical,0.0001)*result.alpha*g.fire_outer.w;
+    if g.fire_pixels.x>0.5 {
+        result.alpha=step(0.08,optical);
+        let bands=g.fire_pixels.y;
+        let heat=floor(clamp(peak_heat,0.,0.9999)*bands)/(bands-1.);
+        var paint=mix(g.fire_outer.rgb,g.fire_warm.rgb,clamp(heat*1.5,0.,1.));
+        paint=mix(paint,g.fire_hot.rgb,clamp((heat-0.6667)*3.,0.,1.));
+        result.color=paint*result.alpha*g.fire_outer.w;
+        if result.alpha<0.5 {result.depth=limit;}
+    }
     return result;
 }

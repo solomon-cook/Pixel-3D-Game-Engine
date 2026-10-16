@@ -94,6 +94,7 @@ struct Globals {
     fire_hot: [f32; 4],
     presentation: [f32; 4],
     fire_shape: [f32; 4],
+    fire_pixels: [f32; 4],
     light_info: [u32; 4],
     point_lights: [PointLightGpu; 8],
 }
@@ -146,7 +147,8 @@ pub struct Renderer {
     volume_layout: wgpu::BindGroupLayout,
     smoke_groups: [wgpu::BindGroup; 2],
     smoke_layout: wgpu::BindGroupLayout,
-    post_group: wgpu::BindGroup,
+    post_groups: [wgpu::BindGroup; 2],
+    effect_depth: wgpu::TextureView,
     post_layout: wgpu::BindGroupLayout,
     shadow_groups: Vec<wgpu::BindGroup>,
     shadow_buffers: Vec<wgpu::Buffer>,
@@ -724,8 +726,17 @@ impl Renderer {
                 ],
             )
         });
+        let effect_depth = texture(
+            &device,
+            "visible atmosphere depth and flame mask",
+            [w, h, 1],
+            HDR,
+            use_color,
+            wgpu::TextureDimension::D2,
+        )
+        .create_view(&Default::default());
         let post_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("pixel treatment"),
+            label: Some("pixel treatment / heat"),
             entries: &[
                 binding(
                     0,
@@ -743,16 +754,42 @@ impl Renderer {
                         wgpu::TextureSampleType::Float { filterable: true },
                     ),
                 ),
+                binding(
+                    2,
+                    wgpu::ShaderStages::FRAGMENT,
+                    sampled(
+                        wgpu::TextureViewDimension::D2,
+                        wgpu::TextureSampleType::Float { filterable: true },
+                    ),
+                ),
+                binding(
+                    3,
+                    wgpu::ShaderStages::FRAGMENT,
+                    sampled(
+                        wgpu::TextureViewDimension::D3,
+                        wgpu::TextureSampleType::Float { filterable: true },
+                    ),
+                ),
+                binding(
+                    4,
+                    wgpu::ShaderStages::FRAGMENT,
+                    wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
+                ),
             ],
         });
-        let post_group = group(
-            &device,
-            &post_layout,
-            &[
-                wgpu::BindingResource::TextureView(&hdr),
-                wgpu::BindingResource::TextureView(&normals),
-            ],
-        );
+        let post_groups = std::array::from_fn(|i| {
+            group(
+                &device,
+                &post_layout,
+                &[
+                    wgpu::BindingResource::TextureView(&hdr),
+                    wgpu::BindingResource::TextureView(&normals),
+                    wgpu::BindingResource::TextureView(&effect_depth),
+                    wgpu::BindingResource::TextureView(&smoke_views[i]),
+                    wgpu::BindingResource::Sampler(&linear),
+                ],
+            )
+        });
         let shadow_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("shadow camera"),
             entries: &[binding(
@@ -851,7 +888,8 @@ impl Renderer {
             volume_layout,
             smoke_groups,
             smoke_layout,
-            post_group,
+            post_groups,
+            effect_depth,
             post_layout,
             shadow_groups,
             shadow_buffers,
@@ -1009,10 +1047,10 @@ impl Renderer {
             &volume_layout,
             "fullscreen",
             Some("volume_fs"),
-            &[color_target(
-                HDR,
-                Some(wgpu::BlendState::PREMULTIPLIED_ALPHA_BLENDING),
-            )],
+            &[
+                color_target(HDR, Some(wgpu::BlendState::PREMULTIPLIED_ALPHA_BLENDING)),
+                color_target(HDR, None),
+            ],
             false,
             false,
         );
@@ -1279,6 +1317,12 @@ impl Renderer {
                 profile.fire.motion_speed,
                 profile.fire.curl,
             ],
+            fire_pixels: [
+                u32::from(profile.fire.solid) as f32,
+                profile.fire.color_bands as f32,
+                profile.fire.heat_distortion,
+                profile.fire.heat_distortion_height,
+            ],
             light_info: [light_count, 0, 0, 0],
             point_lights,
             presentation: [
@@ -1445,14 +1489,17 @@ impl Renderer {
         {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("fire smoke embers"),
-                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &self.hdr,
-                    resolve_target: None,
-                    ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Load,
-                        store: wgpu::StoreOp::Store,
-                    },
-                })],
+                color_attachments: &[
+                    Some(wgpu::RenderPassColorAttachment {
+                        view: &self.hdr,
+                        resolve_target: None,
+                        ops: wgpu::Operations {
+                            load: wgpu::LoadOp::Load,
+                            store: wgpu::StoreOp::Store,
+                        },
+                    }),
+                    clear_attachment(&self.effect_depth),
+                ],
                 depth_stencil_attachment: None,
                 timestamp_writes: None,
                 occlusion_query_set: None,
@@ -1533,7 +1580,7 @@ impl Renderer {
             });
             pass.set_pipeline(&self.pipelines.post);
             pass.set_bind_group(0, &self.globals, &[]);
-            pass.set_bind_group(1, &self.post_group, &[]);
+            pass.set_bind_group(1, &self.post_groups[self.smoke_index], &[]);
             pass.draw(0..3, 0..1);
         }
         if timed {

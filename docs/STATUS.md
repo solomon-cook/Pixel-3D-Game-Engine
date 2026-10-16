@@ -21,7 +21,7 @@ Atelier comparison scene are implemented. See MATERIALS.md for explicit limits.
 
 ## Verification on this host
 
-- Rust formatting, Clippy with warnings denied, 19 unit tests, asset decoding,
+- Rust formatting, Clippy with warnings denied, 20 unit tests, asset decoding,
   schema discovery and scene validation passed.
 - Metal GPU integration passed: deterministic same-device replay, malformed
   commands/invalid edits, capture completion, orthographic rendering, visible
@@ -90,7 +90,7 @@ Water, clouds, browser support, gameplay frameworks and a full editor are later 
 ## Material comparison validation
 
 - The original clearing at seed 42 / hero / tick 300 was pixel-identical before
-  and after adding the material layer. All 19 unit tests, lint/formatting and the
+  and after adding the material layer. All 20 unit tests, lint/formatting and the
   Metal integration suites passed, including live metallic/roughness, transmission/
   IOR/absorption, subsurface/thickness/colour edits, exact restoration/replay,
   orthographic capture, invalid values and invalid optical shader rollback.
@@ -136,7 +136,7 @@ hardware or native presentation acceptance results. The clustered-lit versus
 clustered-unlit pair isolates enabling supplementary particle lighting within
 otherwise identical current flame/smoke settings.
 
-The final format/lint checks, 19 unit tests and both Metal GPU integration suites
+The final format/lint checks, 20 unit tests and both Metal GPU integration suites
 passed. Tests cover branch/particle capacity, stable moving light identities and
 three-axis motion, light-free geometry equality, visible illumination changes,
 invalid light/branch budgets, replay and shader rollback.
@@ -149,3 +149,39 @@ window size, changed a material, captured a frame and shut down. The inspector
 and material scene were visually inspected in the native window. The earlier
 minimization gate is still unresolved; no full native-suite pass or Windows
 DX12 visual validation is claimed.
+
+## Solid pixel fire and heat distortion
+
+The clearing profiles now use opaque occupied flame pixels with four discrete
+HDR heat bands. Bloom/dither are suppressed inside solid flame pixels, preserving
+external glow. The existing slow curves, branches, detached pieces and derived
+lights remain independent. A bounded hot-air post warp samples the existing
+temperature field and uses integer pixel offsets; new effect-depth/coverage data
+protects the fire and foreground geometry/smoke. The continuous treatment and
+heat-off mode remain live controls. See EFFECTS.md for authoring and limitations.
+
+Formatting/linting, 20 unit tests and the Metal integration suites passed. New
+GPU checks cover discrete flame colours, unchanged particle/light reconstruction,
+visible shimmer, foreground stripe protection, fixed-tick restoration/replay,
+invalid values and post-shader rollback. The source M1 Max captures and selected
+motion frames were inspected; human art acceptance remains open. The older
+material/fire-cluster tables above describe their recorded revisions, not this
+new rendering treatment. Current timings are in measurements-pixel-fire.json.
+
+| Pixel-fire treatment | Frame work median / p95 ms | GPU render median / p95 ms |
+|---|---:|---:|
+| solid-heat | 5.450 / 9.538 | 3.093 / 3.842 |
+| solid-no-heat | 5.419 / 9.419 | 3.059 / 3.787 |
+| soft-no-heat | 5.353 / 9.255 | 3.054 / 3.788 |
+
+Each variant has 7,200 moving-route samples after 600 warm-up frames, on this
+M1 Max / 64 GB / Metal with a fixed 640×360 scene grid. GPU render timings exclude
+smoke simulation compute; total frame work includes simulation submission and
+GPU completion. These are offscreen/unpaced results, not native 1080p FPS or
+target-hardware qualification. All three variants use the new effect-depth
+target, so this does not isolate its cost against the preceding binary.
+
+The current Mac and Windows x64 GNU development bundles build successfully.
+The Mac window captured the new pixel/heat treatment, and the self-contained Mac
+bundle produced the identical fixed-tick image from outside the checkout. Windows
+DX12 visual acceptance and the existing native minimization gate remain open.

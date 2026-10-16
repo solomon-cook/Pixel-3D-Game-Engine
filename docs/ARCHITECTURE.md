@@ -99,3 +99,13 @@ upward branch curves. Secondary geometry has an explicit budget that reserves
 particle capacity. Geometry consumes at most 12 moving lights; smoke selects two
 of these in addition to its two authored sources, using shared density absorption.
 No GPU readback or additional per-particle shadow maps are required.
+
+Solid flame coverage and colour bands are presentation controls on the existing
+analytic curve intersections. An auxiliary atmosphere target records visible
+effect depth and flame coverage. The post pass uses this plus world depth and
+the current ping-pong temperature volume for bounded, integer-pixel heat
+refraction. Its eight-sample hot-air column is world-space and wind-leaned;
+depth checks protect foreground silhouettes and the visible fire. This shares
+heat history without changing flame/particle reconstruction or allocating a
+second thermal solver. The additional target participates in normal rendering,
+capture and transactional shader reload.

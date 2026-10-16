@@ -529,6 +529,8 @@ fn draw_inspector(ctx: &egui::Context, session: &Session, commands: &mut Vec<(&s
                 ("motion_speed","Motion pace",profile.fire.motion_speed,0.05,3.),
                 ("curl","Curl",profile.fire.curl,0.,2.),
                 ("lobe_roundness","Rounded lobes",profile.fire.lobe_roundness,0.,1.),
+                ("heat_distortion","Heat shimmer (pixels)",profile.fire.heat_distortion,0.,4.),
+                ("heat_distortion_height","Shimmer height",profile.fire.heat_distortion_height,0.1,12.),
                 ("particle_light_strength","Particle light",profile.fire.particle_light_strength,0.,16.),
                 ("particle_light_range","Particle light range",profile.fire.particle_light_range,0.1,8.),
                 ("edge_breakup","Edge breakup",profile.fire.edge_breakup,0.,1.),
@@ -547,6 +549,10 @@ fn draw_inspector(ctx: &egui::Context, session: &Session, commands: &mut Vec<(&s
                 if ui.add(egui::Slider::new(&mut value,0..=high).text(label)).changed() {commands.push(("set_parameter",json!({"path":format!("effects.{}.fire.{property}",profile.id),"value":value})));}
             }
             ui.small(format!("{} moving lights · {} omitted",session.renderer.metrics.particle_lights,session.renderer.metrics.particle_lights_dropped));
+            let mut solid=profile.fire.solid;
+            if ui.checkbox(&mut solid,"Solid pixel flames").changed() {commands.push(("set_parameter",json!({"path":format!("effects.{}.fire.solid",profile.id),"value":solid})));}
+            let mut bands=profile.fire.color_bands;
+            if ui.add(egui::Slider::new(&mut bands,2..=8).text("Flame colour bands")).changed() {commands.push(("set_parameter",json!({"path":format!("effects.{}.fire.color_bands",profile.id),"value":bands})));}
             let mut segments=profile.fire.segments;
             if ui.add(egui::Slider::new(&mut segments,3..=10).text("Curve segments")).changed() {commands.push(("set_parameter",json!({"path":format!("effects.{}.fire.segments",profile.id),"value":segments})));}
             for (property,label,initial) in [("heat_output","Source heat",profile.thermal.heat_output),("cooling_rate","Cooling",profile.thermal.cooling_rate),("lift","Thermal lift",profile.thermal.lift)] {

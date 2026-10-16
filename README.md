@@ -80,7 +80,10 @@ from the selected pixel grid. `render.palette_strength` and `bloom_strength`
 control presentation after 3D HDR shading. Rounded flame lobes can grow smaller
 upward branches; detached flickers/embers float in 3D and supply a capped set of
 moving lights to geometry and smoke. Use `inspect_effects` for their runtime
-positions/powers and stable identities. See [EFFECTS.md](docs/EFFECTS.md).
+positions/powers and stable identities. The clearing now uses solid pixel flame
+coverage with four heat-colour bands and a bounded, depth-aware heat shimmer
+above it. Both controls remain independent of geometry and pixel resolution.
+See [EFFECTS.md](docs/EFFECTS.md).
 
 ```sh
 python3 scripts/capture_motion.py --profile effect-campfire --gif
