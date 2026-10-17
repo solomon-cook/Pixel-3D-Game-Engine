@@ -209,11 +209,14 @@
       "notes": "Vertex input is seven shadow draws plus opaque draw. These are logical attachment and vertex references, not physical DRAM traffic. Tile memory, caches, compression and overdraw change external traffic. Shader texture reads are variable and excluded. Effect target uses Rg16Float here, reducing modeled full-frame effect-target clear/write traffic by 921600 bytes versus the original Rgba16Float estimate; this remains logical traffic, not measured DRAM bandwidth."
     },
     "optical_frame_additions": {
-      "two_snapshot_copy_payload_bytes": 3686400,
-      "snapshot_copy_logical_read_plus_write_bytes": 7372800,
-      "optical_hdr_and_normal_attachment_load_store_bytes": 7372800,
       "additional_vertex_input_bytes_for_optical_draw": 10539720,
-      "notes": "Two optical snapshots are lazily allocated on first optical material use. Copies and optical draw occur only on frames with active optical materials; the copy traffic is unchanged by lazy allocation."
+      "notes": "One HDR snapshot is allocated on first optical use and copied each active optical frame. The original normal/depth target is sampled read-only and is no longer copied or attached for optical output. This removes 7,372,800 modeled logical copy/attachment bytes per optical frame versus the prior two-snapshot/two-attachment path; estimates are not physical DRAM traffic.",
+      "hdr_snapshot_copy_payload_bytes": 1843200,
+      "hdr_snapshot_copy_logical_read_plus_write_bytes": 3686400,
+      "optical_hdr_attachment_load_store_bytes": 3686400,
+      "normal_snapshot_copy_payload_bytes_removed": 1843200,
+      "normal_snapshot_copy_read_plus_write_bytes_removed": 3686400,
+      "optical_normal_attachment_load_store_bytes_removed": 3686400
     },
     "smoke_compute_per_fixed_step": {
       "voxel_count": 147456,
@@ -285,14 +288,14 @@
       {
         "candidate": "Allocate optical snapshots only for optical scenes",
         "inventory_saving_bytes_at_640x360": 3686400,
-        "evidence": "Two unconditional RGBA16F snapshots are only copied/consumed for optical draws.",
-        "status": "implemented on M1 Max/Metal: lazy allocation preserves live material activation; 3,686,400 known bytes saved before first optical use; matched diffuse and optical captures were pixel-identical. Cross-backend gate remains open."
+        "evidence": "The original renderer allocated two full-resolution RGBA16F snapshots unconditionally, although diffuse scenes skip optical copies and resolve.",
+        "status": "implemented: diffuse scenes allocate no snapshot; optical scenes allocate one HDR snapshot, saving 3,686,400 bytes in diffuse scenes and a further 1,843,200 bytes on active optical scenes versus the prior pair; live activation remains supported"
       },
       {
         "candidate": "Avoid snapshot copies through pass/layout redesign",
-        "estimated_copy_read_plus_write_bytes_per_optical_frame": 7372800,
-        "evidence": "Two full-resolution RGBA16F texture copies precede optical resolve.",
-        "status": "research candidate; same-texture hazards/order and Metal/DX12 pass cost must be measured"
+        "estimated_copy_read_plus_write_bytes_per_optical_frame": 3686400,
+        "evidence": "The normal/depth snapshot copy and second optical attachment were removed; one full-resolution HDR snapshot copy remains to avoid sampling from the HDR target being written.",
+        "status": "partially implemented on M1 Max/Metal: one copy and the normal output attachment are removed, saving 7,372,800 modeled logical bytes per optical frame; HDR feedback copy redesign and cross-backend measurements remain open"
       }
     ],
     "not_recommended_from_current_evidence": "Active-region smoke simulation: current measured compute is about 0.0205 ms median while post and atmosphere/fire are multi-millisecond stages."
@@ -301,8 +304,8 @@
     "No hardware DRAM/bandwidth counters were collected; attachment, copy and filtered-sample byte totals are logical operation estimates.",
     "The only live format capability probe is Apple M1 Max/Metal. Windows DX12 and RTX-class feature reports and measured pass costs remain open.",
     "RG16 capability in this probe does not make it a portable default; query each adapter and retain an RGBA16F fallback unless DX12 and target GPU results pass.",
-    "No narrower RG16 format or pass-layout change has been promoted; lazy optical snapshot allocation is implemented and documented separately.",
-    "Repeat the inventory after O03/O05/O06 introduce or specialize targets, as required by the plan."
+    "Repeat the inventory after O03/O05/O06 introduce or specialize targets, as required by the plan.",
+    "One HDR snapshot and its copy remain necessary in the current pass layout; eliminating it requires a larger sampling/output redesign and matched backend timing."
   ],
   "lazy_optical_snapshots": {
     "status": "implemented; snapshots allocate on first optical material use and remain allocated for live edit safety",
@@ -467,12 +470,76 @@
     },
     "current_live_resource_inventory_640x360": {
       "clearing_before_first_optical_use_bytes": 22808600,
-      "clearing_after_optical_snapshot_activation_bytes": 26495000,
+      "clearing_after_optical_snapshot_activation_bytes": 24651800,
       "materials_with_optical_snapshots_bytes": 18725616,
       "effect_depth_format": "Rg16Float",
       "effect_depth_bytes": 921600,
       "smoke_volume_format": "Rg16Float",
-      "smoke_volumes_bytes": 1179648
+      "smoke_volumes_bytes": 1179648,
+      "materials_with_optical_snapshot_bytes": 16882416,
+      "optical_snapshot_bytes_after_activation": 1843200
+    },
+    "optical_normal_snapshot_removal": {
+      "adapter": "Apple M1 Max / Metal / IntegratedGpu",
+      "resolution": [
+        640,
+        360
+      ],
+      "removed_snapshot": "opaque normal/depth RGBA16F snapshot",
+      "removed_optical_attachment": "normal/depth color output; original normal/depth target stays read-only and is sampled directly",
+      "remaining_snapshot": "HDR color RGBA16F, required because optical pass writes HDR while sampling the prior scene color",
+      "optical_snapshot_allocation_before_bytes": 3686400,
+      "optical_snapshot_allocation_after_bytes": 1843200,
+      "known_allocation_saved_on_optical_scenes_bytes": 1843200,
+      "logical_copy_read_plus_write_saved_per_optical_frame_bytes": 3686400,
+      "logical_attachment_load_store_saved_per_optical_frame_bytes": 3686400,
+      "total_modeled_logical_optical_traffic_saved_per_frame_bytes": 7372800,
+      "captures": [
+        {
+          "scene": "assets/scenes/clearing.json",
+          "camera": "smoke-close",
+          "seed": 42,
+          "tick": 300,
+          "scale": 1,
+          "candidate": "artifacts/o08/clearing-one-snapshot.png",
+          "baseline": "artifacts/o08/clearing-smoke-rg16-scale1.png",
+          "candidate_sha256": "c080df09137173b984f48d39137da5a8719b2110965d0fd270a801e76f0adbfe",
+          "baseline_sha256": "c080df09137173b984f48d39137da5a8719b2110965d0fd270a801e76f0adbfe",
+          "changed_pixels": 0,
+          "mean_absolute_channel_error": 0,
+          "max_channel_error": 0
+        },
+        {
+          "scene": "assets/scenes/materials.json",
+          "camera": "metal-close",
+          "seed": 42,
+          "tick": 300,
+          "scale": 1,
+          "candidate": "artifacts/o08/metal-one-snapshot.png",
+          "baseline": "artifacts/o08/metal-smoke-rg16-scale1.png",
+          "candidate_sha256": "44676834882e579439c0ec61fd20c85501f9a5ad32369f1d0e48b1b31c3c6208",
+          "baseline_sha256": "44676834882e579439c0ec61fd20c85501f9a5ad32369f1d0e48b1b31c3c6208",
+          "changed_pixels": 0,
+          "mean_absolute_channel_error": 0,
+          "max_channel_error": 0
+        },
+        {
+          "scene": "assets/scenes/materials.json",
+          "camera": "glass-close",
+          "seed": 42,
+          "tick": 300,
+          "scale": 1,
+          "candidate": "artifacts/o08/glass-one-snapshot.png",
+          "baseline": "artifacts/o06/captures/glass-direct.png",
+          "candidate_sha256": "033cfad4f7aaf53fbed05bd94b43e847aef302be850e246e1e68b00c44d735b2",
+          "baseline_sha256": "033cfad4f7aaf53fbed05bd94b43e847aef302be850e246e1e68b00c44d735b2",
+          "changed_pixels": 0,
+          "mean_absolute_channel_error": 0,
+          "max_channel_error": 0
+        }
+      ],
+      "performance_claim": "none; logical traffic and allocation reductions are estimates, frame-time was not measured",
+      "limits": "One M1 Max/Metal adapter only; Windows DX12 remains unverified."
     }
   }
 }

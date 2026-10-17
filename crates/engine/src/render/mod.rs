@@ -207,13 +207,11 @@ pub struct Renderer {
     optical_smoke_layout: wgpu::BindGroupLayout,
     optical_sampler: wgpu::Sampler,
     scene_color: Option<wgpu::Texture>,
-    scene_normals: Option<wgpu::Texture>,
     _absorption_texture: wgpu::Texture,
     absorption_cache_resolution: u32,
     absorption_layout: wgpu::BindGroupLayout,
     absorption_groups: [wgpu::BindGroup; 2],
     hdr_texture: wgpu::Texture,
-    normals_texture: wgpu::Texture,
     effect_depth_format: wgpu::TextureFormat,
     smoke_volume_format: wgpu::TextureFormat,
     volume_groups: [wgpu::BindGroup; 2],
@@ -1115,7 +1113,6 @@ impl Renderer {
             ..Default::default()
         });
         let scene_color = None;
-        let scene_normals = None;
         let optical_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("single-layer optical surfaces"),
             entries: &[
@@ -1672,13 +1669,11 @@ impl Renderer {
             optical_smoke_layout,
             optical_sampler: linear,
             scene_color,
-            scene_normals,
             _absorption_texture: absorption_texture,
             absorption_cache_resolution,
             absorption_layout,
             absorption_groups,
             hdr_texture,
-            normals_texture,
             volume_groups,
             volume_layout,
             smoke_groups,
@@ -1733,15 +1728,15 @@ impl Renderer {
         if scene.materials.iter().any(|material| {
             material.metallic > 0. || material.reflectivity > 0. || material.transmission > 0.
         }) {
-            renderer.ensure_optical_snapshots();
+            renderer.ensure_optical_snapshot();
         }
         renderer.shadow_invalidation_reason = Some("resource_initialization");
         renderer.update_globals(scene, &scene.cameras[0], 0, 42);
         Ok(renderer)
     }
 
-    fn ensure_optical_snapshots(&mut self) {
-        if self.scene_color.is_some() && self.scene_normals.is_some() {
+    fn ensure_optical_snapshot(&mut self) {
+        if self.scene_color.is_some() {
             return;
         }
         let [width, height] = self.resolution;
@@ -1754,28 +1749,18 @@ impl Renderer {
             usage,
             wgpu::TextureDimension::D2,
         );
-        let scene_normals = texture(
-            &self.device,
-            "opaque normal/depth snapshot",
-            [width, height, 1],
-            HDR,
-            usage,
-            wgpu::TextureDimension::D2,
-        );
         let color_view = scene_color.create_view(&Default::default());
-        let normals_view = scene_normals.create_view(&Default::default());
         self.optical_group = group(
             &self.device,
             &self.optical_layout,
             &[
                 wgpu::BindingResource::TextureView(&color_view),
-                wgpu::BindingResource::TextureView(&normals_view),
+                wgpu::BindingResource::TextureView(&self.normals),
                 wgpu::BindingResource::Sampler(&self.optical_sampler),
             ],
         );
         self.scene_color = Some(scene_color);
-        self.scene_normals = Some(scene_normals);
-        let bytes = u64::from(width) * u64::from(height) * 16;
+        let bytes = u64::from(width) * u64::from(height) * 8;
         self.resource_inventory["optical_snapshot_bytes"] = bytes.into();
         for key in ["render_targets_bytes", "known_gpu_allocation_bytes"] {
             let current = self.resource_inventory[key].as_u64().unwrap_or(0);
@@ -1974,7 +1959,7 @@ impl Renderer {
             &optical_layout,
             "optical_vs",
             Some("optical_fs"),
-            &[color_target(HDR, None), color_target(HDR, None)],
+            &[color_target(HDR, None)],
             true,
             true,
             true,
@@ -1985,7 +1970,7 @@ impl Renderer {
             &optical_layout,
             "optical_vs_baked",
             Some("optical_fs"),
-            &[color_target(HDR, None), color_target(HDR, None)],
+            &[color_target(HDR, None)],
             true,
             true,
             false,
@@ -2667,7 +2652,7 @@ impl Renderer {
             material.metallic > 0. || material.reflectivity > 0. || material.transmission > 0.
         });
         if optical_active {
-            self.ensure_optical_snapshots();
+            self.ensure_optical_snapshot();
         }
         let started = Instant::now();
         if self.material_cache != scene.materials {
@@ -3007,24 +2992,15 @@ impl Renderer {
                 .scene_color
                 .as_ref()
                 .expect("optical snapshots are allocated before the optical pass");
-            let scene_normals = self
-                .scene_normals
-                .as_ref()
-                .expect("optical snapshots are allocated before the optical pass");
-            for (source, target) in [
-                (&self.hdr_texture, scene_color),
-                (&self.normals_texture, scene_normals),
-            ] {
-                encoder.copy_texture_to_texture(
-                    source.as_image_copy(),
-                    target.as_image_copy(),
-                    wgpu::Extent3d {
-                        width: self.resolution[0],
-                        height: self.resolution[1],
-                        depth_or_array_layers: 1,
-                    },
-                );
-            }
+            encoder.copy_texture_to_texture(
+                self.hdr_texture.as_image_copy(),
+                scene_color.as_image_copy(),
+                wgpu::Extent3d {
+                    width: self.resolution[0],
+                    height: self.resolution[1],
+                    depth_or_array_layers: 1,
+                },
+            );
             let attachment = |view| {
                 Some(wgpu::RenderPassColorAttachment {
                     view,
@@ -3037,7 +3013,7 @@ impl Renderer {
             };
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("reflective and transmissive surfaces"),
-                color_attachments: &[attachment(&self.hdr), attachment(&self.normals)],
+                color_attachments: &[attachment(&self.hdr)],
                 depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
                     view: &self.depth,
                     depth_ops: Some(wgpu::Operations {

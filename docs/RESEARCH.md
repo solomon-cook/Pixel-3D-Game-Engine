@@ -260,15 +260,13 @@ but does not qualify the change for a default. See
 
 ## Lazy optical snapshots (17 October)
 
-The O08 inventory found two full-resolution RGBA16F snapshots allocated in every
-scene although diffuse scenes skip both copies and optical resolve. The renderer
-now starts with the existing HDR/normal targets as unused optical bind-group
-fallbacks and allocates the dedicated snapshots on first optical use. At 640×360,
-the known allocation falls by 3,686,400 bytes for diffuse scenes. A live reflectivity
-edit activated the optical pass and allocated the snapshots; the diffuse smoke and
-opaque-metal fixed-tick captures were byte-identical to pre-change captures. No
-frame-time reduction is claimed because the old diffuse path already skipped the
-copy and optical draw. The effect-depth/flame-coverage attachment now uses Rg16Float
+The original O08 renderer allocated two full-resolution RGBA16F snapshots in every
+scene although diffuse scenes skip optical resolve. The initial lazy-allocation
+change saved 3,686,400 bytes in diffuse scenes. The current pass allocates only one
+HDR snapshot on first optical use and reads the opaque normal/depth target directly.
+A live reflectivity edit activates the pass; fixed-tick smoke, metal and glass
+captures remain byte-identical. No frame-time reduction is claimed for lazy
+allocation. The effect-depth/flame-coverage attachment now uses Rg16Float
 when the adapter reports filterable sampled and render-attachment support, falling
 back to Rgba16Float. On this M1 Max/Metal adapter it saves 921,600 bytes at 640×360;
 matched smoke and opaque-metal captures at scale 1 were pixel-identical to saved
@@ -284,3 +282,16 @@ device feature, updates the storage binding and reset-upload stride, and saves
 smoke-close plus opaque-metal captures at 640×360 were byte-identical to the prior
 format. The nominal full-texel request estimate halves, but no frame-time or
 external-bandwidth gain is claimed. Fallback execution and DX12 remain open.
+
+## Optical normal snapshot removal (17 October)
+
+The optical pass does not need to replace the opaque normal/depth attachment:
+later passes use the opaque values, and the optical shader can sample that target
+directly when it is not bound as a render attachment. The pass now writes HDR only.
+It retains one HDR color snapshot to avoid reading from the HDR attachment that it
+updates. At 640×360 this removes one 1,843,200-byte snapshot from optical scenes,
+one full-texture copy read/write (3,686,400 logical bytes), and the optical normal
+attachment load/store (3,686,400 logical bytes) per frame. Matched smoke-close,
+opaque-metal and glass captures were pixel-identical; no frame-time gain is
+claimed. The HDR copy remains for future pass-layout work. See
+[measurements-o08.json](measurements-o08.json).

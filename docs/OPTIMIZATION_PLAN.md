@@ -452,22 +452,25 @@ changes; sparse simulation remains evidence-gated research. Dependency: O01;
 repeat the audit after O03/O05/O06 introduce resources. Background:
 [Apple GPU and tile-based rendering guidance](https://developer.apple.com/documentation/metal/tailor-your-apps-for-apple-gpus-and-tile-based-deferred-rendering).
 
-**Implemented O08 change:** optical color and normal/depth snapshots allocate
-lazily when a scene first uses an optical material. Diffuse 640×360 scenes save
-3,686,400 known bytes until an optical material is activated; a live material edit
-was verified to allocate the pair without changing fixed-tick output relative to
-the pre-change build. Optical-frame copy traffic is unchanged. The effect-depth and
+**Implemented O08 change:** one optical HDR color snapshot allocates lazily when a
+scene first uses an optical material. The original normal/depth target remains
+read-only during optical resolve, so the pass no longer copies it or writes a
+second color attachment. Diffuse 640×360 scenes save 3,686,400 known bytes relative
+to the original unconditional snapshot pair; optical scenes use one snapshot and
+save another 1,843,200 bytes relative to the prior pair design. At 640×360 this
+also removes 7,372,800 modeled logical copy/attachment bytes from each optical
+frame. A live material edit was verified to allocate the color snapshot without
+changing fixed-tick output relative to the prior build. The effect-depth and
 flame-coverage target also uses adapter-gated Rg16Float when filterable and usable
 as a render attachment and sampled texture, with Rgba16Float fallback. On M1
 Max/Metal at 640×360 this saves 921,600 known bytes and matched smoke and metal
-captures were pixel-identical at native capture scale. These are allocation
-changes; no frame-time gain is claimed. Pass-copy redesign, longer timing, and
-Windows/DX12 validation remain open. Smoke density/temperature ping-pong volumes
+captures were pixel-identical at native capture scale. Smoke density/temperature ping-pong volumes
 also use adapter-gated Rg16Float storage when `TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES`
 and sampled/write-only storage support are available, with an Rgba16Float fallback.
 The measured pair saves 1,179,648 bytes; reset/replay verification and matched
-smoke/metal captures passed on M1 Max/Metal. This records allocation and logical
-request estimates, not a measured timing gain. See [measurements-o08.json](measurements-o08.json).
+smoke/metal captures passed on M1 Max/Metal. No frame-time gain is claimed; the
+remaining HDR snapshot and its copy still need pass-layout work, longer timing,
+and Windows/DX12 validation. See [measurements-o08.json](measurements-o08.json).
 
 **Inventory checkpoint (17 October 2026):** known allocations, resource lifetimes,
 per-frame logical attachment/copy traffic, nominal smoke sample/store footprint,

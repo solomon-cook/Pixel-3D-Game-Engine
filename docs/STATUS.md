@@ -64,9 +64,9 @@ Windows DX12 and RTX-class rendering remain unverified.
 ## O08 resource and bandwidth inventory
 
 The original 640×360 clearing/heavy inventory recorded 29,806,088 bytes. The current
-renderer reports 22,808,600 known bytes before first optical use and 26,495,000
-bytes after live optical activation; lazy optical snapshots add 3,686,400 bytes.
-The current Material Atelier capture reports 18,725,616 known bytes. These are
+renderer reports 22,808,600 known bytes before first optical use and 24,651,800
+bytes after live optical activation; the color snapshot adds 1,843,200 bytes. The
+current Material Atelier capture reports 16,882,416 known bytes. These are
 descriptor/structure-size estimates; driver alignment and transient/pipeline
 storage are excluded.
 
@@ -74,8 +74,10 @@ At 640×360, the clearing/heavy frame has 15,904,768 bytes of modeled full-frame
 attachment clear/write/load/store traffic before shader sampling with the current
 Rg16Float effect target (the original RGBA16F estimate was 16,826,368 bytes):
 shadow maps, opaque color/normal/depth, atmosphere HDR/effect target, and post output. Optical
-frames add 7,372,800 logical bytes for snapshot copy reads/writes and 7,372,800
-bytes of optical attachment load/store. Seven shadow draws plus opaque geometry
+frames add 3,686,400 logical bytes for the HDR snapshot copy read/write and
+3,686,400 bytes of HDR optical attachment load/store. The normal/depth target stays
+read-only as an optical shader input, removing its snapshot copy and optical
+attachment writes. Seven shadow draws plus opaque geometry
 reference 84,317,760 bytes of vertex input if each draw fetches the full buffer;
 optical geometry adds one more full-buffer reference. These quantities are API/
 shader logical work estimates, not measured DRAM bandwidth. Metal tile storage,
@@ -101,12 +103,12 @@ Rgba16Float. At 640×360 this saves 921,600 known bytes. Smoke ping-pong volumes
 select Rg16Float only with the adapter-specific format feature and required
 storage/sample support, falling back to Rgba16Float; they save 1,179,648 bytes.
 Matched images stayed pixel-identical, and reset/replay checks passed on this
-M1 Max/Metal adapter. This is one adapter's result, not DX12 support. Removing the
-two full-frame optical copies (7,372,800 logical read/write bytes per optical
-frame) remains a candidate. Optical snapshots allocate
-on first optical-material use, saving another 3,686,400 known bytes in diffuse
-scenes; live reflectivity activation and fixed-tick capture parity were verified.
-No frame-time gain is claimed for either allocation change. Pass-copy redesign,
+M1 Max/Metal adapter. This is one adapter's result, not DX12 support. The HDR
+snapshot allocates on first optical-material use, saving 3,686,400 known bytes in
+diffuse scenes; on optical scenes, direct normal/depth sampling removes another
+1,843,200 bytes from the prior pair-of-snapshots design. Live material activation
+and fixed-tick capture parity were verified. No frame-time gain is claimed for
+these allocation and pass changes. Pass-copy redesign,
 total pass timing and Windows DX12/RTX acceptance remain open. Full provenance and
 per-resource breakdown are in [measurements-o08.json](measurements-o08.json).
 The required `python3 scripts/verify.py --gpu` run passed on this M1 Max/Metal
