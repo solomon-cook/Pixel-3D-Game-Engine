@@ -1,6 +1,6 @@
 {
   "task": "O05 smoke absorption cache prototype and evidence",
-  "status": "opt-in prototype implemented; disabled allocation and work corrected and verified; optimization, temporal and portability acceptance remain open",
+  "status": "opt-in prototype implemented; disabled allocation fix and three-scale sustained comparison complete; no total GPU render win found; temporal and portability acceptance remain open",
   "host": {
     "gpu": "Apple M1 Max",
     "backend": "Metal",
@@ -123,5 +123,36 @@
       0.061459,
       0.0
     ]
+  },
+  "size_scale_followup": {
+    "report": "measurements-o05-size-study.json",
+    "host": "Apple M1 Max / Metal / macOS",
+    "resolution": [640, 360],
+    "seed": 42,
+    "route": "absorption-cache-orbit",
+    "route_duration_seconds": 20,
+    "timed_duration_seconds_per_run": 120,
+    "warmup_seconds": 10,
+    "pairs_per_size_and_cache": 3,
+    "fire_state_parity": "exact at tick 300 for all direct, 8^3 and 16^3 variants",
+    "cache_bytes": {"direct": 0, "8^3": 4096, "16^3": 32768},
+    "fixed_tick_mean_absolute_rgb_error_0_255": {
+      "small": {"8^3": [0.03994, 0.02155, 0.02007], "16^3": [0.01355, 0.00732, 0.00757]},
+      "medium": {"8^3": [0.31003, 0.17447, 0.13935], "16^3": [0.07972, 0.04409, 0.03987]},
+      "screen_filling": {"8^3": [1.28845, 0.76322, 0.51042], "16^3": [0.25102, 0.15463, 0.11924]}
+    },
+    "gpu_render_paired_median_delta_ms_by_size": {
+      "small": {"8^3": 0.026375, "16^3": 0.044251},
+      "medium": {"8^3": 0.031833, "16^3": 0.036752},
+      "screen_filling": {"8^3": 0.024916, "16^3": 0.026126}
+    },
+    "cache_build_median_ms_by_size": {
+      "small": {"8^3": {"cpu": 0.033666, "gpu": 0.024834}, "16^3": {"cpu": 0.033292, "gpu": 0.032666}},
+      "medium": {"8^3": {"cpu": 0.034083, "gpu": 0.02475}, "16^3": {"cpu": 0.034625, "gpu": 0.031209}},
+      "screen_filling": {"8^3": {"cpu": 0.042791, "gpu": 0.025125}, "16^3": {"cpu": 0.04325, "gpu": 0.033042}}
+    },
+    "interpretation": "The targeted atmosphere_fire GPU stage improved by 0.058-0.101 ms, but the cache adds a separate 0.025-0.033 ms GPU build stage and the measured total gpu_render median was slower in all six comparisons (+0.025 to +0.044 ms). frame_work medians favored the cache but are not matched by total GPU time and include unrelated variance. No useful total-render cost range is demonstrated; keep disabled by default.",
+    "visual_review": "Inspected matched tick-300 contact sheet at all three scales; 16^3 is closer to direct by per-channel mean absolute RGB error at every scale. Continuous temporal review and edit-invalidation stress are not included.",
+    "verification": "Capture parity and six sustained profile_compare runs passed; macOS Metal only, native window false."
   }
 }

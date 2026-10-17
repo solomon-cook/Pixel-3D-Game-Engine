@@ -100,9 +100,14 @@ Fewer primitives alone are not a frame-win claim.
    unused binding fallback; direct density sampling remains selected. Off/on/off
    GPU captures report 0/4096/0 cache bytes and identical images at the same tick
    before and after the enabled interval.
-2. Compare direct sampling with 8³ and 16³ cache modes over small, medium and
-   screen-filling smoke. Separate cache construction/update, lookup and direct
-   sampling time; include memory and invalidation costs in total work.
+2. **Complete on M1 Max/Metal:** compare direct sampling with 8³ and 16³ cache
+   modes over small, medium and screen-filling smoke. Three paired 120-second
+   routes per tier separate the atmosphere/fire stage from cache build, total
+   GPU render and CPU build time; image error, memory and fire-state parity are
+   recorded in [measurements-o05-size-study.json](measurements-o05-size-study.json).
+   Total GPU render medians were slower for all six cache comparisons, so no
+   useful total-cost range has been established. This result does not qualify
+   other GPUs or native-window rendering.
 3. Test cache refresh choices tied to fixed simulation updates against rebuilding
    each render. This is a hypothesis to measure, not a behavior to assume.
 4. Exercise density changes, primary-light motion/range, live flicker, moving ember

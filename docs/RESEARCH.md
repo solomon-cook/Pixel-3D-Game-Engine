@@ -547,3 +547,22 @@ route did not capture PNGs. Keep the established static-cache benefit separate
 from this continuous-invalidation result. See
 [measurements-o02-moving-route.json](measurements-o02-moving-route.json); raw
 frame samples are local under ignored `artifacts/o02/moving-route-120s/`.
+
+## O05 absorption-cache scale study (18 October)
+
+Direct sampling, 8³ cache and 16³ cache were compared at small, medium and
+screen-filling smoke scales, at fixed 640×360 resolution, with three paired
+120-second seed-42 orbit runs for each cache tier and scale. Fire-state inspection
+matched exactly at tick 300. The 16³ still was closer to direct sampling by
+per-channel mean absolute RGB error in every scale: small 0.014/0.007/0.008,
+medium 0.080/0.044/0.040 and screen-filling 0.251/0.155/0.119 (R/G/B, 0–255).
+
+The cache reduced the targeted atmosphere/fire GPU interval by 0.058–0.101 ms.
+However, the GPU build interval costs 0.025–0.033 ms and the total GPU render
+median was slower by 0.025–0.044 ms in all six comparisons. CPU cache construction
+costs 0.034–0.043 ms per frame. Whole-frame medians favored the candidate, but
+that did not agree with total GPU render and was not used as a win claim. Keep the
+cache opt-in and disabled by default. Small-to-large quality improves with 16³,
+but no total-render workload range is established. Continuous temporal error,
+live edit invalidation and other GPU backends remain open. Full paired data and
+capture hashes: [measurements-o05-size-study.json](measurements-o05-size-study.json).

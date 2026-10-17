@@ -332,15 +332,18 @@ bound participating source work; the first cache prototype can be evaluated alon
 
 **Prototype result:** the opt-in implementation caches primary authored fire-light
 optical depth in a configurable 8³ or 16³ field, rebuilding each rendered frame;
-particle lights and out-of-volume points retain direct sampling. On M1 Max/Metal,
-three short paired orbit runs recorded roughly 0.026 ms and 0.029 ms median cache
-build cost. Total GPU render medians were slightly higher with the cache enabled,
-so neither tier is promoted. At the fixed smoke-close still, 16³ had lower mean
-absolute RGB error than 8³. Longer motion, rapid light/density edit, paused-edit,
-and non-Metal acceptance remain open. The disabled path now allocates no cache
-texture, dispatches no build pass, and reports zero cache timing/allocation. An
-off/on/off GPU protocol replay confirmed 0/4096/0 cache bytes and identical
-disabled output before and after. See [measurements-o05.json](measurements-o05.json).
+particle lights and out-of-volume points retain direct sampling. A sustained
+three-scale study used three paired 120-second orbit runs for every size/tier.
+On M1 Max/Metal, the targeted atmosphere/fire stage improved by 0.058–0.101 ms,
+while the separate cache build cost 0.025–0.033 ms on GPU and 0.033–0.043 ms on
+CPU. Total GPU render medians were 0.025–0.044 ms slower in all six comparisons.
+The 16³ fixed-tick captures were closer to direct by mean absolute RGB error at
+all three scales, but this did not establish a total-render win. Neither tier is
+promoted. The disabled path allocates no cache texture or build pass; an off/on/off
+GPU replay confirmed 0/4096/0 cache bytes and identical disabled output before and
+after. Refresh-policy and temporal/edit stress, native-window and non-Metal
+acceptance remain open. See [measurements-o05.json](measurements-o05.json) and
+[measurements-o05-size-study.json](measurements-o05-size-study.json).
 
 ## O06 — Specialise optical materials and avoid repeated shading
 

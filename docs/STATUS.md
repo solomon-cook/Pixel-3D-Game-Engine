@@ -29,16 +29,19 @@ continuous motion review remains open. It remains disabled by default pending
 broader fire-size/profile and portability evidence; see
 [measurements-o04.json](measurements-o04.json).
 
-O05 now has an opt-in primary fire-light absorption cache at 8³ or 16³, rebuilt
-each rendered frame so paused density and light edits are reflected on the next
-render. Fixed-tick stills and three short paired orbit runs are recorded in
-[measurements-o05.json](measurements-o05.json). The 16³ still is closer to direct
-sampling by mean RGB error, but both tiers add a roughly 0.026–0.029 ms GPU build
-pass and total GPU render medians were slightly slower. No default promotion is
-recommended. The disabled path now allocates no cache field or build pass; a live
+O05 has an opt-in primary fire-light absorption cache at 8³ or 16³, rebuilt each
+render. The disabled path allocates no cache field and does no build pass; a live
 off/on/off Metal capture reports 0/4096/0 cache bytes and reproduces the same
-disabled image. Motion/temporal review, rapid density/light edit checks,
-Windows/DX12 and other GPU qualification remain open.
+disabled image. A sustained three-scale study compares direct, 8³ and 16³ at
+640×360 using three paired 120-second orbit runs per tier. At all scales 16³ is
+closer to direct in fixed-tick mean RGB error. The cache reduced the targeted
+atmosphere/fire GPU stage by 0.058–0.101 ms, but adds 0.025–0.033 ms GPU build
+work and the total GPU render median was 0.025–0.044 ms slower in all six
+comparisons. No useful total-render win is demonstrated, so keep the cache off by
+default. See [measurements-o05.json](measurements-o05.json) and the detailed
+[size study](measurements-o05-size-study.json). Temporal review, rapid
+density/light edits, refresh-policy comparison, Windows/DX12 and other GPU
+qualification remain open.
 
 O06 now has an opt-in opaque-reflector lighting reuse path. It reverses the
 matching same-pixel foreground atmosphere contribution from the HDR snapshot and
