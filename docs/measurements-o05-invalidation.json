@@ -1,0 +1,621 @@
+{
+  "workstream": "O05 absorption-cache invalidation and discrete motion study",
+  "date": "2026-10-18",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal",
+    "os": "macOS"
+  },
+  "resolution": [
+    640,
+    360
+  ],
+  "camera": "smoke-close",
+  "seed": 42,
+  "method": "For both 8^3 and 16^3, direct and cached sessions receive the same ordered paused edits and deterministic fixed-tick advances. Each checkpoint captures a PNG and compares candidate error to direct; runtime fire state is also compared.",
+  "tested_cases": [
+    "paused smoke-density change followed by one fixed tick",
+    "two rapid density edits followed by one fixed tick",
+    "linked primary-light position edit",
+    "primary-light range edit",
+    "live flicker edit",
+    "paused capture",
+    "four deterministic moving-ember checkpoints",
+    "successful shader reload",
+    "reset to seed 42 and tick 300"
+  ],
+  "cache_resolutions": {
+    "8": {
+      "fire_state_parity_all_checkpoints": true,
+      "checkpoint_count": 13,
+      "cache_bytes": 4096,
+      "checkpoints": {
+        "tick_300": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "c080df09137173b984f48d39137da5a8719b2110965d0fd270a801e76f0adbfe",
+          "cached_image_sha256": "74f0f5eaa18de2f60e18b835af03d006498ed2f827ab40faa07ccabcfb39fef7",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 18474,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.30727430555555557,
+              0.17623697916666667,
+              0.1383203125
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              19,
+              16,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 4096,
+          "candidate_cpu_cache_build_ms": 0.04725
+        },
+        "paused_density_change": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "4175d0eb675da09143f6c8304fd211747601c382dd5d5a86cc4db1998e3364bf",
+          "cached_image_sha256": "e1ae0ce3252192b49307e4e5811ca71dbddcc14ef394148e1d4c39be79b019a3",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 18509,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.31772569444444443,
+              0.18031684027777778,
+              0.14299913194444444
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              20,
+              17,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 4096,
+          "candidate_cpu_cache_build_ms": 0.060042
+        },
+        "rapid_density_edits": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "bfb0beea5296a87043fa977ec92182673ac0e33a0f48be28e0ae494dd0b773b9",
+          "cached_image_sha256": "06014216ab29b950398214c74aae042aa3502a14a4bbb3273d50f87fce238193",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 18541,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.32480034722222223,
+              0.18327690972222221,
+              0.14641493055555554
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              20,
+              17,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 4096,
+          "candidate_cpu_cache_build_ms": 0.055916
+        },
+        "primary_light_motion": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "9c953531e94c0dbe48641b9e1b13a191a03f517e00367c6ee990158fbd9900e2",
+          "cached_image_sha256": "4374dcb8e5b2b425b3214d39676fbe5d5b9b835ff338095b34bc5d8dc00f9c4c",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 20591,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.37154947916666664,
+              0.211953125,
+              0.16426215277777778
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              19,
+              17,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 4096,
+          "candidate_cpu_cache_build_ms": 0.058917
+        },
+        "primary_light_range": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "68edd6879b7657ad222994e5efe32dabe03be3a6e9eaacf9f5a2eb32da534e29",
+          "cached_image_sha256": "215245e03374df990b1cbc6f2b6e89fac57e9f273b91ccda08cab8ccc7cbdb02",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 20573,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.37172743055555557,
+              0.21180989583333334,
+              0.1646701388888889
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              19,
+              17,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 4096,
+          "candidate_cpu_cache_build_ms": 0.057166999999999996
+        },
+        "live_flicker": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "7fb36560d433f108e14f3eeaf01e7da42a4488dc5ca46554c3a3d65a611c2a72",
+          "cached_image_sha256": "703bef374b3eb74fbd32e503840da217eda6f3030c1351459fa301df5ac012a9",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 20596,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.33632378472222224,
+              0.1905078125,
+              0.15930121527777777
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              19,
+              16,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 4096,
+          "candidate_cpu_cache_build_ms": 0.058208
+        },
+        "pause_confirmation": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "7fb36560d433f108e14f3eeaf01e7da42a4488dc5ca46554c3a3d65a611c2a72",
+          "cached_image_sha256": "703bef374b3eb74fbd32e503840da217eda6f3030c1351459fa301df5ac012a9",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 20596,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.33632378472222224,
+              0.1905078125,
+              0.15930121527777777
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              19,
+              16,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 4096,
+          "candidate_cpu_cache_build_ms": 0.055791999999999994
+        },
+        "shader_reload": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "fb54580be4536090aff8a794594de6c73198d236f178d5d8d357bd5806023dc0",
+          "cached_image_sha256": "b70e5577518cb1da236d20c8bbd79a8633b45921d31e9b4d5bd1f8218fbeaadd",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 17175,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.23879340277777777,
+              0.13885850694444443,
+              0.10751736111111111
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              21,
+              16,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 4096,
+          "candidate_cpu_cache_build_ms": 0.054833
+        },
+        "reset_seed_42_tick_300": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "da8d5234c9bbd9ac384e057fce2c06d74d78c9ab33a34af5150c5fb327a94d96",
+          "cached_image_sha256": "72a86a5cab213b43394a11b48a49151bf5e1e43c8b01c127d9d9d52a3396418b",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 20586,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.3480902777777778,
+              0.19399739583333334,
+              0.1726779513888889
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              19,
+              16,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 4096,
+          "candidate_cpu_cache_build_ms": 0.040459
+        },
+        "ember_motion_1": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "f4c5b2f8b539ae7b16a3a083cbd0219d4818817b0907dc82306bfcca1bc71941",
+          "cached_image_sha256": "9003817f222b5d77cccadeb385a9d7e5508e450da4630a7dba7aceadb4889891",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 20610,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.2948263888888889,
+              0.16927083333333334,
+              0.14745225694444444
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              19,
+              15,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 4096,
+          "candidate_cpu_cache_build_ms": 0.049249999999999995
+        },
+        "ember_motion_2": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "12ebf2747af557112882fa243d8bce8a13e5c3e67c24c1102f182834f8d73230",
+          "cached_image_sha256": "0a66555cdc9648c28c4ce37987e32cf16364fa56206ca47bb45000c3065d71da",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 21567,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.35003038194444447,
+              0.1996484375,
+              0.17022569444444444
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              19,
+              12,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 4096,
+          "candidate_cpu_cache_build_ms": 0.04725
+        },
+        "ember_motion_3": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "d4d393274ba690d1d99390c6fc9cf3baa51e89d7cc37212749c6fa32ab3d1807",
+          "cached_image_sha256": "aee595f3a62344730a4830a37ff249fe749eb8fdf6b7eb37e9d25e6351e43bff",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 21577,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.3241059027777778,
+              0.18338541666666666,
+              0.1609157986111111
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              20,
+              14,
+              12
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 4096,
+          "candidate_cpu_cache_build_ms": 0.063292
+        },
+        "ember_motion_4": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "fb54580be4536090aff8a794594de6c73198d236f178d5d8d357bd5806023dc0",
+          "cached_image_sha256": "b70e5577518cb1da236d20c8bbd79a8633b45921d31e9b4d5bd1f8218fbeaadd",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 17175,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.23879340277777777,
+              0.13885850694444443,
+              0.10751736111111111
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              21,
+              16,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 4096,
+          "candidate_cpu_cache_build_ms": 0.07483300000000001
+        }
+      }
+    },
+    "16": {
+      "fire_state_parity_all_checkpoints": true,
+      "checkpoint_count": 13,
+      "cache_bytes": 32768,
+      "checkpoints": {
+        "tick_300": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "c080df09137173b984f48d39137da5a8719b2110965d0fd270a801e76f0adbfe",
+          "cached_image_sha256": "01b37a143d91311a57da10553fca12b4128c8141ed1dd3d334700a3b473a8f7e",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 9675,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.08005642361111111,
+              0.04681857638888889,
+              0.04020833333333333
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              16,
+              9,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 32768,
+          "candidate_cpu_cache_build_ms": 0.044792
+        },
+        "paused_density_change": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "4175d0eb675da09143f6c8304fd211747601c382dd5d5a86cc4db1998e3364bf",
+          "cached_image_sha256": "af2fbb4b85dcdf3b451d387493038b452526bf7850447af465c290042bbbaac0",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 9910,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.07907552083333333,
+              0.04639322916666667,
+              0.03990017361111111
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              16,
+              9,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 32768,
+          "candidate_cpu_cache_build_ms": 0.050583
+        },
+        "rapid_density_edits": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "bfb0beea5296a87043fa977ec92182673ac0e33a0f48be28e0ae494dd0b773b9",
+          "cached_image_sha256": "b052e5262e7d453a350db033462425118492648cc9d85fefdb752b33d8db15b8",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 9974,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.07815104166666667,
+              0.04645399305555555,
+              0.040230034722222224
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              16,
+              9,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 32768,
+          "candidate_cpu_cache_build_ms": 0.054333000000000006
+        },
+        "primary_light_motion": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "9c953531e94c0dbe48641b9e1b13a191a03f517e00367c6ee990158fbd9900e2",
+          "cached_image_sha256": "099899e2cb969c648660440fee72c71d4ff68d61b2080c56779894c3f5e81303",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 11538,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.08851128472222222,
+              0.05310329861111111,
+              0.0444140625
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              16,
+              9,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 32768,
+          "candidate_cpu_cache_build_ms": 0.053833
+        },
+        "primary_light_range": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "68edd6879b7657ad222994e5efe32dabe03be3a6e9eaacf9f5a2eb32da534e29",
+          "cached_image_sha256": "9946a2e1375eec172f7c22a80d2482dc5db8d78a06dcb00dfd8dc0ec37dee721",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 11608,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.08973090277777777,
+              0.05358072916666667,
+              0.04503038194444445
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              16,
+              9,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 32768,
+          "candidate_cpu_cache_build_ms": 0.055167
+        },
+        "live_flicker": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "7fb36560d433f108e14f3eeaf01e7da42a4488dc5ca46554c3a3d65a611c2a72",
+          "cached_image_sha256": "d0da71372e32ce8d5b0d271689cbd84d75aade994bbda296d0521a588d22e65f",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 11339,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.08166232638888889,
+              0.04893663194444445,
+              0.04182291666666667
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              17,
+              10,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 32768,
+          "candidate_cpu_cache_build_ms": 0.05575
+        },
+        "pause_confirmation": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "7fb36560d433f108e14f3eeaf01e7da42a4488dc5ca46554c3a3d65a611c2a72",
+          "cached_image_sha256": "d0da71372e32ce8d5b0d271689cbd84d75aade994bbda296d0521a588d22e65f",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 11339,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.08166232638888889,
+              0.04893663194444445,
+              0.04182291666666667
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              17,
+              10,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 32768,
+          "candidate_cpu_cache_build_ms": 0.061375
+        },
+        "shader_reload": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "fb54580be4536090aff8a794594de6c73198d236f178d5d8d357bd5806023dc0",
+          "cached_image_sha256": "7b6d89b7dd2e3f0bdc81b8a5a6c8599f7019da27c46fcd2966a374a11518132c",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 16653,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.1647829861111111,
+              0.0896875,
+              0.08006944444444444
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              16,
+              9,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 32768,
+          "candidate_cpu_cache_build_ms": 0.056582999999999994
+        },
+        "reset_seed_42_tick_300": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "da8d5234c9bbd9ac384e057fce2c06d74d78c9ab33a34af5150c5fb327a94d96",
+          "cached_image_sha256": "e64ad969b03ee01708e832d72a016b786242ef52c67d0302a691360d1f068e7d",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 11495,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.09038194444444445,
+              0.052508680555555555,
+              0.04648871527777778
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              18,
+              10,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 32768,
+          "candidate_cpu_cache_build_ms": 0.0435
+        },
+        "ember_motion_1": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "f4c5b2f8b539ae7b16a3a083cbd0219d4818817b0907dc82306bfcca1bc71941",
+          "cached_image_sha256": "4829f8a8b7b2c3f69149e9a62b01c993a455d63f5555b5fe3245d702e05b5d00",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 12007,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.09951822916666667,
+              0.05670572916666667,
+              0.0505078125
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              17,
+              9,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 32768,
+          "candidate_cpu_cache_build_ms": 0.045167000000000006
+        },
+        "ember_motion_2": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "12ebf2747af557112882fa243d8bce8a13e5c3e67c24c1102f182834f8d73230",
+          "cached_image_sha256": "30f46d20c86806eb77642566b10349f67b30a3b08ca77f8f061ed86c59dc97b2",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 12931,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.09364583333333333,
+              0.057565104166666665,
+              0.048138020833333336
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              18,
+              10,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 32768,
+          "candidate_cpu_cache_build_ms": 0.046875
+        },
+        "ember_motion_3": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "d4d393274ba690d1d99390c6fc9cf3baa51e89d7cc37212749c6fa32ab3d1807",
+          "cached_image_sha256": "24f4fa92b7b795090df847cc4bc2a45f3fa4eb1a0999662ebbe3d15669dd8d5d",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 9293,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.06381076388888889,
+              0.04009982638888889,
+              0.033394097222222224
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              17,
+              10,
+              12
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 32768,
+          "candidate_cpu_cache_build_ms": 0.054292
+        },
+        "ember_motion_4": {
+          "fire_state_identical": true,
+          "direct_image_sha256": "fb54580be4536090aff8a794594de6c73198d236f178d5d8d357bd5806023dc0",
+          "cached_image_sha256": "7b6d89b7dd2e3f0bdc81b8a5a6c8599f7019da27c46fcd2966a374a11518132c",
+          "cached_absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 16653,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.1647829861111111,
+              0.0896875,
+              0.08006944444444444
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              16,
+              9,
+              11
+            ]
+          },
+          "direct_cache_bytes": 0,
+          "candidate_cache_bytes": 32768,
+          "candidate_cpu_cache_build_ms": 0.051791
+        }
+      }
+    }
+  },
+  "visual_review": "Inspected a contact sheet for tick 300, paused density edit, linked-light motion and final moving-ember checkpoint. Changes are subtle at 8^3; no abrupt temporal discontinuity is visible in these discrete captures. This does not substitute for continuous playback review.",
+  "limitations": [
+    "Headless serve, not native window; Metal only.",
+    "Fixed-tick checkpoints do not measure continuous temporal pixel error or wall-clock resume timing.",
+    "This verifies freshness and direct-vs-cache differences, not cache performance utility."
+  ]
+}

@@ -110,9 +110,13 @@ Fewer primitives alone are not a frame-win claim.
    other GPUs or native-window rendering.
 3. Test cache refresh choices tied to fixed simulation updates against rebuilding
    each render. This is a hypothesis to measure, not a behavior to assume.
-4. Exercise density changes, primary-light motion/range, live flicker, moving ember
-   lights, pause/resume, reset, shader reload and rapid edits. Compare temporal image
-   error as well as fixed-tick stills, focusing on lit rims, soot folds and contacts.
+4. **Partially complete:** for both cache sizes, compare direct/cached captures
+   through paused density edits, rapid edits, linked primary-light motion/range,
+   flicker, paused captures, four moving-ember checkpoints, shader reload and reset.
+   Fire state matches at all 13 checkpoints per size; see
+   [measurements-o05-invalidation.json](measurements-o05-invalidation.json).
+   Remaining: continuous temporal image error and wall-clock pause/resume checks,
+   plus a longer human motion review of lit rims, soot folds and contacts.
 
 **Exit gate:** a workload range where total frame cost improves and motion quality
 passes. If cache maintenance remains more expensive than direct samples, leave it

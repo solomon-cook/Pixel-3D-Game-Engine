@@ -566,3 +566,16 @@ cache opt-in and disabled by default. Small-to-large quality improves with 16³,
 but no total-render workload range is established. Continuous temporal error,
 live edit invalidation and other GPU backends remain open. Full paired data and
 capture hashes: [measurements-o05-size-study.json](measurements-o05-size-study.json).
+
+## O05 edit and discrete-motion freshness (18 October)
+
+For both 8³ and 16³ caches, direct and cached sessions matched at 13 deterministic
+checkpoints after paused density edits, rapid successive density changes, linked
+primary-light movement/range, flicker, four moving-ember advances, shader reload
+and reset. Fire state was identical at every checkpoint. Image differences stayed
+within the cache tier's expected approximation; visual inspection of representative
+edit and motion stills found no abrupt discontinuity. This confirms the current
+per-render rebuild follows these discrete edits. Representative stills show the
+expected approximation without an obvious new defect, but do not establish
+continuous temporal quality, wall-clock resume behavior, or native-window behavior. See
+[measurements-o05-invalidation.json](measurements-o05-invalidation.json).

@@ -39,9 +39,12 @@ atmosphere/fire GPU stage by 0.058–0.101 ms, but adds 0.025–0.033 ms GPU bui
 work and the total GPU render median was 0.025–0.044 ms slower in all six
 comparisons. No useful total-render win is demonstrated, so keep the cache off by
 default. See [measurements-o05.json](measurements-o05.json) and the detailed
-[size study](measurements-o05-size-study.json). Temporal review, rapid
-density/light edits, refresh-policy comparison, Windows/DX12 and other GPU
-qualification remain open.
+[size study](measurements-o05-size-study.json). Continuous temporal review,
+refresh-policy comparison, Windows/DX12 and other GPU
+qualification remain open. Both cache sizes also passed 13 discrete direct/cache
+checkpoints spanning paused density edits, primary-light changes, flicker, moving
+embers, shader reload and reset, with exact fire-state parity; continuous temporal
+and pause/resume checks remain open ([invalidation study](measurements-o05-invalidation.json)).
 
 O06 now has an opt-in opaque-reflector lighting reuse path. It reverses the
 matching same-pixel foreground atmosphere contribution from the HDR snapshot and

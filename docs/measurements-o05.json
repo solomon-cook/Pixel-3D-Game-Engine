@@ -154,5 +154,15 @@
     "interpretation": "The targeted atmosphere_fire GPU stage improved by 0.058-0.101 ms, but the cache adds a separate 0.025-0.033 ms GPU build stage and the measured total gpu_render median was slower in all six comparisons (+0.025 to +0.044 ms). frame_work medians favored the cache but are not matched by total GPU time and include unrelated variance. No useful total-render cost range is demonstrated; keep disabled by default.",
     "visual_review": "Inspected matched tick-300 contact sheet at all three scales; 16^3 is closer to direct by per-channel mean absolute RGB error at every scale. Continuous temporal review and edit-invalidation stress are not included.",
     "verification": "Capture parity and six sustained profile_compare runs passed; macOS Metal only, native window false."
+  },
+  "invalidation_followup": {
+    "report": "measurements-o05-invalidation.json",
+    "cache_resolutions": [8, 16],
+    "checkpoints_per_resolution": 13,
+    "fire_state_parity": "exact at all 13 direct/cache checkpoints for both cache resolutions",
+    "operations": ["paused density edit followed by fixed tick", "rapid density edits", "linked primary-light motion", "primary-light range", "live flicker", "paused capture", "moving ember lights at four deterministic ticks", "successful shader reload", "reset to seed 42 and tick 300"],
+    "cache_resident_bytes_through_edits_reload_reset": {"8^3": 4096, "16^3": 32768},
+    "interpretation": "No stale-cache discrepancy or discontinuous failure was observed in the discrete captures. 16^3 remained closer to direct than 8^3. This is freshness evidence, not continuous temporal acceptance.",
+    "limitations": ["Headless Metal serve only; native window and other GPUs unverified.", "Continuous temporal pixel error and wall-clock resume timing were not measured."]
   }
 }
