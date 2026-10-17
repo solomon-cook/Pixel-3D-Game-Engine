@@ -358,15 +358,17 @@ path. The default remains unchanged.
 
 On M1 Max/Metal, seed-42 tick-300 hero, metal-close and glass-close captures were
 pixel-identical at 640×360. A glass-close compact-HDR pair was also pixel-identical.
-The candidate still costs 230,400 more known bytes per optical scene at this
-resolution: it replaces the 1,843,200-byte snapshot with an equally sized output
-plus the mask. A clearing scene with no visible optics allocated neither output,
-mask nor snapshot. The logical full-frame estimate falls from 7,372,800 to
-5,299,200 bytes for snapshot-copy/optical attachment versus overlay/mask/post
-reads. This modeled 2,073,600-byte reduction is not physical DRAM traffic.
+RGBA16F coverage uses the overlay alpha channel, so the candidate replaces the
+1,843,200-byte snapshot with an equally sized output and no separate mask; known
+optical-scene allocation matches the snapshot path. Compact HDR still allocates
+the 230,400-byte mask. A clearing scene with no visible optics allocated neither
+output, mask nor snapshot. For RGBA16F, the logical full-frame estimate falls from
+7,372,800 to 5,529,600 bytes for snapshot-copy/optical attachment versus overlay
+attachment/post reads. This modeled 1,843,200-byte reduction is not physical DRAM
+traffic.
 
-Three alternating 120-second material-orbit pairs measured a -0.01675 ms median
-GPU-render delta and -0.01646 ms optical-resolve delta. Frame-work deltas varied;
+Three alternating 120-second material-orbit pairs measured a -0.01817 ms median
+GPU-render delta and -0.01671 ms optical-resolve delta. Frame-work deltas varied;
 the render-time difference is small and does not establish practical speedup.
 Keep this research option disabled by default. Native-window rendering, fallback
 execution on other adapters, Windows/DX12 and compact-HDR route timing remain

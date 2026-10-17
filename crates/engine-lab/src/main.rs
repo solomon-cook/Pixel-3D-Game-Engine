@@ -153,7 +153,7 @@ pub struct Options {
     /// Use experimental Rg11b10Ufloat HDR color targets when supported.
     #[arg(long)]
     pub compact_hdr: bool,
-    /// Use an experimental optical output/mask path to skip the HDR snapshot copy.
+    /// Use an experimental optical overlay path to skip the HDR snapshot copy.
     #[arg(long)]
     pub optical_no_copy: bool,
     #[arg(long)]

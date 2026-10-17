@@ -489,13 +489,15 @@ be bypassed by the experimental `--optical-no-copy` option (also
 allocated color overlay and R8Unorm coverage mask; post selects covered pixels
 while the source HDR remains immutable. Four matched fixed-tick views, including
 compact HDR, were pixel-identical on M1 Max/Metal. At 640×360, the candidate
-replaces the 1,843,200-byte snapshot with an equally large output plus a 230,400-byte
-mask, increasing known optical-scene allocation by 230,400 bytes. Its full-frame
-logical copy/attachment/mask/post-read model is 5,299,200 bytes versus 7,372,800
-for copy plus optical attachment, a modeled 2,073,600-byte reduction; this is not
+RGBA16F uses the overlay alpha channel for coverage, replacing the 1,843,200-byte
+snapshot with an equally sized output and no extra mask allocation. Known optical
+scene allocation therefore matches the snapshot path. The revised full-frame
+logical copy/attachment/post-read model is 5,529,600 bytes versus 7,372,800 for
+copy plus optical attachment, a modeled 1,843,200-byte reduction; this is not
 measured physical bandwidth. Three alternating 120-second material-orbit pairs
-found a -0.01675 ms median GPU-render delta (~0.64%), while frame-work deltas
-varied. No practical speedup is established. The experiment stays disabled by
+found a -0.01817 ms median GPU-render delta (~0.70%), while frame-work deltas
+varied. No practical speedup is established. Compact HDR still uses the separate
+230,400-byte mask and its different traffic model. The experiment stays disabled by
 default pending broader pass-layout review and Windows/DX12 validation. The
 per-frame gate uses
 camera-frustum draw batches, so offscreen optical materials skip both the copy and
@@ -511,8 +513,9 @@ measure external-memory bandwidth. Lazy optical snapshots reduce diffuse-scene
 allocations by 3,686,400 bytes; adapter-gated Rg16Float effect coverage saves
 921,600 bytes and smoke volumes save 1,179,648 bytes on the measured M1 Max/Metal
 adapter. The opt-in optical overlay path removes the HDR copy with exact fixed-tick
-image parity on this adapter, at a 230,400-byte mask cost and no demonstrated
-practical timing gain. Validate fallback and pass layouts on other adapters,
+image parity on this adapter. RGBA16F alpha coverage avoids a separate mask and
+preserves known allocation size; compact HDR still needs the 230,400-byte mask.
+No practical timing gain is demonstrated. Validate fallback and pass layouts on other adapters,
 including Windows/DX12.
 O08 layout/pass experiments and the later sparse-smoke gate
 remain open.

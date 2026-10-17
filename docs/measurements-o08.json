@@ -1836,11 +1836,11 @@
       "baseline_optical_color_attachment_load_store_bytes": 3686400,
       "candidate_optical_output_load_store_bytes": 3686400,
       "candidate_r8_mask_clear_store_bytes": 460800,
-      "candidate_post_overlay_and_mask_read_bytes": 1152000,
+      "candidate_post_overlay_and_mask_read_bytes": 2073600,
       "baseline_total_bytes": 7372800,
-      "candidate_total_bytes": 5299200,
-      "modeled_delta_bytes": -2073600,
-      "caveat": "Full-frame logical access estimate only; not physical DRAM bandwidth and actual shader coverage/cache/tile behavior varies."
+      "candidate_total_bytes": 6220800,
+      "modeled_delta_bytes": -1152000,
+      "caveat": "Full-frame logical access estimate: RGBA16F overlay load is 8 bytes/pixel, R8 mask load is 1 byte/pixel, and mask clear/store is 2 bytes/pixel. Not physical DRAM bandwidth; caches, tiles, coverage and actual accesses vary."
     },
     "verification": {
       "command": "python3 scripts/verify.py --gpu",
@@ -1855,5 +1855,143 @@
       "Timing is too small and frame-work results too variable to claim practical speedup."
     ],
     "local_evidence": "Ignored PNG/JSON captures, contact sheet and raw reports under artifacts/o08/optical-no-copy-captures/ and artifacts/o08/optical-no-copy-timing/."
+  },
+  "optical_alpha_coverage_experiment": {
+    "date": "2026-10-17",
+    "source_revision": "bdd7eb8",
+    "hypothesis": "Use the RGBA16F optical overlay alpha channel as coverage so the normal HDR no-copy path needs no R8 coverage attachment; retain a separate mask only for compact HDR, which has no alpha channel.",
+    "implementation": "Adds a single-target RGBA16F optical overlay pipeline and alpha-aware post pipeline. Compact Rg11b10Ufloat retains the two-target color plus R8 mask variant. Mask capability gates no-copy only for formats that require the mask.",
+    "device": {
+      "name": "Apple M1 Max",
+      "backend": "Metal",
+      "resolution": [
+        640,
+        360
+      ]
+    },
+    "captures": [
+      {
+        "label": "hero",
+        "baseline": "artifacts/o08/optical-alpha-coverage/hero-baseline.png",
+        "candidate": "artifacts/o08/optical-alpha-coverage/hero-alpha-no-copy.png",
+        "changed_pixels": 0,
+        "mae_rgb_255": 0.0,
+        "max_channel_error": 0
+      },
+      {
+        "label": "metal-close",
+        "baseline": "artifacts/o08/optical-alpha-coverage/metal-close-baseline.png",
+        "candidate": "artifacts/o08/optical-alpha-coverage/metal-close-alpha-no-copy.png",
+        "changed_pixels": 0,
+        "mae_rgb_255": 0.0,
+        "max_channel_error": 0
+      },
+      {
+        "label": "glass-close",
+        "baseline": "artifacts/o08/optical-alpha-coverage/glass-close-baseline.png",
+        "candidate": "artifacts/o08/optical-alpha-coverage/glass-close-alpha-no-copy.png",
+        "changed_pixels": 0,
+        "mae_rgb_255": 0.0,
+        "max_channel_error": 0
+      },
+      {
+        "label": "glass-close compact HDR",
+        "baseline": "artifacts/o08/optical-alpha-coverage/glass-compact-baseline.png",
+        "candidate": "artifacts/o08/optical-alpha-coverage/glass-compact-alpha-no-copy.png",
+        "changed_pixels": 0,
+        "mae_rgb_255": 0.0,
+        "max_channel_error": 0
+      }
+    ],
+    "allocation_bytes": {
+      "rgba16_baseline": 16882416,
+      "rgba16_candidate": 16882416,
+      "rgba16_delta": 0,
+      "rgba16_snapshot": 0,
+      "rgba16_output": 1843200,
+      "rgba16_mask": 0,
+      "compact_baseline": 15039216,
+      "compact_candidate": 15269616,
+      "compact_delta": 230400,
+      "compact_output": 921600,
+      "compact_mask": 230400,
+      "no_visible_optics_snapshot_output_mask": 0
+    },
+    "timing": {
+      "route": "material-orbit",
+      "scene": "assets/scenes/materials.json",
+      "seed": 42,
+      "camera": "hero",
+      "duration_seconds": 120,
+      "warmup_seconds": 10,
+      "samples_per_run": 7200,
+      "mode": "serial",
+      "run_order": [
+        "baseline",
+        "candidate",
+        "candidate",
+        "baseline",
+        "baseline",
+        "candidate"
+      ],
+      "paired_delta_ms": {
+        "gpu_render": [
+          -0.020250000000000323,
+          -0.024207999999999785,
+          -0.022833000000000325
+        ],
+        "frame_work": [
+          -0.07041699999999995,
+          0.004167000000000698,
+          -0.0714579999999998
+        ],
+        "optical_resolve": [
+          -0.01491599999999993,
+          -0.014458000000000082,
+          -0.0129999999999999
+        ],
+        "post": [
+          -0.011248999999999842,
+          -0.011998999999999871,
+          -0.014125000000000165
+        ]
+      },
+      "median_paired_delta_ms": {
+        "gpu_render": -0.022833000000000325,
+        "frame_work": -0.07041699999999995,
+        "optical_resolve": -0.014458000000000082,
+        "post": -0.011998999999999871
+      },
+      "raw_reports": "artifacts/o08/optical-alpha-coverage/timing/",
+      "interpretation": "Paired GPU-render deltas are small; frame-work deltas range from -0.07146 to +0.00417 ms. No practical end-to-end speedup is established."
+    },
+    "logical_traffic_model_rgba16": {
+      "baseline_hdr_copy_read_write_bytes": 3686400,
+      "baseline_optical_attachment_load_store_bytes": 3686400,
+      "candidate_overlay_load_store_bytes": 3686400,
+      "candidate_post_overlay_read_bytes": 1843200,
+      "baseline_total_bytes": 7372800,
+      "candidate_total_bytes": 5529600,
+      "modeled_delta_bytes": -1843200,
+      "caveat": "Counts RGBA16F overlay full-frame reads at 8 bytes/pixel. Compares changed optical-path work; common post reads of base HDR are excluded. Logical estimate only, not measured DRAM bandwidth."
+    },
+    "verification": {
+      "command": "python3 scripts/verify.py --gpu",
+      "result": "passed",
+      "device": "Apple M1 Max / Metal",
+      "details": "fmt, clippy with -D warnings, workspace tests (30), build, scene validation, material and pixel-fire GPU verification passed; verified=true,gpu=true,native=false"
+    },
+    "limits": [
+      "Opt-in only; default remains snapshot-copy.",
+      "Compact HDR retains the R8 mask and has no route timing in this experiment.",
+      "Native-window rendering, other adapters and Windows/DX12 remain unverified.",
+      "Route timing does not establish a practical end-to-end gain."
+    ],
+    "local_evidence": "Ignored fixed-tick PNG/JSON captures and contact sheet under artifacts/o08/optical-alpha-coverage/; raw 120-second route reports under artifacts/o08/optical-alpha-coverage/timing/",
+    "source_hashes_sha256": {
+      "crates/engine/src/render/mod.rs": "ce464325954b2fb79be4899d5779cc982760e14784945bf8e852330761d37c1b",
+      "crates/engine/src/render/shaders/optical.wgsl": "80ba2382db33cb2aaaccb41a574240254c4a5eea5c802a342bf78500827f2f72",
+      "crates/engine/src/render/shaders/post.wgsl": "45fa7a3d24294a4fe09c6ba7d12be457cf8cfd092a7501d53440d4bb545da967"
+    }
   }
 }

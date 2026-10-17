@@ -149,15 +149,19 @@ The experimental `--optical-no-copy` overlay path keeps the source HDR immutable
 draws optical results to a separate color target plus R8Unorm coverage mask, and
 selects covered pixels during post. Four seed-42 tick-300 image pairs (hero,
 metal-close, glass-close, and compact-HDR glass-close) were pixel-identical on
-M1 Max/Metal. At 640×360 it replaces the 1,843,200-byte snapshot with an equally
-large output plus 230,400-byte mask. The logical full-frame copy/attachment/mask/
-post-read model is 5,299,200 bytes versus 7,372,800 for the snapshot path, not a
-physical bandwidth measurement. Three alternating 120-second route pairs found a
--0.01675 ms median GPU-render delta (~0.64%); frame-work deltas varied, so there
-is no practical speedup claim. The option remains off by default. GPU verification
+M1 Max/Metal. At 640×360, RGBA16F coverage uses the output alpha channel and
+replaces the 1,843,200-byte snapshot with an equally sized output, with no added
+mask allocation. The known allocation matches the snapshot path. Its modeled
+full-frame copy/attachment/post-read traffic is 5,529,600 bytes versus 7,372,800,
+not a physical bandwidth measurement. Compact HDR retains a 230,400-byte R8 mask.
+Three alternating 120-second route pairs found a -0.01817 ms median GPU-render
+delta (~0.70%); frame-work deltas varied, so there is no practical speedup claim.
+The option remains off by default. GPU verification
 passed on M1 Max/Metal; native window, fallback adapters and Windows/DX12 remain
 unverified. Full evidence is in [measurements-o08.json](measurements-o08.json),
 with local captures and reports under `artifacts/o08/optical-no-copy-*`.
+The RGBA16F alpha-coverage refinement and its refreshed timing reports are under
+`artifacts/o08/optical-alpha-coverage/`.
 
 ## O03 single-emitter tile lists
 

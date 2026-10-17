@@ -115,3 +115,6 @@ fn shade_optical(v:Varying,front:bool)->vec4<f32> {
     output.mask=vec4(1.);
     return output;
 }
+@fragment fn optical_overlay_alpha_fs(v:Varying,@builtin(front_facing) front:bool)->@location(0) vec4<f32> {
+    return shade_optical(v,front);
+}

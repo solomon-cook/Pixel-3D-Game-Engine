@@ -9,6 +9,14 @@ fn resolved_hdr(pixel:vec2<i32>)->vec3<f32> {
     if textureLoad(optical_mask,pixel,0).r>0.5 {return textureLoad(optical_color,pixel,0).rgb;}
     return textureLoad(hdr,pixel,0).rgb;
 }
+fn resolved_hdr_alpha(pixel:vec2<i32>)->vec3<f32> {
+    if textureLoad(optical_color,pixel,0).a>0.5 {return textureLoad(optical_color,pixel,0).rgb;}
+    return textureLoad(hdr,pixel,0).rgb;
+}
+fn selected_hdr(pixel:vec2<i32>,alpha_coverage:bool)->vec3<f32> {
+    if alpha_coverage {return resolved_hdr_alpha(pixel);}
+    return resolved_hdr(pixel);
+}
 fn visible_depth(p:vec2<i32>)->f32 {
     let geometry=textureLoad(normal_depth,p,0).w;
     let effect=textureLoad(effect_depth,p,0).x;
@@ -63,16 +71,16 @@ fn bayer(p:vec2<u32>)->f32 {
     let matrix=array<f32,16>(0.,8.,2.,10.,12.,4.,14.,6.,3.,11.,1.,9.,15.,7.,13.,5.);
     return matrix[(p.x%4u)+(p.y%4u)*4u]/16.-0.5;
 }
-@fragment fn fs(@builtin(position) pos:vec4<f32>)->@location(0) vec4<f32>{
+fn pixel_treatment(pos:vec4<f32>,alpha_coverage:bool)->vec4<f32>{
     let source_pixel=vec2<i32>(pos.xy);let p=heat_pixel(source_pixel);
     let solid_flame=g.fire_pixels.x>0.5 && textureLoad(effect_depth,p,0).y>0.05;
-    var color=resolved_hdr(p);
+    var color=selected_hdr(p,alpha_coverage);
     if g.experiments.x>0.5 {
         let anchor=(p/2)*2;let nd=textureLoad(normal_depth,p,0);var total=vec3(0.);var count=0.;
         for(var y=0;y<2;y++){for(var x=0;x<2;x++){
             let q=anchor+vec2(x,y);let candidate=textureLoad(normal_depth,q,0);
             if dot(nd.xyz,candidate.xyz)>0.96 && abs(nd.w-candidate.w)<0.25 {
-                total+=resolved_hdr(q);count+=1.;
+                total+=selected_hdr(q,alpha_coverage);count+=1.;
             }
         }}
         if count>0. {let average=total/count;let l=max(dot(color,vec3(0.2126,0.7152,0.0722)),0.001);let a=dot(average,vec3(0.2126,0.7152,0.0722));color*=mix(1.,a/l,0.65);}
@@ -83,7 +91,7 @@ fn bayer(p:vec2<u32>)->f32 {
         var glow=vec3(0.);let size=vec2<i32>(textureDimensions(hdr));
         for(var y=-1;y<=1;y++){for(var x=-1;x<=1;x++){
             let q=clamp(p+vec2(x,y)*2,vec2(0),size-vec2(1));
-            glow+=max(resolved_hdr(q)-vec3(1.),vec3(0.));
+            glow+=max(selected_hdr(q,alpha_coverage)-vec3(1.),vec3(0.));
         }}
         color+=glow/9.*g.presentation.y;
     }
@@ -97,3 +105,5 @@ fn bayer(p:vec2<u32>)->f32 {
     // Output target is sRGB; the GPU applies the display transfer function.
     return vec4(pow(result,vec3(2.2)),1.);
 }
+@fragment fn fs(@builtin(position) pos:vec4<f32>)->@location(0) vec4<f32>{return pixel_treatment(pos,false);}
+@fragment fn fs_alpha_coverage(@builtin(position) pos:vec4<f32>)->@location(0) vec4<f32>{return pixel_treatment(pos,true);}

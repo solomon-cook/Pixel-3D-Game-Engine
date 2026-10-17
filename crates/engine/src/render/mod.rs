@@ -130,8 +130,11 @@ struct Pipelines {
     optical_baked: wgpu::RenderPipeline,
     optical_overlay: wgpu::RenderPipeline,
     optical_overlay_baked: wgpu::RenderPipeline,
+    optical_overlay_alpha: wgpu::RenderPipeline,
+    optical_overlay_alpha_baked: wgpu::RenderPipeline,
     volume: wgpu::RenderPipeline,
     post: wgpu::RenderPipeline,
+    post_alpha: wgpu::RenderPipeline,
     shadow: wgpu::RenderPipeline,
     shadow_opaque: wgpu::RenderPipeline,
     shadow_baked: wgpu::RenderPipeline,
@@ -213,6 +216,7 @@ pub struct Renderer {
     optical_mask: Option<wgpu::Texture>,
     optical_post_groups: Option<[wgpu::BindGroup; 2]>,
     optical_no_copy_enabled: bool,
+    optical_mask_required: bool,
     _absorption_texture: wgpu::Texture,
     absorption_cache_resolution: u32,
     absorption_layout: wgpu::BindGroupLayout,
@@ -737,9 +741,19 @@ impl Renderer {
         };
         let optical_mask_format = wgpu::TextureFormat::R8Unorm;
         let optical_mask_features = adapter.get_texture_format_features(optical_mask_format);
-        let optical_no_copy_supported = optical_mask_features.allowed_usages.contains(
-            wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING,
-        );
+        let optical_mask_required = hdr_color_format == compact_hdr_format;
+        let optical_no_copy_supported = if optical_mask_required {
+            optical_mask_features.allowed_usages.contains(
+                wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING,
+            )
+        } else {
+            adapter
+                .get_texture_format_features(HDR)
+                .allowed_usages
+                .contains(
+                    wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING,
+                )
+        };
         let optical_no_copy_enabled = scene.render.optical_no_copy && optical_no_copy_supported;
         let rg16_features = adapter.get_texture_format_features(wgpu::TextureFormat::Rg16Float);
         let effect_depth_format = if rg16_features
@@ -1722,6 +1736,7 @@ impl Renderer {
             "optical_no_copy_requested":scene.render.optical_no_copy,
             "optical_no_copy_enabled":optical_no_copy_enabled,
             "optical_no_copy_supported":optical_no_copy_supported,
+            "optical_mask_required":optical_mask_required,
             "optical_mask_format":format!("{optical_mask_format:?}"),
             "smoke_volume_format":format!("{smoke_volume_format:?}"),
             "smoke_rg16_storage_enabled":smoke_rg16_supported,
@@ -1791,6 +1806,7 @@ impl Renderer {
             optical_mask: None,
             optical_post_groups: None,
             optical_no_copy_enabled,
+            optical_mask_required,
             _absorption_texture: absorption_texture,
             absorption_cache_resolution,
             absorption_layout,
@@ -1856,11 +1872,9 @@ impl Renderer {
     }
 
     fn ensure_optical_targets(&mut self) {
-        if if self.optical_no_copy_enabled {
-            self.optical_output.is_some()
-        } else {
-            self.scene_color.is_some()
-        } {
+        if (self.optical_no_copy_enabled && self.optical_output.is_some())
+            || (!self.optical_no_copy_enabled && self.scene_color.is_some())
+        {
             return;
         }
         let [width, height] = self.resolution;
@@ -1881,7 +1895,7 @@ impl Renderer {
             wgpu::TextureDimension::D2,
         );
         let color_view = optical_color.create_view(&Default::default());
-        let mask = self.optical_no_copy_enabled.then(|| {
+        let mask = (self.optical_no_copy_enabled && self.optical_mask_required).then(|| {
             texture(
                 &self.device,
                 "optical coverage mask",
@@ -1904,8 +1918,11 @@ impl Renderer {
                 wgpu::BindingResource::Sampler(&self.optical_sampler),
             ],
         );
-        if let Some(mask_texture) = mask.as_ref() {
-            let mask_view = mask_texture.create_view(&Default::default());
+        if self.optical_no_copy_enabled {
+            let mask_view = mask
+                .as_ref()
+                .map(|texture| texture.create_view(&Default::default()));
+            let coverage_view = mask_view.as_ref().unwrap_or(&color_view);
             let smoke_views = self
                 .smoke_textures
                 .each_ref()
@@ -1921,7 +1938,7 @@ impl Renderer {
                         wgpu::BindingResource::TextureView(&smoke_views[i]),
                         wgpu::BindingResource::Sampler(&self.optical_sampler),
                         wgpu::BindingResource::TextureView(&color_view),
-                        wgpu::BindingResource::TextureView(&mask_view),
+                        wgpu::BindingResource::TextureView(coverage_view),
                     ],
                 )
             }));
@@ -1936,7 +1953,7 @@ impl Renderer {
             8
         };
         let bytes = u64::from(width) * u64::from(height) * bytes_per_pixel;
-        let mask_bytes = if self.optical_no_copy_enabled {
+        let mask_bytes = if self.optical_mask_required && self.optical_no_copy_enabled {
             u64::from(width) * u64::from(height)
         } else {
             0
@@ -2200,6 +2217,28 @@ impl Renderer {
             true,
             false,
         );
+        let optical_overlay_alpha = render(
+            "optical surfaces no-copy alpha coverage",
+            &optical_module,
+            &optical_layout,
+            "optical_vs",
+            Some("optical_overlay_alpha_fs"),
+            &[color_target(HDR, None)],
+            true,
+            true,
+            true,
+        );
+        let optical_overlay_alpha_baked = render(
+            "optical surfaces no-copy alpha coverage baked reference",
+            &optical_module,
+            &optical_layout,
+            "optical_vs_baked",
+            Some("optical_overlay_alpha_fs"),
+            &[color_target(HDR, None)],
+            true,
+            true,
+            false,
+        );
         let volume = render(
             "volumetrics",
             &volume_module,
@@ -2223,6 +2262,17 @@ impl Renderer {
             &post_layout,
             "vs",
             Some("fs"),
+            &[color_target(PIXEL_FORMAT, None)],
+            false,
+            false,
+            false,
+        );
+        let post_alpha = render(
+            "pixel treatment with overlay alpha coverage",
+            &post_module,
+            &post_layout,
+            "vs",
+            Some("fs_alpha_coverage"),
             &[color_target(PIXEL_FORMAT, None)],
             false,
             false,
@@ -2306,8 +2356,11 @@ impl Renderer {
             optical_baked,
             optical_overlay,
             optical_overlay_baked,
+            optical_overlay_alpha,
+            optical_overlay_alpha_baked,
             volume,
             post,
+            post_alpha,
             shadow,
             shadow_opaque,
             shadow_baked,
@@ -3420,16 +3473,18 @@ impl Renderer {
                         store: wgpu::StoreOp::Store,
                     },
                 }));
-                attachments.push(Some(wgpu::RenderPassColorAttachment {
-                    view: optical_mask_view
-                        .as_ref()
-                        .expect("optical mask is allocated before the optical pass"),
-                    resolve_target: None,
-                    ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT),
-                        store: wgpu::StoreOp::Store,
-                    },
-                }));
+                if self.optical_mask_required {
+                    attachments.push(Some(wgpu::RenderPassColorAttachment {
+                        view: optical_mask_view
+                            .as_ref()
+                            .expect("optical mask is allocated before the optical pass"),
+                        resolve_target: None,
+                        ops: wgpu::Operations {
+                            load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT),
+                            store: wgpu::StoreOp::Store,
+                        },
+                    }));
+                }
             } else {
                 let scene_color = self
                     .scene_color
@@ -3473,9 +3528,17 @@ impl Renderer {
             });
             pass.set_pipeline(if self.optical_no_copy_enabled {
                 if self.geometry_instancing_enabled {
-                    &self.pipelines.optical_overlay
+                    if self.optical_mask_required {
+                        &self.pipelines.optical_overlay
+                    } else {
+                        &self.pipelines.optical_overlay_alpha
+                    }
                 } else {
-                    &self.pipelines.optical_overlay_baked
+                    if self.optical_mask_required {
+                        &self.pipelines.optical_overlay_baked
+                    } else {
+                        &self.pipelines.optical_overlay_alpha_baked
+                    }
                 }
             } else if self.geometry_instancing_enabled {
                 &self.pipelines.optical
@@ -3519,7 +3582,13 @@ impl Renderer {
                 }),
                 occlusion_query_set: None,
             });
-            pass.set_pipeline(&self.pipelines.post);
+            pass.set_pipeline(
+                if self.optical_no_copy_enabled && optical_active && !self.optical_mask_required {
+                    &self.pipelines.post_alpha
+                } else {
+                    &self.pipelines.post
+                },
+            );
             pass.set_bind_group(0, &self.globals, &[]);
             let post_group = if self.optical_no_copy_enabled && optical_active {
                 &self.optical_post_groups.as_ref().unwrap()[self.smoke_index]
