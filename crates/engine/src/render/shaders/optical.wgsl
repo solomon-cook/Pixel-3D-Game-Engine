@@ -1,7 +1,7 @@
 @group(2) @binding(0) var scene_color:texture_2d<f32>;
 @group(2) @binding(1) var scene_normals:texture_2d<f32>;
 @group(2) @binding(2) var optical_sampler:sampler;
-struct OpticalOutput { @location(0) color:vec4<f32> };
+struct OpticalOverlayOutput { @location(0) color:vec4<f32>, @location(1) mask:vec4<f32> };
 @vertex fn optical_vs(v:VertexIn)->Varying {
     var result=world_vertex(v);
     if optical_strength(materials[v.material])<=0. {result.clip=vec4(2.,2.,2.,1.);}
@@ -61,7 +61,7 @@ fn reflected_scene(p:vec3<f32>,n:vec3<f32>,view:vec3<f32>,rough:f32)->vec3<f32> 
     }
     return fallback;
 }
-@fragment fn optical_fs(v:Varying,@builtin(front_facing) front:bool)->OpticalOutput {
+fn shade_optical(v:Varying,front:bool)->vec4<f32> {
     let tile=tile_index(v.clip.xy);
     let m=materials[v.material];
     if optical_strength(m)<=0. {discard;}
@@ -73,7 +73,7 @@ fn reflected_scene(p:vec3<f32>,n:vec3<f32>,view:vec3<f32>,rough:f32)->vec3<f32> 
     let foreground=atmosphere(v.clip,v.clip.z,tile);
     // An opaque foreground smoke lobe hides the complete optical surface.
     if foreground.a>0.985 {
-        var hidden:OpticalOutput;hidden.color=vec4(foreground.rgb,1.);return hidden;
+        return vec4(foreground.rgb,1.);
     }
     var base_color:vec3<f32>;
     var base_normal_depth:vec4<f32>;
@@ -104,5 +104,14 @@ fn reflected_scene(p:vec3<f32>,n:vec3<f32>,view:vec3<f32>,rough:f32)->vec3<f32> 
         color+=background*exp(-m.absorption.rgb*path)*clamp(albedo,vec3(0.),vec3(1.))*(vec3(1.)-f)*transmission(m);
     }
     color=foreground.rgb+color*(1.-foreground.a);
-    var result:OpticalOutput;result.color=vec4(color,1.);return result;
+    return vec4(color,1.);
+}
+@fragment fn optical_fs(v:Varying,@builtin(front_facing) front:bool)->@location(0) vec4<f32> {
+    return shade_optical(v,front);
+}
+@fragment fn optical_overlay_fs(v:Varying,@builtin(front_facing) front:bool)->OpticalOverlayOutput {
+    var output:OpticalOverlayOutput;
+    output.color=shade_optical(v,front);
+    output.mask=vec4(1.);
+    return output;
 }

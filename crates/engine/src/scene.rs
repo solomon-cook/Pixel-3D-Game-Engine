@@ -29,6 +29,9 @@ pub struct RenderSettings {
     /// Experimental 32-bit packed HDR target for comparison; disabled by default.
     #[serde(default)]
     pub compact_hdr: bool,
+    /// Experimental optical output plus coverage mask to avoid copying the HDR input; disabled by default.
+    #[serde(default)]
+    pub optical_no_copy: bool,
     pub exposure: f32,
     pub shading_steps: u32,
     pub dither_strength: f32,

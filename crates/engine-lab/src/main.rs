@@ -153,6 +153,9 @@ pub struct Options {
     /// Use experimental Rg11b10Ufloat HDR color targets when supported.
     #[arg(long)]
     pub compact_hdr: bool,
+    /// Use an experimental optical output/mask path to skip the HDR snapshot copy.
+    #[arg(long)]
+    pub optical_no_copy: bool,
     #[arg(long)]
     pub shaders: Option<PathBuf>,
 }
@@ -280,6 +283,9 @@ pub fn prepare(options: &Options) -> Result<(Scene, PathBuf, PathBuf)> {
     let mut scene = Scene::load(&path)?;
     if options.compact_hdr {
         scene.render.compact_hdr = true;
+    }
+    if options.optical_no_copy {
+        scene.render.optical_no_copy = true;
     }
     if let Some(profile) = &options.effect_profile {
         scene.emitters[0].effect_profile = profile.clone();

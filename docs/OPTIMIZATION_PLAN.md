@@ -483,8 +483,21 @@ The measured pair saves 1,179,648 bytes; reset/replay verification and matched
 smoke/metal captures passed on M1 Max/Metal. Three alternating 20-second and
 three 60-second material-orbit pairs found no GPU timing benefit: the longer run
 had a +0.0087 ms median optical-resolve delta and +0.0003 ms total GPU-render
-delta, while frame-work results varied. The remaining HDR snapshot and its copy
-still need pass-layout work and Windows/DX12 validation. The per-frame gate uses
+delta, while frame-work results varied. The normal-path HDR snapshot copy can now
+be bypassed by the experimental `--optical-no-copy` option (also
+`render.optical_no_copy` in scene JSON). It writes optical fragments to a lazily
+allocated color overlay and R8Unorm coverage mask; post selects covered pixels
+while the source HDR remains immutable. Four matched fixed-tick views, including
+compact HDR, were pixel-identical on M1 Max/Metal. At 640×360, the candidate
+replaces the 1,843,200-byte snapshot with an equally large output plus a 230,400-byte
+mask, increasing known optical-scene allocation by 230,400 bytes. Its full-frame
+logical copy/attachment/mask/post-read model is 5,299,200 bytes versus 7,372,800
+for copy plus optical attachment, a modeled 2,073,600-byte reduction; this is not
+measured physical bandwidth. Three alternating 120-second material-orbit pairs
+found a -0.01675 ms median GPU-render delta (~0.64%), while frame-work deltas
+varied. No practical speedup is established. The experiment stays disabled by
+default pending broader pass-layout review and Windows/DX12 validation. The
+per-frame gate uses
 camera-frustum draw batches, so offscreen optical materials skip both the copy and
 resolve; fully occluded surfaces may still activate the pass. The snapshot remains
 resident after first visibility to support later camera/material edits. See
@@ -497,7 +510,10 @@ recorded in [measurements-o08.json](measurements-o08.json). The report does not
 measure external-memory bandwidth. Lazy optical snapshots reduce diffuse-scene
 allocations by 3,686,400 bytes; adapter-gated Rg16Float effect coverage saves
 921,600 bytes and smoke volumes save 1,179,648 bytes on the measured M1 Max/Metal
-adapter. Copy elimination remains a candidate; validate layouts on both Metal and DX12.
+adapter. The opt-in optical overlay path removes the HDR copy with exact fixed-tick
+image parity on this adapter, at a 230,400-byte mask cost and no demonstrated
+practical timing gain. Validate fallback and pass layouts on other adapters,
+including Windows/DX12.
 O08 layout/pass experiments and the later sparse-smoke gate
 remain open.
 

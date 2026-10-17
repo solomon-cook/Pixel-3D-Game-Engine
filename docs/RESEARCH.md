@@ -346,3 +346,31 @@ performance gain. The confirmed tradeoff is 1,843,200 fewer known target bytes a
 are sparse fixed-tick captures, not a continuous sequence. Fallback and DX12 review
 remain open. See [measurements-o08.json](measurements-o08.json) and ignored
 `artifacts/o08/compact-hdr-motion/` and `artifacts/o08/compact-hdr-route-captures/` captures.
+
+## Optical overlay output without snapshot copy (17 Oct 2026)
+
+Hypothesis: keep the source HDR texture immutable for reflection/refraction
+sampling, render optical fragments into a separate overlay, and use a coverage mask
+in post to avoid copying the HDR texture each frame. The opt-in `--optical-no-copy`
+path uses a lazily allocated RGBA16F (or selected compact HDR) output and R8Unorm
+mask; a missing R8 render/sample capability falls back to the existing snapshot-copy
+path. The default remains unchanged.
+
+On M1 Max/Metal, seed-42 tick-300 hero, metal-close and glass-close captures were
+pixel-identical at 640×360. A glass-close compact-HDR pair was also pixel-identical.
+The candidate still costs 230,400 more known bytes per optical scene at this
+resolution: it replaces the 1,843,200-byte snapshot with an equally sized output
+plus the mask. A clearing scene with no visible optics allocated neither output,
+mask nor snapshot. The logical full-frame estimate falls from 7,372,800 to
+5,299,200 bytes for snapshot-copy/optical attachment versus overlay/mask/post
+reads. This modeled 2,073,600-byte reduction is not physical DRAM traffic.
+
+Three alternating 120-second material-orbit pairs measured a -0.01675 ms median
+GPU-render delta and -0.01646 ms optical-resolve delta. Frame-work deltas varied;
+the render-time difference is small and does not establish practical speedup.
+Keep this research option disabled by default. Native-window rendering, fallback
+execution on other adapters, Windows/DX12 and compact-HDR route timing remain
+unverified. Captures and raw timing reports are under ignored
+`artifacts/o08/optical-no-copy-captures/` and
+`artifacts/o08/optical-no-copy-timing/`; full details are in
+[measurements-o08.json](measurements-o08.json).

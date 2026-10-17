@@ -145,6 +145,20 @@ DX12/other adapters and the HDR snapshot/pass-layout gate remain open. Full resu
 [measurements-o08.json](measurements-o08.json); local captures are under ignored
 `artifacts/o08/compact-hdr-motion/` and `artifacts/o08/compact-hdr-route-captures/`.
 
+The experimental `--optical-no-copy` overlay path keeps the source HDR immutable,
+draws optical results to a separate color target plus R8Unorm coverage mask, and
+selects covered pixels during post. Four seed-42 tick-300 image pairs (hero,
+metal-close, glass-close, and compact-HDR glass-close) were pixel-identical on
+M1 Max/Metal. At 640×360 it replaces the 1,843,200-byte snapshot with an equally
+large output plus 230,400-byte mask. The logical full-frame copy/attachment/mask/
+post-read model is 5,299,200 bytes versus 7,372,800 for the snapshot path, not a
+physical bandwidth measurement. Three alternating 120-second route pairs found a
+-0.01675 ms median GPU-render delta (~0.64%); frame-work deltas varied, so there
+is no practical speedup claim. The option remains off by default. GPU verification
+passed on M1 Max/Metal; native window, fallback adapters and Windows/DX12 remain
+unverified. Full evidence is in [measurements-o08.json](measurements-o08.json),
+with local captures and reports under `artifacts/o08/optical-no-copy-*`.
+
 ## O03 single-emitter tile lists
 
 The renderer builds ordered 16×16 scene-pixel lists for fire primitives, ink-smoke

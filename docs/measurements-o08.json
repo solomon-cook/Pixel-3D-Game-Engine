@@ -1725,5 +1725,135 @@
     "max_channel_error_across_poses": 10,
     "visual_review": "All eight matched baseline/candidate poses looked alike in the contact sheet, with no distinct route-dependent artifact identified. Most pixels have small quantization changes; numerical details vary with viewpoint. Same fixed simulation tick at every camera pose isolates route viewpoint and does not show simultaneous route-time fire/smoke evolution.",
     "limits": "Single Apple M1 Max/Metal adapter; fixed tick and seed; eight sampled poses at 15-second intervals rather than continuous capture; no fallback adapter or DX12 validation."
+  },
+  "optical_no_copy_experiment": {
+    "date": "2026-10-17",
+    "hypothesis": "Replace the per-frame HDR snapshot copy with a separate optical color overlay and R8Unorm coverage mask, preserving the immutable HDR source for reflection/refraction reads.",
+    "implementation": "Opt-in render.optical_no_copy / engine-lab --optical-no-copy. Clears a lazily allocated optical overlay and mask on visible optical frames, renders optical results there, then post selects covered pixels. Default path remains snapshot-copy. Unsupported R8Unorm render/sample capability falls back to snapshot-copy.",
+    "device": {
+      "name": "Apple M1 Max",
+      "backend": "Metal",
+      "resolution": [
+        640,
+        360
+      ]
+    },
+    "scene": {
+      "file": "assets/scenes/materials.json",
+      "seed": 42,
+      "tick": 300,
+      "capture_scale": 1,
+      "cameras": [
+        "hero",
+        "metal-close",
+        "glass-close"
+      ]
+    },
+    "capture_pairs": [
+      {
+        "baseline": "artifacts/o08/optical-no-copy-captures/hero-baseline.png",
+        "candidate": "artifacts/o08/optical-no-copy-captures/hero-no-copy.png",
+        "changed_pixels": 0,
+        "mae_rgb_255": 0,
+        "max_channel_error": 0
+      },
+      {
+        "baseline": "artifacts/o08/optical-no-copy-captures/metal-close-baseline.png",
+        "candidate": "artifacts/o08/optical-no-copy-captures/metal-close-no-copy.png",
+        "changed_pixels": 0,
+        "mae_rgb_255": 0,
+        "max_channel_error": 0
+      },
+      {
+        "baseline": "artifacts/o08/optical-no-copy-captures/glass-close-baseline.png",
+        "candidate": "artifacts/o08/optical-no-copy-captures/glass-close-no-copy.png",
+        "changed_pixels": 0,
+        "mae_rgb_255": 0,
+        "max_channel_error": 0
+      },
+      {
+        "baseline": "artifacts/o08/optical-no-copy-captures/glass-compact-baseline.png",
+        "candidate": "artifacts/o08/optical-no-copy-captures/glass-compact-no-copy.png",
+        "changed_pixels": 0,
+        "mae_rgb_255": 0,
+        "max_channel_error": 0
+      }
+    ],
+    "allocation_bytes": {
+      "baseline_optical_scene": 16882416,
+      "candidate_optical_scene": 17112816,
+      "delta": 230400,
+      "baseline_optical_snapshot": 1843200,
+      "candidate_optical_snapshot": 0,
+      "candidate_optical_output": 1843200,
+      "candidate_r8_mask": 230400,
+      "no_visible_optics_candidate_snapshot_output_mask": 0
+    },
+    "timing": {
+      "route": "material-orbit",
+      "duration_seconds": 120,
+      "warmup_seconds": 10,
+      "frames_per_run": 7200,
+      "seed": 42,
+      "run_order": [
+        "baseline",
+        "candidate",
+        "candidate",
+        "baseline",
+        "baseline",
+        "candidate"
+      ],
+      "raw_reports": "artifacts/o08/optical-no-copy-timing/",
+      "paired_delta_ms": {
+        "gpu_render": [
+          -0.013251,
+          -0.019249,
+          -0.01675
+        ],
+        "optical_resolve": [
+          -0.012208,
+          -0.018792,
+          -0.016458
+        ],
+        "frame_work": [
+          -0.002334,
+          0.09525,
+          0.061624
+        ],
+        "post": [
+          -0.006459
+        ]
+      },
+      "median_paired_delta_ms": {
+        "gpu_render": -0.01675,
+        "optical_resolve": -0.016458,
+        "frame_work": 0.061624
+      },
+      "interpretation": "GPU render reduction is small (~0.64% of baseline); frame-work deltas vary and no practical end-to-end gain is established. GPU stage intervals may overlap; do not sum stage distributions."
+    },
+    "logical_traffic_model": {
+      "baseline_copy_read_plus_write_bytes": 3686400,
+      "baseline_optical_color_attachment_load_store_bytes": 3686400,
+      "candidate_optical_output_load_store_bytes": 3686400,
+      "candidate_r8_mask_clear_store_bytes": 460800,
+      "candidate_post_overlay_and_mask_read_bytes": 1152000,
+      "baseline_total_bytes": 7372800,
+      "candidate_total_bytes": 5299200,
+      "modeled_delta_bytes": -2073600,
+      "caveat": "Full-frame logical access estimate only; not physical DRAM bandwidth and actual shader coverage/cache/tile behavior varies."
+    },
+    "verification": {
+      "command": "python3 scripts/verify.py --gpu",
+      "result": "passed",
+      "device": "Apple M1 Max / Metal",
+      "details": "format, clippy, workspace tests (30), build, smoke/material GPU checks passed; verified=true,gpu=true,native=false"
+    },
+    "limits": [
+      "Opt-in only; default snapshot-copy path is unchanged.",
+      "Windows/DX12, other adapters, and native-window rendering were not verified.",
+      "Compact-HDR no-copy was image-compared at fixed tick but not route-timed.",
+      "Timing is too small and frame-work results too variable to claim practical speedup."
+    ],
+    "local_evidence": "Ignored PNG/JSON captures, contact sheet and raw reports under artifacts/o08/optical-no-copy-captures/ and artifacts/o08/optical-no-copy-timing/."
   }
 }
