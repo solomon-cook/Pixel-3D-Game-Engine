@@ -9,8 +9,9 @@ projected detail, smoke absorption reuse, optical specialisation, object culling
 instancing and resource efficiency. O01's profiling implementation and M1 Max/Metal
 workload evidence are complete. O08's inventory and targeted allocation changes
 are implemented on M1 Max/Metal; an opt-in packed HDR format now halves target
-storage with small still-image differences. Broader layout/pass changes still need
-motion and cross-backend measurements. O03's bounded single-emitter tile lists and O07's per-camera/per-light culling,
+storage with small still-image differences. Fixed-camera temporal and moving-route
+timing evidence exists; moving-route camera imagery and cross-backend measurements
+remain open. O03's bounded single-emitter tile lists and O07's per-camera/per-light culling,
 shared meshes, instancing and live object transforms are implemented and measured
 on M1 Max/Metal. Platform acceptance gates remain open.
 
@@ -132,9 +133,16 @@ The experimental `Rg11b10Ufloat` HDR target reduces the primary color target and
 optical snapshot from 8 to 4 bytes per pixel when the adapter exposes the required
 feature/usages. Three fixed-tick M1 Max stills looked very similar on visual review,
 but 49–78% of pixels changed at low mean RGB error; sparse smoke pixels had a
-30/255 maximum channel difference. The format remains off by default pending motion,
-timing and cross-backend review. The HDR snapshot/pass-layout and sparse-smoke gates
-remain open.
+30/255 maximum channel difference. Four additional fixed-camera captures over ticks
+300–1200 show similar appearance and stable error (mean 0.362/255, maximum 9/255)
+while fire/smoke evolve. Three alternating 120-second M1 Max/Metal material-orbit
+pairs show a -0.0061 ms paired median GPU-render delta, about 0.24%; frame-work
+deltas vary and no practical speedup is claimed. The measured benefit is 1,843,200
+fewer known target bytes at 640×360 on an optical scene. The format remains off by
+default. Moving-route camera imagery, fallback behavior, DX12/other adapters and
+the HDR snapshot/pass-layout gate remain open. Full paired results are in
+[measurements-o08.json](measurements-o08.json); local captures are under ignored
+`artifacts/o08/compact-hdr-motion/`.
 
 ## O03 single-emitter tile lists
 

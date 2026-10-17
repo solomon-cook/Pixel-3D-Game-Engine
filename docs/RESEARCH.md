@@ -330,6 +330,15 @@ target and lazy optical snapshot, instead of eight; `Rgba16Float` remains the
 default and unsupported-adapter fallback. Three matched fixed-tick views for metal,
 smoke and glass looked very similar at native capture scale, but are not pixel
 identical. Mean absolute RGB error ranged from 0.32 to 0.45/255; the smoke view had
-a sparse maximum channel difference of 30/255. This gives a useful selectable
-memory/precision tradeoff, not an accepted default or a performance result. Motion,
-timing, fallback and DX12 review remain open. See [measurements-o08.json](measurements-o08.json).
+a sparse maximum channel difference of 30/255. Four additional matched seed-42
+hero-camera captures at ticks 300, 600, 900 and 1200 cover fire/smoke evolution.
+Visual review found no new instability; per-tick mean RGB error stayed near
+0.362/255, with a 9/255 maximum channel difference in this view. Three alternating
+120-second `material-orbit` pairs after 10-second warm-up measured candidate GPU
+render medians 0.0051–0.0092 ms lower (paired median -0.0061 ms, about 0.24% of
+baseline). Frame-work deltas varied, so this is not evidence of a practical
+performance gain. The confirmed tradeoff is 1,843,200 fewer known target bytes at
+640×360 for a small precision loss. Keep the format opt-in. Fixed-camera temporal
+captures do not replace visual review from the moving route camera. Fallback and
+DX12 review remain open. See [measurements-o08.json](measurements-o08.json) and
+ignored `artifacts/o08/compact-hdr-motion/` captures.
