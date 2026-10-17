@@ -64,9 +64,9 @@ Windows DX12 and RTX-class rendering remain unverified.
 ## O08 resource and bandwidth inventory
 
 The original 640×360 clearing/heavy inventory recorded 29,806,088 bytes. The current
-renderer reports 23,988,248 known bytes before first optical use and 27,674,648
+renderer reports 22,808,600 known bytes before first optical use and 26,495,000
 bytes after live optical activation; lazy optical snapshots add 3,686,400 bytes.
-The current Material Atelier capture reports 19,905,264 known bytes. These are
+The current Material Atelier capture reports 18,725,616 known bytes. These are
 descriptor/structure-size estimates; driver alignment and transient/pipeline
 storage are excluded.
 
@@ -81,23 +81,29 @@ optical geometry adds one more full-buffer reference. These quantities are API/
 shader logical work estimates, not measured DRAM bandwidth. Metal tile storage,
 caches, compression and overdraw can change external traffic substantially.
 
-The smoke shader nominally reads two trilinear samples and writes one RGBA16F
-voxel. Counting two 8-texel full-format samples plus the 8-byte store gives
-20,054,016 nominal bytes per 48×64×48 fixed step. This is not physical bandwidth:
-the shader consumes only x/y from the samples, and filtered sampling, channel
-elimination and cache behavior are hardware-dependent. O01 measured smoke compute
-at about 0.0205 ms median, compared with multi-millisecond post and atmosphere/fire
-stages; current evidence does not justify active-region simulation.
+The smoke shader now stores density and temperature in adapter-gated Rg16Float
+ping-pong volumes, requiring `TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES`; the
+RGBA16F fallback remains. This saves 1,179,648 known bytes for the two 48×64×48
+volumes. The full-format logical texel-request estimate falls from 20,054,016 to
+10,027,008 bytes per fixed step. This is not physical bandwidth: the shader only
+consumes x/y, and filtered sampling and cache behavior are hardware-dependent.
+Reset uploads use the selected texel stride. GPU reset/replay checks passed, and
+fixed-tick smoke/metal captures match the prior format byte-for-byte on this
+M1 Max/Metal adapter. O01 measured smoke compute at about 0.0205 ms median,
+compared with multi-millisecond post and atmosphere/fire stages; current evidence
+does not justify active-region simulation.
 
 A live M1 Max/Metal wgpu format query reported sampled, storage, render-attachment,
 copy and filtering support for Rg16Float and the probed alternatives. The effect
 depth/flame-coverage target now selects Rg16Float only when it is filterable and
 supports render attachment plus texture binding; otherwise it falls back to
-Rgba16Float. At 640×360 this saves 921,600 known bytes. Smoke and opaque-metal
-captures at matching 640×360 output were pixel-identical to saved baselines. This
-is one adapter's result, not DX12 support. Two-channel smoke volumes (1,179,648
-bytes saved) and removing the two full-frame optical copies (7,372,800 logical
-read/write bytes per optical frame) remain candidates. Optical snapshots allocate
+Rgba16Float. At 640×360 this saves 921,600 known bytes. Smoke ping-pong volumes
+select Rg16Float only with the adapter-specific format feature and required
+storage/sample support, falling back to Rgba16Float; they save 1,179,648 bytes.
+Matched images stayed pixel-identical, and reset/replay checks passed on this
+M1 Max/Metal adapter. This is one adapter's result, not DX12 support. Removing the
+two full-frame optical copies (7,372,800 logical read/write bytes per optical
+frame) remains a candidate. Optical snapshots allocate
 on first optical-material use, saving another 3,686,400 known bytes in diffuse
 scenes; live reflectivity activation and fixed-tick capture parity were verified.
 No frame-time gain is claimed for either allocation change. Pass-copy redesign,

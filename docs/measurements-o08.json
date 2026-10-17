@@ -19,7 +19,7 @@
     "format_capability_probe": "artifacts/o08/capability-probe.json",
     "format_capability_probe_sha256": "dfd283f6782f96a368dc2a7b207d0ea9073d90ee9c926163b038178d5d3d9edd",
     "format_capability_probe_scope": "one-second clearing route used to initialize the adapter and return wgpu format feature reports; timings are discarded",
-    "format_query_limit": "The original query recorded adapter-reported format features only. The later effect-target trial created the Rg16Float render attachment and render pipeline on this M1 Max/Metal adapter; fallback selection remains capability-gated and other adapters still require runtime validation."
+    "format_query_limit": "The original query recorded adapter-reported format features. Later effect-target and smoke-volume trials created the selected Rg16Float render attachment, render pipelines, storage textures and compute pipeline on this M1 Max/Metal adapter. Smoke selection also requires and enables TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES; fallback execution on another adapter and other backends remain unverified."
   },
   "provenance": {
     "source_revision": "f5632ef210f82c2556110d487392b445e41b2ff6",
@@ -219,12 +219,12 @@
       "voxel_count": 147456,
       "nominal_filtered_samples_per_voxel": 2,
       "nominal_texels_per_trilinear_sample": 8,
-      "source_format_bytes_per_texel": 8,
-      "destination_store_bytes_per_voxel": 8,
-      "nominal_full_texel_request_bytes_per_voxel": 136,
-      "nominal_full_texel_request_bytes_per_step": 20054016,
+      "source_format_bytes_per_texel": 4,
+      "destination_store_bytes_per_voxel": 4,
+      "nominal_full_texel_request_bytes_per_voxel": 68,
+      "nominal_full_texel_request_bytes_per_step": 10027008,
       "nominal_request_bytes_per_second_at_60_steps": 1203240960,
-      "notes": "Nominal source footprint counts two eight-texel filtered samples and one RGBA16F store. The shader uses x/y channels from samples; filtering hardware, channel elimination, caching and implementation details mean this is neither measured bus bandwidth nor guaranteed physical bytes."
+      "notes": "Nominal source footprint counts two eight-texel filtered samples and one RGBA16F store. The shader uses x/y channels from samples; filtering hardware, channel elimination, caching and implementation details mean this is neither measured bus bandwidth nor guaranteed physical bytes. Current implementation uses two-channel Rg16Float ping-pong volumes; nominal full-texel request arithmetic is halved from the original RGBA16F inventory. This is not measured external-memory traffic."
     }
   },
   "uploads": {
@@ -280,7 +280,7 @@
         "candidate": "Use a two-channel density/temperature ping-pong texture",
         "inventory_saving_bytes": 1179648,
         "evidence": "Two Rgba16Float volumes total 2359296 bytes; smoke shader writes z/w as zero and consumes x/y; this M1 Max reports Rg16Float write-only storage and filterable.",
-        "status": "candidate only; current shader uses rgba16float storage and RG16 support is adapter-specific here; query and fallback required on DX12; validate reset/replay and transport precision"
+        "status": "implemented on this M1 Max/Metal adapter with Rgba16Float fallback; reset/replay GPU verification passed and matched 640x360 smoke and opaque-metal captures are byte-identical; fallback execution, DX12 and other-adapter validation remain open"
       },
       {
         "candidate": "Allocate optical snapshots only for optical scenes",
@@ -405,6 +405,74 @@
       "modeled_clear_write_traffic_saving_per_frame_bytes": 921600,
       "baseline_fixed_attachment_total_bytes": 16826368,
       "candidate_fixed_attachment_total_bytes": 15904768
+    },
+    "smoke_volume_rg16": {
+      "selected_format": "Rg16Float",
+      "fallback_format": "Rgba16Float",
+      "selection_requirement": "adapter reports TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES and Rg16Float is filterable with STORAGE_BINDING and TEXTURE_BINDING usages plus STORAGE_WRITE_ONLY; the device feature is requested only when this path is selected",
+      "adapter": "Apple M1 Max / Metal / IntegratedGpu",
+      "resolution": [
+        48,
+        64,
+        48
+      ],
+      "bytes_per_voxel": {
+        "rgba16float": 8,
+        "rg16float": 4
+      },
+      "two_volume_bytes": {
+        "rgba16float": 2359296,
+        "rg16float": 1179648
+      },
+      "known_allocation_saving_bytes": 1179648,
+      "nominal_filtered_samples_and_store_bytes_per_fixed_step": {
+        "rgba16float": 20054016,
+        "rg16float": 10027008
+      },
+      "reset_upload": "zero-filled volume upload uses selected format bytes-per-voxel row stride",
+      "captures": [
+        {
+          "scene": "assets/scenes/clearing.json",
+          "camera": "smoke-close",
+          "seed": 42,
+          "tick": 300,
+          "scale": 1,
+          "candidate": "artifacts/o08/clearing-smoke-rg16-scale1.png",
+          "baseline": "artifacts/o08/clearing-rg16-scale1.png",
+          "candidate_sha256": "c080df09137173b984f48d39137da5a8719b2110965d0fd270a801e76f0adbfe",
+          "baseline_sha256": "c080df09137173b984f48d39137da5a8719b2110965d0fd270a801e76f0adbfe",
+          "changed_pixels": 0,
+          "mean_absolute_channel_error": 0,
+          "max_channel_error": 0
+        },
+        {
+          "scene": "assets/scenes/materials.json",
+          "camera": "metal-close",
+          "seed": 42,
+          "tick": 300,
+          "scale": 1,
+          "candidate": "artifacts/o08/metal-smoke-rg16-scale1.png",
+          "baseline": "artifacts/o08/metal-rg16-scale1.png",
+          "candidate_sha256": "44676834882e579439c0ec61fd20c85501f9a5ad32369f1d0e48b1b31c3c6208",
+          "baseline_sha256": "44676834882e579439c0ec61fd20c85501f9a5ad32369f1d0e48b1b31c3c6208",
+          "changed_pixels": 0,
+          "mean_absolute_channel_error": 0,
+          "max_channel_error": 0
+        }
+      ],
+      "deterministic_replay": "python3 scripts/verify.py --gpu reset/replay check passed; same-device seed-42 capture after reset matched the initial 120-tick capture byte-for-byte",
+      "performance_claim": "none; allocation and logical texel-request reductions were calculated, not measured as frame-time or external-memory bandwidth gains",
+      "limits": "One adapter only; fallback execution on an adapter lacking the extension/format support, Windows DX12 and other GPU backends remain unverified.",
+      "nominal_traffic_saving_per_fixed_step_bytes": 10027008
+    },
+    "current_live_resource_inventory_640x360": {
+      "clearing_before_first_optical_use_bytes": 22808600,
+      "clearing_after_optical_snapshot_activation_bytes": 26495000,
+      "materials_with_optical_snapshots_bytes": 18725616,
+      "effect_depth_format": "Rg16Float",
+      "effect_depth_bytes": 921600,
+      "smoke_volume_format": "Rg16Float",
+      "smoke_volumes_bytes": 1179648
     }
   }
 }

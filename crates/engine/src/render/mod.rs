@@ -215,6 +215,7 @@ pub struct Renderer {
     hdr_texture: wgpu::Texture,
     normals_texture: wgpu::Texture,
     effect_depth_format: wgpu::TextureFormat,
+    smoke_volume_format: wgpu::TextureFormat,
     volume_groups: [wgpu::BindGroup; 2],
     volume_layout: wgpu::BindGroupLayout,
     smoke_groups: [wgpu::BindGroup; 2],
@@ -681,17 +682,37 @@ impl Renderer {
         } else {
             HDR
         };
+        let adapter_format_feature = wgpu::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES;
+        let adapter_format_feature_available = adapter.features().contains(adapter_format_feature);
+        let smoke_rg16_supported = adapter_format_feature_available
+            && rg16_features.allowed_usages.contains(
+                wgpu::TextureUsages::STORAGE_BINDING | wgpu::TextureUsages::TEXTURE_BINDING,
+            )
+            && rg16_features
+                .flags
+                .contains(wgpu::TextureFormatFeatureFlags::FILTERABLE)
+            && rg16_features
+                .flags
+                .contains(wgpu::TextureFormatFeatureFlags::STORAGE_WRITE_ONLY);
+        let smoke_volume_format = if smoke_rg16_supported {
+            wgpu::TextureFormat::Rg16Float
+        } else {
+            HDR
+        };
         let timestamp =
             enable_timestamps && adapter.features().contains(wgpu::Features::TIMESTAMP_QUERY);
+        let mut required_features = wgpu::Features::empty();
+        if timestamp {
+            required_features |= wgpu::Features::TIMESTAMP_QUERY;
+        }
+        if smoke_rg16_supported {
+            required_features |= adapter_format_feature;
+        }
         let (device, queue) = adapter
             .request_device(
                 &wgpu::DeviceDescriptor {
                     label: Some("Pixel Engine"),
-                    required_features: if timestamp {
-                        wgpu::Features::TIMESTAMP_QUERY
-                    } else {
-                        wgpu::Features::empty()
-                    },
+                    required_features,
                     required_limits: wgpu::Limits::default(),
                     memory_hints: wgpu::MemoryHints::Performance,
                 },
@@ -1068,7 +1089,7 @@ impl Renderer {
                 &device,
                 "smoke density/temperature",
                 VOLUME,
-                HDR,
+                smoke_volume_format,
                 wgpu::TextureUsages::TEXTURE_BINDING
                     | wgpu::TextureUsages::STORAGE_BINDING
                     | wgpu::TextureUsages::COPY_DST,
@@ -1266,7 +1287,7 @@ impl Renderer {
                     wgpu::ShaderStages::COMPUTE,
                     wgpu::BindingType::StorageTexture {
                         access: wgpu::StorageTextureAccess::WriteOnly,
-                        format: HDR,
+                        format: smoke_volume_format,
                         view_dimension: wgpu::TextureViewDimension::D3,
                     },
                 ),
@@ -1452,6 +1473,7 @@ impl Renderer {
             &tile_list_layout,
             &tile_build_layout,
             effect_depth_format,
+            smoke_volume_format,
             &shader_directory,
         )?;
         let timing = timestamp.then(|| Timing {
@@ -1518,8 +1540,16 @@ impl Renderer {
             8
         };
         let render_targets_bytes = pixel_count * (2 * 8 + effect_depth_bytes_per_pixel + 4 + 4);
-        let smoke_bytes =
-            u64::from(VOLUME[0]) * u64::from(VOLUME[1]) * u64::from(VOLUME[2]) * 8 * 2;
+        let smoke_bytes_per_voxel = if smoke_volume_format == wgpu::TextureFormat::Rg16Float {
+            4
+        } else {
+            8
+        };
+        let smoke_bytes = u64::from(VOLUME[0])
+            * u64::from(VOLUME[1])
+            * u64::from(VOLUME[2])
+            * smoke_bytes_per_voxel
+            * 2;
         let shadow_bytes = 1024u64 * 1024 * 4 + 256 * 256 * 6 * 4;
         let atlas_bytes = 128u64 * 128 * 4 * mesh.textures.len() as u64;
         let tile_list_bytes = u64::from(tile_count)
@@ -1580,6 +1610,8 @@ impl Renderer {
             "render_targets_bytes":render_targets_bytes,
             "effect_depth_format":format!("{effect_depth_format:?}"),
             "effect_depth_bytes":pixel_count*effect_depth_bytes_per_pixel,
+            "smoke_volume_format":format!("{smoke_volume_format:?}"),
+            "smoke_rg16_storage_enabled":smoke_rg16_supported,
             "optical_snapshot_bytes":0,
             "smoke_volumes_bytes":smoke_bytes,
             "smoke_absorption_cache_bytes":(scene.render.absorption_cache_resolution as u64).pow(3)*8,
@@ -1612,6 +1644,7 @@ impl Renderer {
             queue,
             adapter,
             effect_depth_format,
+            smoke_volume_format,
             pixels,
             pixel_texture,
             resolution: scene.render.resolution,
@@ -1766,6 +1799,7 @@ impl Renderer {
         tile_lists: &wgpu::BindGroupLayout,
         tile_build: &wgpu::BindGroupLayout,
         effect_depth_format: wgpu::TextureFormat,
+        smoke_volume_format: wgpu::TextureFormat,
         dir: &Path,
     ) -> Result<Pipelines> {
         let read = |name: &str| {
@@ -1828,7 +1862,16 @@ impl Renderer {
         let smoke_module = shader(
             device,
             "smoke advection",
-            format!("{common}\n{}", smoke_source),
+            format!(
+                "{common}\n{}",
+                smoke_source.replace(
+                    "texture_storage_3d<rgba16float,write>",
+                    match smoke_volume_format {
+                        wgpu::TextureFormat::Rg16Float => "texture_storage_3d<rg16float,write>",
+                        _ => "texture_storage_3d<rgba16float,write>",
+                    },
+                )
+            ),
         );
         let absorption_module = shader(
             device,
@@ -2076,6 +2119,7 @@ impl Renderer {
             &self.tile_list_layout,
             &self.tile_build_layout,
             self.effect_depth_format,
+            self.smoke_volume_format,
             &self.shader_directory,
         )?;
         self.pipelines = replacement;
@@ -2395,7 +2439,12 @@ impl Renderer {
     }
     pub fn reset_smoke(&mut self) {
         self.invalidate_shadow_cache("reset");
-        let bytes = vec![0u8; (VOLUME[0] * VOLUME[1] * VOLUME[2] * 8) as usize];
+        let bytes_per_voxel = if self.smoke_volume_format == wgpu::TextureFormat::Rg16Float {
+            4
+        } else {
+            8
+        };
+        let bytes = vec![0u8; (VOLUME[0] * VOLUME[1] * VOLUME[2] * bytes_per_voxel) as usize];
         for t in &self.smoke_textures {
             self.queue.write_texture(
                 wgpu::TexelCopyTextureInfo {
@@ -2407,7 +2456,7 @@ impl Renderer {
                 &bytes,
                 wgpu::TexelCopyBufferLayout {
                     offset: 0,
-                    bytes_per_row: Some(VOLUME[0] * 8),
+                    bytes_per_row: Some(VOLUME[0] * bytes_per_voxel),
                     rows_per_image: Some(VOLUME[1]),
                 },
                 wgpu::Extent3d {

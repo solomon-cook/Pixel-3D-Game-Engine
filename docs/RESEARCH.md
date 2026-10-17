@@ -275,3 +275,12 @@ matched smoke and opaque-metal captures at scale 1 were pixel-identical to saved
 baselines. This confirms the path on one Metal adapter only; no timing benefit is
 claimed. The full live-allocation report, format selection and limits are in
 [measurements-o08.json](measurements-o08.json).
+
+The smoke density/temperature ping-pong pair also uses Rg16Float when the adapter
+exposes `TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES` and filterable sampled/write-only
+storage support; otherwise it retains Rgba16Float. The selected path requests that
+device feature, updates the storage binding and reset-upload stride, and saves
+1,179,648 bytes at 48×64×48. Fixed-seed reset/replay verification passed, and
+smoke-close plus opaque-metal captures at 640×360 were byte-identical to the prior
+format. The nominal full-texel request estimate halves, but no frame-time or
+external-bandwidth gain is claimed. Fallback execution and DX12 remain open.

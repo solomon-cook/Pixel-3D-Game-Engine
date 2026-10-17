@@ -462,7 +462,12 @@ as a render attachment and sampled texture, with Rgba16Float fallback. On M1
 Max/Metal at 640×360 this saves 921,600 known bytes and matched smoke and metal
 captures were pixel-identical at native capture scale. These are allocation
 changes; no frame-time gain is claimed. Pass-copy redesign, longer timing, and
-Windows/DX12 validation remain open. See [measurements-o08.json](measurements-o08.json).
+Windows/DX12 validation remain open. Smoke density/temperature ping-pong volumes
+also use adapter-gated Rg16Float storage when `TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES`
+and sampled/write-only storage support are available, with an Rgba16Float fallback.
+The measured pair saves 1,179,648 bytes; reset/replay verification and matched
+smoke/metal captures passed on M1 Max/Metal. This records allocation and logical
+request estimates, not a measured timing gain. See [measurements-o08.json](measurements-o08.json).
 
 **Inventory checkpoint (17 October 2026):** known allocations, resource lifetimes,
 per-frame logical attachment/copy traffic, nominal smoke sample/store footprint,
@@ -470,8 +475,8 @@ dynamic/startup upload payloads and a live M1 Max/Metal texture-format query are
 recorded in [measurements-o08.json](measurements-o08.json). The report does not
 measure external-memory bandwidth. Lazy optical snapshots reduce diffuse-scene
 allocations by 3,686,400 bytes; adapter-gated Rg16Float effect coverage saves
-921,600 bytes on the measured M1 Max/Metal adapter. Two-channel smoke storage and
-copy elimination remain candidates; validate layouts on both Metal and DX12.
+921,600 bytes and smoke volumes save 1,179,648 bytes on the measured M1 Max/Metal
+adapter. Copy elimination remains a candidate; validate layouts on both Metal and DX12.
 O08 layout/pass experiments and the later sparse-smoke gate
 remain open.
 
