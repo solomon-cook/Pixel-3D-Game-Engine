@@ -158,6 +158,27 @@ live `describe` schema, fixed-tick captures and the GPU verify workflow. Per-
 emitter simulation buffers, light budgets, tile-list ownership and multi-source
 stress tests remain open.
 
+## Active-region smoke gate (17 October)
+
+Decision: do not prototype active-region smoke simulation from the current
+measurements. The O01 stage report contains 7,200 smoke-compute samples per
+workload: clearing median 0.020583 ms (p95 0.02225 ms), heavy plume median
+0.0205 ms (p95 0.022209 ms), while corresponding post and atmosphere/fire
+medians are 2.42–3.25 ms. O08 records these timings and notes that stage spans
+overlap. The observed compute cost is too small to justify risking heat/density
+transport changes for a speculative gain. Reconsider only if profiling shows a
+meaningful rise in compute cost or a workload with a materially larger grid/source
+count; no visual or scaling result is claimed for active-region simulation.
+
+## O08 format fallback selection
+
+The Rg16Float effect target and smoke-volume selectors now have adapter-free
+unit coverage for their usage/feature gates and Rgba16Float fallback. This
+checks decision logic, not resource creation or visual output on an adapter that
+lacks Rg16Float support. The runtime fallback remains unverified on physical
+non-Metal/DX12 hardware; keep the format trials opt-in/gated until that evidence
+exists.
+
 ## Material response beneath pixel treatment (16 October)
 
 Hypothesis: independent HDR metalness/refraction/scattering parameters retain

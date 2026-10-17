@@ -103,6 +103,10 @@ supports render attachment plus texture binding; otherwise it falls back to
 Rgba16Float. At 640×360 this saves 921,600 known bytes. Smoke ping-pong volumes
 select Rg16Float only with the adapter-specific format feature and required
 storage/sample support, falling back to Rgba16Float; they save 1,179,648 bytes.
+Pure capability-selection tests now cover the required usages/features and the
+Rgba16Float fallback path. They validate the branch logic only; unsupported-
+format texture creation, shader pipelines and rendered output still need a
+physical adapter without these capabilities.
 Matched images stayed pixel-identical, and reset/replay checks passed on this
 M1 Max/Metal adapter. This is one adapter's result, not DX12 support. The HDR
 snapshot now allocates only when a camera-visible optical batch first appears, saving

@@ -408,6 +408,41 @@ fn format_capability(adapter: &wgpu::Adapter, format: wgpu::TextureFormat) -> se
         "storage_write_only": features.flags.contains(wgpu::TextureFormatFeatureFlags::STORAGE_WRITE_ONLY),
     })
 }
+
+fn select_effect_depth_format(features: wgpu::TextureFormatFeatures) -> wgpu::TextureFormat {
+    if features
+        .allowed_usages
+        .contains(wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING)
+        && features
+            .flags
+            .contains(wgpu::TextureFormatFeatureFlags::FILTERABLE)
+    {
+        wgpu::TextureFormat::Rg16Float
+    } else {
+        HDR
+    }
+}
+
+fn select_smoke_volume_format(
+    features: wgpu::TextureFormatFeatures,
+    adapter_specific_formats: bool,
+) -> wgpu::TextureFormat {
+    if adapter_specific_formats
+        && features
+            .allowed_usages
+            .contains(wgpu::TextureUsages::STORAGE_BINDING | wgpu::TextureUsages::TEXTURE_BINDING)
+        && features
+            .flags
+            .contains(wgpu::TextureFormatFeatureFlags::FILTERABLE)
+        && features
+            .flags
+            .contains(wgpu::TextureFormatFeatureFlags::STORAGE_WRITE_ONLY)
+    {
+        wgpu::TextureFormat::Rg16Float
+    } else {
+        HDR
+    }
+}
 fn binding(
     binding: u32,
     visibility: wgpu::ShaderStages,
@@ -749,34 +784,12 @@ impl Renderer {
         };
         let optical_no_copy_enabled = scene.render.optical_no_copy && optical_no_copy_supported;
         let rg16_features = adapter.get_texture_format_features(wgpu::TextureFormat::Rg16Float);
-        let effect_depth_format = if rg16_features
-            .allowed_usages
-            .contains(wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING)
-            && rg16_features
-                .flags
-                .contains(wgpu::TextureFormatFeatureFlags::FILTERABLE)
-        {
-            wgpu::TextureFormat::Rg16Float
-        } else {
-            HDR
-        };
+        let effect_depth_format = select_effect_depth_format(rg16_features);
         let adapter_format_feature = wgpu::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES;
         let adapter_format_feature_available = adapter.features().contains(adapter_format_feature);
-        let smoke_rg16_supported = adapter_format_feature_available
-            && rg16_features.allowed_usages.contains(
-                wgpu::TextureUsages::STORAGE_BINDING | wgpu::TextureUsages::TEXTURE_BINDING,
-            )
-            && rg16_features
-                .flags
-                .contains(wgpu::TextureFormatFeatureFlags::FILTERABLE)
-            && rg16_features
-                .flags
-                .contains(wgpu::TextureFormatFeatureFlags::STORAGE_WRITE_ONLY);
-        let smoke_volume_format = if smoke_rg16_supported {
-            wgpu::TextureFormat::Rg16Float
-        } else {
-            HDR
-        };
+        let smoke_volume_format =
+            select_smoke_volume_format(rg16_features, adapter_format_feature_available);
+        let smoke_rg16_supported = smoke_volume_format == wgpu::TextureFormat::Rg16Float;
         let timestamp =
             enable_timestamps && adapter.features().contains(wgpu::Features::TIMESTAMP_QUERY);
         let mut required_features = wgpu::Features::empty();
@@ -3950,6 +3963,59 @@ fn clear_attachment(view: &wgpu::TextureView) -> Option<wgpu::RenderPassColorAtt
 #[cfg(test)]
 mod shadow_cache_tests {
     use super::*;
+
+    fn rg16_features(
+        allowed_usages: wgpu::TextureUsages,
+        flags: wgpu::TextureFormatFeatureFlags,
+    ) -> wgpu::TextureFormatFeatures {
+        wgpu::TextureFormatFeatures {
+            allowed_usages,
+            flags,
+        }
+    }
+
+    #[test]
+    fn rg16_layout_selection_requires_each_usage_and_feature() {
+        let effect_supported = rg16_features(
+            wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING,
+            wgpu::TextureFormatFeatureFlags::FILTERABLE,
+        );
+        assert_eq!(
+            super::select_effect_depth_format(effect_supported),
+            wgpu::TextureFormat::Rg16Float
+        );
+        assert_eq!(
+            super::select_effect_depth_format(rg16_features(
+                wgpu::TextureUsages::TEXTURE_BINDING,
+                wgpu::TextureFormatFeatureFlags::FILTERABLE,
+            )),
+            super::HDR
+        );
+
+        let smoke_supported = rg16_features(
+            wgpu::TextureUsages::STORAGE_BINDING | wgpu::TextureUsages::TEXTURE_BINDING,
+            wgpu::TextureFormatFeatureFlags::FILTERABLE
+                | wgpu::TextureFormatFeatureFlags::STORAGE_WRITE_ONLY,
+        );
+        assert_eq!(
+            super::select_smoke_volume_format(smoke_supported, true),
+            wgpu::TextureFormat::Rg16Float
+        );
+        assert_eq!(
+            super::select_smoke_volume_format(smoke_supported, false),
+            super::HDR
+        );
+        assert_eq!(
+            super::select_smoke_volume_format(
+                rg16_features(
+                    wgpu::TextureUsages::STORAGE_BINDING | wgpu::TextureUsages::TEXTURE_BINDING,
+                    wgpu::TextureFormatFeatureFlags::FILTERABLE,
+                ),
+                true,
+            ),
+            super::HDR
+        );
+    }
 
     #[test]
     fn perspective_frustum_rejects_behind_and_side_bounds_but_keeps_intersections() {

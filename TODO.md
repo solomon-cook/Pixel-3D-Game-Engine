@@ -27,13 +27,15 @@ Detailed steps, dependencies and acceptance criteria live in
 - [x] [O06: specialised optical resolve](docs/OPTIMIZATION_PLAN.md#o06--specialise-optical-materials-and-avoid-repeated-shading) — opt-in opaque-reflector base-light reuse with direct transmissive fallback; matched stills and short paired route timings in [measurements-o06.json](docs/measurements-o06.json). Long-route, native-window and cross-backend gates remain open.
 - [ ] O08: individually measured resource/pass-layout improvements — camera-visible lazy optical allocation saves 3.69 MB until optical geometry is visible at 640×360; normal/depth now samples directly, saving another 1.84 MB on optical scenes and 7.37 MB of modeled optical-pass traffic per frame. Adapter-gated RG16 targets save 2.10 MB total with replay and image parity on M1 Max/Metal. Three short and three longer route pairs found no GPU timing gain. The opt-in Rg11b10Ufloat HDR target saves 1.84 MB on optical scenes; three alternating 120-second route pairs found a consistent but very small GPU timing difference, four fixed-camera temporal samples and eight moving-route poses looked similar. The experimental `--optical-no-copy` overlay path gives exact fixed-tick image parity and removes the snapshot copy. On RGBA16F, alpha coverage avoids the former 0.23 MB mask and keeps known allocation equal to the snapshot path; its revised logical model saves 1.84 MB/frame at 640×360. Three alternating 120-second route pairs show only a small GPU timing delta and variable frame-work. Compact HDR still uses an R8 mask. It remains opt-in; other-adapter fallback, broader pass redesign and DX12/target-hardware gates remain open.
 
+  RG16 format-selection logic now has adapter-independent tests for usage/feature gating and the RGBA16F fallback. This does not replace physical fallback rendering or Windows/DX12 acceptance.
+
 ## Later scaling research
 
 - [ ] Simulation-driven surface heat cue — opt-in material response backed by
   the existing temperature volume; evaluate pixel readability and shader cost
   after O08 before enabling it in authored scenes by default.
 - [x] Bind emitters to their thermal/fire profile and primary point light by stable IDs; legacy scenes retain positional light binding. Multi-fire stress tests and per-emitter simulation/render ownership remain open.
-- [ ] Consider active-region smoke simulation only if compute measurements justify it.
+- [x] Evaluate active-region smoke simulation against O01 stage data. Current M1 Max/Metal measurements put smoke compute at 0.0205–0.0206 ms median versus 2.42–3.25 ms render stages, so there is no timing case for an active-region prototype; re-evaluate if compute cost or workload changes.
 
 Keep selected pixel density and simulation state independent of camera detail.
 Do not mark visual review, Windows rendering or target-hardware gates complete
