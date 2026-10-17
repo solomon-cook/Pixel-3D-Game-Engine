@@ -419,7 +419,11 @@ opaque shading and adds a stepped warm mark with a pixel edge cue. Zero response
 preserves pixel output. Matched captures at seed 42/tick 300 were repeatable; the
 active cue changed 220 pixels near the fire base. Three 120-second M1 Max/Metal
 route pairs measured a 0.0112 ms median paired GPU-render increase. The prototype
-remains opt-in; DX12 and broader visual review are open. See
+remains opt-in; a follow-up fixed-tick check across hero, fire-study, smoke-close
+and orthographic cameras changed 5–203 pixels, with the clearest mark in close
+views and only five changed pixels in orthographic view. Repeated fire-study
+output was pixel-identical. This is a style check; gameplay readability and
+DX12 acceptance remain open. See
 [RESEARCH.md](RESEARCH.md) and [measurements-heat-cue.json](measurements-heat-cue.json).
 
 ## Material comparison validation

@@ -440,13 +440,19 @@ material authoring to select gameplay-relevant surfaces.
 
 Visual check: with `heat_response=1`, the matched `fire-study` capture at seed 42,
 tick 300 and 640×360 changed 220 scene pixels around the fire base; repeating the
-capture produced identical pixels. The cue reads as a localized warm mark on the
-ground. A zero-response capture was pixel-identical to the baseline. This is a
-single-view style check, not a full art review.
+capture produced identical pixels. A later multiview review used response 0.8,
+seed 42 and ticks 120/300/900. Six camera/tick pairs changed 5–203 pixels each:
+fire-study and smoke-close showed the cue most clearly, hero framing showed a
+small localized mark, and the orthographic overview changed only five pixels.
+The zero-response capture remains pixel-identical to baseline; repeated
+fire-study tick-300 captures were also pixel-identical. The cue remains
+projection-dependent and this is style evidence, not gameplay-usability acceptance.
+Captures are in ignored `artifacts/heat-cue-review/`.
 
 Cost check: three alternating 120-second `clearing-orbit` pairs with 10-second
 warmup on Apple M1 Max/Metal measured a 0.0112 ms median paired increase in GPU
 render time (2.5669 ms baseline vs 2.5781 ms candidate); opaque geometry increased
 0.0068 ms. Full route/frame work varied more than the GPU delta. See
 [`measurements-heat-cue.json`](measurements-heat-cue.json). Keep the feature
-opt-in; Windows DX12 and broader visual acceptance remain open.
+opt-in; the cue is subtle from wide views, and Windows DX12 and broader visual
+acceptance remain open.

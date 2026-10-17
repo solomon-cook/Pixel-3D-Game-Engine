@@ -70,5 +70,78 @@
     "Single-device Metal evidence only; DX12 remains unverified.",
     "Offscreen serial runs exclude native presentation, UI and vsync.",
     "Feature remains opt-in; no promotion decision is supported by these results."
-  ]
+  ],
+  "visual_multiview_review": {
+    "scene": "assets/scenes/clearing.json",
+    "candidate_override": "materials.earth.heat_response = 0.8",
+    "seed": 42,
+    "resolution": [
+      640,
+      360
+    ],
+    "fixed_ticks": [
+      120,
+      300,
+      900
+    ],
+    "camera_cases": [
+      "hero@120",
+      "hero@300",
+      "hero@900",
+      "fire-study@300",
+      "smoke-close@300",
+      "orthographic@300"
+    ],
+    "comparison_metrics": [
+      {
+        "camera": "hero",
+        "tick": 120,
+        "changed_pixels": 18,
+        "mean_abs_rgb_error": 0.00388,
+        "max_channel_error": 167
+      },
+      {
+        "camera": "hero",
+        "tick": 300,
+        "changed_pixels": 17,
+        "mean_abs_rgb_error": 0.00429,
+        "max_channel_error": 191
+      },
+      {
+        "camera": "hero",
+        "tick": 900,
+        "changed_pixels": 13,
+        "mean_abs_rgb_error": 0.00266,
+        "max_channel_error": 168
+      },
+      {
+        "camera": "fire-study",
+        "tick": 300,
+        "changed_pixels": 203,
+        "mean_abs_rgb_error": 0.04999,
+        "max_channel_error": 200
+      },
+      {
+        "camera": "smoke-close",
+        "tick": 300,
+        "changed_pixels": 161,
+        "mean_abs_rgb_error": 0.04508,
+        "max_channel_error": 198
+      },
+      {
+        "camera": "orthographic",
+        "tick": 300,
+        "changed_pixels": 5,
+        "mean_abs_rgb_error": 0.00186,
+        "max_channel_error": 187
+      }
+    ],
+    "repeat_capture": "fire-study tick 300 repeated capture was pixel-identical",
+    "visual_review": "The response stays localized on the ground near the fire. It is clearest in fire-study and smoke-close framing, subtle at hero distance, and nearly absent in the orthographic overview. This is a multi-camera style check, not gameplay usability acceptance.",
+    "captures_directory": "artifacts/heat-cue-review/",
+    "contact_sheet": "artifacts/heat-cue-review/heat-review-comparison.png",
+    "decision": "Keep opt-in. Do not promote to authored scene defaults; the cue is projection-dependent and only one multi-view pass has been reviewed. O08 and DX12 acceptance remain open.",
+    "error_scale": "mean_abs_rgb_error is the mean absolute delta in 8-bit channel levels over all pixels and channels; max_channel_error uses the same scale.",
+    "zero_response": "0 response remains pixel-identical to baseline, as previously verified."
+  }
 }
