@@ -165,15 +165,20 @@ unverified.
 
 The renderer now keeps all seven shadow maps valid across frames with unchanged
 casters, effective shadow transmission, sun projection and fire-light projection.
-Camera and light color/power changes retain the maps. Reset, successful shader
-reload, shadow-material edits and projection changes invalidate the whole set.
-Unknown key state redraws rather than reuses. Cache-hit metrics report the dirty
-reason, redrawn map count, 5,767,168 resident map bytes and CPU shadow-encoding
-time. `set_shadow_cache` forces redraw through the protocol; benchmark reports also
-accept `--force-shadow-redraw`. Live `set_object_transform` updates the draw transform,
-conservative bounds and baked reference vertices, and returns a per-object transform
-revision. Object moves currently invalidate all seven maps; O02 per-face affected-face
-tracking remains open.
+Camera and light color/power changes retain the maps. Sun projection edits redraw
+the sun map; fire-light position/range edits redraw the point cube. Reset, successful
+shader reload and uncertain key state redraw all seven maps. Cache metrics report
+the dirty reason, per-face mask, redrawn map count, 5,767,168 resident map bytes and
+CPU shadow-encoding time. `set_shadow_cache` forces redraw through the protocol;
+benchmark reports also accept `--force-shadow-redraw`. Live `set_object_transform`
+updates the draw transform, conservative bounds and baked reference vertices, and
+returns a per-object transform revision. O02 per-face tracking uses old and new
+conservative bounds against each map frustum. Shadow-
+participation material edits test the bounds of affected objects. The renderer
+redraws only marked faces and reports a `[sun,+X,-X,+Y,-Y,+Z,-Z]` mask through
+`get_metrics`. The M1 Max protocol check moved `fire-ring-0` and dirtied three maps;
+its capture was byte-identical to a forced seven-map redraw. Missing or uncertain
+bounds and unsupported caster changes still take the full-map path.
 
 The captures at 640×360 with seed 42/tick 0 were byte-identical for first cache
 render, forced redraw and subsequent cache hit. Protocol checks confirmed hits on
@@ -239,13 +244,13 @@ instancing-only. The four images were visually inspected. Bounds and frustum tes
 cover GLB geometry, transformed positive nonuniform scale/rotation, perspective,
 orthographic, behind-camera, side-plane and invalid-bound cases.
 
-`python3 scripts/verify.py --gpu` passed on M1 Max/Metal: formatting, Clippy, 27
+`python3 scripts/verify.py --gpu` passed on M1 Max/Metal: formatting, Clippy, 30
 workspace tests, validation, material GPU and pixel-fire GPU checks. It reports
 `native: false`; native window and Windows DX12 rendering remain unverified.
 Live object transforms now update the model matrix, conservative bounds and baked
-reference vertices, returning a per-object transform revision. Caster moves still use
-full-map invalidation; O02 per-face affected-face tracking remains open. Full provenance
-and checksums are in
+reference vertices, returning a per-object transform revision. Per-face invalidation
+and its comparison are recorded in [measurements-o02.json](measurements-o02.json).
+Full provenance and checksums are in
 [measurements-o07-culling.json](measurements-o07-culling.json).
 
 Implemented: reusable engine/library separation, native Metal/DX12 selection,

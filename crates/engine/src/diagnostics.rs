@@ -55,6 +55,8 @@ pub struct FrameMetrics {
     pub shadow_redrawn: bool,
     pub shadow_cache_resident: bool,
     pub shadow_maps_redrawn: u32,
+    /// Redrawn maps by index: sun, +X, -X, +Y, -Y, +Z, -Z.
+    pub shadow_dirty_faces: [bool; 7],
     pub shadow_dirty_reason: Option<String>,
     pub effect_update_cpu_ms: f64,
     pub projected_detail_cpu_ms: f64,

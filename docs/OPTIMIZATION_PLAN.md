@@ -140,19 +140,23 @@ Implementation:
 
 **Acceptance:** cached and forced-redraw captures agree through light moves,
 range/direction edits, material shadow-class changes, reset and shader reload.
-Changing only colour/power reuses maps while lighting visibly responds. Synthetic
-revision tests cover caster invalidation now; end-to-end moving-caster tests follow
-O07's transform support. Profile both static reuse and continuous invalidation.
+Changing only colour/power reuses maps while lighting visibly responds. Transform
+and shadow-participation edits redraw only maps whose conservative bounds overlap;
+unknown bounds retain the full-map fallback. Profile both static reuse and
+continuous invalidation.
 
 **Deliverable:** image-preserving shadow reuse, followed by optional per-face reuse.
 Dependency: O01; per-face refinement also needs O07. Roll back to forced redraw
 on any invalid or unknown cache state.
 
-**Implementation state (16 October 2026):** the renderer compares a whole-scene
-caster key, effective shadow-transmission material values, directional-light
-position and primary fire-light position/range. A hit skips all seven render
-passes and their matrix-buffer writes. Reset, renderer/resource construction and
-successful shader reload invalidate the key; missing key inputs force redraw.
+**Implementation state (17 October 2026):** live transform revisions retain old
+and new object bounds. The renderer tests both against the sun and six point-face
+frusta, and it tests bounds for objects using shadow-participation materials.
+Only dirty map passes and matrix buffers are updated. Sun projection changes dirty
+the sun map; point-light position/range changes dirty the six cube faces. Unknown
+changes, missing bounds, reset, renderer/resource construction and successful
+shader reload retain the full-map fallback. `get_metrics` reports the seven-face
+mask in sun, +X, -X, +Y, -Y, +Z, -Z order.
 `set_shadow_cache` and benchmark `--force-shadow-redraw` expose the full-redraw
 control. Per-frame metrics and route reports expose hits, misses, resident bytes,
 redrawn map count, CPU shadow encoding and dirty reason. Three alternating

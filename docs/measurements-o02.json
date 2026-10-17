@@ -1,13 +1,16 @@
 {
   "version": 1,
-  "date": "2026-10-16",
+  "date": "2026-10-17",
   "purpose": "O02 whole-map shadow cache comparison; forced full redraw versus static reuse",
   "device": {
     "name": "Apple M1 Max",
     "device_type": "IntegratedGpu",
     "memory_gb": 64,
     "backend": "Metal",
-    "scene_resolution": [640, 360],
+    "scene_resolution": [
+      640,
+      360
+    ],
     "seed": 42,
     "route": "clearing-orbit"
   },
@@ -45,32 +48,52 @@
     "frame_work_ms": {
       "forced_redraw_median": 6.364542,
       "cached_median": 5.591917,
-      "paired_deltas": [-0.755917, -0.802667, -0.769042],
+      "paired_deltas": [
+        -0.755917,
+        -0.802667,
+        -0.769042
+      ],
       "paired_delta_median": -0.769042,
       "paired_delta_p95": -0.755917
     },
     "cpu_encode_ms": {
       "forced_redraw_median": 0.972501,
       "cached_median": 0.492875,
-      "paired_deltas": [-0.468666, -0.492749, -0.487835],
+      "paired_deltas": [
+        -0.468666,
+        -0.492749,
+        -0.487835
+      ],
       "paired_delta_median": -0.487835
     },
     "cpu_shadow_encode_ms": {
       "forced_redraw_median": 0.558333,
-      "cached_median": 0.000083,
-      "paired_deltas": [-0.546458, -0.569792, -0.558250],
-      "paired_delta_median": -0.558250
+      "cached_median": 8.3e-05,
+      "paired_deltas": [
+        -0.546458,
+        -0.569792,
+        -0.55825
+      ],
+      "paired_delta_median": -0.55825
     },
     "cpu_upload_ms": {
       "forced_redraw_median": 0.344834,
       "cached_median": 0.218917,
-      "paired_deltas": [-0.117458, -0.126665, -0.124917],
+      "paired_deltas": [
+        -0.117458,
+        -0.126665,
+        -0.124917
+      ],
       "paired_delta_median": -0.124917
     },
     "gpu_render_ms": {
       "forced_redraw_median": 3.151375,
       "cached_median": 2.672083,
-      "paired_deltas": [-0.476708, -0.489834, -0.479292],
+      "paired_deltas": [
+        -0.476708,
+        -0.489834,
+        -0.479292
+      ],
       "paired_delta_median": -0.479292,
       "paired_delta_p95": -0.476708
     },
@@ -81,15 +104,26 @@
       "notes": "The cache omits this pass and its timestamps on every measured cached frame; the null denotes no pass, not zero measured GPU time."
     },
     "shadow_cache_counts_per_run": {
-      "forced_redraw": {"hits": 0, "redraw_frames": 7200, "shadow_passes": 50400},
-      "cached_after_warmup": {"hits": 7200, "redraw_frames": 0, "shadow_passes": 0},
+      "forced_redraw": {
+        "hits": 0,
+        "redraw_frames": 7200,
+        "shadow_passes": 50400
+      },
+      "cached_after_warmup": {
+        "hits": 7200,
+        "redraw_frames": 0,
+        "shadow_passes": 0
+      },
       "resident_shadow_map_bytes": 5767168
     }
   },
   "image_and_invalidation_checks": {
     "comparison_capture": {
       "scene": "assets/scenes/clearing.json",
-      "resolution": [640, 360],
+      "resolution": [
+        640,
+        360
+      ],
       "seed": 42,
       "tick": 0,
       "cached_png_sha256": "cfa8a4ee570d25de780e5d3aecdf220398c546b299a9974348035d1eface4fdf",
@@ -109,10 +143,93 @@
     "synthetic_revision_tests": "caster state, effective shadow material participation, sun projection, point-light position/range, and color/power reuse"
   },
   "limitations": [
-    "Measurements are Apple M1 Max/Metal only; Windows DX12 and RTX-class shadow equivalence/performance remain unverified.",
-    "The route has static casters and shadow projections; forced redraw is the continuous-invalidation control, not a moving-caster workload.",
-    "Whole-map invalidation redraws the sun map and all six point faces together. Per-face invalidation waits for O07 bounds/draw metadata.",
+    "Measurements and protocol captures are Apple M1 Max/Metal only; Windows DX12 and other GPU equivalence/performance remain unverified.",
+    "The transform check is a fixed-tick single-object change, not a sustained moving-caster performance workload.",
+    "Unknown bounds, missing key inputs, topology changes and renderer/resource invalidation retain full-map redraw behavior.",
     "The GPU shadow stage is absent in cache-hit samples, so its cached median is null; whole-render GPU timing and frame work provide comparable totals.",
     "The 5,767,168-byte map residency is unchanged by caching. This work saves redraw/upload work, not allocation memory."
-  ]
+  ],
+  "per_face_invalidation": {
+    "device": {
+      "name": "Apple M1 Max",
+      "backend": "Metal",
+      "native_window": false
+    },
+    "protocol": "engine-lab serve, paused fixed-tick capture at 640x360, seed 42, tick 0",
+    "transform": {
+      "object_id": "fire-ring-0",
+      "from_position": [
+        0.75,
+        -0.025,
+        0.0
+      ],
+      "to_position": [
+        0.95,
+        -0.025,
+        0.0
+      ],
+      "dirty_face_order": [
+        "sun",
+        "+X",
+        "-X",
+        "+Y",
+        "-Y",
+        "+Z",
+        "-Z"
+      ],
+      "dirty_faces": [
+        true,
+        true,
+        false,
+        false,
+        true,
+        false,
+        false
+      ],
+      "shadow_maps_redrawn": 3,
+      "reason": "casters_changed"
+    },
+    "projection_control": {
+      "edit": "lights.sun.position",
+      "dirty_faces": [
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "reason": "directional_light_projection_changed"
+    },
+    "cached_vs_forced_capture": {
+      "resolution": [
+        640,
+        360
+      ],
+      "scale": 1,
+      "cached_sha256": "fccd35ad3ef1b4334c82cd2c7b274f6aee090ea1919bc823175d7d4e15b9ee57",
+      "forced_sha256": "fccd35ad3ef1b4334c82cd2c7b274f6aee090ea1919bc823175d7d4e15b9ee57",
+      "bytes": 230892,
+      "result": "byte-identical"
+    },
+    "cache_hit_after_forced_comparison": {
+      "shadow_maps_redrawn": 0,
+      "dirty_faces": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "reason": "unchanged"
+    },
+    "unit_checks": [
+      "positive-X bounds dirty only the +X point face",
+      "unknown bounds dirty all seven maps"
+    ],
+    "performance_claim": "No per-face route benchmark was run; this is functional invalidation and image-parity evidence only."
+  }
 }

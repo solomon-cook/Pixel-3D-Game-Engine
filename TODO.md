@@ -18,7 +18,7 @@ Detailed steps, dependencies and acceptance criteria live in
 - [x] [O02: whole-map shadow caching](docs/OPTIMIZATION_PLAN.md#o02--cache-static-shadow-maps) — full sun map and point-light cube reuse with conservative invalidation; M1 Max paired results and gates are in [measurements-o02.json](docs/measurements-o02.json).
 - [x] [O07: stable object bounds, culling, shared meshes, instancing and live transforms](docs/OPTIMIZATION_PLAN.md#o07--object-bounds-culling-and-shared-meshes) — per-camera/light culling, shared geometry and validated live object transforms measured; image, draw, vertex, memory, CPU and transform evidence is in [measurements-o07-culling.json](docs/measurements-o07-culling.json).
 - [x] [O03: bounded single-emitter tile lists with overflow fallback](docs/OPTIMIZATION_PLAN.md#o03--tile-lists-for-effects-and-local-lights) — byte-identical perspective, orthographic, close-smoke and glass captures; three paired route workloads and GPU diagnostics in [measurements-o03.json](docs/measurements-o03.json). Metal only; multi-emitter and DX12 gates remain open.
-- [ ] O02: per-face invalidation using O07 live transform revisions and updated affected-object bounds; retain full-map fallback for unknown bounds.
+- [x] O02: per-face invalidation using O07 live transform revisions and affected-object bounds, with full-map fallback for uncertain state; M1 Max protocol/capture evidence is in [measurements-o02.json](docs/measurements-o02.json). Windows/DX12 acceptance remains open.
 
 ## Then: measure and review quality/cost tradeoffs
 

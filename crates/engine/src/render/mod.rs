@@ -258,6 +258,8 @@ pub struct Renderer {
     resource_inventory: serde_json::Value,
     shadow_cache_key: Option<ShadowCacheKey>,
     shadow_invalidation_reason: Option<&'static str>,
+    shadow_transform_changes: Vec<(String, Option<assets::Bounds3>, Option<assets::Bounds3>)>,
+    shadow_dirty_faces: [bool; 7],
     shadow_visible_cache: [u32; 7],
     shadow_batch_cache: [u32; 7],
     shadow_vertex_cache: [u64; 7],
@@ -319,6 +321,44 @@ fn shadow_dirty_reason(previous: Option<&ShadowCacheKey>, next: &ShadowCacheKey)
     } else {
         "unchanged"
     }
+}
+
+fn shadow_face_mask_for_bounds(
+    bounds: &[Option<assets::Bounds3>],
+    matrices: &[Mat4; 7],
+) -> [bool; 7] {
+    let mut dirty = [false; 7];
+    for bound in bounds {
+        let Some(bound) = bound else {
+            return [true; 7];
+        };
+        for (index, matrix) in matrices.iter().enumerate() {
+            let Some(frustum) = Frustum::from_view_projection(*matrix) else {
+                return [true; 7];
+            };
+            dirty[index] |= frustum.intersects(bound);
+        }
+    }
+    dirty
+}
+
+fn only_object_transforms_changed(previous: &ShadowCacheKey, next: &ShadowCacheKey) -> bool {
+    if previous.casters.len() != next.casters.len() {
+        return false;
+    }
+    previous
+        .casters
+        .iter()
+        .zip(&next.casters)
+        .all(|(old, new)| {
+            old.id == new.id
+                && old.material == new.material
+                && old.geometry == new.geometry
+                && (old.position != new.position
+                    || old.rotation != new.rotation
+                    || old.scale != new.scale
+                    || old == new)
+        })
 }
 
 fn texture(
@@ -1718,6 +1758,8 @@ impl Renderer {
             resource_inventory,
             shadow_cache_key: None,
             shadow_invalidation_reason: Some("resource_initialization"),
+            shadow_transform_changes: Vec::new(),
+            shadow_dirty_faces: [true; 7],
             shadow_visible_cache: [0; 7],
             shadow_batch_cache: [0; 7],
             shadow_vertex_cache: [0; 7],
@@ -2161,7 +2203,7 @@ impl Renderer {
     }
 
     /// Updates one validated scene object's model, conservative bounds, and baked
-    /// reference vertices. The scene key still invalidates shadow maps conservatively.
+    /// reference vertices, retaining old/new bounds for per-face shadow invalidation.
     pub fn set_object_transform(&mut self, object: &Object) -> Result<u64> {
         let index = self
             .object_draws
@@ -2194,9 +2236,12 @@ impl Renderer {
             bail!("object '{}': transform delta is not finite", object.id);
         }
         let local_bounds = self.object_draws[index].local_bounds.clone();
+        let old_bounds = self.object_draws[index].bounds.clone();
         let start = self.object_draws[index].baked_first_vertex as usize;
         let end = start + self.object_draws[index].vertex_count as usize;
         let bounds = local_bounds.and_then(|bounds| bounds.transformed(next_transform));
+        self.shadow_transform_changes
+            .push((object.id.clone(), old_bounds, bounds.clone()));
         let (first_vertex, revision) = {
             let draw = &mut self.object_draws[index];
             draw.transform = next_transform.to_cols_array_2d();
@@ -2233,9 +2278,12 @@ impl Renderer {
             .write_buffer(&self.tile_config_buffer, 0, bytemuck::bytes_of(&config));
     }
 
-    fn update_shadow_matrices(&mut self, scene: &Scene) {
+    fn update_shadow_matrices(&mut self, scene: &Scene, dirty_faces: [bool; 7]) {
         let matrices = shadow_matrices(scene);
         for (index, matrix) in matrices.into_iter().enumerate() {
+            if !dirty_faces[index] {
+                continue;
+            }
             let upload_started = Instant::now();
             self.queue.write_buffer(
                 &self.shadow_buffers[index],
@@ -2746,25 +2794,129 @@ impl Renderer {
         let compared_reason = next_shadow_key
             .as_ref()
             .map(|key| shadow_dirty_reason(self.shadow_cache_key.as_ref(), key));
-        let dirty_reason = self
-            .shadow_invalidation_reason
-            .take()
+        let invalidation_reason = self.shadow_invalidation_reason.take();
+        let dirty_reason = invalidation_reason
             .or(compared_reason)
             .unwrap_or("unknown_shadow_state");
-        let shadow_redrawn = self.force_shadow_redraw || dirty_reason != "unchanged";
-        let reported_reason = if self.force_shadow_redraw {
-            "forced_redraw"
-        } else {
-            dirty_reason
-        };
+        let mut dirty_faces = [false; 7];
+        let mut reported_reason = dirty_reason;
+        let full_invalidation = self.force_shadow_redraw
+            || invalidation_reason.is_some()
+            || next_shadow_key.is_none()
+            || self.shadow_cache_key.is_none();
+        if full_invalidation {
+            dirty_faces = [true; 7];
+            if self.force_shadow_redraw {
+                reported_reason = "forced_redraw";
+            }
+        } else if dirty_reason != "unchanged" {
+            let previous = self.shadow_cache_key.as_ref().unwrap();
+            let next = next_shadow_key.as_ref().unwrap();
+            if previous.sun_position != next.sun_position {
+                dirty_faces[0] = true;
+            }
+            if previous.fire_position != next.fire_position
+                || previous.fire_range != next.fire_range
+            {
+                dirty_faces[1..].fill(true);
+            }
+            if previous.casters != next.casters {
+                if only_object_transforms_changed(previous, next) {
+                    let changed_ids = previous
+                        .casters
+                        .iter()
+                        .zip(&next.casters)
+                        .filter(|(old, new)| {
+                            old.position != new.position
+                                || old.rotation != new.rotation
+                                || old.scale != new.scale
+                        })
+                        .map(|(old, _)| old.id.as_str())
+                        .collect::<Vec<_>>();
+                    let tracked = changed_ids.iter().all(|id| {
+                        self.shadow_transform_changes
+                            .iter()
+                            .any(|(changed_id, _, _)| changed_id == id)
+                    });
+                    if tracked {
+                        let bounds = self
+                            .shadow_transform_changes
+                            .iter()
+                            .filter(|(id, _, _)| changed_ids.contains(&id.as_str()))
+                            .flat_map(|(_, old, new)| [old.clone(), new.clone()])
+                            .collect::<Vec<_>>();
+                        let transform_faces =
+                            shadow_face_mask_for_bounds(&bounds, &shadow_matrices(scene));
+                        for (dirty, transform_dirty) in dirty_faces.iter_mut().zip(transform_faces)
+                        {
+                            *dirty |= transform_dirty;
+                        }
+                        if !transform_faces.iter().any(|dirty| *dirty) {
+                            reported_reason = "casters_changed_outside_shadow_frusta";
+                        }
+                    } else {
+                        dirty_faces = [true; 7];
+                        reported_reason = "unknown_caster_bounds";
+                    }
+                } else {
+                    dirty_faces = [true; 7];
+                }
+            }
+            if previous.shadow_materials != next.shadow_materials {
+                let mut changed_material_ids = Vec::new();
+                if previous.shadow_materials.len() != next.shadow_materials.len() {
+                    dirty_faces = [true; 7];
+                    reported_reason = "unknown_shadow_material_bounds";
+                }
+                for (id, old_value) in &previous.shadow_materials {
+                    if dirty_faces.iter().any(|dirty| *dirty) {
+                        break;
+                    }
+                    match next
+                        .shadow_materials
+                        .iter()
+                        .find(|(new_id, _)| new_id == id)
+                    {
+                        Some((_, new_value)) if old_value == new_value => {}
+                        Some(_) => changed_material_ids.push(id.as_str()),
+                        None => {
+                            dirty_faces = [true; 7];
+                            reported_reason = "unknown_shadow_material_bounds";
+                            break;
+                        }
+                    }
+                }
+                if reported_reason != "unknown_shadow_material_bounds" {
+                    let bounds = self
+                        .object_draws
+                        .iter()
+                        .filter(|draw| changed_material_ids.contains(&draw.material_id.as_str()))
+                        .map(|draw| draw.bounds.clone())
+                        .collect::<Vec<_>>();
+                    if bounds.is_empty() && !changed_material_ids.is_empty() {
+                        dirty_faces = [true; 7];
+                        reported_reason = "unknown_shadow_material_bounds";
+                    } else {
+                        let material_faces =
+                            shadow_face_mask_for_bounds(&bounds, &shadow_matrices(scene));
+                        for (dirty, material_dirty) in dirty_faces.iter_mut().zip(material_faces) {
+                            *dirty |= material_dirty;
+                        }
+                    }
+                }
+            }
+        }
+        let shadow_redrawn = dirty_faces.iter().any(|dirty| *dirty);
+        self.shadow_dirty_faces = dirty_faces;
         self.metrics.shadow_cache_hit = !shadow_redrawn && next_shadow_key.is_some();
         self.metrics.shadow_redrawn = shadow_redrawn;
         self.metrics.shadow_cache_resident = next_shadow_key.is_some();
-        self.metrics.shadow_maps_redrawn = if shadow_redrawn { 7 } else { 0 };
+        self.metrics.shadow_maps_redrawn =
+            dirty_faces.iter().filter(|dirty| **dirty).count() as u32;
+        self.metrics.shadow_dirty_faces = dirty_faces;
         self.metrics.shadow_dirty_reason = Some(reported_reason.to_string());
-        if shadow_redrawn {
-            self.shadow_cache_key = next_shadow_key;
-        }
+        self.shadow_cache_key = next_shadow_key;
+        self.shadow_transform_changes.clear();
         let culling_started = Instant::now();
         let camera_vp = camera.matrix(self.resolution[0] as f32 / self.resolution[1] as f32);
         let camera_draws = prepare_draws(
@@ -2784,15 +2936,18 @@ impl Renderer {
         let shadow_draws = if shadow_redrawn {
             shadow_matrices(scene)
                 .into_iter()
-                .map(|matrix| {
-                    prepare_draws(
-                        &self.object_draws,
-                        &self.mesh_draws,
-                        &scene.materials,
-                        Frustum::from_view_projection(matrix),
-                        self.geometry_culling_enabled,
-                        self.geometry_instancing_enabled,
-                    )
+                .enumerate()
+                .map(|(index, matrix)| {
+                    dirty_faces[index].then(|| {
+                        prepare_draws(
+                            &self.object_draws,
+                            &self.mesh_draws,
+                            &scene.materials,
+                            Frustum::from_view_projection(matrix),
+                            self.geometry_culling_enabled,
+                            self.geometry_instancing_enabled,
+                        )
+                    })
                 })
                 .collect::<Vec<_>>()
         } else {
@@ -2820,6 +2975,7 @@ impl Renderer {
             );
         }
         for (index, draws) in shadow_draws.iter().enumerate() {
+            let Some(draws) = draws else { continue };
             self.shadow_visible_cache[index] = draws.visible_objects;
             self.shadow_batch_cache[index] = draws.batches.len() as u32;
             self.shadow_vertex_cache[index] = submitted_vertices(draws);
@@ -2900,8 +3056,11 @@ impl Renderer {
             absorption_encode_started.elapsed().as_secs_f64() * 1000.;
         let shadow_encode_started = Instant::now();
         if shadow_redrawn {
-            self.update_shadow_matrices(scene);
+            self.update_shadow_matrices(scene, dirty_faces);
+            let first_dirty = dirty_faces.iter().position(|dirty| *dirty);
+            let last_dirty = dirty_faces.iter().rposition(|dirty| *dirty);
             for (i, draws) in shadow_draws.iter().enumerate() {
+                let Some(draws) = draws else { continue };
                 let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                     label: Some("shadow"),
                     color_attachments: &[],
@@ -2917,12 +3076,13 @@ impl Renderer {
                         }),
                         stencil_ops: None,
                     }),
-                    timestamp_writes: if timed && (i == 0 || i == 6) {
+                    timestamp_writes: if timed && (Some(i) == first_dirty || Some(i) == last_dirty)
+                    {
                         Some(wgpu::RenderPassTimestampWrites {
                             query_set: &self.timing.as_ref().unwrap().slots[timing_slot.unwrap()]
                                 .query,
-                            beginning_of_pass_write_index: (i == 0).then_some(0),
-                            end_of_pass_write_index: (i == 6).then_some(1),
+                            beginning_of_pass_write_index: (Some(i) == first_dirty).then_some(0),
+                            end_of_pass_write_index: (Some(i) == last_dirty).then_some(1),
                         })
                     } else {
                         None
@@ -3500,6 +3660,39 @@ mod shadow_cache_tests {
         assert!(frustum.intersects(&bounds([f32::NAN, 0., 0.], [1., 1., 1.])));
         assert!(frustum.intersects(&bounds([2., 0., 0.], [1., 1., 1.])));
         assert!(Frustum::from_view_projection(Mat4::ZERO).is_none());
+    }
+
+    #[test]
+    fn shadow_bounds_mark_only_intersecting_cube_face_and_unknown_bounds_fallback() {
+        let directions = [
+            Vec3::X,
+            Vec3::NEG_X,
+            Vec3::Y,
+            Vec3::NEG_Y,
+            Vec3::Z,
+            Vec3::NEG_Z,
+        ];
+        let matrices = std::array::from_fn(|index| {
+            if index == 0 {
+                Mat4::IDENTITY
+            } else {
+                let direction = directions[index - 1];
+                let up = if direction == Vec3::Y || direction == Vec3::NEG_Y {
+                    Vec3::Z
+                } else {
+                    Vec3::Y
+                };
+                Mat4::perspective_rh(90_f32.to_radians(), 1., 0.1, 20.)
+                    * Mat4::look_at_rh(Vec3::ZERO, direction, up)
+            }
+        });
+        let positive_x = assets::Bounds3 {
+            min: [2.8, -0.2, -0.2],
+            max: [3.2, 0.2, 0.2],
+        };
+        let dirty = shadow_face_mask_for_bounds(&[Some(positive_x)], &matrices);
+        assert_eq!(dirty, [false, true, false, false, false, false, false]);
+        assert_eq!(shadow_face_mask_for_bounds(&[None], &matrices), [true; 7]);
     }
 
     fn scene() -> Scene {
