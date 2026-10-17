@@ -10,6 +10,8 @@ culling/instancing remain renderer work; these plans extend the current
 renderer and do not replace the smoke/fire art direction.
 [TODO.md](../TODO.md) tracks execution. Runtime and acceptance evidence remain in
 [STATUS.md](STATUS.md).
+The ordered follow-up gates for O01–O08 are in
+[O01-O08_FOLLOWUP_PLAN.md](O01-O08_FOLLOWUP_PLAN.md).
 
 ## Contract and evidence
 
