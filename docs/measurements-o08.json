@@ -7,8 +7,15 @@
     "memory_gb": 64,
     "backend": "Metal",
     "device_type": "IntegratedGpu",
-    "scene_resolution": [640, 360],
-    "smoke_grid": [48, 64, 48],
+    "scene_resolution": [
+      640,
+      360
+    ],
+    "smoke_grid": [
+      48,
+      64,
+      48
+    ],
     "format_capability_probe": "artifacts/o08/capability-probe.json",
     "format_capability_probe_sha256": "dfd283f6782f96a368dc2a7b207d0ea9073d90ee9c926163b038178d5d3d9edd",
     "format_capability_probe_scope": "one-second clearing route used to initialize the adapter and return wgpu format feature reports; timings are discarded",
@@ -32,35 +39,164 @@
   "known_allocations": {
     "estimate_limit": "Excludes driver alignment, transient capture/surface buffers, pipelines, bind groups and timestamp query storage.",
     "workloads": {
-      "clearing": {"bytes": 29806088, "scene_vertex_bytes": 10539720},
-      "heavy": {"bytes": 29806088, "scene_vertex_bytes": 10539720},
-      "materials": {"bytes": 20370208, "scene_vertex_bytes": 1103760}
+      "clearing": {
+        "bytes": 29806088,
+        "scene_vertex_bytes": 10539720
+      },
+      "heavy": {
+        "bytes": 29806088,
+        "scene_vertex_bytes": 10539720
+      },
+      "materials": {
+        "bytes": 20370208,
+        "scene_vertex_bytes": 1103760
+      }
     },
     "640x360_clearing_and_heavy_breakdown": [
-      {"resource": "HDR scene color", "format": "Rgba16Float", "bytes": 1843200, "lifetime": "persistent for Renderer; cleared/stored opaque, loaded/stored atmosphere, copied only for optical materials, loaded/stored optical resolve when active, sampled post"},
-      {"resource": "normal plus linear depth", "format": "Rgba16Float", "bytes": 1843200, "lifetime": "persistent; cleared/stored opaque, loaded/stored optical resolve when active, copied only for optical materials and sampled by effects/post"},
-      {"resource": "depth test attachment", "format": "Depth32Float", "bytes": 921600, "lifetime": "persistent; cleared and written by opaque geometry"},
-      {"resource": "pixel output", "format": "Rgba8UnormSrgb", "bytes": 921600, "lifetime": "persistent; cleared/written by post, copied for captures when requested"},
-      {"resource": "effect depth and flame coverage", "format": "Rgba16Float", "bytes": 1843200, "lifetime": "persistent and unconditional; cleared/written by atmosphere and sampled by post; shader consumes x and y"},
-      {"resource": "optical color snapshot", "format": "Rgba16Float", "bytes": 1843200, "lifetime": "persistent and unconditional; copied from HDR only on optical frames, sampled by optical resolve"},
-      {"resource": "optical normal/depth snapshot", "format": "Rgba16Float", "bytes": 1843200, "lifetime": "persistent and unconditional; copied from normal/depth only on optical frames, sampled by optical resolve"},
-      {"resource": "smoke density/temperature ping", "format": "Rgba16Float 3D", "bytes": 1179648, "lifetime": "persistent; alternate source and destination per fixed simulation step; both reset to zero"},
-      {"resource": "smoke density/temperature pong", "format": "Rgba16Float 3D", "bytes": 1179648, "lifetime": "persistent; alternate destination and source per fixed simulation step; both reset to zero"},
-      {"resource": "sun shadow map", "format": "Depth32Float 1024x1024", "bytes": 4194304, "lifetime": "persistent; cleared and rendered every frame, sampled by opaque/effect shading"},
-      {"resource": "point-light shadow cube", "format": "Depth32Float 256x256x6", "bytes": 1572864, "lifetime": "persistent; six faces cleared and rendered every frame, sampled by opaque/effect shading"},
-      {"resource": "material atlas", "format": "Rgba8UnormSrgb 128x128x1", "bytes": 65536, "lifetime": "persistent; uploaded at startup, sampled by opaque shading"},
-      {"resource": "static geometry", "format": "Vertex 60 bytes", "bytes": 10539720, "lifetime": "persistent; uploaded at startup; logically fetched in shadow and geometry draws"},
-      {"resource": "material table", "format": "MaterialGpu 80 bytes x 12 entries", "bytes": 960, "lifetime": "persistent; uploaded at startup and after material edits"},
-      {"resource": "fixed and shadow buffers", "format": "Globals 832 + FireFrame 12928 + seven matrices 448", "bytes": 14208, "lifetime": "persistent; globals/matrices refreshed during update_globals, fire frame on changed fixed-tick key"}
+      {
+        "resource": "HDR scene color",
+        "format": "Rgba16Float",
+        "bytes": 1843200,
+        "lifetime": "persistent for Renderer; cleared/stored opaque, loaded/stored atmosphere, copied only for optical materials, loaded/stored optical resolve when active, sampled post"
+      },
+      {
+        "resource": "normal plus linear depth",
+        "format": "Rgba16Float",
+        "bytes": 1843200,
+        "lifetime": "persistent; cleared/stored opaque, loaded/stored optical resolve when active, copied only for optical materials and sampled by effects/post"
+      },
+      {
+        "resource": "depth test attachment",
+        "format": "Depth32Float",
+        "bytes": 921600,
+        "lifetime": "persistent; cleared and written by opaque geometry"
+      },
+      {
+        "resource": "pixel output",
+        "format": "Rgba8UnormSrgb",
+        "bytes": 921600,
+        "lifetime": "persistent; cleared/written by post, copied for captures when requested"
+      },
+      {
+        "resource": "effect depth and flame coverage",
+        "format": "Rgba16Float",
+        "bytes": 1843200,
+        "lifetime": "persistent and unconditional; cleared/written by atmosphere and sampled by post; shader consumes x and y"
+      },
+      {
+        "resource": "optical color snapshot",
+        "format": "Rgba16Float",
+        "bytes": 1843200,
+        "lifetime": "allocated on first optical material use; copied each active optical frame; retained to support later live material edits"
+      },
+      {
+        "resource": "optical normal/depth snapshot",
+        "format": "Rgba16Float",
+        "bytes": 1843200,
+        "lifetime": "allocated on first optical material use; copied each active optical frame; retained to support later live material edits"
+      },
+      {
+        "resource": "smoke density/temperature ping",
+        "format": "Rgba16Float 3D",
+        "bytes": 1179648,
+        "lifetime": "persistent; alternate source and destination per fixed simulation step; both reset to zero"
+      },
+      {
+        "resource": "smoke density/temperature pong",
+        "format": "Rgba16Float 3D",
+        "bytes": 1179648,
+        "lifetime": "persistent; alternate destination and source per fixed simulation step; both reset to zero"
+      },
+      {
+        "resource": "sun shadow map",
+        "format": "Depth32Float 1024x1024",
+        "bytes": 4194304,
+        "lifetime": "persistent; cleared and rendered every frame, sampled by opaque/effect shading"
+      },
+      {
+        "resource": "point-light shadow cube",
+        "format": "Depth32Float 256x256x6",
+        "bytes": 1572864,
+        "lifetime": "persistent; six faces cleared and rendered every frame, sampled by opaque/effect shading"
+      },
+      {
+        "resource": "material atlas",
+        "format": "Rgba8UnormSrgb 128x128x1",
+        "bytes": 65536,
+        "lifetime": "persistent; uploaded at startup, sampled by opaque shading"
+      },
+      {
+        "resource": "static geometry",
+        "format": "Vertex 60 bytes",
+        "bytes": 10539720,
+        "lifetime": "persistent; uploaded at startup; logically fetched in shadow and geometry draws"
+      },
+      {
+        "resource": "material table",
+        "format": "MaterialGpu 80 bytes x 12 entries",
+        "bytes": 960,
+        "lifetime": "persistent; uploaded at startup and after material edits"
+      },
+      {
+        "resource": "fixed and shadow buffers",
+        "format": "Globals 832 + FireFrame 12928 + seven matrices 448",
+        "bytes": 14208,
+        "lifetime": "persistent; globals/matrices refreshed during update_globals, fire frame on changed fixed-tick key"
+      }
     ],
     "atlas_layer_note": "The above breakdown is for measured clearing/heavy scenes, which each have one atlas layer. Material Atelier allocation is from its O01 report and has a smaller geometry buffer."
   },
   "format_support_on_probe_adapter": [
-    {"format": "Rgba16Float", "texture_binding": true, "storage_binding": true, "render_attachment": true, "copy_src": true, "copy_dst": true, "filterable": true, "storage_write_only": true},
-    {"format": "Rg16Float", "texture_binding": true, "storage_binding": true, "render_attachment": true, "copy_src": true, "copy_dst": true, "filterable": true, "storage_write_only": true},
-    {"format": "R32Float", "texture_binding": true, "storage_binding": true, "render_attachment": true, "copy_src": true, "copy_dst": true, "filterable": true, "storage_write_only": true},
-    {"format": "Rg32Float", "texture_binding": true, "storage_binding": true, "render_attachment": true, "copy_src": true, "copy_dst": true, "filterable": true, "storage_write_only": true},
-    {"format": "Rgba8Unorm", "texture_binding": true, "storage_binding": true, "render_attachment": true, "copy_src": true, "copy_dst": true, "filterable": true, "storage_write_only": true}
+    {
+      "format": "Rgba16Float",
+      "texture_binding": true,
+      "storage_binding": true,
+      "render_attachment": true,
+      "copy_src": true,
+      "copy_dst": true,
+      "filterable": true,
+      "storage_write_only": true
+    },
+    {
+      "format": "Rg16Float",
+      "texture_binding": true,
+      "storage_binding": true,
+      "render_attachment": true,
+      "copy_src": true,
+      "copy_dst": true,
+      "filterable": true,
+      "storage_write_only": true
+    },
+    {
+      "format": "R32Float",
+      "texture_binding": true,
+      "storage_binding": true,
+      "render_attachment": true,
+      "copy_src": true,
+      "copy_dst": true,
+      "filterable": true,
+      "storage_write_only": true
+    },
+    {
+      "format": "Rg32Float",
+      "texture_binding": true,
+      "storage_binding": true,
+      "render_attachment": true,
+      "copy_src": true,
+      "copy_dst": true,
+      "filterable": true,
+      "storage_write_only": true
+    },
+    {
+      "format": "Rgba8Unorm",
+      "texture_binding": true,
+      "storage_binding": true,
+      "render_attachment": true,
+      "copy_src": true,
+      "copy_dst": true,
+      "filterable": true,
+      "storage_write_only": true
+    }
   ],
   "logical_traffic_per_frame": {
     "clearing_or_heavy": {
@@ -77,7 +213,7 @@
       "snapshot_copy_logical_read_plus_write_bytes": 7372800,
       "optical_hdr_and_normal_attachment_load_store_bytes": 7372800,
       "additional_vertex_input_bytes_for_optical_draw": 10539720,
-      "notes": "Snapshot textures are allocated in all scenes, but copies and optical draw occur only when optical materials are present. Optical resolve shader reads vary with material path and ray/refinement steps."
+      "notes": "Two optical snapshots are lazily allocated on first optical material use. Copies and optical draw occur only on frames with active optical materials; the copy traffic is unchanged by lazy allocation."
     },
     "smoke_compute_per_fixed_step": {
       "voxel_count": 147456,
@@ -92,24 +228,72 @@
     }
   },
   "uploads": {
-    "per_update_globals_call": {"shadow_matrices_bytes": 448, "globals_bytes": 832, "total_bytes": 1280},
-    "typical_one_tick_plus_render_frame": {"update_globals_calls": 2, "global_and_matrix_write_bytes": 2560, "fire_frame_write_bytes": 12928, "typical_total_dynamic_write_bytes": 15488},
+    "per_update_globals_call": {
+      "shadow_matrices_bytes": 448,
+      "globals_bytes": 832,
+      "total_bytes": 1280
+    },
+    "typical_one_tick_plus_render_frame": {
+      "update_globals_calls": 2,
+      "global_and_matrix_write_bytes": 2560,
+      "fire_frame_write_bytes": 12928,
+      "typical_total_dynamic_write_bytes": 15488
+    },
     "conditional_or_startup": [
-      {"operation": "material table edit", "bytes": 960},
-      {"operation": "smoke reset, both volumes", "bytes": 2359296},
-      {"operation": "geometry upload for clearing/heavy", "bytes": 10539720},
-      {"operation": "material atlas upload for clearing/heavy", "bytes": 65536}
+      {
+        "operation": "material table edit",
+        "bytes": 960
+      },
+      {
+        "operation": "smoke reset, both volumes",
+        "bytes": 2359296
+      },
+      {
+        "operation": "geometry upload for clearing/heavy",
+        "bytes": 10539720
+      },
+      {
+        "operation": "material atlas upload for clearing/heavy",
+        "bytes": 65536
+      }
     ],
     "notes": "The fire frame is cached by its fixed-tick key; without a changed tick, camera-only render refreshes globals/matrices but not FireFrame. Upload payload excludes queue staging/alignment."
   },
   "evidence_and_candidates": {
-    "o01_gpu_stage_medians_ms": {"clearing_smoke_compute": 0.020583, "clearing_post": 2.528834, "clearing_atmosphere_fire": 2.423042, "heavy_smoke_compute": 0.0205, "heavy_post": 3.24975, "materials_optical_resolve": 2.646208},
+    "o01_gpu_stage_medians_ms": {
+      "clearing_smoke_compute": 0.020583,
+      "clearing_post": 2.528834,
+      "clearing_atmosphere_fire": 2.423042,
+      "heavy_smoke_compute": 0.0205,
+      "heavy_post": 3.24975,
+      "materials_optical_resolve": 2.646208
+    },
     "interpretation": "Existing route data shows smoke compute well below render stages on this M1 Max/Metal build; active-region simulation is not justified by the current timing. Stage timestamps overlap and route values describe complete variants.",
     "candidates": [
-      {"candidate": "Pack effect depth and flame coverage into a two-channel target", "inventory_saving_bytes_at_640x360": 921600, "evidence": "Rgba16Float target is 8 bytes/pixel; post shader consumes x and y; this M1 Max reports Rg16Float renderable and filterable.", "status": "candidate only; requires matched images, depth precision checks and Metal plus DX12 capability/results"},
-      {"candidate": "Use a two-channel density/temperature ping-pong texture", "inventory_saving_bytes": 1179648, "evidence": "Two Rgba16Float volumes total 2359296 bytes; smoke shader writes z/w as zero and consumes x/y; this M1 Max reports Rg16Float write-only storage and filterable.", "status": "candidate only; current shader uses rgba16float storage and RG16 support is adapter-specific here; query and fallback required on DX12; validate reset/replay and transport precision"},
-      {"candidate": "Allocate optical snapshots only for optical scenes", "inventory_saving_bytes_at_640x360": 3686400, "evidence": "Two unconditional RGBA16F snapshots are only copied/consumed for optical draws.", "status": "candidate only; needs resource creation/rebuild lifecycle review and image/state checks"},
-      {"candidate": "Avoid snapshot copies through pass/layout redesign", "estimated_copy_read_plus_write_bytes_per_optical_frame": 7372800, "evidence": "Two full-resolution RGBA16F texture copies precede optical resolve.", "status": "research candidate; same-texture hazards/order and Metal/DX12 pass cost must be measured"}
+      {
+        "candidate": "Pack effect depth and flame coverage into a two-channel target",
+        "inventory_saving_bytes_at_640x360": 921600,
+        "evidence": "Rgba16Float target is 8 bytes/pixel; post shader consumes x and y; this M1 Max reports Rg16Float renderable and filterable.",
+        "status": "candidate only; requires matched images, depth precision checks and Metal plus DX12 capability/results"
+      },
+      {
+        "candidate": "Use a two-channel density/temperature ping-pong texture",
+        "inventory_saving_bytes": 1179648,
+        "evidence": "Two Rgba16Float volumes total 2359296 bytes; smoke shader writes z/w as zero and consumes x/y; this M1 Max reports Rg16Float write-only storage and filterable.",
+        "status": "candidate only; current shader uses rgba16float storage and RG16 support is adapter-specific here; query and fallback required on DX12; validate reset/replay and transport precision"
+      },
+      {
+        "candidate": "Allocate optical snapshots only for optical scenes",
+        "inventory_saving_bytes_at_640x360": 3686400,
+        "evidence": "Two unconditional RGBA16F snapshots are only copied/consumed for optical draws.",
+        "status": "implemented on M1 Max/Metal: lazy allocation preserves live material activation; 3,686,400 known bytes saved before first optical use; matched diffuse and optical captures were pixel-identical. Cross-backend gate remains open."
+      },
+      {
+        "candidate": "Avoid snapshot copies through pass/layout redesign",
+        "estimated_copy_read_plus_write_bytes_per_optical_frame": 7372800,
+        "evidence": "Two full-resolution RGBA16F texture copies precede optical resolve.",
+        "status": "research candidate; same-texture hazards/order and Metal/DX12 pass cost must be measured"
+      }
     ],
     "not_recommended_from_current_evidence": "Active-region smoke simulation: current measured compute is about 0.0205 ms median while post and atmosphere/fire are multi-millisecond stages."
   },
@@ -117,7 +301,54 @@
     "No hardware DRAM/bandwidth counters were collected; attachment, copy and filtered-sample byte totals are logical operation estimates.",
     "The only live format capability probe is Apple M1 Max/Metal. Windows DX12 and RTX-class feature reports and measured pass costs remain open.",
     "RG16 capability in this probe does not make it a portable default; query each adapter and retain an RGBA16F fallback unless DX12 and target GPU results pass.",
-    "No layout change was implemented or promoted in this inventory task.",
+    "No narrower RG16 format or pass-layout change has been promoted; lazy optical snapshot allocation is implemented and documented separately.",
     "Repeat the inventory after O03/O05/O06 introduce or specialize targets, as required by the plan."
-  ]
+  ],
+  "lazy_optical_snapshots": {
+    "status": "implemented; snapshots allocate on first optical material use and remain allocated for live edit safety",
+    "host": {
+      "gpu": "Apple M1 Max",
+      "backend": "Metal"
+    },
+    "resolution": [
+      640,
+      360
+    ],
+    "bytes_before_first_optical_material": 0,
+    "bytes_after_live_reflectivity_edit": 3686400,
+    "memory_estimate_before": {
+      "render_targets_bytes": 7372800,
+      "known_gpu_allocation_bytes": 24909848
+    },
+    "memory_estimate_after": {
+      "render_targets_bytes": 11059200,
+      "known_gpu_allocation_bytes": 28596248
+    },
+    "saved_for_non_optical_scene_bytes": 3686400,
+    "live_edit_check": {
+      "path": "materials.grass.reflectivity",
+      "value": 0.3,
+      "optical_draw_batches": 1,
+      "capture_created": true
+    },
+    "parity_captures": {
+      "materials_atelier_opaque_metal": {
+        "reference": "pre-lazy M1 Max/Metal capture; seed 42, tick 300, metal-close, 640x360",
+        "changed_pixels": 0,
+        "reference_sha256": "44676834882e579439c0ec61fd20c85501f9a5ad32369f1d0e48b1b31c3c6208",
+        "candidate_sha256": "44676834882e579439c0ec61fd20c85501f9a5ad32369f1d0e48b1b31c3c6208"
+      },
+      "clearing_ink_smoke": {
+        "reference": "pre-lazy M1 Max/Metal capture; seed 42, tick 300, smoke-close, 640x360",
+        "changed_pixels": 0,
+        "reference_sha256": "c080df09137173b984f48d39137da5a8719b2110965d0fd270a801e76f0adbfe",
+        "candidate_sha256": "c080df09137173b984f48d39137da5a8719b2110965d0fd270a801e76f0adbfe"
+      }
+    },
+    "interpretation": "memory estimate savings only; no frame-time gain is claimed. Optical scenes allocate full snapshots at startup, and diffuse scenes allocate them at first live optical material edit. Snapshot copy traffic is unchanged on optical frames.",
+    "limitations": [
+      "Known GPU allocation is a descriptor-size estimate and excludes driver alignment, transient allocations, pipelines and timestamp storage.",
+      "Measurements cover Apple M1 Max/Metal only; Windows DX12 and other GPU backends remain open."
+    ]
+  }
 }

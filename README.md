@@ -7,14 +7,16 @@ The reusable engine and the lab are separate workspace packages.
 See [the work queue](TODO.md) and [optimisation plans](docs/OPTIMIZATION_PLAN.md)
 for completed profiling instrumentation, whole-map shadow reuse, tiled effect lists,
 opt-in projected fire detail, smoke absorption reuse, optical surface reuse and
-geometry culling. Further memory work remains proposed. Measurements are recorded in
+geometry culling. Optical snapshots are lazy for diffuse scenes; other memory
+layout work remains proposed. Measurements are recorded in
 [docs/measurements-o01.json](docs/measurements-o01.json),
 [docs/measurements-o02.json](docs/measurements-o02.json),
 [docs/measurements-o03.json](docs/measurements-o03.json),
 [docs/measurements-o04.json](docs/measurements-o04.json) and
 [docs/measurements-o05.json](docs/measurements-o05.json),
 [docs/measurements-o06.json](docs/measurements-o06.json) and
-[docs/measurements-o07-culling.json](docs/measurements-o07-culling.json).
+[docs/measurements-o07-culling.json](docs/measurements-o07-culling.json) and
+[docs/measurements-o08.json](docs/measurements-o08.json).
 
 ## Start
 

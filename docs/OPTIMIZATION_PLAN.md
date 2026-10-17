@@ -452,14 +452,23 @@ changes; sparse simulation remains evidence-gated research. Dependency: O01;
 repeat the audit after O03/O05/O06 introduce resources. Background:
 [Apple GPU and tile-based rendering guidance](https://developer.apple.com/documentation/metal/tailor-your-apps-for-apple-gpus-and-tile-based-deferred-rendering).
 
+**Implemented O08 change:** optical color and normal/depth snapshots allocate
+lazily when a scene first uses an optical material. Diffuse 640×360 scenes save
+3,686,400 known bytes until an optical material is activated; a live material edit
+was verified to allocate the pair without changing fixed-tick output relative to
+the pre-change build. Optical-frame copy traffic is unchanged. This does not close
+the broader O08 task: format packing, pass-copy redesign, longer timing, and
+Windows/DX12 validation remain open. See [measurements-o08.json](measurements-o08.json).
+
 **Inventory checkpoint (16 October 2026):** known allocations, resource lifetimes,
 per-frame logical attachment/copy traffic, nominal smoke sample/store footprint,
 dynamic/startup upload payloads and a live M1 Max/Metal texture-format query are
 recorded in [measurements-o08.json](measurements-o08.json). The report does not
-measure external-memory bandwidth. RG16 layouts, lazy optical snapshots and copy
-elimination are candidates only; validate on both Metal and DX12 before changing
-the renderer. O08 layout/pass experiments and the later sparse-smoke gate remain
-open.
+measure external-memory bandwidth. Lazy optical snapshot allocation is implemented
+with a measured 3,686,400-byte reduction for diffuse 640×360 scenes. RG16 layouts
+and copy elimination remain candidates; validate on both Metal and DX12 before
+changing those paths. O08 layout/pass experiments and the later sparse-smoke gate
+remain open.
 
 ## Delivery order and promotion
 

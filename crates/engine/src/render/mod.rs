@@ -205,14 +205,15 @@ pub struct Renderer {
     optical_group: wgpu::BindGroup,
     optical_smoke_groups: [wgpu::BindGroup; 2],
     optical_smoke_layout: wgpu::BindGroupLayout,
+    optical_sampler: wgpu::Sampler,
+    scene_color: Option<wgpu::Texture>,
+    scene_normals: Option<wgpu::Texture>,
     _absorption_texture: wgpu::Texture,
     absorption_cache_resolution: u32,
     absorption_layout: wgpu::BindGroupLayout,
     absorption_groups: [wgpu::BindGroup; 2],
     hdr_texture: wgpu::Texture,
     normals_texture: wgpu::Texture,
-    scene_color: wgpu::Texture,
-    scene_normals: wgpu::Texture,
     volume_groups: [wgpu::BindGroup; 2],
     volume_layout: wgpu::BindGroupLayout,
     smoke_groups: [wgpu::BindGroup; 2],
@@ -1079,23 +1080,8 @@ impl Renderer {
             min_filter: wgpu::FilterMode::Linear,
             ..Default::default()
         });
-        let snapshot_usage = wgpu::TextureUsages::COPY_DST | wgpu::TextureUsages::TEXTURE_BINDING;
-        let scene_color = texture(
-            &device,
-            "opaque + atmosphere snapshot",
-            [w, h, 1],
-            HDR,
-            snapshot_usage,
-            wgpu::TextureDimension::D2,
-        );
-        let scene_normals = texture(
-            &device,
-            "opaque normal/depth snapshot",
-            [w, h, 1],
-            HDR,
-            snapshot_usage,
-            wgpu::TextureDimension::D2,
-        );
+        let scene_color = None;
+        let scene_normals = None;
         let optical_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("single-layer optical surfaces"),
             entries: &[
@@ -1126,8 +1112,8 @@ impl Renderer {
             &device,
             &optical_layout,
             &[
-                wgpu::BindingResource::TextureView(&scene_color.create_view(&Default::default())),
-                wgpu::BindingResource::TextureView(&scene_normals.create_view(&Default::default())),
+                wgpu::BindingResource::TextureView(&hdr),
+                wgpu::BindingResource::TextureView(&normals),
                 wgpu::BindingResource::Sampler(&linear),
             ],
         );
@@ -1511,7 +1497,7 @@ impl Renderer {
         });
         let pixel_count =
             u64::from(scene.render.resolution[0]) * u64::from(scene.render.resolution[1]);
-        let render_targets_bytes = pixel_count * (5 * 8 + 4 + 4);
+        let render_targets_bytes = pixel_count * (3 * 8 + 4 + 4);
         let smoke_bytes =
             u64::from(VOLUME[0]) * u64::from(VOLUME[1]) * u64::from(VOLUME[2]) * 8 * 2;
         let shadow_bytes = 1024u64 * 1024 * 4 + 256 * 256 * 6 * 4;
@@ -1572,6 +1558,7 @@ impl Renderer {
         let resource_inventory = serde_json::json!({
             "estimate_kind":"known allocation sizes; excludes driver alignment, transient capture/surface buffers, pipelines, bind groups and timestamp query storage",
             "render_targets_bytes":render_targets_bytes,
+            "optical_snapshot_bytes":0,
             "smoke_volumes_bytes":smoke_bytes,
             "smoke_absorption_cache_bytes":(scene.render.absorption_cache_resolution as u64).pow(3)*8,
             "shadow_maps_bytes":shadow_bytes,
@@ -1627,14 +1614,15 @@ impl Renderer {
             optical_group,
             optical_smoke_groups,
             optical_smoke_layout,
+            optical_sampler: linear,
+            scene_color,
+            scene_normals,
             _absorption_texture: absorption_texture,
             absorption_cache_resolution,
             absorption_layout,
             absorption_groups,
             hdr_texture,
             normals_texture,
-            scene_color,
-            scene_normals,
             volume_groups,
             volume_layout,
             smoke_groups,
@@ -1686,9 +1674,57 @@ impl Renderer {
             shader_directory,
         };
         renderer.reset_smoke();
+        if scene.materials.iter().any(|material| {
+            material.metallic > 0. || material.reflectivity > 0. || material.transmission > 0.
+        }) {
+            renderer.ensure_optical_snapshots();
+        }
         renderer.shadow_invalidation_reason = Some("resource_initialization");
         renderer.update_globals(scene, &scene.cameras[0], 0, 42);
         Ok(renderer)
+    }
+
+    fn ensure_optical_snapshots(&mut self) {
+        if self.scene_color.is_some() && self.scene_normals.is_some() {
+            return;
+        }
+        let [width, height] = self.resolution;
+        let usage = wgpu::TextureUsages::COPY_DST | wgpu::TextureUsages::TEXTURE_BINDING;
+        let scene_color = texture(
+            &self.device,
+            "opaque + atmosphere snapshot",
+            [width, height, 1],
+            HDR,
+            usage,
+            wgpu::TextureDimension::D2,
+        );
+        let scene_normals = texture(
+            &self.device,
+            "opaque normal/depth snapshot",
+            [width, height, 1],
+            HDR,
+            usage,
+            wgpu::TextureDimension::D2,
+        );
+        let color_view = scene_color.create_view(&Default::default());
+        let normals_view = scene_normals.create_view(&Default::default());
+        self.optical_group = group(
+            &self.device,
+            &self.optical_layout,
+            &[
+                wgpu::BindingResource::TextureView(&color_view),
+                wgpu::BindingResource::TextureView(&normals_view),
+                wgpu::BindingResource::Sampler(&self.optical_sampler),
+            ],
+        );
+        self.scene_color = Some(scene_color);
+        self.scene_normals = Some(scene_normals);
+        let bytes = u64::from(width) * u64::from(height) * 16;
+        self.resource_inventory["optical_snapshot_bytes"] = bytes.into();
+        for key in ["render_targets_bytes", "known_gpu_allocation_bytes"] {
+            let current = self.resource_inventory[key].as_u64().unwrap_or(0);
+            self.resource_inventory[key] = (current + bytes).into();
+        }
     }
 
     #[allow(clippy::too_many_arguments)]
@@ -2553,6 +2589,12 @@ impl Renderer {
 
     pub fn render(&mut self, scene: &Scene, camera: &Camera, tick: u64, seed: u32) {
         self.poll_timing(false);
+        let optical_active = scene.materials.iter().any(|material| {
+            material.metallic > 0. || material.reflectivity > 0. || material.transmission > 0.
+        });
+        if optical_active {
+            self.ensure_optical_snapshots();
+        }
         let started = Instant::now();
         if self.material_cache != scene.materials {
             let upload_started = Instant::now();
@@ -2886,14 +2928,18 @@ impl Renderer {
             pass.draw(0..3, 0..1);
         }
         // Skip the copies and extra draw entirely for existing diffuse scenes.
-        let optical_active = scene
-            .materials
-            .iter()
-            .any(|m| m.metallic > 0. || m.reflectivity > 0. || m.transmission > 0.);
         if optical_active {
+            let scene_color = self
+                .scene_color
+                .as_ref()
+                .expect("optical snapshots are allocated before the optical pass");
+            let scene_normals = self
+                .scene_normals
+                .as_ref()
+                .expect("optical snapshots are allocated before the optical pass");
             for (source, target) in [
-                (&self.hdr_texture, &self.scene_color),
-                (&self.normals_texture, &self.scene_normals),
+                (&self.hdr_texture, scene_color),
+                (&self.normals_texture, scene_normals),
             ] {
                 encoder.copy_texture_to_texture(
                     source.as_image_copy(),

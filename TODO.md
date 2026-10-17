@@ -25,7 +25,7 @@ Detailed steps, dependencies and acceptance criteria live in
 - [x] [O04: projected-pixel detail](docs/OPTIMIZATION_PLAN.md#o04--detail-based-on-projected-pixel-contribution) — opt-in fire-segment LOD, exact-state parity checks, three projected-size capture pairs, threshold-crossing route and paired M1 Max timings recorded in [measurements-o04.json](docs/measurements-o04.json). Default promotion, sustained orbit/temporal review and non-Metal acceptance remain open.
 - [x] [O05: cached smoke absorption](docs/OPTIMIZATION_PLAN.md#o05--reuse-smoke-transmittance-and-illumination-work) — opt-in primary fire-light cache prototype with 8³/16³ still and paired timing evidence in [measurements-o05.json](docs/measurements-o05.json). Promotion, motion, invalidation stress and cross-backend gates remain open.
 - [x] [O06: specialised optical resolve](docs/OPTIMIZATION_PLAN.md#o06--specialise-optical-materials-and-avoid-repeated-shading) — opt-in opaque-reflector base-light reuse with direct transmissive fallback; matched stills and short paired route timings in [measurements-o06.json](docs/measurements-o06.json). Long-route, native-window and cross-backend gates remain open.
-- [ ] O08: individually measured resource/pass-layout improvements; Metal/DX12 results, image/state comparisons and target-hardware gates remain open.
+- [ ] O08: individually measured resource/pass-layout improvements — lazy optical snapshots are implemented and measured (3.69 MB saved for diffuse 640×360 scenes; live activation verified). Format packing, pass-copy redesign, Metal/DX12 timing and target-hardware gates remain open.
 
 ## Later scaling research
 

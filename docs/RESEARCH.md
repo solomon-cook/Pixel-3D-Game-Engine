@@ -257,3 +257,16 @@ and smoke-over-reflector captures stayed visually close, with small localized
 half-float differences. The consistent short-run GPU result merits longer review,
 but does not qualify the change for a default. See
 [measurements-o06.json](measurements-o06.json).
+
+## Lazy optical snapshots (17 October)
+
+The O08 inventory found two full-resolution RGBA16F snapshots allocated in every
+scene although diffuse scenes skip both copies and optical resolve. The renderer
+now starts with the existing HDR/normal targets as unused optical bind-group
+fallbacks and allocates the dedicated snapshots on first optical use. At 640×360,
+the known allocation falls by 3,686,400 bytes for diffuse scenes. A live reflectivity
+edit activated the optical pass and allocated the snapshots; the diffuse smoke and
+opaque-metal fixed-tick captures were byte-identical to pre-change captures. No
+frame-time reduction is claimed because the old diffuse path already skipped the
+copy and optical draw. The full live-allocation report and limits are in
+[measurements-o08.json](measurements-o08.json).
