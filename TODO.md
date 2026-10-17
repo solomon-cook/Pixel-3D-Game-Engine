@@ -29,6 +29,8 @@ Detailed steps, dependencies and acceptance criteria live in
 
   RG16 format-selection logic now has adapter-independent tests for usage/feature gating and the RGBA16F fallback. This does not replace physical fallback rendering or Windows/DX12 acceptance.
 
+  Runtime inventory also counts the tile debug uniform and optional timestamp staging buffers; opaque QuerySet allocation remains excluded.
+
 ## Later scaling research
 
 - [ ] Simulation-driven surface heat cue — opt-in material response backed by

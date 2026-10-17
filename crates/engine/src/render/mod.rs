@@ -1702,7 +1702,16 @@ impl Renderer {
                         + POINT_TILE_CAPACITY
                         + PARTICLE_TILE_CAPACITY,
                 ));
-        let tile_stats_bytes = 48 * 4;
+        let tile_stats_buffer_bytes = 48;
+        let tile_stats_readback_bytes = 3 * 48;
+        let tile_stats_bytes = tile_stats_buffer_bytes + tile_stats_readback_bytes;
+        let tile_config_bytes = std::mem::size_of::<TileConfigGpu>() as u64;
+        let timing_staging_bytes = if timestamp {
+            TIMING_SLOTS as u64 * GPU_QUERY_BYTES * 2
+                + COMPUTE_TIMING_SLOTS as u64 * COMPUTE_QUERY_BYTES * 2
+        } else {
+            0
+        };
         let geometry_bytes = mesh.vertices.len() as u64 * std::mem::size_of::<Vertex>() as u64;
         let unshared_geometry_bytes = mesh
             .object_draws
@@ -1745,12 +1754,14 @@ impl Renderer {
             + atlas_bytes
             + tile_list_bytes
             + tile_stats_bytes
+            + tile_config_bytes
+            + timing_staging_bytes
             + geometry_bytes
             + instance_buffer_bytes
             + material_bytes
             + fixed_buffer_bytes;
         let resource_inventory = serde_json::json!({
-            "estimate_kind":"known allocation sizes; excludes driver alignment, transient capture/surface buffers, pipelines, bind groups and timestamp query storage",
+            "estimate_kind":"known resource buffer/texture sizes; excludes driver alignment, transient capture/surface buffers, pipelines, bind groups and opaque timestamp query-set storage",
             "render_targets_bytes":render_targets_bytes,
             "effect_depth_format":format!("{effect_depth_format:?}"),
             "effect_depth_bytes":pixel_count*effect_depth_bytes_per_pixel,
@@ -1780,6 +1791,11 @@ impl Renderer {
             "shared_mesh_count":shared_mesh_count,
             "tile_list_bytes":tile_list_bytes,
             "tile_stats_bytes":tile_stats_bytes,
+            "tile_stats_buffer_bytes":tile_stats_buffer_bytes,
+            "tile_config_bytes":tile_config_bytes,
+            "tile_stats_readback_bytes":tile_stats_readback_bytes,
+            "gpu_timestamp_staging_bytes":timing_staging_bytes,
+            "gpu_timestamp_query_set_count":if timestamp { TIMING_SLOTS + COMPUTE_TIMING_SLOTS } else { 0 },
             "tile_count":tile_count,
             "geometry_object_count":geometry_object_count,
             "geometry_draw_range_count":geometry_range_count,

@@ -179,6 +179,17 @@ lacks Rg16Float support. The runtime fallback remains unverified on physical
 non-Metal/DX12 hardware; keep the format trials opt-in/gated until that evidence
 exists.
 
+## O08 small-buffer accounting
+
+The live allocation estimate now includes the 16-byte tile-list debug uniform
+and the timestamp resolve/readback buffers: 864 bytes when timestamp collection
+is enabled, zero otherwise. The three tile-stat readbacks were confirmed already
+included with the 48-byte counter in the existing 192-byte total, so they are
+not double-counted. Timestamp QuerySet storage stays excluded because wgpu does
+not expose its allocation size. The corrected delta is 880 bytes for timed
+sessions (16 bytes untimed); this improves inventory completeness but has no
+meaningful optimization value.
+
 ## Material response beneath pixel treatment (16 October)
 
 Hypothesis: independent HDR metalness/refraction/scattering parameters retain

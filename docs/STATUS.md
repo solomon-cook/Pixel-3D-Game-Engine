@@ -107,6 +107,10 @@ Pure capability-selection tests now cover the required usages/features and the
 Rgba16Float fallback path. They validate the branch logic only; unsupported-
 format texture creation, shader pipelines and rendered output still need a
 physical adapter without these capabilities.
+The live allocation estimate also includes the tile debug uniform (16 bytes)
+and timestamp resolve/readback buffers (864 bytes when timing is enabled); the
+opaque query-set storage remains excluded. Tile-stat buffers/readbacks were
+already included in the existing 192-byte total.
 Matched images stayed pixel-identical, and reset/replay checks passed on this
 M1 Max/Metal adapter. This is one adapter's result, not DX12 support. The HDR
 snapshot now allocates only when a camera-visible optical batch first appears, saving
