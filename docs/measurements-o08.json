@@ -1993,5 +1993,54 @@
       "crates/engine/src/render/shaders/optical.wgsl": "80ba2382db33cb2aaaccb41a574240254c4a5eea5c802a342bf78500827f2f72",
       "crates/engine/src/render/shaders/post.wgsl": "45fa7a3d24294a4fe09c6ba7d12be457cf8cfd092a7501d53440d4bb545da967"
     }
+  },
+  "current_resource_inventory_refresh": {
+    "date": "2026-10-17",
+    "source_revision": "30b1391b442c8a60923ea328c3f0b02ea7c04982",
+    "source_hashes_sha256": {
+      "crates/engine/src/render/mod.rs": "3982ca7ddc5ab7f0d6a4ec120d982bf1a7bf8b571dd575ff5cb08c9fc69bce22",
+      "assets/scenes/clearing.json": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+      "assets/scenes/materials.json": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f"
+    },
+    "device": {
+      "name": "Apple M1 Max",
+      "backend": "Metal",
+      "resolution": [
+        640,
+        360
+      ]
+    },
+    "capture_state": {
+      "seed": 42,
+      "tick": 300,
+      "clearing_camera": "hero",
+      "materials_camera": "metal-close"
+    },
+    "known_allocation_bytes": {
+      "clearing_before_optical_activation": 22809480,
+      "materials_with_visible_optical_snapshot": 16883296,
+      "timestamp_staging_buffers_enabled": 864,
+      "tile_config_uniform": 16,
+      "tile_stats_counter_and_readbacks": 192,
+      "smoke_volumes_bytes": 1179648,
+      "smoke_volume_format": "Rg16Float",
+      "effect_depth_bytes": 921600,
+      "effect_depth_format": "Rg16Float"
+    },
+    "timestamp_resources": {
+      "query_set_count": 9,
+      "staging_buffers_bytes": 864,
+      "query_set_allocation_bytes": "not exposed by wgpu; excluded"
+    },
+    "capture_sidecars": [
+      "artifacts/o08-refresh/clearing.json",
+      "artifacts/o08-refresh/materials.json"
+    ],
+    "interpretation": "The previous inventory undercounted known live resource bytes by 880 in timestamp-enabled sessions (16-byte tile config plus 864-byte timestamp resolve/readback buffers). This is an accounting correction, not a performance result.",
+    "limits": [
+      "Descriptor sizes exclude driver alignment and internal allocations.",
+      "No physical DRAM counters were collected.",
+      "The probe is one Apple M1 Max/Metal adapter; Windows/DX12 and other-adapter fallback remain unverified."
+    ]
   }
 }

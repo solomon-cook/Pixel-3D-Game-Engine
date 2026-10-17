@@ -517,6 +517,10 @@ image parity on this adapter. RGBA16F alpha coverage avoids a separate mask and
 preserves known allocation size; compact HDR still needs the 230,400-byte mask.
 No practical timing gain is demonstrated. Validate fallback and pass layouts on other adapters,
 including Windows/DX12.
+The 17 October current-renderer inventory refresh reports 22,809,480 known bytes
+for clearing before optical activation and 16,883,296 bytes for Material Atelier
+with its visible HDR snapshot; timestamp staging and the tile debug uniform are
+now counted. See `current_resource_inventory_refresh` in the measurement report.
 O08 layout/pass experiments and the later sparse-smoke gate
 remain open.
 

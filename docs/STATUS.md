@@ -111,6 +111,11 @@ The live allocation estimate also includes the tile debug uniform (16 bytes)
 and timestamp resolve/readback buffers (864 bytes when timing is enabled); the
 opaque query-set storage remains excluded. Tile-stat buffers/readbacks were
 already included in the existing 192-byte total.
+The inventory was refreshed at seed 42/tick 300 on the current renderer:
+22,809,480 known bytes for clearing before optical activation and 16,883,296
+bytes for Material Atelier with its visible HDR snapshot. Capture sidecars are
+in ignored `artifacts/o08-refresh/`; the values include no driver padding or
+opaque query-set storage.
 Matched images stayed pixel-identical, and reset/replay checks passed on this
 M1 Max/Metal adapter. This is one adapter's result, not DX12 support. The HDR
 snapshot now allocates only when a camera-visible optical batch first appears, saving
