@@ -15,11 +15,19 @@ fn fire_visibility(p:vec3<f32>) -> f32 {
     let depth=far/(far-0.05)-(far*0.05)/((far-0.05)*max(major,0.051));
     return textureSampleCompareLevel(point_shadow,shadow_sampler,d,depth-0.004);
 }
-struct VertexIn { @location(0) position:vec3<f32>, @location(1) normal:vec3<f32>, @location(2) color:vec3<f32>, @location(3) uv:vec2<f32>, @location(4) texture:f32, @location(5) emission:f32, @location(6) roughness:f32, @location(7) material:u32 };
+struct VertexIn { @location(0) position:vec3<f32>, @location(1) normal:vec3<f32>, @location(2) color:vec3<f32>, @location(3) uv:vec2<f32>, @location(4) texture:f32, @location(5) emission:f32, @location(6) roughness:f32, @location(7) material:u32,
+    @location(8) model_0:vec4<f32>, @location(9) model_1:vec4<f32>, @location(10) model_2:vec4<f32>, @location(11) model_3:vec4<f32>,
+    @location(12) normal_0:vec4<f32>, @location(13) normal_1:vec4<f32>, @location(14) normal_2:vec4<f32> };
 struct Varying { @builtin(position) clip:vec4<f32>, @location(0) position:vec3<f32>, @location(1) normal:vec3<f32>, @location(2) color:vec3<f32>, @location(3) uv:vec2<f32>, @location(4) @interpolate(flat) texture:f32, @location(5) emission:f32, @location(6) roughness:f32, @location(7) @interpolate(flat) material:u32 };
 @vertex fn vs(v:VertexIn)->Varying {return world_vertex(v);}
+@vertex fn vs_baked(@location(0) position:vec3<f32>, @location(1) normal:vec3<f32>, @location(2) color:vec3<f32>, @location(3) uv:vec2<f32>, @location(4) texture:f32, @location(5) emission:f32, @location(6) roughness:f32, @location(7) material:u32)->Varying {
+    var o:Varying; o.clip=g.view_proj*vec4(position,1.);o.position=position;o.normal=normal;o.color=color;o.uv=uv;o.texture=texture;o.emission=emission;o.roughness=roughness;o.material=material;return o;
+}
 fn world_vertex(v:VertexIn)->Varying {
-    var o:Varying; o.clip=g.view_proj*vec4(v.position,1.);o.position=v.position;o.normal=v.normal;o.color=v.color;o.uv=v.uv;o.texture=v.texture;o.emission=v.emission;o.roughness=v.roughness;o.material=v.material;return o;
+    let model=mat4x4<f32>(v.model_0,v.model_1,v.model_2,v.model_3);
+    let normal_matrix=mat3x3<f32>(v.normal_0.xyz,v.normal_1.xyz,v.normal_2.xyz);
+    let position=(model*vec4(v.position,1.)).xyz;
+    var o:Varying; o.clip=g.view_proj*vec4(position,1.);o.position=position;o.normal=normal_matrix*v.normal;o.color=v.color;o.uv=v.uv;o.texture=v.texture;o.emission=v.emission;o.roughness=v.roughness;o.material=v.material;return o;
 }
 struct Output { @location(0) color:vec4<f32>, @location(1) normal_depth:vec4<f32> };
 fn surface_view(v:Varying)->vec3<f32> {
@@ -40,7 +48,7 @@ fn scattered(m:Material,n:vec3<f32>,l:vec3<f32>)->vec3<f32> {
     let attenuation=exp(-(m.absorption.rgb+vec3(0.7))*m.optical.y);
     return m.scatter.rgb*m.optical.z*(vec3(wrap)+attenuation*back);
 }
-fn shade_surface(v:Varying)->Output {
+fn shade_surface(v:Varying,tile:u32)->Output {
     let m=materials[v.material];let rough=clamp(m.surface.x*v.roughness,0.,1.);
     let emission=m.color_emission.w*v.emission;
     let n=normalize(v.normal);let view=surface_view(v);
@@ -63,7 +71,11 @@ fn shade_surface(v:Varying)->Output {
     if m.optical.z>0. {
         scatter+=scattered(m,n,sun_l)*g.sun_color.rgb*g.sun_color.w*sun_visibility(v.position+sun_l*m.optical.y,n);
     }
-    for(var i=0u;i<8u;i++) {if i>=g.light_info.x {break;}
+    let tile_header=tile_headers[tile];
+    let point_overflow=(tile_header.flags.x&4u)!=0u;
+    let point_count=select(tile_header.counts.z,g.light_info.x,point_overflow);
+    for(var candidate=0u;candidate<8u;candidate++) {if candidate>=point_count {break;}
+        let i=select(point_tile_indices[tile*POINT_TILE_CAPACITY+candidate],candidate,point_overflow);
         let point=g.point_lights[i];let l=normalize(point.position_range.xyz-v.position+vec3(0.00001));
         var visibility=1.;if i==0u {visibility=fire_visibility(v.position+n*0.025);}
         let power=point.color_power.w*point_falloff(v.position,point);
@@ -77,7 +89,10 @@ fn shade_surface(v:Varying)->Output {
         }
     }
     // Bounded moving emission sources; no per-particle shadow maps.
-    for(var i=0u;i<12u;i++) {if i>=fire.lighting.x {break;}
+    let particle_overflow=(tile_header.flags.x&8u)!=0u;
+    let particle_count=select(tile_header.counts.w,fire.lighting.x,particle_overflow);
+    for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;}
+        let i=select(particle_tile_indices[tile*PARTICLE_TILE_CAPACITY+candidate],candidate,particle_overflow);
         let point=particle_light_point(i);let l=normalize(point.position_range.xyz-v.position+vec3(0.00001));
         let energy=point.color_power.w*point_falloff(v.position,point);
         local_light+=point.color_power.rgb*energy*max(dot(n,l),0.);
@@ -92,7 +107,7 @@ fn shade_surface(v:Varying)->Output {
     o.normal_depth=vec4(n,length(g.camera.xyz-v.position));return o;
 }
 @fragment fn fs(v:Varying)->Output {
-    let result=shade_surface(v);
+    let result=shade_surface(v,tile_index(v.clip.xy));
     if transmission(materials[v.material])>0. {discard;}
     return result;
 }

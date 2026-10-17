@@ -1,0 +1,528 @@
+{
+  "version": 1,
+  "workstream": "O03 bounded single-emitter tile lists with exhaustive overflow fallback",
+  "date": "2026-10-16",
+  "state": "implemented; visual/parity and three M1 Max Metal workload comparisons recorded; platform and scaling gates open",
+  "device": {
+    "name": "Apple M1 Max",
+    "device_type": "IntegratedGpu",
+    "memory_gb": 64,
+    "backend": "Metal"
+  },
+  "implementation": {
+    "tile_size_pixels": [
+      16,
+      16
+    ],
+    "categories": {
+      "fire_primitives": {
+        "capacity_per_tile": 64
+      },
+      "smoke_lobes": {
+        "capacity_per_tile": 36
+      },
+      "point_lights": {
+        "capacity_per_tile": 8
+      },
+      "particle_lights": {
+        "capacity_per_tile": 12
+      }
+    },
+    "list_bytes_at_640x360": 471040,
+    "stats_bytes": 192,
+    "list_build": "GPU compute; conservative projection of enclosing bounds; camera-inside, near-plane and non-finite cases conservatively cover the viewport",
+    "overflow": "Per-category flag; shader exhaustively scans that category when the tile overflows. Diagnostic force_overflow marks every tile for fallback.",
+    "candidate_order": "Original candidate order retained; point and particle light selection semantics retained.",
+    "runtime_control": "set_tile_lists {enabled, force_overflow?}; capture and benchmark have --disable-tile-lists and --force-tile-overflow.",
+    "enabled_by_default": true
+  },
+  "benchmark_method": {
+    "workflow": "alternating paired serial offscreen route benchmarks; same scene in both variants",
+    "baseline": "tile-list mode disabled, which sets exhaustive evaluation; the small compute pass still runs and writes fallback flags",
+    "candidate": "tile lists enabled",
+    "pairs": 3,
+    "route_seconds_per_run": 10,
+    "warmup_seconds_per_run": 5,
+    "resolution": [
+      640,
+      360
+    ],
+    "seed": 42,
+    "gpu_timing": true,
+    "scope": "native presentation, UI and vsync excluded; serial mode waits for GPU completion; paired deltas are candidate minus baseline",
+    "aggregation": "median of the three run medians; GPU pass intervals can overlap and must not be summed",
+    "commands": [
+      "python3 scripts/profile_compare.py --baseline assets/scenes/clearing.json --candidate assets/scenes/clearing.json --baseline-disable-tile-lists --pairs 3 --duration 10 --warmup 5 --binary target/debug/engine-lab --resolution 640x360 --output artifacts/o03/clearing",
+      "python3 scripts/profile_compare.py --baseline assets/scenes/profiling-heavy.json --candidate assets/scenes/profiling-heavy.json --baseline-disable-tile-lists --pairs 3 --duration 10 --warmup 5 --binary target/debug/engine-lab --resolution 640x360 --output artifacts/o03/heavy",
+      "python3 scripts/profile_compare.py --baseline assets/scenes/materials.json --candidate assets/scenes/materials.json --baseline-disable-tile-lists --pairs 3 --duration 10 --warmup 5 --binary target/debug/engine-lab --resolution 640x360 --output artifacts/o03/materials"
+    ]
+  },
+  "workloads": {
+    "clearing": {
+      "scene": "clearing-orbit",
+      "scene_path": "assets/scenes/clearing.json",
+      "scene_sha256": "c26e28a23cddfc30374dd18b2613485eff6f922b603a9f30ab8ed3b64a9435e6",
+      "route": "clearing-orbit",
+      "camera": "hero",
+      "counts": {
+        "authored_lights": 2,
+        "draw_calls_per_frame": 3.0,
+        "effect_draw_calls_per_frame": 1,
+        "emitters": 1,
+        "fire_primitives_last_frame": 81,
+        "materials": 11,
+        "objects": 276,
+        "opaque_geometry_draw_calls_per_frame": 1,
+        "optical_draw_calls_per_frame": 0,
+        "particle_lights_last_frame": 12,
+        "post_draw_calls_per_frame": 1,
+        "shadow_draw_calls_per_frame": 0.0,
+        "shadow_draw_calls_when_redrawn": 7,
+        "vertices": 175662
+      },
+      "frame_work_ms": {
+        "baseline_median_of_run_medians_ms": 7.028375,
+        "candidate_median_of_run_medians_ms": 4.808541,
+        "paired_delta_median_ms": -2.2018329999999997,
+        "paired_delta_p95_ms": -1.8308330000000002
+      },
+      "cpu_encode_ms": {
+        "baseline_median_of_run_medians_ms": 0.9769999999999999,
+        "candidate_median_of_run_medians_ms": 0.8716249999999999,
+        "paired_delta_median_ms": -0.105375,
+        "paired_delta_p95_ms": -0.062416999999999945
+      },
+      "gpu_render_ms": {
+        "baseline_median_of_run_medians_ms": 3.017417,
+        "candidate_median_of_run_medians_ms": 2.575167,
+        "paired_delta_median_ms": -0.4399160000000002,
+        "paired_delta_p95_ms": -0.43887399999999976
+      },
+      "tile_build_gpu_ms": {
+        "baseline_median_of_run_medians_ms": 0.018,
+        "candidate_median_of_run_medians_ms": 0.620875,
+        "paired_delta_median_ms": 0.6028749999999999,
+        "paired_delta_p95_ms": 0.6031259999999999
+      },
+      "candidate_tile_stats": {
+        "capacity_bytes": 471040,
+        "cpu_encode_ms": {
+          "median_ms": 0.14375,
+          "p95_ms": 0.363083,
+          "samples": 600
+        },
+        "enabled": true,
+        "force_overflow": false,
+        "gpu_build": {
+          "median_ms": 0.6213339999999999,
+          "p95_ms": 0.673375,
+          "samples": 600
+        },
+        "note": "Stats are asynchronous and frame-tagged. Oversized categories and forced overflow use exhaustive shader evaluation.",
+        "overflow_by_category": {
+          "fire_primitives": {
+            "candidate_memberships": 234036,
+            "fallback_rate": 0.0,
+            "max_candidates_per_tile": 53,
+            "overflow_tiles": 0
+          },
+          "particle_lights": {
+            "candidate_memberships": 433259,
+            "fallback_rate": 0.0,
+            "max_candidates_per_tile": 12,
+            "overflow_tiles": 0
+          },
+          "point_lights": {
+            "candidate_memberships": 552000,
+            "fallback_rate": 0.0,
+            "max_candidates_per_tile": 1,
+            "overflow_tiles": 0
+          },
+          "smoke_lobes": {
+            "candidate_memberships": 802434,
+            "fallback_rate": 0.0,
+            "max_candidates_per_tile": 18,
+            "overflow_tiles": 0
+          }
+        },
+        "stats_frames": 600,
+        "tile_size": 16
+      },
+      "comparison_report": "artifacts/o03/clearing/comparison.json",
+      "comparison_report_sha256": "159580dcac8039c415ba0e0185fdffdaa8d04c355f97a61ba4229d526b767572",
+      "pair_report_sha256": {
+        "pair-01-baseline.engine.json": "6a616d6f2cdeb59656ab202a4a1e32e086fdc0b6e6c813e87cb936a10770c825",
+        "pair-01-baseline.json": "2b100790757814cf05d484c4d1f8231f71e4aa7669cc2cbdc6d1ece9454fa820",
+        "pair-01-candidate.engine.json": "e0524edb62b2c2699adcdd4f783de3662fc991c31898b820b25d37f247ee785b",
+        "pair-01-candidate.json": "8097b5215187a75fa059e11814db6ae734268634d271fd60a6c4a0dc5ae5f841",
+        "pair-02-baseline.engine.json": "5a1df97e4ca60ada6b481afe43d08d4ebc111cd2edc841adc671f11882a31d21",
+        "pair-02-baseline.json": "e20d8cd6d451fbe6a483fe0712f46965dbce35ed1b324c5b19cc3ea679c2f0e8",
+        "pair-02-candidate.engine.json": "a3f035ab5df21bccb6ad02b0e5eae544e92092da4d0a951067910293cf6904e1",
+        "pair-02-candidate.json": "7e709f5e8dca1278e059dba05d187d38b9d22970620e7c934f8a5b430497aed9",
+        "pair-03-baseline.engine.json": "625b4506fac9e61bcbc02f4977a000266a4a2f7f575a96b79e99511ed076c432",
+        "pair-03-baseline.json": "446f7f65692905b971f6840d4e7278123d76e68e744680f1af132c35376e0c96",
+        "pair-03-candidate.engine.json": "94790b83ef9b78844046e3a727f5019e48996e112914180708b9e41e440491d3",
+        "pair-03-candidate.json": "f13675949df1cd5b16314015a1d62b6b00105bd71f8d73c46fbb9a7dfdc9a0a7"
+      }
+    },
+    "heavy": {
+      "scene": "clearing-orbit",
+      "scene_path": "assets/scenes/profiling-heavy.json",
+      "scene_sha256": "30f5d1305d1b49b7784183d9b365520ff80cc7ea127a6c77044e321309b7971b",
+      "route": "clearing-orbit",
+      "camera": "hero",
+      "counts": {
+        "authored_lights": 9,
+        "draw_calls_per_frame": 3.0,
+        "effect_draw_calls_per_frame": 1,
+        "emitters": 1,
+        "fire_primitives_last_frame": 81,
+        "materials": 11,
+        "objects": 276,
+        "opaque_geometry_draw_calls_per_frame": 1,
+        "optical_draw_calls_per_frame": 0,
+        "particle_lights_last_frame": 12,
+        "post_draw_calls_per_frame": 1,
+        "shadow_draw_calls_per_frame": 0.0,
+        "shadow_draw_calls_when_redrawn": 7,
+        "vertices": 175662
+      },
+      "frame_work_ms": {
+        "baseline_median_of_run_medians_ms": 7.230958,
+        "candidate_median_of_run_medians_ms": 6.284167,
+        "paired_delta_median_ms": -0.9908740000000007,
+        "paired_delta_p95_ms": -0.8050420000000003
+      },
+      "cpu_encode_ms": {
+        "baseline_median_of_run_medians_ms": 0.9613330000000002,
+        "candidate_median_of_run_medians_ms": 0.896334,
+        "paired_delta_median_ms": -0.06879299999999988,
+        "paired_delta_p95_ms": -0.04875000000000018
+      },
+      "gpu_render_ms": {
+        "baseline_median_of_run_medians_ms": 3.87775,
+        "candidate_median_of_run_medians_ms": 3.3925829999999997,
+        "paired_delta_median_ms": -0.4857910000000003,
+        "paired_delta_p95_ms": -0.47520900000000044
+      },
+      "tile_build_gpu_ms": {
+        "baseline_median_of_run_medians_ms": 0.018125,
+        "candidate_median_of_run_medians_ms": 0.632875,
+        "paired_delta_median_ms": 0.61475,
+        "paired_delta_p95_ms": 0.6154580000000001
+      },
+      "candidate_tile_stats": {
+        "capacity_bytes": 471040,
+        "cpu_encode_ms": {
+          "median_ms": 0.1555,
+          "p95_ms": 0.42183299999999996,
+          "samples": 600
+        },
+        "enabled": true,
+        "force_overflow": false,
+        "gpu_build": {
+          "median_ms": 0.6323329999999999,
+          "p95_ms": 0.660917,
+          "samples": 600
+        },
+        "note": "Stats are asynchronous and frame-tagged. Oversized categories and forced overflow use exhaustive shader evaluation.",
+        "overflow_by_category": {
+          "fire_primitives": {
+            "candidate_memberships": 234036,
+            "fallback_rate": 0.0,
+            "max_candidates_per_tile": 53,
+            "overflow_tiles": 0
+          },
+          "particle_lights": {
+            "candidate_memberships": 433259,
+            "fallback_rate": 0.0,
+            "max_candidates_per_tile": 12,
+            "overflow_tiles": 0
+          },
+          "point_lights": {
+            "candidate_memberships": 4416000,
+            "fallback_rate": 0.0,
+            "max_candidates_per_tile": 8,
+            "overflow_tiles": 0
+          },
+          "smoke_lobes": {
+            "candidate_memberships": 802434,
+            "fallback_rate": 0.0,
+            "max_candidates_per_tile": 18,
+            "overflow_tiles": 0
+          }
+        },
+        "stats_frames": 600,
+        "tile_size": 16
+      },
+      "comparison_report": "artifacts/o03/heavy/comparison.json",
+      "comparison_report_sha256": "cde39dee3056e2f9623ee653b0a0afb3eb90aaef52d4d30a184eb276912977b6",
+      "pair_report_sha256": {
+        "pair-01-baseline.engine.json": "6c3c6df076eca6aea044271d4c03a993a7e2120826ed97ad33e5a2a6bf3f4af8",
+        "pair-01-baseline.json": "c0fffe7682271aab198e2f5f7cf96964c5d0ca06f0ab13b2b7bae8780d90a829",
+        "pair-01-candidate.engine.json": "70200110a8ea9ef5b679fa4e0a9f4a151d730dfd14add5080f9767f890ae9df8",
+        "pair-01-candidate.json": "29e90abf435c748886d4766c8c743b50d46539981757507f217af68afbead4b1",
+        "pair-02-baseline.engine.json": "9a5790d29160dd0d81493d7dde7f4dbeec96ed62227cfc83ed76a31c29301cbf",
+        "pair-02-baseline.json": "0ba2c43892fcfcb63c2aaa83b0b67cc09b6203dc1699a551c1902c579a22ffc6",
+        "pair-02-candidate.engine.json": "a6b82b0cbe9242cac430eec5ec46aca10907cddcb7a2adb47b33b3e3da0ade7e",
+        "pair-02-candidate.json": "f9135b702093410da5d97d82c2ebb54bed50a4399683ef86344e35f864a8eedb",
+        "pair-03-baseline.engine.json": "21933bc786b917da5c57c08f9fed1c1998a6d087cbff0a3b27a82613ff6497da",
+        "pair-03-baseline.json": "fb224aed9ffb1b36af49e9fe9f8b76561d8771464382b10a539d4013e91d1521",
+        "pair-03-candidate.engine.json": "be922c0905f46de507479c241aa52ba9ca8d4a6d3e28f3af702d1cb181828a30",
+        "pair-03-candidate.json": "4c6c55d8d9a51875d6335a7644155ccf813bb3c2cc4391c17ea5cea0e5f0cfa1"
+      }
+    },
+    "materials": {
+      "scene": "material-orbit",
+      "scene_path": "assets/scenes/materials.json",
+      "scene_sha256": "945fcb11f73dd78ec6d6966c855af74f018915cd8aadac2051b1812d68d420c9",
+      "route": "material-orbit",
+      "camera": "hero",
+      "counts": {
+        "authored_lights": 4,
+        "draw_calls_per_frame": 4.0,
+        "effect_draw_calls_per_frame": 1,
+        "emitters": 1,
+        "fire_primitives_last_frame": 39,
+        "materials": 12,
+        "objects": 37,
+        "opaque_geometry_draw_calls_per_frame": 1,
+        "optical_draw_calls_per_frame": 1,
+        "particle_lights_last_frame": 9,
+        "post_draw_calls_per_frame": 1,
+        "shadow_draw_calls_per_frame": 0.0,
+        "shadow_draw_calls_when_redrawn": 7,
+        "vertices": 18396
+      },
+      "frame_work_ms": {
+        "baseline_median_of_run_medians_ms": 5.783167,
+        "candidate_median_of_run_medians_ms": 4.728834,
+        "paired_delta_median_ms": -1.0222509999999998,
+        "paired_delta_p95_ms": -0.8603329999999998
+      },
+      "cpu_encode_ms": {
+        "baseline_median_of_run_medians_ms": 0.648542,
+        "candidate_median_of_run_medians_ms": 0.864167,
+        "paired_delta_median_ms": 0.27933299999999994,
+        "paired_delta_p95_ms": 0.3277500000000001
+      },
+      "gpu_render_ms": {
+        "baseline_median_of_run_medians_ms": 2.983833,
+        "candidate_median_of_run_medians_ms": 2.477959,
+        "paired_delta_median_ms": -0.5058740000000004,
+        "paired_delta_p95_ms": -0.49775100000000005
+      },
+      "tile_build_gpu_ms": {
+        "baseline_median_of_run_medians_ms": 0.017249999999999998,
+        "candidate_median_of_run_medians_ms": 0.41262499999999996,
+        "paired_delta_median_ms": 0.39508299999999996,
+        "paired_delta_p95_ms": 0.395875
+      },
+      "candidate_tile_stats": {
+        "capacity_bytes": 471040,
+        "cpu_encode_ms": {
+          "median_ms": 0.12675,
+          "p95_ms": 0.298666,
+          "samples": 600
+        },
+        "enabled": true,
+        "force_overflow": false,
+        "gpu_build": {
+          "median_ms": 0.41304199999999996,
+          "p95_ms": 0.449042,
+          "samples": 600
+        },
+        "note": "Stats are asynchronous and frame-tagged. Oversized categories and forced overflow use exhaustive shader evaluation.",
+        "overflow_by_category": {
+          "fire_primitives": {
+            "candidate_memberships": 87298,
+            "fallback_rate": 0.0,
+            "max_candidates_per_tile": 34,
+            "overflow_tiles": 0
+          },
+          "particle_lights": {
+            "candidate_memberships": 128406,
+            "fallback_rate": 0.0,
+            "max_candidates_per_tile": 10,
+            "overflow_tiles": 0
+          },
+          "point_lights": {
+            "candidate_memberships": 1656000,
+            "fallback_rate": 0.0,
+            "max_candidates_per_tile": 3,
+            "overflow_tiles": 0
+          },
+          "smoke_lobes": {
+            "candidate_memberships": 554419,
+            "fallback_rate": 0.0,
+            "max_candidates_per_tile": 18,
+            "overflow_tiles": 0
+          }
+        },
+        "stats_frames": 600,
+        "tile_size": 16
+      },
+      "comparison_report": "artifacts/o03/materials/comparison.json",
+      "comparison_report_sha256": "d4bb0721bf60f490dcbcef390e18703053b116f66b30e92e8d11c04b96c169ca",
+      "pair_report_sha256": {
+        "pair-01-baseline.engine.json": "d58379f7e30e5513f3603328d6c9474b67b0bcdf3f3e9ed65d0d5a5a597ccbd6",
+        "pair-01-baseline.json": "10b76ce59451fa20ea6698b2e5f60569fbe8e6ca094ea43c4f9b775ee881ad86",
+        "pair-01-candidate.engine.json": "f8084e1888c18dd0342c43bf24e8daacb80ec8b162cbe1204036a196138d3189",
+        "pair-01-candidate.json": "b3ec63b48e5a8354183d3f5a3e6d711766dc85ea3c9bbeba4f3fac761a78f380",
+        "pair-02-baseline.engine.json": "19f93dc0547a2b91eb25e386725cef53f501684c898f9ebf510cf9463fac275e",
+        "pair-02-baseline.json": "9bb6ffbf7fabc1bfc5f26362a4ab63cb498de7ab90e1f3b20bb36c8f97960674",
+        "pair-02-candidate.engine.json": "bdb83c8d672f20caa34eca4733e82d96b133540e28a6e36f9900d735e50ef8fb",
+        "pair-02-candidate.json": "9e4e20a21f6641266131161893d6520fe2d12ce4ed7e088312f72c95d3fc016a",
+        "pair-03-baseline.engine.json": "a433a0611520cd82df701210451997c03c483c540012c5b7e3540a87ebab92b9",
+        "pair-03-baseline.json": "18eebc6ac837c5a933f89f1bf7594ea506892fe13f0e047ef256e0afb3f0ca4e",
+        "pair-03-candidate.engine.json": "e4965d671b24d5a766722466708ec379464bfd8a511b0c8e1acf25941f2d32b5",
+        "pair-03-candidate.json": "a63f13c8c5ad355b5baae7176cfbb93d2d0d6002c1b93f3c18dd6e46ab25d233"
+      }
+    }
+  },
+  "capture_comparisons": [
+    {
+      "view": "perspective hero",
+      "scene": "assets/scenes/clearing.json",
+      "scene_sha256": "c26e28a23cddfc30374dd18b2613485eff6f922b603a9f30ab8ed3b64a9435e6",
+      "camera": "hero",
+      "seed": 42,
+      "tick": 0,
+      "resolution": [
+        640,
+        360
+      ],
+      "sha256_by_mode": {
+        "tiled": "cfa8a4ee570d25de780e5d3aecdf220398c546b299a9974348035d1eface4fdf",
+        "exhaustive": "cfa8a4ee570d25de780e5d3aecdf220398c546b299a9974348035d1eface4fdf",
+        "forced_overflow": "cfa8a4ee570d25de780e5d3aecdf220398c546b299a9974348035d1eface4fdf"
+      },
+      "byte_identical": true,
+      "png_path_by_mode": {
+        "tiled": "/tmp/o03-clearing-hero-tiled.png",
+        "exhaustive": "/tmp/o03-clearing-hero-exhaustive.png",
+        "forced_overflow": "/tmp/o03-clearing-hero-overflow.png"
+      }
+    },
+    {
+      "view": "perspective close smoke",
+      "scene": "assets/scenes/clearing.json",
+      "scene_sha256": "c26e28a23cddfc30374dd18b2613485eff6f922b603a9f30ab8ed3b64a9435e6",
+      "camera": "smoke-close",
+      "seed": 42,
+      "tick": 120,
+      "resolution": [
+        640,
+        360
+      ],
+      "sha256_by_mode": {
+        "tiled": "5e799c750c38d8f2a7c5fbc4dcf2abcbfcf6a8eb4490bf4bb62f3ec84600ea87",
+        "exhaustive": "5e799c750c38d8f2a7c5fbc4dcf2abcbfcf6a8eb4490bf4bb62f3ec84600ea87",
+        "forced_overflow": "5e799c750c38d8f2a7c5fbc4dcf2abcbfcf6a8eb4490bf4bb62f3ec84600ea87"
+      },
+      "byte_identical": true,
+      "png_path_by_mode": {
+        "tiled": "/tmp/o03-clearing-smoke-close-tiled.png",
+        "exhaustive": "/tmp/o03-clearing-smoke-close-exhaustive.png",
+        "forced_overflow": "/tmp/o03-clearing-smoke-close-overflow.png"
+      }
+    },
+    {
+      "view": "orthographic",
+      "scene": "assets/scenes/clearing.json",
+      "scene_sha256": "c26e28a23cddfc30374dd18b2613485eff6f922b603a9f30ab8ed3b64a9435e6",
+      "camera": "orthographic",
+      "seed": 42,
+      "tick": 120,
+      "resolution": [
+        640,
+        360
+      ],
+      "sha256_by_mode": {
+        "tiled": "3f301a985f99abe65989ebe10c004b711e330509b2dbd7b4c4b5ca3e49f95928",
+        "exhaustive": "3f301a985f99abe65989ebe10c004b711e330509b2dbd7b4c4b5ca3e49f95928",
+        "forced_overflow": "3f301a985f99abe65989ebe10c004b711e330509b2dbd7b4c4b5ca3e49f95928"
+      },
+      "byte_identical": true,
+      "png_path_by_mode": {
+        "tiled": "/tmp/o03-clearing-ortho-tiled.png",
+        "exhaustive": "/tmp/o03-clearing-ortho-exhaustive.png",
+        "forced_overflow": "/tmp/o03-clearing-ortho-overflow.png"
+      }
+    },
+    {
+      "view": "glass close-up",
+      "scene": "assets/scenes/materials.json",
+      "scene_sha256": "945fcb11f73dd78ec6d6966c855af74f018915cd8aadac2051b1812d68d420c9",
+      "camera": "glass-close",
+      "seed": 42,
+      "tick": 0,
+      "resolution": [
+        640,
+        360
+      ],
+      "sha256_by_mode": {
+        "tiled": "a762db76b6e2e0f9c407ab3d3aa6fa7c33013844cf869b90a2d1b1ff239ea056",
+        "exhaustive": "a762db76b6e2e0f9c407ab3d3aa6fa7c33013844cf869b90a2d1b1ff239ea056",
+        "forced_overflow": "a762db76b6e2e0f9c407ab3d3aa6fa7c33013844cf869b90a2d1b1ff239ea056"
+      },
+      "byte_identical": true,
+      "png_path_by_mode": {
+        "tiled": "/tmp/o03-materials-glass-tiled.png",
+        "exhaustive": "/tmp/o03-materials-glass-exhaustive.png",
+        "forced_overflow": "/tmp/o03-materials-glass-overflow.png"
+      }
+    }
+  ],
+  "live_protocol_check": {
+    "command": "set_tile_lists",
+    "checks": [
+      "disabled/exhaustive selection returned enabled:false",
+      "enabled plus force_overflow:true returned both requested values",
+      "get_metrics returned capability and tile-list metrics"
+    ],
+    "stdout_protocol_only": true
+  },
+  "verification": {
+    "command": "python3 scripts/verify.py --gpu",
+    "verified": true,
+    "gpu": true,
+    "native": false,
+    "clippy": true,
+    "workspace_tests_passed": 25,
+    "scene_validation": true,
+    "material_gpu": true,
+    "pixel_fire_gpu": true,
+    "explicit_limits": [
+      "Native-window acceptance was not verified by this run.",
+      "Windows/DX12 rendering was not tested."
+    ]
+  },
+  "visual_review": {
+    "inspected_capture": "/tmp/o03-final-tiled.png",
+    "assessment": "existing clearing scene image looks visually intact; tiled, exhaustive and forced-fallback image hashes match"
+  },
+  "source_sha256": {
+    "crates/engine/src/render/mod.rs": "38db9f3ca6afae4cd94759a33aad2d62c644e85e639ebd3835c3dd7a640d9751",
+    "crates/engine/src/render/shaders/common.wgsl": "240a5b8122d0972365b30d4c2474045ea25a05abcecf2d223b20c454b817ea93",
+    "crates/engine/src/render/shaders/tile_common.wgsl": "01a94d430bd9807c16dcabbef3aaaa996fc2aea14153959ceef804dfa1550fc5",
+    "crates/engine/src/render/shaders/tile_build.wgsl": "6464ffedafd2c8a61d3d4dcb3770082ba6dd0bb30dbab0a44d2e6ed03222669e",
+    "crates/engine/src/render/shaders/tile_bindings.wgsl": "c236cde642cb4a722c50389bca1475c9d8e216cd0234c23ccb3805a4eeb8350d",
+    "crates/engine/src/render/shaders/fire.wgsl": "07e4c7e6c49c00d563994faea8fb6e618fdfd3eb14a55e483ab0b1841fc85f48",
+    "crates/engine/src/render/shaders/volume.wgsl": "eef2331443b9502147de4f28889a568c15b9dc1d9ed097d56c1823665e22eb71",
+    "crates/engine/src/render/shaders/world.wgsl": "913a5c9f2737fa76028e7da6480714579d77134edc1019e809eef6d3576a1c80",
+    "crates/engine/src/render/shaders/optical.wgsl": "0102cc2fa9f96cc689a9b6a866003f673fac395b8b0fe25b040d2c424278e6c8",
+    "crates/engine/src/session.rs": "8eb9870e9044087e236e46c2fa5450823c49b45964908cbe89c165627a974cd5",
+    "crates/engine/src/diagnostics.rs": "2c5a1d4a3fc07964840668570899ba0c691510618761ffd9ac148611866a3de8",
+    "crates/engine-lab/src/main.rs": "aa863a1c8fd4d839abe4c6a96f77063653597dbfa9bef5a393d09f139c4f95ff",
+    "scripts/profile_compare.py": "54e5b601e70d63bdb6e272ec451797f0c1d5cedb25c778512c0254f9d3573821"
+  },
+  "limits": [
+    "Only one bounded fire emitter is supported; multi-emitter ownership, thermal/light budgets and stress scenes are not implemented.",
+    "16x16 tiles were measured; 8x8 tiles were not trialed.",
+    "The route workloads had zero natural overflows. Forced fallback mode was exercised; an organically over-capacity tile was not observed.",
+    "Exact-tick still comparisons do not establish motion quality or native-window performance.",
+    "Measurements and exact image equality are Apple M1 Max/Metal only; Windows DX12 and other GPU vendors remain unverified.",
+    "No cross-vendor floating-point bit identity is promised."
+  ]
+}

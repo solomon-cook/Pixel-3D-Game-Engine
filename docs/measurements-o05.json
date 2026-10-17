@@ -1,0 +1,103 @@
+{
+  "task": "O05 smoke absorption cache prototype and evidence",
+  "status": "opt-in prototype implemented; promotion and temporal/platform acceptance remain open",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal",
+    "os": "macOS"
+  },
+  "comparison": {
+    "scene": "assets/scenes/clearing.json",
+    "scene_sha256": "c26e28a23cddfc30374dd18b2613485eff6f922b603a9f30ab8ed3b64a9435e6",
+    "seed": 42,
+    "camera": "smoke-close",
+    "tick": 300,
+    "resolution": [
+      640,
+      360
+    ],
+    "route": "clearing-orbit",
+    "benchmark_mode": "serial",
+    "duration_seconds": 5,
+    "warmup_seconds": 1,
+    "pairs": 3,
+    "baseline": "direct density sampling",
+    "candidate": "smoke_absorption_cache enabled; primary authored fire light only",
+    "image_difference": "absolute RGB error against direct capture; 0..255 channels"
+  },
+  "tiers": {
+    "8": {
+      "gpu_cache_build_ms_median": 0.025374999999999998,
+      "gpu_cache_build_ms_p95": 0.514,
+      "gpu_render_paired_delta_ms_median": 0.01691699999999985,
+      "frame_work_paired_delta_ms_median": -0.09595899999999968,
+      "capture": {
+        "cache_enabled": true,
+        "resolution": [
+          8,
+          8,
+          8
+        ],
+        "cache_memory_bytes": 4096,
+        "changed_pixel_count": 18474,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.30727430555555557,
+          0.17623697916666667,
+          0.1383203125
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          19,
+          16,
+          11
+        ],
+        "sha256": "74f0f5eaa18de2f60e18b835af03d006498ed2f827ab40faa07ccabcfb39fef7"
+      }
+    },
+    "16": {
+      "gpu_cache_build_ms_median": 0.028916999999999998,
+      "gpu_cache_build_ms_p95": 0.588,
+      "gpu_render_paired_delta_ms_median": 0.03441599999999978,
+      "frame_work_paired_delta_ms_median": -0.01499999999999968,
+      "capture": {
+        "cache_enabled": true,
+        "resolution": [
+          16,
+          16,
+          16
+        ],
+        "cache_memory_bytes": 32768,
+        "changed_pixel_count": 9675,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.08005642361111111,
+          0.04681857638888889,
+          0.04020833333333333
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          16,
+          9,
+          11
+        ],
+        "sha256": "01b37a143d91311a57da10553fca12b4128c8141ed1dd3d334700a3b473a8f7e"
+      }
+    }
+  },
+  "verification": {
+    "command": "python3 scripts/verify.py --gpu",
+    "result": "passed",
+    "unit_tests": 29,
+    "gpu_backend": "Metal",
+    "gpu_device": "Apple M1 Max",
+    "native_window": false,
+    "windows_dx12_verified": false
+  },
+  "limitations": [
+    "Three short paired route samples are directional evidence, not sustained acceptance.",
+    "The cache pass adds GPU work and total GPU render medians were slightly slower in these runs; no speedup claim.",
+    "One fixed still at one camera/tick does not quantify temporal error or establish moving-ember/light quality.",
+    "Windows DX12 and other GPU backends remain unverified.",
+    "Cache currently handles only the primary authored fire light; particle lights and fallback points use direct sampling.",
+    "Cache resource is allocated even when the opt-in experiment is disabled."
+  ]
+}

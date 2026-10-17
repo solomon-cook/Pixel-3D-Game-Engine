@@ -1,0 +1,118 @@
+{
+  "version": 1,
+  "date": "2026-10-16",
+  "purpose": "O02 whole-map shadow cache comparison; forced full redraw versus static reuse",
+  "device": {
+    "name": "Apple M1 Max",
+    "device_type": "IntegratedGpu",
+    "memory_gb": 64,
+    "backend": "Metal",
+    "scene_resolution": [640, 360],
+    "seed": 42,
+    "route": "clearing-orbit"
+  },
+  "provenance": {
+    "git_revision": "f5632ef210f82c2556110d487392b445e41b2ff6",
+    "build": "cargo build --release -p engine-lab via scripts/profile_compare.py",
+    "comparison": "alternating paired serial offscreen benchmarks; same clearing scene and route in both variants; baseline forces redraw, candidate uses whole-map cache",
+    "duration_seconds_per_run": 120,
+    "warmup_seconds_per_run": 10,
+    "pairs": 3,
+    "frames_per_run": 7200,
+    "gpu_timing": true,
+    "comparison_report": "artifacts/o02/shadow-static/comparison.json",
+    "comparison_report_sha256": "5eafc26882e4d218141b0a5f5ca070f22438cde150edb1c279af71e9e79a1db0",
+    "pair_reports_sha256": {
+      "pair-01-baseline.json": "89a4a54f868b548b57a5ecab6bee9738c17179c01becfcd63a59f3409f24db2c",
+      "pair-01-candidate.json": "0996b850ed9e8c7bab80cc7380b76de6ce70c44fe1f41baf6368f08b8cfbe113",
+      "pair-02-baseline.json": "ae6442f345d01814610b87c70f9bfc7c334642a0b82f1ee7f6a2bd73e751e0cf",
+      "pair-02-candidate.json": "98a8f378b03294d1831ba637bd1057b28cb471526c63d00527e80949d532a9d0",
+      "pair-03-baseline.json": "5e47f3d5f5068c7e5aff6ac4d67c81fe45c51744f902056a08e8144d23de11b0",
+      "pair-03-candidate.json": "444cd5704d90ae80927f4dcdd189ee665a0867d5a039545de624130bf8f6fa2f"
+    },
+    "scene_sha256": "c26e28a23cddfc30374dd18b2613485eff6f922b603a9f30ab8ed3b64a9435e6",
+    "source_hashes_at_benchmark": {
+      "crates/engine/src/render/mod.rs": "5e1cad10b122de94366bd005335ba5a58c37d5d430ab24326b6b3f8c34772dd3",
+      "crates/engine/src/scene.rs": "dd3478edd0ab36800892946a5be5c2c3b6223cb241d9220a9df2e6f59bcc1889",
+      "crates/engine/src/session.rs": "edcdd6e3f4960b17189924c3874e2f1a997c7cf68abdc09ff66c3d3ed8a6677e",
+      "crates/engine/src/diagnostics.rs": "4ee92ef5298192aae70d2ddbfb94e37e518ad88c39a24a6c17b89233af8976c5",
+      "crates/engine-lab/src/main.rs": "381ee3c46af3ec43f4a668afb79b77e51a8631f5be629fa571fe88ac615a688b",
+      "crates/engine/src/render/shaders/shadow.wgsl": "c85ed631dbedd8394c09b59d54e15563a864c46d1aa52f0f5bc630b8cd8fb877"
+    }
+  },
+  "results": {
+    "aggregation": "median of each run's 7200 frame medians; paired deltas are candidate minus forced-redraw control",
+    "frame_work_ms": {
+      "forced_redraw_median": 6.364542,
+      "cached_median": 5.591917,
+      "paired_deltas": [-0.755917, -0.802667, -0.769042],
+      "paired_delta_median": -0.769042,
+      "paired_delta_p95": -0.755917
+    },
+    "cpu_encode_ms": {
+      "forced_redraw_median": 0.972501,
+      "cached_median": 0.492875,
+      "paired_deltas": [-0.468666, -0.492749, -0.487835],
+      "paired_delta_median": -0.487835
+    },
+    "cpu_shadow_encode_ms": {
+      "forced_redraw_median": 0.558333,
+      "cached_median": 0.000083,
+      "paired_deltas": [-0.546458, -0.569792, -0.558250],
+      "paired_delta_median": -0.558250
+    },
+    "cpu_upload_ms": {
+      "forced_redraw_median": 0.344834,
+      "cached_median": 0.218917,
+      "paired_deltas": [-0.117458, -0.126665, -0.124917],
+      "paired_delta_median": -0.124917
+    },
+    "gpu_render_ms": {
+      "forced_redraw_median": 3.151375,
+      "cached_median": 2.672083,
+      "paired_deltas": [-0.476708, -0.489834, -0.479292],
+      "paired_delta_median": -0.479292,
+      "paired_delta_p95": -0.476708
+    },
+    "gpu_shadow_maps_ms": {
+      "forced_redraw_median": 0.477708,
+      "cached_median": null,
+      "cached_samples": 0,
+      "notes": "The cache omits this pass and its timestamps on every measured cached frame; the null denotes no pass, not zero measured GPU time."
+    },
+    "shadow_cache_counts_per_run": {
+      "forced_redraw": {"hits": 0, "redraw_frames": 7200, "shadow_passes": 50400},
+      "cached_after_warmup": {"hits": 7200, "redraw_frames": 0, "shadow_passes": 0},
+      "resident_shadow_map_bytes": 5767168
+    }
+  },
+  "image_and_invalidation_checks": {
+    "comparison_capture": {
+      "scene": "assets/scenes/clearing.json",
+      "resolution": [640, 360],
+      "seed": 42,
+      "tick": 0,
+      "cached_png_sha256": "cfa8a4ee570d25de780e5d3aecdf220398c546b299a9974348035d1eface4fdf",
+      "forced_redraw_png_sha256": "cfa8a4ee570d25de780e5d3aecdf220398c546b299a9974348035d1eface4fdf",
+      "result": "byte-identical"
+    },
+    "live_protocol_reasons": [
+      "resource_initialization",
+      "unchanged",
+      "forced_redraw",
+      "unchanged after camera/light-power changes",
+      "directional_light_projection_changed",
+      "reset",
+      "shader_reload",
+      "shadow_materials_changed"
+    ],
+    "synthetic_revision_tests": "caster state, effective shadow material participation, sun projection, point-light position/range, and color/power reuse"
+  },
+  "limitations": [
+    "Measurements are Apple M1 Max/Metal only; Windows DX12 and RTX-class shadow equivalence/performance remain unverified.",
+    "The route has static casters and shadow projections; forced redraw is the continuous-invalidation control, not a moving-caster workload.",
+    "Whole-map invalidation redraws the sun map and all six point faces together. Per-face invalidation waits for O07 bounds/draw metadata.",
+    "The GPU shadow stage is absent in cache-hit samples, so its cached median is null; whole-render GPU timing and frame work provide comparable totals.",
+    "The 5,767,168-byte map residency is unchanged by caching. This work saves redraw/upload work, not allocation memory."
+  ]
+}

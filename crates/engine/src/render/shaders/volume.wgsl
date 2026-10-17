@@ -2,6 +2,7 @@
 @group(2) @binding(0) var scene_depth:texture_depth_2d;
 @group(2) @binding(1) var smoke:texture_3d<f32>;
 @group(2) @binding(2) var volume_sampler:sampler;
+@group(2) @binding(8) var smoke_absorption:texture_3d<f32>;
 
 @vertex fn fullscreen(@builtin(vertex_index) i:u32)->@builtin(position) vec4<f32> {
     let p=array<vec2<f32>,3>(vec2(-1.,-1.),vec2(3.,-1.),vec2(-1.,3.));return vec4(p[i],0.,1.);
@@ -14,17 +15,18 @@ fn sky_color(direction:vec3<f32>)->vec3<f32> {
 struct AtmosphereSample {color:vec4<f32>,depth:f32,flame:f32};
 struct AtmosphereOutput {@location(0) color:vec4<f32>,@location(1) effects:vec4<f32>};
 @fragment fn volume_fs(@builtin(position) pixel:vec4<f32>)->AtmosphereOutput {
-    let sample=atmosphere_info(pixel,textureLoad(scene_depth,vec2<i32>(pixel.xy),0));
+    let tile=tile_index(pixel.xy);
+    let sample=atmosphere_info(pixel,textureLoad(scene_depth,vec2<i32>(pixel.xy),0),tile);
     var o:AtmosphereOutput;o.color=sample.color;o.effects=vec4(sample.depth,sample.flame,0.,0.);return o;
 }
-fn atmosphere(pixel:vec4<f32>,z:f32)->vec4<f32> {return atmosphere_info(pixel,z).color;}
-fn atmosphere_info(pixel:vec4<f32>,z:f32)->AtmosphereSample {
+fn atmosphere(pixel:vec4<f32>,z:f32,tile:u32)->vec4<f32> {return atmosphere_info(pixel,z,tile).color;}
+fn atmosphere_info(pixel:vec4<f32>,z:f32,tile:u32)->AtmosphereSample {
     let uv=pixel.xy/g.resolution.xy;let clip=uv*vec2(2.,-2.)+vec2(-1.,1.);
     let near4=g.inverse_view_proj*vec4(clip,0.,1.);let near=near4.xyz/near4.w;
     let far4=g.inverse_view_proj*vec4(clip,1.,1.);let far=far4.xyz/far4.w;
     let direction=normalize(far-near);let surface4=g.inverse_view_proj*vec4(clip,z,1.);
     let distance=min(length(surface4.xyz/surface4.w-near),120.);
-    if g.experiments.w>0.5 {return ink_volume(pixel,near,direction,distance,z);}
+    if g.experiments.w>0.5 {return ink_volume(pixel,near,direction,distance,z,tile);}
     let inv=1./(direction+vec3(0.0000001));
     let a=(g.volume_min.xyz-near)*inv;let b=(g.volume_max.xyz-near)*inv;
     let lo=min(a,b);let hi=max(a,b);let enter=max(max(max(lo.x,lo.y),lo.z),0.);let exit=min(min(min(hi.x,hi.y),hi.z),distance);
@@ -39,7 +41,7 @@ fn atmosphere_info(pixel:vec4<f32>,z:f32)->AtmosphereSample {
             let detail=noise(p*5.-vec3(0.,g.wind_time.w*0.6,0.));
             let density=sample.x*mix(0.75+detail*0.5,smoothstep(0.2,0.75,detail)*1.4,g.experiments.y);
             let extinction=density*2.6;let alpha=1.-exp(-extinction*ds);
-            let fire_light=smoke_local_lights(p,vec3(0.),3u)*0.55;
+            let fire_light=smoke_local_lights(p,vec3(0.),3u,tile)*0.55;
             // A few density samples toward the sun approximate internal shading.
             var optical=0.;for(var j=1u;j<=4u;j++){
                 let q=volume_uv+normalize(g.sun_direction.xyz)*f32(j)*0.025;
@@ -52,7 +54,7 @@ fn atmosphere_info(pixel:vec4<f32>,z:f32)->AtmosphereSample {
             if transmittance<0.015 {break;}
         }
     }
-    let flame=sample_fire(near,direction,distance);
+    let flame=sample_fire(near,direction,distance,tile);
     // Approximate camera-to-flame smoke absorption with a bounded six-sample
     // integral. The soft-volume renderer does not claim exact per-lobe sorting.
     var absorption=0.;
@@ -78,9 +80,9 @@ fn atmosphere_info(pixel:vec4<f32>,z:f32)->AtmosphereSample {
 
 // Sculpted, opaque pyro lobes are a 3D presentation of the advected smoke field.
 // All lobes ray-intersect in world space, so contours survive camera rotation.
-fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,z:f32)->AtmosphereSample {
+fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,z:f32,tile:u32)->AtmosphereSample {
     var nearest=distance;var second=distance;var second_normal=vec3(0.,1.,0.);var hit_normal=vec3(0.,1.,0.);var hit_position=vec3(0.);var smoke_hit=false;var secondary_hit=false;var hit_radius=0.3;
-    let time=g.wind_time.w;let source=g.fire_position.xyz;
+    let time=g.wind_time.w;
     // Keep the original parent-puff motion and silhouette. Small attached
     // satellites enrich each puff rather than replacing it with noisy detail.
     let bounds_inv=1./(direction+vec3(0.0000001));
@@ -88,15 +90,18 @@ fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,
     let bounds_lo=min(bounds_a,bounds_b);let bounds_hi=max(bounds_a,bounds_b);
     let bounds_enter=max(max(max(bounds_lo.x,bounds_lo.y),bounds_lo.z),0.);
     let bounds_exit=min(min(min(bounds_hi.x,bounds_hi.y),bounds_hi.z),distance);
-    if bounds_exit>bounds_enter {for(var i=0u;i<36u;i++) {
+    let tile_header=tile_headers[tile];
+    let smoke_overflow=(tile_header.flags.x&2u)!=0u;
+    let smoke_candidate_count=select(tile_header.counts.y,36u,smoke_overflow);
+    if bounds_exit>bounds_enter {for(var candidate=0u;candidate<36u;candidate++) {
+        if candidate>=smoke_candidate_count {break;}
+        let i=select(smoke_tile_indices[tile*SMOKE_TILE_CAPACITY+candidate],candidate,smoke_overflow);
         let layer=f32(i/3u);let branch=f32(i%3u);let age=fract(time*0.125-layer/12.)*8.;
         if age>time || age<0.12 {continue;}
         let phase=hash(vec3(layer,branch,g.params.z))*6.28318;
-        let spread=0.12+age*0.09;let rising=age*(g.simulation.x*0.72+0.2);
-        let gust=select(g.wind_time.xyz,wind_at(source+vec3(0.,rising,0.)),g.experiments.z>0.5);
-        let parent=source+vec3(cos(phase+age*0.35)*spread,rising+0.65,sin(phase+age*0.35)*spread)+gust*age*0.72;
+        let lobe=smoke_lobe_bounds(i);let parent=lobe.xyz;
         // Conservative parent/children bound: most rays never need child tests.
-        let bound=(0.27+age*0.095)*1.12*max(1.1,0.93+g.effect_settings.y*1.16);
+        let bound=lobe.w;
         let along=dot(parent-origin,direction);
         if along+bound<0. || along-bound>distance || length(origin+direction*max(along,0.)-parent)>bound {continue;}
         let uv=(parent-g.volume_min.xyz)/(g.volume_max.xyz-g.volume_min.xyz);
@@ -151,7 +156,7 @@ fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,
         let eye=max(dot(hit_normal,-direction),0.);
         let pattern=select(hash(vec3(floor(pixel.xy/2.),31.)),hash(floor((hit_position-vec3(0.,time*0.3,0.))*14.)),g.experiments.y>0.5);
         let soot=vec3(0.052,0.014,0.035);
-        let scattering=smoke_local_lights(hit_position,n,6u)*(1.-crease*0.45);
+        let scattering=smoke_local_lights(hit_position,n,6u,tile)*(1.-crease*0.45);
         var paint=soot+scattering*vec3(0.24,0.22,0.22)*(0.98+pattern*0.04);
         let overlap=1.-smoothstep(0.025,hit_radius*0.65,second-nearest);
         if eye<0.30 {
@@ -166,7 +171,7 @@ fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,
         color=paint+internal;
         transmittance=0.;
     }
-    let flame=sample_fire(origin,direction,nearest);
+    let flame=sample_fire(origin,direction,nearest,tile);
     color=flame.color+color*(1.-flame.alpha);
     transmittance*=1.-flame.alpha;
     nearest=min(nearest,flame.depth);
@@ -180,8 +185,13 @@ fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,
 
 
 // Shared smoke absorption along the path to any local point light.
-fn smoke_light_transmittance(surface:vec3<f32>,normal:vec3<f32>,light:vec3<f32>,steps:u32)->f32 {
+fn smoke_light_transmittance(surface:vec3<f32>,normal:vec3<f32>,light:vec3<f32>,steps:u32,cached:bool)->f32 {
     if g.effect_settings.z<=0. {return 1.;}
+    let surface_uv=(surface-g.volume_min.xyz)/(g.volume_max.xyz-g.volume_min.xyz);
+    if cached && g.presentation.w>0.5 && all(surface_uv>=vec3(0.)) && all(surface_uv<=vec3(1.)) {
+        let optical_depth=textureSampleLevel(smoke_absorption,volume_sampler,surface_uv,0.).x;
+        return exp(-optical_depth*g.effect_settings.z*2.);
+    }
     let origin=surface+normal*0.035;let delta=light-origin;let full_distance=length(delta);
     let distance=max(full_distance-0.25,0.);let direction=delta/max(full_distance,0.001);
     let ds=distance/f32(steps);var optical_depth=0.;
@@ -192,11 +202,15 @@ fn smoke_light_transmittance(surface:vec3<f32>,normal:vec3<f32>,light:vec3<f32>,
     }
     return exp(-optical_depth*g.effect_settings.z*2.);
 }
-fn smoke_local_lights(p:vec3<f32>,normal:vec3<f32>,steps:u32)->vec3<f32> {
+fn smoke_local_lights(p:vec3<f32>,normal:vec3<f32>,steps:u32,tile:u32)->vec3<f32> {
+    let tile_header=tile_headers[tile];
+    let point_overflow=(tile_header.flags.x&4u)!=0u;
     var first=8u;var second=8u;var near=1e20;var next=1e20;
     // Select two nearby active sources, then spend absorption samples only on
     // those lights. Distance falloff is continuous, independent of puff age.
-    for(var i=0u;i<8u;i++) {if i>=g.light_info.x {break;}
+    let point_count=select(tile_header.counts.z,g.light_info.x,point_overflow);
+    for(var candidate=0u;candidate<8u;candidate++) {if candidate>=point_count {break;}
+        let i=select(point_tile_indices[tile*POINT_TILE_CAPACITY+candidate],candidate,point_overflow);
         let light=g.point_lights[i];let delta=light.position_range.xyz-p;let d=dot(delta,delta);
         if light.color_power.w<=0. || max(max(light.color_power.x,light.color_power.y),light.color_power.z)<=0. || d>=light.position_range.w*light.position_range.w {continue;}
         if d<near {second=first;next=near;first=i;near=d;} else if d<next {second=i;next=d;}
@@ -207,14 +221,17 @@ fn smoke_local_lights(p:vec3<f32>,normal:vec3<f32>,steps:u32)->vec3<f32> {
         let light=g.point_lights[index];let direction=normalize(light.position_range.xyz-p+vec3(0.00001));
         let form=floor(clamp(dot(normal,direction)*0.5+0.5,0.,1.)*3.+0.5)/3.;
         let shape=select(0.22+form*0.78,1.,dot(normal,normal)<0.1);
-        var shadow=smoke_light_transmittance(p,normal,light.position_range.xyz,steps);
+        var shadow=smoke_light_transmittance(p,normal,light.position_range.xyz,steps,index==0u);
         if index==0u {shadow*=fire_visibility(p);}
         radiance+=light.color_power.xyz*light.color_power.w*point_falloff(p,light)*shadow*shape;
     }
     // Keep authored fire/fill lighting, then budget two local particle sources
     // by estimated received energy. Hot fragments can light smoke from within.
     var best=12u;var runner=12u;var score=0.;var next_score=0.;
-    for(var i=0u;i<12u;i++) {if i>=fire.lighting.x {break;}
+    let particle_overflow=(tile_header.flags.x&8u)!=0u;
+    let particle_count=select(tile_header.counts.w,fire.lighting.x,particle_overflow);
+    for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;}
+        let i=select(particle_tile_indices[tile*PARTICLE_TILE_CAPACITY+candidate],candidate,particle_overflow);
         let light=particle_light_point(i);
         let importance=light.color_power.w*point_falloff(p,light);
         if importance>score {runner=best;next_score=score;best=i;score=importance;}
@@ -226,7 +243,7 @@ fn smoke_local_lights(p:vec3<f32>,normal:vec3<f32>,steps:u32)->vec3<f32> {
         let form=clamp(dot(normal,direction)*0.5+0.5,0.,1.);
         let shape=select(0.2+form*0.8,1.,dot(normal,normal)<0.1);
         radiance+=light.color_power.rgb*light.color_power.w*point_falloff(p,light)*
-            smoke_light_transmittance(p,normal,light.position_range.xyz,steps)*shape;
+            smoke_light_transmittance(p,normal,light.position_range.xyz,6u,false)*shape;
     }
     return radiance;
 }

@@ -37,6 +37,27 @@ the experiment additionally couples flame bending and ember drift to that field.
 The baseline uses steady wind for smoke and separate ember/fire trajectories.
 Compare gust onset and direction, flame readability, smoke response and replay.
 
+## Projected fire detail
+
+Hypothesis: reducing fire tongue curve segments below a projected-size threshold
+can lower per-pixel fire evaluation without changing the simulation or selected
+pixel grid. The opt-in experiment estimates projected height for both camera
+projections and uses 40/20 px downshift thresholds with 48/24 px return thresholds.
+It preserves the full deterministic frame for bounds and particle lights. At
+640×360, fixed orthographic captures measured 66 px (full), 28.3 px (tier 1,
+6→4 segments) and 16.5 px (tier 2, 6→3). The matched images differed in 0, 59 and
+55 output pixels respectively; visual inspection found the changes confined to
+the small flame silhouette. An 8-second repeated zoom route spent 64/314/102 frames
+in tiers 0/1/2 without frame-to-frame tier chatter.
+
+Three alternating 2-second serial pairs per size on M1 Max/Metal reduced median
+GPU render time by about 0.11 ms in medium and small views, but paired total frame
+work was mixed and the candidate run medians were 0.13–0.23 ms slower overall.
+This is too small and noisy to support promotion. The implementation stays off by
+default pending longer moving-route review and Windows/DX12 qualification. Full
+commands, hashes, measurements and caveats are in [measurements-o04.json](measurements-o04.json);
+local captures and raw runs are under ignored `artifacts/o04/`.
+
 ## Evidence procedure
 
 Run `scripts/experiments.py` after a release build. Each variant uses seed 42,
@@ -162,3 +183,62 @@ is prior work for scene-image coordinate perturbation and masking. The wind/heat
 envelope, depth rejection and fixed pixel offsets here are engine choices, not
 a claim of a new refraction technique. Matched soft/solid/no-heat captures, a
 moving sequence and the route comparison use fire_study.py --study pixels.
+
+## O01 stage profiling characterization (16 October)
+
+Three alternating 120-second serial route pairs with ten-second warm-ups were
+recorded for clearing, a single heavy plume with eight point lights, and Material
+Atelier. Each variant used identical scene inputs within its workload; paired
+differences therefore estimate run variation and do not claim an optimization.
+Every pair also has timestamp-enabled and timestamp-disabled runs. On Apple M1 Max /
+Metal at 640×360, median whole-render GPU times were 3.15 ms for clearing, 3.87 ms
+for the heavy plume and 3.39 ms for Material Atelier. The leading measured stage
+medians were post (2.53 ms), post (3.25 ms) and post/optical resolve (2.75/2.65 ms),
+respectively. Pass intervals may overlap; they are not additive costs. Timestamp
+instrumentation increased median frame work by 0.11–0.28 ms across the matched
+timed/untimed controls.
+
+A separate 120-second native clearing route measured 43.48 frames/s, 8.83 ms median /
+70.28 ms p95 native CPU frame and 6.36 ms median / 64.79 ms p95 surface acquisition.
+It includes native surface and vsync behavior, unlike the unpaced offscreen runs.
+Exact CPU-to-GPU queue latency is unavailable because wgpu timestamps have no
+calibrated host-clock mapping; readback-completion latency is reported separately.
+All three workloads had 7,200/7,200 serial render and smoke-compute timing samples
+with no skipped or late samples. Native GPU sample summaries are filtered to the
+measured frame/tick window; slot skip/late counters include warm-up. Full sample reports are locally retained under
+`artifacts/o01/`; [measurements-o01.json](measurements-o01.json) records provenance,
+summary values and checksums. This evidence is a measurement baseline only; no
+renderer optimization was tested or promoted.
+
+
+## Shared geometry and conservative visibility (16 October)
+
+Hypothesis: storing repeated geometry/material variants once and rejecting objects
+outside each camera/light frustum can cut draw submission and vertex traffic while
+retaining offscreen shadow casters. The implementation groups only consecutive
+matching instances to preserve scene order, computes independent camera and shadow
+visibility, and treats missing/invalid bounds as visible. In the clearing route,
+camera submissions fell by about half and point-shadow submissions fell sharply;
+whole-render GPU time stayed nearly flat across three short M1 Max/Metal pairs.
+The mesh buffer uses less GPU storage, while runtime-selectable exact comparisons
+retain a 10.54 MB CPU baked reference stream. Instanced vertex transforms cause a
+small number of changed pixels at quantization edges; culling adds none in the
+reviewed cameras. The measured work is therefore an engine optimization tradeoff,
+not a claim of visual identity or universal speedup. See
+[measurements-o07-culling.json](measurements-o07-culling.json) for paired data,
+images and platform limits.
+
+## Coarse smoke transmittance cache (17 October)
+
+Hypothesis: reusing primary fire-light optical depth may reduce repeated smoke
+density reads while preserving the view-dependent surface normals and radial light
+falloff. An opt-in 8³/16³ field is rebuilt every rendered frame; the 8³ and 16³
+fields use 4 KiB and 32 KiB respectively. Particle lights and out-of-volume points
+retain direct sampling. Three short paired M1 Max/Metal route runs measured median
+cache-build passes near 0.026 ms and 0.029 ms; whole GPU render medians increased
+slightly, so the cache remains disabled by default. In one fixed smoke-close still,
+mean absolute RGB error versus direct sampling was lower at 16³ (0.056) than 8³
+(0.207) when averaged over all channels. This does not establish temporal quality
+or a useful performance range. Review motion, edits while paused and other GPU
+backends before promotion; full provenance is in
+[measurements-o05.json](measurements-o05.json).

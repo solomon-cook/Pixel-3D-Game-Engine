@@ -26,6 +26,20 @@ fn wind_at(p:vec3<f32>) -> vec3<f32> {
     return g.wind_time.xyz + vec3<f32>(sin(p.y*1.7+t*1.9)*0.15,0.,cos(p.y*1.3+t)*0.12);
 }
 
+// Shared bounds for the deterministic ink-smoke parent candidates. This is
+// consumed by both the per-pixel intersection path and the tile-list builder.
+fn smoke_lobe_bounds(index:u32)->vec4<f32> {
+    let layer=f32(index/3u);let branch=f32(index%3u);
+    let time=g.wind_time.w;let source=g.fire_position.xyz;
+    let age=fract(time*0.125-layer/12.)*8.;
+    let phase=hash(vec3(layer,branch,g.params.z))*6.28318;
+    let spread=0.12+age*0.09;let rising=age*(g.simulation.x*0.72+0.2);
+    let gust=select(g.wind_time.xyz,wind_at(source+vec3(0.,rising,0.)),g.experiments.z>0.5);
+    let parent=source+vec3(cos(phase+age*0.35)*spread,rising+0.65,sin(phase+age*0.35)*spread)+gust*age*0.72;
+    let bound=(0.27+age*0.095)*1.12*max(1.1,0.93+g.effect_settings.y*1.16);
+    return vec4(parent,bound);
+}
+
 fn point_falloff(p:vec3<f32>,light:PointLight)->f32 {
     let d=length(p-light.position_range.xyz);let edge=clamp(1.-pow(d/light.position_range.w,4.),0.,1.);
     return edge*edge/(1.+d*d*0.65);

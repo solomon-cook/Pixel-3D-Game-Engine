@@ -6,10 +6,19 @@
 GPU resources and shared Session operations. `engine-lab` owns process arguments,
 native window lifecycle, the inspector and stdin/stdout transport.
 
-Scene JSON -> validation -> static mesh/texture upload -> Session.
+Scene JSON -> validation -> shared local mesh/texture upload -> Session.
+Asset loading keys reusable non-indexed meshes by complete geometry description
+and material ID. Stable per-object identities, local-to-world transforms and
+conservative world-space bounds remain alongside those shared ranges. Each camera
+and each shadow frustum culls independently; unknown bounds stay visible, so an
+object outside the camera can still cast a visible shadow. Consecutive compatible
+instances batch in scene order. The Session exposes independent culling and
+instancing switches for exhaustive reference comparisons.
 Each fixed step submits smoke advection into ping-pong density/temperature volumes.
-Each render submits directional/point shadow maps, HDR opaque geometry,
-volumetric fire/smoke/embers, then colour treatment into an sRGB pixel buffer.
+Each render reuses valid directional/point shadow maps or redraws them after a
+relevant scene revision, builds bounded screen-tile candidate lists with an
+exhaustive overflow fallback, then submits HDR opaque geometry, volumetric
+fire/smoke/embers, and colour treatment into an sRGB pixel buffer.
 The native host presents that buffer at an integer physical-pixel scale and draws
 the inspector at display resolution. Captures read the same pixel buffer.
 
@@ -75,7 +84,12 @@ Only a fully successful replacement is installed.
 Frame reports distinguish CPU encoding, simulation submission, GPU rendering and
 full offscreen work including GPU completion. GPU timestamps are optional;
 unsupported adapters report absence rather than fabricated zero timings.
-Timestamp writes use render-pass boundaries supported by Apple GPUs.
+Timestamp writes use render-pass boundaries supported by Apple GPUs. Tile lists
+currently target one bounded fire emitter and four candidate categories; a
+compute-pass overflow flag switches each affected category to the exhaustive
+shader loop. The renderer exposes a runtime exhaustive mode and forced-overflow
+diagnostic, plus frame-tagged list-build and occupancy measurements. Multi-emitter
+ownership and Windows DX12 validation remain open.
 
 Backend selection is native Metal on macOS and DX12 on Windows. Dependency lock
 and toolchain files make local and CI builds reproducible. CI tests compile and

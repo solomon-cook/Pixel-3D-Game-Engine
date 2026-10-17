@@ -1,0 +1,67 @@
+{
+  "workstream": "O07 stable object bounds and draw ranges",
+  "date": "2026-10-16",
+  "state": "historical O07 bounds/draw-range foundation; follow-on culling/shared-mesh evidence is in measurements-o07-culling.json",
+  "machine": {
+    "adapter": "Apple M1 Max",
+    "backend": "Metal",
+    "device_type": "IntegratedGpu"
+  },
+  "input": {
+    "scene": "assets/scenes/clearing.json",
+    "scene_sha256": "c26e28a23cddfc30374dd18b2613485eff6f922b603a9f30ab8ed3b64a9435e6",
+    "camera": "hero",
+    "seed": 42,
+    "tick": 0,
+    "resolution": [
+      640,
+      360
+    ],
+    "git_head": "f5632ef210f82c2556110d487392b445e41b2ff6"
+  },
+  "capture_comparison": {
+    "before": "/tmp/o07-before.png",
+    "after": "/tmp/o07-after.png",
+    "before_sha256": "cfa8a4ee570d25de780e5d3aecdf220398c546b299a9974348035d1eface4fdf",
+    "after_sha256": "cfa8a4ee570d25de780e5d3aecdf220398c546b299a9974348035d1eface4fdf",
+    "byte_identical": true,
+    "visually_inspected": true,
+    "vertex_count": 175662,
+    "object_count": 276,
+    "draw_range_count": 276,
+    "bounded_object_count": 276,
+    "uncullable_object_count": 0
+  },
+  "checks": {
+    "project_verification": {
+      "command": "python3 scripts/verify.py --gpu",
+      "verified": true,
+      "gpu": true,
+      "native": false,
+      "unit_tests_passed": 25,
+      "clippy": true,
+      "scene_validation": true,
+      "material_gpu": true,
+      "pixel_fire_gpu": true
+    },
+    "unit_tests": [
+      "object_draw_ranges_are_contiguous_and_bounds_contain_emitted_vertices",
+      "imports_static_glb_and_png_texture"
+    ],
+    "range_invariants": "Ranges are contiguous, preserve scene object/material IDs, and cover the complete emitted vertex buffer.",
+    "bounds_invariants": "Each finite AABB contains every emitted world-space position in its range; GLB node transforms are included.",
+    "render_path_changed": false,
+    "culling_enabled": false,
+    "performance_claim": false
+  },
+  "source_sha256": {
+    "crates/engine/src/assets.rs": "d254e7b9b7a4a1f86569e2e07d0df892188dfd2f5999d2a300f2b83357711354",
+    "crates/engine/src/render/mod.rs": "7253935f6dcb0f5c0e9ea925f8e4eb9ef6122e1ba1d89787a82d23929669f69d"
+  },
+  "limits": [
+    "Bounds are derived from emitted vertices, not from an analytic primitive definition.",
+    "Empty ranges and ranges containing non-finite positions have no bounds and must be treated as uncullable.",
+    "This capture was verified on M1 Max/Metal only; native-window and Windows DX12 rendering remain unverified.",
+    "Follow-on camera/light culling and shared instancing are reported separately in measurements-o07-culling.json."
+  ]
+}

@@ -20,7 +20,67 @@ pub struct Vertex {
 
 pub struct MeshData {
     pub vertices: Vec<Vertex>,
+    /// World-baked reference stream used for exact culling/instancing comparisons.
+    pub baked_vertices: Vec<Vertex>,
     pub textures: Vec<RgbaImage>,
+    pub object_draws: Vec<ObjectDrawRange>,
+    pub mesh_draws: Vec<MeshDrawRange>,
+}
+
+/// Conservative bounds over the emitted world-space vertices for one scene object.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Bounds3 {
+    pub min: [f32; 3],
+    pub max: [f32; 3],
+}
+
+/// Stable, shared non-indexed vertex range for one geometry/material key.
+#[derive(Clone, Debug, PartialEq)]
+pub struct MeshDrawRange {
+    pub key: String,
+    pub material_id: String,
+    pub first_vertex: u32,
+    pub vertex_count: u32,
+}
+
+/// One scene instance referring to a shared mesh range.
+#[derive(Clone, Debug, PartialEq)]
+pub struct ObjectDrawRange {
+    pub object_id: String,
+    pub material_id: String,
+    pub mesh_index: usize,
+    pub first_vertex: u32,
+    pub vertex_count: u32,
+    pub baked_first_vertex: u32,
+    /// Local-to-world transform in column-major order.
+    pub transform: [[f32; 4]; 4],
+    /// `None` means the range is empty or contains non-finite positions and must not be culled.
+    pub bounds: Option<Bounds3>,
+}
+
+impl Bounds3 {
+    fn from_vertices(vertices: &[Vertex], transform: Mat4) -> Option<Self> {
+        let first = vertices.first()?;
+        let first = transform.transform_point3(Vec3::from(first.position));
+        if !first.is_finite() {
+            return None;
+        }
+        let (min, max) = vertices
+            .iter()
+            .skip(1)
+            .try_fold((first, first), |(min, max), v| {
+                let p = transform.transform_point3(Vec3::from(v.position));
+                p.is_finite().then(|| (min.min(p), max.max(p)))
+            })?;
+        Some(Self {
+            min: min.to_array(),
+            max: max.to_array(),
+        })
+    }
+
+    pub fn contains(&self, point: [f32; 3]) -> bool {
+        (0..3).all(|axis| point[axis] >= self.min[axis] && point[axis] <= self.max[axis])
+    }
 }
 
 struct Builder {
@@ -236,179 +296,237 @@ pub fn load(scene: &Scene, base: &Path) -> Result<MeshData> {
         material: 0,
         trunk_material: scene.materials.len() as u32,
     };
+    let mut object_draws = Vec::with_capacity(scene.objects.len());
+    let mut mesh_draws = Vec::new();
+    let mut mesh_by_key = HashMap::<String, usize>::new();
+    let mut baked_vertices = Vec::new();
     for o in &scene.objects {
         let m = scene
             .materials
             .iter()
             .find(|m| m.id == o.material)
             .context("validated material missing")?;
-        builder.transform = Mat4::from_scale_rotation_translation(
+        let object_transform = Mat4::from_scale_rotation_translation(
             o.scale.into(),
             Quat::from_euler(EulerRot::XYZ, o.rotation[0], o.rotation[1], o.rotation[2]),
             o.position.into(),
         );
-        builder.normal = Mat3::from_mat4(builder.transform).inverse().transpose();
-        builder.color = [1.; 3];
-        builder.emission = 1.;
-        builder.roughness = 1.;
-        builder.material = scene.materials.iter().position(|x| x.id == m.id).unwrap() as u32;
-        builder.texture = *slots.get(&m.id).unwrap_or(&0.);
-        match &o.geometry {
-            Geometry::Cube => builder.cube(),
-            Geometry::Sphere => builder.round(false, true),
-            Geometry::SmoothSphere => builder.smooth_sphere(),
-            Geometry::Cylinder => builder.round(false, false),
-            Geometry::Cone => builder.round(true, false),
-            Geometry::Pine { seed } => builder.pine(*seed),
-            Geometry::Terrain { size, subdivisions } => {
-                for z in 0..*subdivisions {
-                    for x in 0..*subdivisions {
-                        let p = |x: u32, z: u32| {
-                            let x = x as f32 / *subdivisions as f32 * size - size / 2.;
-                            let z = z as f32 / *subdivisions as f32 * size - size / 2.;
-                            Vec3::new(x, terrain_height(x, z), z)
+        let key = format!("{}|{}", serde_json::to_string(&o.geometry)?, o.material);
+        let mesh_index = if let Some(&mesh_index) = mesh_by_key.get(&key) {
+            mesh_index
+        } else {
+            builder.transform = Mat4::IDENTITY;
+            builder.normal = Mat3::IDENTITY;
+            builder.color = [1.; 3];
+            builder.emission = 1.;
+            builder.roughness = 1.;
+            builder.material = scene.materials.iter().position(|x| x.id == m.id).unwrap() as u32;
+            builder.texture = *slots.get(&m.id).unwrap_or(&0.);
+            let first_vertex = builder.vertices.len();
+            match &o.geometry {
+                Geometry::Cube => builder.cube(),
+                Geometry::Sphere => builder.round(false, true),
+                Geometry::SmoothSphere => builder.smooth_sphere(),
+                Geometry::Cylinder => builder.round(false, false),
+                Geometry::Cone => builder.round(true, false),
+                Geometry::Pine { seed } => builder.pine(*seed),
+                Geometry::Terrain { size, subdivisions } => {
+                    for z in 0..*subdivisions {
+                        for x in 0..*subdivisions {
+                            let p = |x: u32, z: u32| {
+                                let x = x as f32 / *subdivisions as f32 * size - size / 2.;
+                                let z = z as f32 / *subdivisions as f32 * size - size / 2.;
+                                Vec3::new(x, terrain_height(x, z), z)
+                            };
+                            let a = p(x, z);
+                            let b = p(x + 1, z);
+                            let c = p(x + 1, z + 1);
+                            let d = p(x, z + 1);
+                            let variation = 0.91 + 0.09 * ((x * 73 + z * 137) % 17) as f32 / 16.;
+                            builder.color = [variation; 3];
+                            builder.tri(a, c, b);
+                            builder.tri(a, d, c);
+                        }
+                    }
+                }
+                Geometry::Glb { path } => {
+                    let (doc, buffers, images) = gltf::import(base.join(path))
+                        .with_context(|| format!("object '{}'.geometry.path: {path}", o.id))?;
+                    let first_texture = textures.len();
+                    for img in &images {
+                        let mut rgba = Vec::with_capacity((img.width * img.height * 4) as usize);
+                        use gltf::image::Format;
+                        let channels = match img.format {
+                            Format::R8 => 1,
+                            Format::R8G8 => 2,
+                            Format::R8G8B8 => 3,
+                            Format::R8G8B8A8 => 4,
+                            _ => bail!("object '{}': GLB texture must use 8-bit channels", o.id),
                         };
-                        let a = p(x, z);
-                        let b = p(x + 1, z);
-                        let c = p(x + 1, z + 1);
-                        let d = p(x, z + 1);
-                        let variation = 0.91 + 0.09 * ((x * 73 + z * 137) % 17) as f32 / 16.;
-                        builder.color = [variation; 3];
-                        builder.tri(a, c, b);
-                        builder.tri(a, d, c);
-                    }
-                }
-            }
-            Geometry::Glb { path } => {
-                let (doc, buffers, images) = gltf::import(base.join(path))
-                    .with_context(|| format!("object '{}'.geometry.path: {path}", o.id))?;
-                let first_texture = textures.len();
-                for img in &images {
-                    let mut rgba = Vec::with_capacity((img.width * img.height * 4) as usize);
-                    use gltf::image::Format;
-                    let channels = match img.format {
-                        Format::R8 => 1,
-                        Format::R8G8 => 2,
-                        Format::R8G8B8 => 3,
-                        Format::R8G8B8A8 => 4,
-                        _ => bail!("object '{}': GLB texture must use 8-bit channels", o.id),
-                    };
-                    for px in img.pixels.chunks_exact(channels) {
-                        match channels {
-                            1 => rgba.extend([px[0], px[0], px[0], 255]),
-                            2 => rgba.extend([px[0], px[0], px[0], px[1]]),
-                            3 => rgba.extend([px[0], px[1], px[2], 255]),
-                            _ => rgba.extend_from_slice(px),
+                        for px in img.pixels.chunks_exact(channels) {
+                            match channels {
+                                1 => rgba.extend([px[0], px[0], px[0], 255]),
+                                2 => rgba.extend([px[0], px[0], px[0], px[1]]),
+                                3 => rgba.extend([px[0], px[1], px[2], 255]),
+                                _ => rgba.extend_from_slice(px),
+                            }
                         }
+                        textures.push(
+                            RgbaImage::from_raw(img.width, img.height, rgba)
+                                .context("GLB image dimensions")?,
+                        );
                     }
-                    textures.push(
-                        RgbaImage::from_raw(img.width, img.height, rgba)
-                            .context("GLB image dimensions")?,
-                    );
-                }
-                fn visit(
-                    node: gltf::Node<'_>,
-                    parent: Mat4,
-                    b: &mut Builder,
-                    buffers: &[gltf::buffer::Data],
-                    first: usize,
-                ) -> Result<()> {
-                    let world = parent * Mat4::from_cols_array_2d(&node.transform().matrix());
-                    if node.skin().is_some() {
-                        bail!("GLB: skinned meshes are outside the static geometry contract");
-                    }
-                    if let Some(mesh) = node.mesh() {
-                        for primitive in mesh.primitives() {
-                            if primitive.material().alpha_mode()
-                                != gltf::material::AlphaMode::Opaque
-                            {
-                                bail!("GLB: only opaque materials are supported");
-                            }
-                            if primitive.mode() != gltf::mesh::Mode::Triangles {
-                                bail!("GLB: only triangle primitives are supported");
-                            }
-                            let reader = primitive.reader(|buf| Some(&buffers[buf.index()]));
-                            let positions: Vec<[f32; 3]> = reader
-                                .read_positions()
-                                .context("GLB mesh missing positions")?
-                                .collect();
-                            let normals: Option<Vec<[f32; 3]>> =
-                                reader.read_normals().map(Iterator::collect);
-                            let uvs: Option<Vec<[f32; 2]>> =
-                                reader.read_tex_coords(0).map(|x| x.into_f32().collect());
-                            let indices: Vec<u32> = reader
-                                .read_indices()
-                                .map(|x| x.into_u32().collect())
-                                .unwrap_or_else(|| (0..positions.len() as u32).collect());
-                            let original = (
-                                b.transform,
-                                b.normal,
-                                b.color,
-                                b.texture,
-                                b.roughness,
-                                b.emission,
-                            );
-                            b.transform = world;
-                            b.normal = Mat3::from_mat4(world).inverse().transpose();
-                            let pbr = primitive.material().pbr_metallic_roughness();
-                            let factor = pbr.base_color_factor();
-                            b.color = [
-                                original.2[0] * factor[0],
-                                original.2[1] * factor[1],
-                                original.2[2] * factor[2],
-                            ];
-                            b.roughness = pbr.roughness_factor();
-                            if let Some(tex) = pbr.base_color_texture() {
-                                b.texture = (first + tex.texture().source().index()) as f32;
-                            }
-                            for tri in indices.as_chunks::<3>().0 {
-                                let a = Vec3::from(positions[tri[0] as usize]);
-                                let c = Vec3::from(positions[tri[1] as usize]);
-                                let d = Vec3::from(positions[tri[2] as usize]);
-                                let n = (c - a).cross(d - a).normalize_or_zero();
-                                for &index in tri {
-                                    let i = index as usize;
-                                    b.vertex(
-                                        positions[i].into(),
-                                        normals.as_ref().map(|v| Vec3::from(v[i])).unwrap_or(n),
-                                        uvs.as_ref()
-                                            .map(|v| Vec2::from(v[i]))
-                                            .unwrap_or(Vec2::ZERO),
-                                    );
+                    fn visit(
+                        node: gltf::Node<'_>,
+                        parent: Mat4,
+                        b: &mut Builder,
+                        buffers: &[gltf::buffer::Data],
+                        first: usize,
+                    ) -> Result<()> {
+                        let world = parent * Mat4::from_cols_array_2d(&node.transform().matrix());
+                        if node.skin().is_some() {
+                            bail!("GLB: skinned meshes are outside the static geometry contract");
+                        }
+                        if let Some(mesh) = node.mesh() {
+                            for primitive in mesh.primitives() {
+                                if primitive.material().alpha_mode()
+                                    != gltf::material::AlphaMode::Opaque
+                                {
+                                    bail!("GLB: only opaque materials are supported");
                                 }
+                                if primitive.mode() != gltf::mesh::Mode::Triangles {
+                                    bail!("GLB: only triangle primitives are supported");
+                                }
+                                let reader = primitive.reader(|buf| Some(&buffers[buf.index()]));
+                                let positions: Vec<[f32; 3]> = reader
+                                    .read_positions()
+                                    .context("GLB mesh missing positions")?
+                                    .collect();
+                                let normals: Option<Vec<[f32; 3]>> =
+                                    reader.read_normals().map(Iterator::collect);
+                                let uvs: Option<Vec<[f32; 2]>> =
+                                    reader.read_tex_coords(0).map(|x| x.into_f32().collect());
+                                let indices: Vec<u32> = reader
+                                    .read_indices()
+                                    .map(|x| x.into_u32().collect())
+                                    .unwrap_or_else(|| (0..positions.len() as u32).collect());
+                                let original = (
+                                    b.transform,
+                                    b.normal,
+                                    b.color,
+                                    b.texture,
+                                    b.roughness,
+                                    b.emission,
+                                );
+                                b.transform = world;
+                                b.normal = Mat3::from_mat4(world).inverse().transpose();
+                                let pbr = primitive.material().pbr_metallic_roughness();
+                                let factor = pbr.base_color_factor();
+                                b.color = [
+                                    original.2[0] * factor[0],
+                                    original.2[1] * factor[1],
+                                    original.2[2] * factor[2],
+                                ];
+                                b.roughness = pbr.roughness_factor();
+                                if let Some(tex) = pbr.base_color_texture() {
+                                    b.texture = (first + tex.texture().source().index()) as f32;
+                                }
+                                for tri in indices.as_chunks::<3>().0 {
+                                    let a = Vec3::from(positions[tri[0] as usize]);
+                                    let c = Vec3::from(positions[tri[1] as usize]);
+                                    let d = Vec3::from(positions[tri[2] as usize]);
+                                    let n = (c - a).cross(d - a).normalize_or_zero();
+                                    for &index in tri {
+                                        let i = index as usize;
+                                        b.vertex(
+                                            positions[i].into(),
+                                            normals.as_ref().map(|v| Vec3::from(v[i])).unwrap_or(n),
+                                            uvs.as_ref()
+                                                .map(|v| Vec2::from(v[i]))
+                                                .unwrap_or(Vec2::ZERO),
+                                        );
+                                    }
+                                }
+                                (
+                                    b.transform,
+                                    b.normal,
+                                    b.color,
+                                    b.texture,
+                                    b.roughness,
+                                    b.emission,
+                                ) = original;
                             }
-                            (
-                                b.transform,
-                                b.normal,
-                                b.color,
-                                b.texture,
-                                b.roughness,
-                                b.emission,
-                            ) = original;
                         }
+                        for child in node.children() {
+                            visit(child, world, b, buffers, first)?;
+                        }
+                        Ok(())
                     }
-                    for child in node.children() {
-                        visit(child, world, b, buffers, first)?;
+                    let root = doc
+                        .default_scene()
+                        .or_else(|| doc.scenes().next())
+                        .context("GLB missing scene")?;
+                    let parent = Mat4::IDENTITY;
+                    for node in root.nodes() {
+                        visit(node, parent, &mut builder, &buffers, first_texture)?;
                     }
-                    Ok(())
-                }
-                let root = doc
-                    .default_scene()
-                    .or_else(|| doc.scenes().next())
-                    .context("GLB missing scene")?;
-                let parent = builder.transform;
-                for node in root.nodes() {
-                    visit(node, parent, &mut builder, &buffers, first_texture)?;
                 }
             }
+            let vertex_count = builder.vertices.len() - first_vertex;
+            let first_vertex =
+                u32::try_from(first_vertex).context("objects: vertex range overflow")?;
+            let vertex_count =
+                u32::try_from(vertex_count).context("objects: vertex range overflow")?;
+            let mesh_index = mesh_draws.len();
+            mesh_draws.push(MeshDrawRange {
+                key: key.clone(),
+                material_id: o.material.clone(),
+                first_vertex,
+                vertex_count,
+            });
+            mesh_by_key.insert(key, mesh_index);
+            mesh_index
+        };
+        let mesh = &mesh_draws[mesh_index];
+        let first_vertex = mesh.first_vertex;
+        let vertex_count = mesh.vertex_count;
+        let end = first_vertex as usize + vertex_count as usize;
+        let baked_first_vertex =
+            u32::try_from(baked_vertices.len()).context("objects: baked vertex range overflow")?;
+        let object_normal = Mat3::from_mat4(object_transform).inverse().transpose();
+        for vertex in &builder.vertices[first_vertex as usize..end] {
+            let mut baked = *vertex;
+            baked.position = object_transform
+                .transform_point3(Vec3::from(vertex.position))
+                .to_array();
+            baked.normal = (object_normal * Vec3::from(vertex.normal))
+                .normalize_or_zero()
+                .to_array();
+            baked_vertices.push(baked);
         }
+        object_draws.push(ObjectDrawRange {
+            object_id: o.id.clone(),
+            material_id: o.material.clone(),
+            mesh_index,
+            first_vertex,
+            vertex_count,
+            baked_first_vertex,
+            transform: object_transform.to_cols_array_2d(),
+            bounds: Bounds3::from_vertices(
+                &builder.vertices[first_vertex as usize..end],
+                object_transform,
+            ),
+        });
     }
     if builder.vertices.is_empty() {
         bail!("objects: scene must contain renderable geometry");
     }
     Ok(MeshData {
         vertices: builder.vertices,
+        baked_vertices,
         textures,
+        object_draws,
+        mesh_draws,
     })
 }
 
@@ -503,10 +621,67 @@ mod tests {
         let mesh = load(&scene, &root).unwrap();
         assert_eq!(mesh.vertices.len(), 3);
         assert_eq!(mesh.textures.len(), 2);
+        assert_eq!(mesh.object_draws.len(), 1);
+        let draw = &mesh.object_draws[0];
+        assert_eq!(draw.object_id, scene.objects[0].id);
+        assert_eq!(draw.material_id, scene.objects[0].material);
+        assert_eq!(draw.mesh_index, 0);
+        assert_eq!((draw.first_vertex, draw.vertex_count), (0, 3));
+        assert_eq!(draw.baked_first_vertex, 0);
+        let bounds = draw.bounds.as_ref().unwrap();
+        assert_eq!(bounds.min, [-1., 0., 0.]);
+        assert_eq!(bounds.max, [1., 1., 0.]);
         assert!(mesh
             .vertices
             .iter()
             .all(|v| v.normal.iter().all(|n| n.is_finite())));
         std::fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn shared_mesh_instances_have_stable_ranges_and_transformed_bounds() {
+        let scene_path =
+            Path::new(env!("CARGO_MANIFEST_DIR")).join("../../assets/scenes/clearing.json");
+        let mut scene = Scene::load(&scene_path).unwrap();
+        scene.objects[0].scale = [1.7, 0.55, 1.2];
+        scene.objects[0].rotation = [0.17, 0.31, -0.09];
+        scene.validate(scene_path.parent().unwrap()).unwrap();
+        let mesh = load(&scene, scene_path.parent().unwrap()).unwrap();
+        assert_eq!(mesh.object_draws.len(), scene.objects.len());
+        assert!(mesh.mesh_draws.len() < mesh.object_draws.len());
+        let mut next_vertex = 0usize;
+        for draw in &mesh.mesh_draws {
+            assert_eq!(draw.first_vertex as usize, next_vertex);
+            next_vertex += draw.vertex_count as usize;
+        }
+        assert_eq!(next_vertex, mesh.vertices.len());
+        assert_eq!(
+            mesh.baked_vertices.len(),
+            mesh.object_draws
+                .iter()
+                .map(|object| object.vertex_count as usize)
+                .sum::<usize>()
+        );
+        for (object, draw) in scene.objects.iter().zip(&mesh.object_draws) {
+            assert_eq!(draw.object_id, object.id);
+            assert_eq!(draw.material_id, object.material);
+            let shared = &mesh.mesh_draws[draw.mesh_index];
+            assert_eq!(
+                (draw.first_vertex, draw.vertex_count),
+                (shared.first_vertex, shared.vertex_count)
+            );
+            let start = shared.first_vertex as usize;
+            let end = start + shared.vertex_count as usize;
+            assert!(end <= mesh.vertices.len());
+            let bounds = draw.bounds.as_ref().expect("finite scene object bounds");
+            let transform = Mat4::from_cols_array_2d(&draw.transform);
+            assert!(mesh.vertices[start..end].iter().all(|vertex| {
+                bounds.contains(
+                    transform
+                        .transform_point3(Vec3::from(vertex.position))
+                        .to_array(),
+                )
+            }));
+        }
     }
 }

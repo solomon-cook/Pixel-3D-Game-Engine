@@ -4,11 +4,12 @@ use glam::Vec3;
 use pixel_engine::{
     diagnostics,
     render::{self, Presenter},
+    scene::{Camera, Route},
     session::{Request, Session},
 };
 use serde_json::{json, Value};
 use std::{
-    collections::HashSet,
+    collections::{HashSet, VecDeque},
     io::{BufRead, Write},
     sync::{mpsc, Arc},
     time::Instant,
@@ -52,6 +53,161 @@ struct Native {
     looking: bool,
     inspector: bool,
     occluded: bool,
+    benchmark: Option<NativeBenchmark>,
+    native_gpu_timing: Option<NativeGpuTiming>,
+}
+struct NativeBenchmarkConfig {
+    route: String,
+    duration: f64,
+    warmup: f64,
+    output: std::path::PathBuf,
+    launch_started: Instant,
+}
+struct NativeBenchmark {
+    config: NativeBenchmarkConfig,
+    route: Route,
+    base_camera: Camera,
+    started: Instant,
+    setup_seconds: f64,
+    samples: Vec<Value>,
+    gpu_samples: Vec<render::GpuTimingSample>,
+    gpu_compute_samples: Vec<render::GpuComputeTimingSample>,
+    gpu_presentation_samples: Vec<NativeGpuTimingSample>,
+    finished: bool,
+}
+#[derive(Clone, serde::Serialize)]
+struct NativeGpuTimingSample {
+    frame: u64,
+    presenter_ms: f64,
+    inspector_ms: f64,
+    readback_latency_ms: f64,
+}
+struct NativeGpuTiming {
+    slots: Vec<NativeGpuTimingSlot>,
+    next: usize,
+    completed: VecDeque<NativeGpuTimingSample>,
+    skipped: u64,
+}
+struct NativeGpuTimingSlot {
+    query: wgpu::QuerySet,
+    resolve: wgpu::Buffer,
+    read: wgpu::Buffer,
+    pending: Option<mpsc::Receiver<std::result::Result<(), wgpu::BufferAsyncError>>>,
+    frame: u64,
+    submitted_at: Option<Instant>,
+}
+impl NativeGpuTiming {
+    fn new(device: &wgpu::Device) -> Self {
+        let slots = (0..3)
+            .map(|_| NativeGpuTimingSlot {
+                query: device.create_query_set(&wgpu::QuerySetDescriptor {
+                    label: Some("native presentation timestamps"),
+                    ty: wgpu::QueryType::Timestamp,
+                    count: 4,
+                }),
+                resolve: device.create_buffer(&wgpu::BufferDescriptor {
+                    label: Some("native presentation timestamp resolve"),
+                    size: 32,
+                    usage: wgpu::BufferUsages::QUERY_RESOLVE | wgpu::BufferUsages::COPY_SRC,
+                    mapped_at_creation: false,
+                }),
+                read: device.create_buffer(&wgpu::BufferDescriptor {
+                    label: Some("native presentation timestamp readback"),
+                    size: 32,
+                    usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+                    mapped_at_creation: false,
+                }),
+                pending: None,
+                frame: 0,
+                submitted_at: None,
+            })
+            .collect();
+        Self {
+            slots,
+            next: 0,
+            completed: VecDeque::new(),
+            skipped: 0,
+        }
+    }
+
+    fn acquire(&mut self) -> Option<usize> {
+        let count = self.slots.len();
+        let index = (0..count)
+            .map(|offset| (self.next + offset) % count)
+            .find(|&index| self.slots[index].pending.is_none());
+        if let Some(index) = index {
+            self.next = (index + 1) % count;
+        } else {
+            self.skipped += 1;
+        }
+        index
+    }
+
+    fn query(&self, index: usize) -> &wgpu::QuerySet {
+        &self.slots[index].query
+    }
+
+    fn resolve_and_map(&mut self, index: usize, frame: u64, encoder: &mut wgpu::CommandEncoder) {
+        let slot = &self.slots[index];
+        encoder.resolve_query_set(&slot.query, 0..4, &slot.resolve, 0);
+        encoder.copy_buffer_to_buffer(&slot.resolve, 0, &slot.read, 0, 32);
+        self.slots[index].frame = frame;
+    }
+
+    fn submitted(&mut self, index: usize) {
+        let slot = &mut self.slots[index];
+        let (sender, receiver) = mpsc::channel();
+        slot.read
+            .slice(..)
+            .map_async(wgpu::MapMode::Read, move |result| {
+                let _ = sender.send(result);
+            });
+        slot.submitted_at = Some(Instant::now());
+        slot.pending = Some(receiver);
+    }
+
+    fn poll(&mut self, device: &wgpu::Device, queue: &wgpu::Queue) {
+        device.poll(wgpu::Maintain::Poll);
+        for slot in &mut self.slots {
+            let Some(receiver) = &slot.pending else {
+                continue;
+            };
+            match receiver.try_recv() {
+                Ok(result) => {
+                    if result.is_ok() {
+                        let view = slot.read.slice(..).get_mapped_range();
+                        let times: &[u64] = bytemuck::cast_slice(&view);
+                        let period = queue.get_timestamp_period() as f64 / 1_000_000.;
+                        let sample = NativeGpuTimingSample {
+                            frame: slot.frame,
+                            presenter_ms: times[1].saturating_sub(times[0]) as f64 * period,
+                            inspector_ms: times[3].saturating_sub(times[2]) as f64 * period,
+                            readback_latency_ms: slot
+                                .submitted_at
+                                .map(|submitted| submitted.elapsed().as_secs_f64() * 1000.)
+                                .unwrap_or(0.),
+                        };
+                        drop(view);
+                        slot.read.unmap();
+                        if self.completed.len() == 64 {
+                            self.completed.pop_front();
+                        }
+                        self.completed.push_back(sample);
+                    }
+                    slot.pending = None;
+                }
+                Err(mpsc::TryRecvError::Empty) => {}
+                Err(mpsc::TryRecvError::Disconnected) => {
+                    slot.pending = None;
+                    self.skipped += 1;
+                }
+            }
+        }
+    }
+
+    fn take_completed(&mut self) -> Vec<NativeGpuTimingSample> {
+        self.completed.drain(..).collect()
+    }
 }
 struct App {
     options: Options,
@@ -60,8 +216,46 @@ struct App {
     native: Option<Native>,
     receiver: mpsc::Receiver<String>,
     error: Option<String>,
+    benchmark: Option<NativeBenchmarkConfig>,
 }
 pub fn run(options: Options, agent: bool, paused: bool) -> Result<()> {
+    run_inner(options, agent, paused, None)
+}
+
+pub fn benchmark_native(
+    options: Options,
+    route: &str,
+    duration: f32,
+    warmup: f32,
+    output: std::path::PathBuf,
+) -> Result<()> {
+    if !duration.is_finite()
+        || !(0.1..=600.).contains(&duration)
+        || !warmup.is_finite()
+        || !(0.0..=120.).contains(&warmup)
+    {
+        anyhow::bail!("duration: expected 0.1..600 seconds; warmup: expected 0..120 seconds");
+    }
+    run_inner(
+        options,
+        false,
+        false,
+        Some(NativeBenchmarkConfig {
+            route: route.to_owned(),
+            duration: duration as f64,
+            warmup: warmup as f64,
+            output,
+            launch_started: Instant::now(),
+        }),
+    )
+}
+
+fn run_inner(
+    options: Options,
+    agent: bool,
+    paused: bool,
+    benchmark: Option<NativeBenchmarkConfig>,
+) -> Result<()> {
     let event_loop = EventLoop::<()>::with_user_event().build()?;
     let proxy = event_loop.create_proxy();
     let (send, receiver) = mpsc::channel();
@@ -87,6 +281,7 @@ pub fn run(options: Options, agent: bool, paused: bool) -> Result<()> {
         native: None,
         receiver,
         error: None,
+        benchmark,
     };
     event_loop.run_app(&mut app)?;
     if let Some(error) = app.error {
@@ -161,6 +356,36 @@ impl App {
         session.paused = self.agent || self.paused;
         session.execute("set_camera", json!({"id":self.options.camera}))?;
         diagnostics::log("ready", session.renderer.capabilities());
+        let benchmark = if let Some(config) = self.benchmark.take() {
+            let route = session
+                .scene
+                .routes
+                .iter()
+                .find(|route| route.id == config.route)
+                .cloned()
+                .ok_or_else(|| anyhow::anyhow!("route '{}' is unknown", config.route))?;
+            let setup_seconds = config.launch_started.elapsed().as_secs_f64();
+            Some(NativeBenchmark {
+                config,
+                route,
+                base_camera: session.camera.clone(),
+                started: Instant::now(),
+                setup_seconds,
+                samples: Vec::new(),
+                gpu_samples: Vec::new(),
+                gpu_compute_samples: Vec::new(),
+                gpu_presentation_samples: Vec::new(),
+                finished: false,
+            })
+        } else {
+            None
+        };
+        let native_gpu_timing =
+            if benchmark.is_some() && session.renderer.metrics.gpu_timestamp_supported {
+                Some(NativeGpuTiming::new(&session.renderer.device))
+            } else {
+                None
+            };
         self.native = Some(Native {
             window,
             surface,
@@ -176,6 +401,8 @@ impl App {
             looking: false,
             inspector: true,
             occluded: false,
+            benchmark,
+            native_gpu_timing,
         });
         Ok(())
     }
@@ -296,6 +523,12 @@ impl ApplicationHandler for App {
                     self.error = Some(format!("{error:#}"));
                     event_loop.exit();
                 }
+                if n.benchmark
+                    .as_ref()
+                    .is_some_and(|benchmark| benchmark.finished)
+                {
+                    event_loop.exit();
+                }
             }
             _ => {}
         }
@@ -360,6 +593,19 @@ impl Native {
             self.last = Instant::now();
             return Ok(());
         }
+        let native_frame_started = Instant::now();
+        if let Some(timer) = &mut self.native_gpu_timing {
+            timer.poll(&self.session.renderer.device, &self.session.renderer.queue);
+            let completed = timer.take_completed();
+            if let Some(benchmark) = &mut self.benchmark {
+                benchmark.gpu_presentation_samples.extend(completed);
+            }
+        }
+        let benchmark_elapsed_at_start = self
+            .benchmark
+            .as_ref()
+            .map(|benchmark| benchmark.started.elapsed().as_secs_f64());
+        self.session.begin_measurement_frame();
         let dt = self.last.elapsed().as_secs_f64().min(0.1);
         self.last = Instant::now();
         if self.looking {
@@ -389,6 +635,15 @@ impl Native {
             c.position = (Vec3::from(c.position) + movement).into();
             c.target = (Vec3::from(c.target) + movement).into();
         }
+        if let Some(benchmark) = &self.benchmark {
+            let route_time = benchmark_elapsed_at_start
+                .unwrap_or(0.)
+                .min(benchmark.config.warmup + benchmark.config.duration)
+                as f32;
+            self.session.camera = benchmark
+                .route
+                .camera_at(route_time, &benchmark.base_camera);
+        }
         if !self.session.paused {
             self.accumulator += dt;
             while self.accumulator >= 1. / 60. {
@@ -400,6 +655,7 @@ impl Native {
         }
         let input = self.egui_state.take_egui_input(&self.window);
         let mut commands = Vec::<(&str, Value)>::new();
+        let ui_started = Instant::now();
         let output = self.egui.run(input, |ctx| {
             if self.inspector {
                 draw_inspector(ctx, &self.session, &mut commands);
@@ -412,8 +668,14 @@ impl Native {
         }
         self.egui_state
             .handle_platform_output(&self.window, output.platform_output);
+        self.session.renderer.metrics.cpu_native_ui_ms =
+            Some(ui_started.elapsed().as_secs_f64() * 1000.);
         self.session.render();
-        let frame = match self.surface.get_current_texture() {
+        let surface_started = Instant::now();
+        let acquired = self.surface.get_current_texture();
+        self.session.renderer.metrics.cpu_surface_acquire_ms =
+            Some(surface_started.elapsed().as_secs_f64() * 1000.);
+        let frame = match acquired {
             Ok(frame) => frame,
             Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
                 self.surface
@@ -425,6 +687,13 @@ impl Native {
         };
         let view = frame.texture.create_view(&Default::default());
         let renderer = &self.session.renderer;
+        let presentation_slot = self
+            .native_gpu_timing
+            .as_mut()
+            .and_then(NativeGpuTiming::acquire);
+        let presentation_query =
+            presentation_slot.map(|index| self.native_gpu_timing.as_ref().unwrap().query(index));
+        let present_encode_started = Instant::now();
         let mut encoder = renderer.device.create_command_encoder(&Default::default());
         self.presenter.draw(
             &mut encoder,
@@ -432,6 +701,7 @@ impl Native {
             [self.config.width, self.config.height],
             self.session.scene.render.resolution,
             &renderer.queue,
+            presentation_query,
         );
         let jobs = self.egui.tessellate(output.shapes, output.pixels_per_point);
         let descriptor = egui_wgpu::ScreenDescriptor {
@@ -461,20 +731,297 @@ impl Native {
                     },
                 })],
                 depth_stencil_attachment: None,
-                timestamp_writes: None,
+                timestamp_writes: presentation_query.map(|query_set| {
+                    wgpu::RenderPassTimestampWrites {
+                        query_set,
+                        beginning_of_pass_write_index: Some(2),
+                        end_of_pass_write_index: Some(3),
+                    }
+                }),
                 occlusion_query_set: None,
             });
             self.egui_renderer
                 .render(&mut pass.forget_lifetime(), &jobs, &descriptor);
         }
+        if let Some(index) = presentation_slot {
+            self.native_gpu_timing.as_mut().unwrap().resolve_and_map(
+                index,
+                self.session.renderer.metrics.frame,
+                &mut encoder,
+            );
+        }
+        let present_encode_ms = present_encode_started.elapsed().as_secs_f64() * 1000.;
+        let present_submit_started = Instant::now();
+        let queue_submit_started = Instant::now();
         renderer
             .queue
             .submit(buffers.into_iter().chain([encoder.finish()]));
+        let queue_submit_ms = queue_submit_started.elapsed().as_secs_f64() * 1000.;
+        if let Some(index) = presentation_slot {
+            self.native_gpu_timing.as_mut().unwrap().submitted(index);
+        }
         frame.present();
+        let present_submit_ms = present_submit_started.elapsed().as_secs_f64() * 1000.;
+        self.session.renderer.metrics.cpu_present_encode_ms = Some(present_encode_ms);
+        self.session.renderer.metrics.cpu_present_submit_ms = Some(present_submit_ms);
+        self.session.renderer.metrics.cpu_queue_submit_ms += queue_submit_ms;
+        self.session.renderer.metrics.cpu_native_frame_ms =
+            Some(native_frame_started.elapsed().as_secs_f64() * 1000.);
+        self.session.renderer.poll_timing(false);
+        let gpu_timings = self.session.renderer.take_gpu_timing_samples();
+        let compute_timings = self.session.renderer.take_gpu_compute_timing_samples();
+        let presentation_timings = if let Some(timer) = &mut self.native_gpu_timing {
+            timer.poll(&self.session.renderer.device, &self.session.renderer.queue);
+            timer.take_completed()
+        } else {
+            Vec::new()
+        };
+        if let Some(benchmark) = &mut self.benchmark {
+            benchmark.gpu_samples.extend(gpu_timings);
+            benchmark.gpu_compute_samples.extend(compute_timings);
+            benchmark
+                .gpu_presentation_samples
+                .extend(presentation_timings);
+            let elapsed = benchmark.started.elapsed().as_secs_f64();
+            let warmup_end = benchmark.config.warmup;
+            let benchmark_end = warmup_end + benchmark.config.duration;
+            let sample_elapsed = benchmark_elapsed_at_start.unwrap_or(elapsed);
+            if sample_elapsed >= warmup_end && sample_elapsed < benchmark_end {
+                let metrics = &self.session.renderer.metrics;
+                benchmark.samples.push(json!({
+                    "frame":metrics.frame,
+                    "elapsed_seconds":sample_elapsed - warmup_end,
+                    "tick":self.session.tick,
+                    "cpu_native_frame_ms":metrics.cpu_native_frame_ms,
+                    "cpu_simulation_submit_ms":metrics.cpu_simulation_submit_ms,
+                    "cpu_simulation_encode_ms":metrics.cpu_simulation_encode_ms,
+                    "cpu_queue_submit_ms":metrics.cpu_queue_submit_ms,
+                    "cpu_steps":metrics.cpu_steps_this_frame,
+                    "cpu_renderer_encode_ms":metrics.cpu_encode_ms,
+                    "cpu_upload_calls_ms":metrics.cpu_upload_ms,
+                    "cpu_ui_ms":metrics.cpu_native_ui_ms,
+                    "cpu_surface_acquire_ms":metrics.cpu_surface_acquire_ms,
+                    "cpu_present_encode_ms":metrics.cpu_present_encode_ms,
+                    "cpu_present_submit_ms":metrics.cpu_present_submit_ms,
+                    "gpu_timing_frame":metrics.gpu_timing_frame,
+                    "gpu_smoke_tick":metrics.gpu_smoke_tick,
+                    "fire_primitives":metrics.fire_primitives,
+                    "particle_lights":metrics.particle_lights
+                }));
+            }
+            if elapsed >= benchmark_end {
+                self.session.renderer.device.poll(wgpu::Maintain::Wait);
+                self.session.renderer.poll_timing(true);
+                if let Some(timer) = &mut self.native_gpu_timing {
+                    timer.poll(&self.session.renderer.device, &self.session.renderer.queue);
+                    benchmark
+                        .gpu_presentation_samples
+                        .extend(timer.take_completed());
+                }
+                benchmark
+                    .gpu_samples
+                    .extend(self.session.renderer.take_gpu_timing_samples());
+                benchmark
+                    .gpu_compute_samples
+                    .extend(self.session.renderer.take_gpu_compute_timing_samples());
+                let report = native_benchmark_report(
+                    benchmark,
+                    &self.session,
+                    self.config.present_mode,
+                    self.native_gpu_timing.as_ref().map(|timer| timer.skipped),
+                );
+                if let Some(parent) = benchmark
+                    .config
+                    .output
+                    .parent()
+                    .filter(|parent| !parent.as_os_str().is_empty())
+                {
+                    std::fs::create_dir_all(parent)?;
+                }
+                std::fs::write(
+                    &benchmark.config.output,
+                    serde_json::to_vec_pretty(&report)?,
+                )?;
+                eprintln!(
+                    "{}",
+                    json!({"event":"native_benchmark_complete","report":benchmark.config.output,"samples":benchmark.samples.len()})
+                );
+                benchmark.finished = true;
+            }
+        }
         for id in &output.textures_delta.free {
             self.egui_renderer.free_texture(id);
         }
         Ok(())
+    }
+}
+
+fn native_benchmark_report(
+    benchmark: &NativeBenchmark,
+    session: &Session,
+    present_mode: wgpu::PresentMode,
+    skipped_presentation_samples: Option<u64>,
+) -> Value {
+    let measured_frame_start = benchmark
+        .samples
+        .first()
+        .and_then(|sample| sample["frame"].as_u64());
+    let measured_frame_end = benchmark
+        .samples
+        .last()
+        .and_then(|sample| sample["frame"].as_u64());
+    let measured_tick_start = benchmark
+        .samples
+        .first()
+        .and_then(|sample| sample["tick"].as_u64());
+    let measured_tick_end = benchmark
+        .samples
+        .last()
+        .and_then(|sample| sample["tick"].as_u64());
+    let measured_gpu_samples = benchmark
+        .gpu_samples
+        .iter()
+        .filter(|sample| {
+            measured_frame_start.is_some_and(|start| sample.frame >= start)
+                && measured_frame_end.is_some_and(|end| sample.frame <= end)
+        })
+        .collect::<Vec<_>>();
+    let measured_gpu_compute_samples = benchmark
+        .gpu_compute_samples
+        .iter()
+        .filter(|sample| {
+            measured_tick_start.is_some_and(|start| sample.tick >= start)
+                && measured_tick_end.is_some_and(|end| sample.tick <= end)
+        })
+        .collect::<Vec<_>>();
+    let measured_gpu_presentation_samples = benchmark
+        .gpu_presentation_samples
+        .iter()
+        .filter(|sample| {
+            measured_frame_start.is_some_and(|start| sample.frame >= start)
+                && measured_frame_end.is_some_and(|end| sample.frame <= end)
+        })
+        .collect::<Vec<_>>();
+    let summarize_frames = |key: &str| {
+        let values = benchmark
+            .samples
+            .iter()
+            .filter_map(|sample| sample[key].as_f64())
+            .collect::<Vec<_>>();
+        if values.is_empty() {
+            json!({"median_ms":null,"p95_ms":null,"samples":0})
+        } else {
+            json!({"median_ms":diagnostics::percentile(&values,0.5),"p95_ms":diagnostics::percentile(&values,0.95),"samples":values.len()})
+        }
+    };
+    let stage_names = [
+        "shadow_maps",
+        "opaque_geometry",
+        "atmosphere_fire",
+        "optical_resolve",
+        "post",
+    ];
+    let mut gpu_stages = serde_json::Map::new();
+    for stage in stage_names {
+        let values = measured_gpu_samples
+            .iter()
+            .filter_map(|sample| sample.passes_ms.get(stage).copied())
+            .collect::<Vec<_>>();
+        let summary = if values.is_empty() {
+            json!({"median_ms":null,"p95_ms":null,"samples":0})
+        } else {
+            json!({"median_ms":diagnostics::percentile(&values,0.5),"p95_ms":diagnostics::percentile(&values,0.95),"samples":values.len()})
+        };
+        gpu_stages.insert(stage.into(), summary);
+    }
+    let smoke = measured_gpu_compute_samples
+        .iter()
+        .map(|sample| sample.elapsed_ms)
+        .collect::<Vec<_>>();
+    gpu_stages.insert(
+        "smoke_compute".into(),
+        if smoke.is_empty() {
+            json!({"median_ms":null,"p95_ms":null,"samples":0})
+        } else {
+            json!({"median_ms":diagnostics::percentile(&smoke,0.5),"p95_ms":diagnostics::percentile(&smoke,0.95),"samples":smoke.len()})
+        },
+    );
+    let presenter_values = measured_gpu_presentation_samples
+        .iter()
+        .map(|sample| sample.presenter_ms)
+        .collect::<Vec<_>>();
+    let inspector_values = measured_gpu_presentation_samples
+        .iter()
+        .map(|sample| sample.inspector_ms)
+        .collect::<Vec<_>>();
+    for (name, values) in [
+        ("native_presenter", presenter_values),
+        ("native_inspector", inspector_values),
+    ] {
+        gpu_stages.insert(
+            name.into(),
+            if values.is_empty() {
+                json!({"median_ms":null,"p95_ms":null,"samples":0})
+            } else {
+                json!({"median_ms":diagnostics::percentile(&values,0.5),"p95_ms":diagnostics::percentile(&values,0.95),"samples":values.len()})
+            },
+        );
+    }
+    let actual_seconds = benchmark
+        .samples
+        .last()
+        .and_then(|sample| sample["elapsed_seconds"].as_f64())
+        .unwrap_or(0.);
+    let render_readback = measured_gpu_samples
+        .iter()
+        .map(|sample| sample.readback_latency_ms)
+        .collect::<Vec<_>>();
+    let presentation_readback = measured_gpu_presentation_samples
+        .iter()
+        .map(|sample| sample.readback_latency_ms)
+        .collect::<Vec<_>>();
+    let capabilities = session.renderer.capabilities();
+    json!({
+        "version":1,
+        "mode":"native_vsync_route",
+        "scope":"native surface route; frame wall includes surface acquisition, UI encoding, queue submission and present call; CPU spans overlap and are not additive",
+        "route":benchmark.route,
+        "route_seconds":benchmark.config.duration,
+        "warmup_seconds":benchmark.config.warmup,
+        "setup_seconds":benchmark.setup_seconds,
+        "actual_measured_seconds":actual_seconds,
+        "frames_per_second":if actual_seconds > 0. {benchmark.samples.len() as f64 / actual_seconds} else {0.},
+        "present_mode":format!("{:?}", present_mode),
+        "vsync":present_mode == wgpu::PresentMode::AutoVsync || present_mode == wgpu::PresentMode::Fifo,
+        "scene":session.scene,
+        "seed":session.seed,
+        "capabilities":capabilities,
+        "workload_counts":{"objects":session.scene.objects.len(),"materials":session.scene.materials.len(),"authored_lights":session.scene.lights.len(),"emitters":session.scene.emitters.len(),"draw_calls_per_frame":10 + u32::from(session.scene.materials.iter().any(|m|m.metallic > 0. || m.reflectivity > 0. || m.transmission > 0.)),"vertices":session.renderer.capabilities()["vertices"]},
+        "timing_coverage":{"gpu_timestamps_supported":session.renderer.metrics.gpu_timestamp_supported,"timed_render_frames":measured_gpu_samples.len(),"smoke_compute_samples":measured_gpu_compute_samples.len(),"native_presentation_ui_samples":measured_gpu_presentation_samples.len(),"rendered_frames":benchmark.samples.len(),"counter_scope":"skipped and late counters are cumulative for the native session, including warm-up","skipped_render_samples":session.renderer.metrics.gpu_samples_skipped,"skipped_compute_samples":session.renderer.metrics.gpu_compute_samples_skipped,"skipped_native_presentation_ui_samples":skipped_presentation_samples,"late_render_samples":session.renderer.metrics.gpu_samples_late,"gpu_presentation_ui_reason":if session.renderer.metrics.gpu_timestamp_supported {Value::Null} else {json!("adapter does not support TIMESTAMP_QUERY")}},
+        "queue_latency":{"value_ms":null,"reason":"GPU timestamps are not calibrated to the host clock; queue/readback completion delay is reported separately"},
+        "gpu_readback_latency":{"render_stages":timing_summary(&render_readback),"presentation_ui":timing_summary(&presentation_readback),"meaning":"host submit-to-map-completion delay including queueing, GPU work, and polling; not pure queue latency"},
+        "cpu_native_frame":summarize_frames("cpu_native_frame_ms"),
+        "cpu_renderer_encode":summarize_frames("cpu_renderer_encode_ms"),
+        "cpu_simulation_submit":summarize_frames("cpu_simulation_submit_ms"),
+        "cpu_simulation_encode":summarize_frames("cpu_simulation_encode_ms"),
+        "cpu_queue_submit":summarize_frames("cpu_queue_submit_ms"),
+        "cpu_ui":summarize_frames("cpu_ui_ms"),
+        "cpu_surface_acquire":summarize_frames("cpu_surface_acquire_ms"),
+        "cpu_present_encode":summarize_frames("cpu_present_encode_ms"),
+        "cpu_present_submit":summarize_frames("cpu_present_submit_ms"),
+        "gpu_stages":gpu_stages,
+        "gpu_timing_samples":measured_gpu_samples,
+        "gpu_smoke_compute_samples":measured_gpu_compute_samples,
+        "gpu_native_presentation_samples":measured_gpu_presentation_samples,
+        "samples":benchmark.samples
+    })
+}
+
+fn timing_summary(values: &[f64]) -> Value {
+    if values.is_empty() {
+        json!({"median_ms":null,"p95_ms":null,"samples":0})
+    } else {
+        json!({"median_ms":diagnostics::percentile(values,0.5),"p95_ms":diagnostics::percentile(values,0.95),"samples":values.len()})
     }
 }
 
@@ -613,7 +1160,7 @@ fn draw_inspector(ctx: &egui::Context, session: &Session, commands: &mut Vec<(&s
         ui.separator();
         ui.label("EXPERIMENTS / independent toggles");
         let e=&session.scene.render.experiments;
-        for (key,label,initial) in [("pixel_cluster_lighting","Pixel-cluster lighting",e.pixel_cluster_lighting),("stable_smoke_detail","Smoke-field detail",e.stable_smoke_detail),("connected_motion","Connected wind",e.connected_motion)] {
+        for (key,label,initial) in [("pixel_cluster_lighting","Pixel-cluster lighting",e.pixel_cluster_lighting),("stable_smoke_detail","Smoke-field detail",e.stable_smoke_detail),("connected_motion","Connected wind",e.connected_motion),("projected_detail_lod","Projected fire detail LOD",e.projected_detail_lod),("smoke_absorption_cache","Smoke absorption cache",e.smoke_absorption_cache)] {
             let mut value=initial;
             if ui.checkbox(&mut value,label).changed() {commands.push(("set_parameter",json!({"path":format!("render.experiments.{key}"),"value":value})));}
         }

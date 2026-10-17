@@ -1,0 +1,157 @@
+{
+  "workstream": "O04 projected-pixel detail",
+  "status": "opt-in implementation and initial evidence complete; default promotion and visual/platform acceptance remain open",
+  "date": "2026-10-16",
+  "implementation": {
+    "setting": "render.experiments.projected_detail_lod",
+    "default": false,
+    "scope": "fire tongue curve segments only",
+    "thresholds_px": {
+      "tier_0_to_1_below": 40,
+      "tier_1_to_0_above": 48,
+      "tier_1_to_2_below": 20,
+      "tier_2_to_1_above": 24
+    },
+    "preserved": "full deterministic simulation frame, bounds, particle births, emitted lights, and selected pixel resolution"
+  },
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "resolution": [
+      640,
+      360
+    ],
+    "native_window": false,
+    "windows_dx12_verified": false
+  },
+  "capture_method": {
+    "scene": "clearing",
+    "seed": 42,
+    "tick": 300,
+    "camera": "fixed orthographic scene view per size",
+    "capture_scale": 1,
+    "pairing": "same scene/camera/tick with projected_detail_lod off and on",
+    "visual_review": "contact sheet inspected; visible changes are confined to the small flame silhouette"
+  },
+  "capture_results": {
+    "large": {
+      "height_px": 66.0,
+      "tier": 0,
+      "segments": [
+        6,
+        6
+      ],
+      "primitives": [
+        75,
+        75
+      ],
+      "changed_pixels": 0,
+      "frame_work_ms": [
+        3.527041,
+        3.660041
+      ],
+      "gpu_render_ms": [
+        1.841708,
+        1.852917
+      ],
+      "paired_delta_frame_work_ms": -0.026125,
+      "paired_delta_gpu_ms": -0.011083
+    },
+    "medium": {
+      "height_px": 28.285713,
+      "tier": 1,
+      "segments": [
+        6,
+        4
+      ],
+      "primitives": [
+        75,
+        65
+      ],
+      "changed_pixels": 59,
+      "frame_work_ms": [
+        3.5225,
+        3.751917
+      ],
+      "gpu_render_ms": [
+        2.148041,
+        2.051208
+      ],
+      "paired_delta_frame_work_ms": 0.292708,
+      "paired_delta_gpu_ms": -0.114625
+    },
+    "small": {
+      "height_px": 16.5,
+      "tier": 2,
+      "segments": [
+        6,
+        3
+      ],
+      "primitives": [
+        75,
+        60
+      ],
+      "changed_pixels": 55,
+      "frame_work_ms": [
+        3.547584,
+        3.771417
+      ],
+      "gpu_render_ms": [
+        1.87475,
+        1.749376
+      ],
+      "paired_delta_frame_work_ms": 0.12525,
+      "paired_delta_gpu_ms": -0.116415
+    }
+  },
+  "route_transition": {
+    "route": "repeated 8-second perspective zoom between 9-unit and 44-unit camera distances",
+    "seed": 42,
+    "warmup_seconds": 1,
+    "frames": 480,
+    "tier_frame_counts": [
+      64,
+      314,
+      102
+    ],
+    "projected_height_px_median": 28.727873,
+    "projected_height_px_p95": 48.150536,
+    "projected_detail_cpu_ms_median": 0.000292,
+    "projected_detail_cpu_ms_p95": 0.00075,
+    "interpretation": "repeated tier transitions occurred without frame-to-frame chatter; sustained orbit and detailed temporal review remain open"
+  },
+  "benchmark": {
+    "workflow": "profile_compare.py alternating paired serial runs",
+    "duration_seconds_per_run": 2,
+    "warmup_seconds_per_run": 1,
+    "pairs_per_size": 3,
+    "seed": 42,
+    "culling_instancing_tile_lists": "enabled in both variants",
+    "scope": "offscreen, serial GPU-waiting; excludes native presentation, inspector and vsync",
+    "interpretation": "GPU render median improved about 0.11 ms in medium and small tiers; total frame-work candidate medians were slower by 0.13 to 0.23 ms, so no default-promotion claim is made",
+    "raw_reports": "local ignored artifacts/o04/profile-{large,medium,small}.json/"
+  },
+  "capture_files": "local ignored artifacts/o04/captures/",
+  "capture_sha256": {
+    "o04-contact.png": "4b20c09a0304567f909431e8af6753b428e5d5add1ada40f4f1d0501a849c11a",
+    "o04-large-base.png": "270db84b32d23e1716b81871ca5ed4f4ef5113fd490aa7033dce56e5e7f37883",
+    "o04-large-lod.png": "270db84b32d23e1716b81871ca5ed4f4ef5113fd490aa7033dce56e5e7f37883",
+    "o04-medium-base.png": "ebcaafbb7365e28f555269a694100032c5a6d02ce86d4003a896021450336416",
+    "o04-medium-lod.png": "5f83ae4916dc1e4bd31bd9bcbf3988556a3277a14499b9816e29b2b9a301184c",
+    "o04-small-base.png": "d749074ddb30480b6f6b98825e2729f248068ef490b187dc420aa57a62cfa7c4",
+    "o04-small-lod.png": "bb0372e3c60e965eefd8b9ba6e4f156919636e6bd3b96f9537b16776839fa685"
+  },
+  "verification": {
+    "command": "python3 scripts/verify.py --gpu",
+    "result": "passed",
+    "checks": "fmt, clippy, 29 workspace tests, locked build, scene validation, Metal renderer/protocol GPU checks",
+    "native": false
+  },
+  "open_gates": [
+    "slow orbit and prolonged temporal/popping visual review",
+    "native-window performance",
+    "Windows DX12 rendering",
+    "other GPU vendors",
+    "larger/screen-filling effect workloads before default promotion"
+  ]
+}

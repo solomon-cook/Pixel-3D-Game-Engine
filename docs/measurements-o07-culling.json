@@ -1,0 +1,196 @@
+{
+  "workstream": "O07 conservative per-camera/per-light culling, shared meshes and instancing",
+  "date": "2026-10-16",
+  "state": "implemented and measured on Apple M1 Max / Metal; native and Windows acceptance open",
+  "machine": {
+    "adapter": "Apple M1 Max",
+    "backend": "Metal",
+    "device_type": "IntegratedGpu",
+    "native_window": false
+  },
+  "input": {
+    "scene": "assets/scenes/clearing.json",
+    "scene_sha256": "c26e28a23cddfc30374dd18b2613485eff6f922b603a9f30ab8ed3b64a9435e6",
+    "seed": 42,
+    "camera": "hero",
+    "resolution": [
+      640,
+      360
+    ],
+    "capture_tick": 0,
+    "benchmark_route": "clearing-orbit",
+    "benchmark_warmup_seconds": 2,
+    "benchmark_duration_seconds": 6,
+    "benchmark_pairs": 3,
+    "git_head": "f5632ef210f82c2556110d487392b445e41b2ff6"
+  },
+  "implementation": {
+    "mesh_key": "serialized geometry description plus material id",
+    "scene_objects": 276,
+    "unique_mesh_material_keys": 68,
+    "object_ranges": 276,
+    "bounded_objects": 276,
+    "shared_vertex_count": 143454,
+    "unshared_vertex_count": 175662,
+    "camera_and_shadow_culling_independent": true,
+    "invalid_or_missing_bounds": "remain visible",
+    "draw_order": "only consecutive compatible instances batch; scene order preserved",
+    "named_controls": "set_geometry_rendering and engine-lab capture/benchmark flags"
+  },
+  "captures": {
+    "hero": {
+      "reference_sha256": "cfa8a4ee570d25de780e5d3aecdf220398c546b299a9974348035d1eface4fdf",
+      "instanced_sha256": "7918f80029ce0413058a39e3f91f82e093477ad8d053f132e13cb69ebfdb6f63",
+      "reference_vs_instanced_pixels_different": 1,
+      "difference_example": {
+        "xy": [
+          255,
+          219
+        ],
+        "reference_rgba": [
+          110,
+          94,
+          96,
+          255
+        ],
+        "instanced_rgba": [
+          32,
+          40,
+          62,
+          255
+        ]
+      },
+      "culling_additional_pixel_differences_vs_instancing_only": 0,
+      "visually_inspected": true
+    },
+    "orthographic": {
+      "reference_sha256": "681e55ccb1701ad89d95441204a8b124292c058eb251e2fc07d048302b35700c",
+      "instanced_sha256": "3bfefa0875a7b606c854d3242454fa977eda29af8e097c992f5068cffdc9ba7d",
+      "reference_vs_instanced_pixels_different": 1,
+      "culling_additional_pixel_differences_vs_instancing_only": 0,
+      "visually_inspected": true
+    },
+    "smoke-close": {
+      "reference_sha256": "31d7e717474c52f1bbfa2c827b99d15ce314ab4a7f78a0e8bd67c2eab9240e7f",
+      "instanced_sha256": "355f58737efec2d457dcb05dc3c4e9daedc5a0f8bd2c27282fd09a0201fa8ead",
+      "reference_vs_instanced_pixels_different": 4,
+      "culling_additional_pixel_differences_vs_instancing_only": 0,
+      "visually_inspected": true
+    },
+    "glass-close": {
+      "reference_sha256": "a762db76b6e2e0f9c4079b0a3aa6fa7c33013844cf869b90a2d1b1ff239ea056",
+      "instanced_sha256": "a2cc457a7af4f52a30ec3c2450ca276157bd9dc48b4ab1c8cc7d8811e5085177",
+      "reference_vs_instanced_pixels_different": 12,
+      "culling_additional_pixel_differences_vs_instancing_only": 0,
+      "visually_inspected": true
+    },
+    "exact_reference_path": {
+      "mode": "culling=false, instancing=false",
+      "hero_sha256": "cfa8a4ee570d25de780e5d3aecdf220398c546b299a9974348035d1eface4fdf",
+      "matches_saved_prechange_capture": true
+    }
+  },
+  "paired_culling_benchmark": {
+    "report": "/tmp/o07-culling-profile/comparison.json",
+    "baseline": "same scene, instancing enabled, culling disabled",
+    "candidate": "same scene, instancing enabled, camera and per-light culling enabled",
+    "baseline_run_median_frame_work_ms": 4.322334,
+    "candidate_run_median_frame_work_ms": 3.9341250000000003,
+    "paired_frame_work_delta_median_ms": -0.38820899999999936,
+    "baseline_run_median_gpu_render_ms": 2.323,
+    "candidate_run_median_gpu_render_ms": 2.310333,
+    "paired_gpu_render_delta_median_ms": -0.018124999999999947,
+    "paired_opaque_geometry_gpu_delta_median_ms": -0.009541000000000022,
+    "camera_objects_visible_median": 157,
+    "camera_objects_considered": 276,
+    "camera_draw_batches_median_without_culling": 69,
+    "camera_draw_batches_median_with_culling": 26,
+    "camera_vertices_submitted_median_without_culling": 175662,
+    "camera_vertices_submitted_median_with_culling": 89571,
+    "cpu_culling_median_ms": 0.022666,
+    "cpu_culling_p95_ms": 0.062667,
+    "shadow_visible_objects_median_by_map": [
+      276,
+      61,
+      81,
+      2,
+      31,
+      72,
+      76
+    ],
+    "shadow_vertices_submitted_median_by_map": [
+      175662,
+      68922,
+      62523,
+      32901,
+      40608,
+      72219,
+      75696
+    ],
+    "interpretation": "three paired route runs; measured deltas are small/noisy. Camera and shadow counts show materially fewer submissions, while overall GPU time is nearly unchanged."
+  },
+  "paired_geometry_path_benchmark": {
+    "report": "/tmp/o07-profile/comparison.json",
+    "baseline": "culling and instancing disabled; one draw per object using baked-reference stream",
+    "candidate": "culling and instancing enabled",
+    "pairs": 3,
+    "route": "clearing-orbit",
+    "duration_seconds": 6,
+    "warmup_seconds": 2,
+    "baseline_run_median_frame_work_ms": 3.940625,
+    "candidate_run_median_frame_work_ms": 3.972459,
+    "paired_frame_work_delta_median_ms": 0.03183400000000036,
+    "baseline_run_median_gpu_render_ms": 2.296875,
+    "candidate_run_median_gpu_render_ms": 2.300084,
+    "paired_gpu_render_delta_median_ms": 0.00025000000000030553,
+    "camera_draw_calls_per_frame_baseline": 276,
+    "camera_draw_batches_per_frame_candidate": 26,
+    "baseline_to_candidate_vertex_buffer_bytes": {
+      "unshared_gpu_vertex_buffer": 10539720,
+      "shared_gpu_vertex_buffer": 8607240,
+      "eight_instance_transform_buffers": 247296,
+      "gpu_geometry_plus_instance_storage_candidate": 8854536,
+      "gpu_storage_reduction_vs_one_unshared_vertex_buffer_percent": 15.97
+    },
+    "additional_comparison_costs": {
+      "unshared_gpu_vertex_buffer_bytes_when_reference_mode_enabled": 10539720,
+      "persistent_cpu_baked_reference_bytes": 10539720,
+      "enabled_mode_total_known_gpu_allocation_bytes": 28592136,
+      "reference_mode_total_known_gpu_allocation_bytes": 39131856
+    },
+    "interpretation": "draw-call count falls sharply and GPU geometry residency decreases, but measured whole-frame time is effectively flat; enabling reference mode adds the comparison vertex buffer and default mode retains a CPU baked stream for selectable parity comparisons."
+  },
+  "verification": {
+    "command": "python3 scripts/verify.py --gpu",
+    "verified": true,
+    "gpu": true,
+    "backend": "Metal",
+    "adapter": "Apple M1 Max",
+    "native": false,
+    "workspace_unit_tests": 27,
+    "clippy": true,
+    "scene_validation": true,
+    "materials_gpu": true,
+    "pixel_fire_gpu": true,
+    "windows_dx12": false
+  },
+  "limits": [
+    "GPU instance transforms cause a few output pixels to differ from the CPU-baked reference because of floating-point rounding; culling adds no differences beyond those instanced captures in the four reviewed views.",
+    "Scene schema requires positive scales, so negative-scale transforms are not supported or accepted.",
+    "CPU reference vertices are retained (10.54 MB for clearing) for the independently selectable exact comparison mode.",
+    "Shadow map draw counts refer to seven maps in order: directional sun, then six point-light cube faces; offscreen camera objects remain in the sun shadow set.",
+    "Three short paired route runs on one M1 Max are evidence only; no cross-vendor or Windows DX12 result.",
+    "Native-window and presentation behavior were not part of headless GPU verification."
+  ],
+  "source_sha256": {
+    "crates/engine/src/assets.rs": "7895e31c4d00542e22646d468353f8d5c84690668f167e32aa7ae0aaab0cfc7d",
+    "crates/engine/src/diagnostics.rs": "1b29de506dfcfa37f0f3fe68af0835f5ea95d8c3b2bc5ace08c3172b78710887",
+    "crates/engine/src/render/mod.rs": "bbe92f126ba1db301b1013e52c867a786a852b51bd16b772b6ef6a6176a869e0",
+    "crates/engine/src/render/shaders/world.wgsl": "a45294808b90679d0850c6315797c9e5529e8fd726918fbceb41363dc5e50fb1",
+    "crates/engine/src/render/shaders/optical.wgsl": "c32d1b52852647d17f7d6fc09241cc6b9c058f8499599656d3d5718d64bc9d64",
+    "crates/engine/src/render/shaders/shadow.wgsl": "5fe5115138806071873f3d68d4b0606a856c22959bc7a72e7337906622024495",
+    "crates/engine/src/session.rs": "8ee87c0b7dec3bcd420f60b9116caacf26ccad4a099d4103209e35f8d889f1cb",
+    "crates/engine-lab/src/main.rs": "5645dce0d30e5f7b9607675c17d4a915b18466a1d602420653680f3bf85b5df0",
+    "scripts/profile_compare.py": "c22ebbcbead6a71c71a50e562818810485ab7e26487ab975b606644aca6da32e"
+  }
+}

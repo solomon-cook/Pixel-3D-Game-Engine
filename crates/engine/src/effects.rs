@@ -1,5 +1,6 @@
 //! Game-authored effect profiles and bounded, deterministic world-space fire.
 //! Geometry is sampled once per tick, independently of camera/pixel resolution.
+use crate::scene::{Camera, Projection};
 use anyhow::{bail, Result};
 use bytemuck::{Pod, Zeroable};
 use glam::Vec3;
@@ -375,6 +376,12 @@ impl FireFrame {
     /// Pure seeded reconstruction: arbitrary fixed-tick captures need no particle
     /// history or GPU readback. Event identities survive slot reuse and reset.
     pub fn sample(key: &FireKey) -> Self {
+        Self::sample_with_segments(key, key.profile.fire.segments)
+    }
+
+    /// Rebuild render geometry at a requested curve density. Callers preserve
+    /// the full-detail frame's emitted lights and simulation bounds.
+    pub fn sample_with_segments(key: &FireKey, segments: u32) -> Self {
         let mut frame = Self::zeroed();
         let source = Vec3::from(key.source);
         let wind = Vec3::from(key.wind);
@@ -383,7 +390,9 @@ impl FireFrame {
         if key.enabled <= 0. {
             return frame;
         }
-        let f = &key.profile.fire;
+        let mut profile = key.profile.clone();
+        profile.fire.segments = segments.clamp(3, key.profile.fire.segments);
+        let f = &profile.fire;
         let time = key.tick as f32 * crate::simulation::FIXED_DT * f.motion_speed;
         frame.bounds_min[3] =
             0.88 + 0.07 * (time * 2.1 + key.seed as f32).sin() + 0.05 * (time * 3.7).cos();
@@ -563,6 +572,78 @@ impl FireFrame {
     }
 }
 
+pub fn projected_fire_height_px(
+    camera: &Camera,
+    resolution: [u32; 2],
+    source: [f32; 3],
+    profile: &EffectProfile,
+) -> f32 {
+    if resolution[1] == 0 {
+        return f32::INFINITY;
+    }
+    let position = Vec3::from(camera.position);
+    let forward = (Vec3::from(camera.target) - position).normalize_or_zero();
+    let depth = (Vec3::from(source) - position).dot(forward);
+    if !position.is_finite() || !forward.is_finite() || depth <= 0.1 {
+        return f32::INFINITY;
+    }
+    let world_height = profile.fire.height.max(profile.fire.width * 2.);
+    let pixels_per_world = match camera.projection {
+        Projection::Perspective { fov_degrees } => {
+            resolution[1] as f32 / (2. * (fov_degrees.to_radians() * 0.5).tan() * depth)
+        }
+        Projection::Orthographic { height } => resolution[1] as f32 / height,
+    };
+    let projected = world_height * pixels_per_world;
+    if projected.is_finite() {
+        projected.max(0.)
+    } else {
+        f32::INFINITY
+    }
+}
+
+/// Two-threshold hysteresis: tiers change at 40/20 px and return at 48/24 px.
+pub fn advance_projected_detail_tier(current: u8, height_px: f32, enabled: bool) -> u8 {
+    if !enabled || !height_px.is_finite() {
+        return 0;
+    }
+    let mut tier = current.min(2);
+    for _ in 0..2 {
+        let next = match tier {
+            0 if height_px < 40. => 1,
+            1 if height_px > 48. => 0,
+            1 if height_px < 20. => 2,
+            2 if height_px > 24. => 1,
+            _ => tier,
+        };
+        if next == tier {
+            break;
+        }
+        tier = next;
+    }
+    tier
+}
+
+pub fn projected_detail_segments(full_segments: u32, tier: u8) -> u32 {
+    match tier {
+        1 => (full_segments * 2).div_ceil(3).max(3),
+        2 => (full_segments / 2).max(3),
+        _ => full_segments,
+    }
+}
+
+pub fn render_frame_with_detail(key: &FireKey, full_frame: &FireFrame, segments: u32) -> FireFrame {
+    if segments >= key.profile.fire.segments {
+        return *full_frame;
+    }
+    let mut reduced = FireFrame::sample_with_segments(key, segments);
+    reduced.bounds_min = full_frame.bounds_min;
+    reduced.bounds_max = full_frame.bounds_max;
+    reduced.lighting = full_frame.lighting;
+    reduced.lights = full_frame.lights;
+    reduced
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -731,5 +812,52 @@ mod tests {
         assert_eq!(FireFrame::sample(&k).lighting[0], 0);
         k.profile.fire.motion_speed = f32::NAN;
         assert!(k.profile.validate().is_err());
+    }
+
+    #[test]
+    fn projected_detail_tiers_have_hysteresis_and_preserve_emitted_lights() {
+        assert_eq!(advance_projected_detail_tier(0, 39., true), 1);
+        assert_eq!(advance_projected_detail_tier(1, 44., true), 1);
+        assert_eq!(advance_projected_detail_tier(1, 19., true), 2);
+        assert_eq!(advance_projected_detail_tier(2, 22., true), 2);
+        assert_eq!(advance_projected_detail_tier(2, 25., true), 1);
+        assert_eq!(advance_projected_detail_tier(1, 49., true), 0);
+        assert_eq!(advance_projected_detail_tier(2, f32::INFINITY, true), 0);
+        assert_eq!(projected_detail_segments(6, 0), 6);
+        assert_eq!(projected_detail_segments(6, 1), 4);
+        assert_eq!(projected_detail_segments(6, 2), 3);
+
+        let key = key();
+        let full = FireFrame::sample(&key);
+        let reduced = render_frame_with_detail(&key, &full, 3);
+        assert!(reduced.counts[1] < full.counts[1]);
+        assert_eq!(reduced.counts[2..], full.counts[2..]);
+        assert_eq!(reduced.lighting, full.lighting);
+        assert_eq!(
+            bytemuck::bytes_of(&reduced.lights),
+            bytemuck::bytes_of(&full.lights)
+        );
+        assert_eq!(reduced.bounds_min, full.bounds_min);
+        assert_eq!(reduced.bounds_max, full.bounds_max);
+    }
+
+    #[test]
+    fn projected_fire_size_supports_perspective_and_orthographic_cameras() {
+        let profile = EffectProfile::default();
+        let camera = Camera {
+            id: "test".into(),
+            position: [0., 0., 10.],
+            target: [0., 0., 0.],
+            projection: Projection::Perspective { fov_degrees: 60. },
+        };
+        let perspective = projected_fire_height_px(&camera, [640, 360], [0., 0., 0.], &profile);
+        let mut orthographic = camera.clone();
+        orthographic.projection = Projection::Orthographic { height: 10. };
+        let ortho = projected_fire_height_px(&orthographic, [640, 360], [0., 0., 0.], &profile);
+        assert!(perspective.is_finite() && perspective > 0.);
+        assert!(ortho.is_finite() && ortho > perspective);
+        assert!(
+            projected_fire_height_px(&camera, [640, 360], [0., 0., 12.], &profile).is_infinite()
+        );
     }
 }

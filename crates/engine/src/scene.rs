@@ -38,10 +38,17 @@ pub struct RenderSettings {
     /// Zero uses only the environment fallback. Never changes the pixel grid.
     #[serde(default = "reflection_steps")]
     pub reflection_steps: u32,
+    /// Coarse smoke absorption cache dimension per axis; valid values are 8 or 16.
+    #[serde(default = "absorption_cache_resolution")]
+    pub absorption_cache_resolution: u32,
 }
 
 fn reflection_steps() -> u32 {
     16
+}
+
+fn absorption_cache_resolution() -> u32 {
+    8
 }
 
 fn palette_strength() -> f32 {
@@ -54,6 +61,10 @@ pub struct Experiments {
     pub pixel_cluster_lighting: bool,
     pub stable_smoke_detail: bool,
     pub connected_motion: bool,
+    #[serde(default)]
+    pub projected_detail_lod: bool,
+    #[serde(default)]
+    pub smoke_absorption_cache: bool,
 }
 
 #[derive(Clone, Serialize, Deserialize, JsonSchema)]
@@ -108,7 +119,7 @@ fn roughness() -> f32 {
     0.8
 }
 
-#[derive(Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Object {
     pub id: String,
@@ -124,7 +135,7 @@ fn unit_scale() -> [f32; 3] {
     [1.; 3]
 }
 
-#[derive(Clone, Serialize, Deserialize, JsonSchema)]
+#[derive(Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub enum Geometry {
     Cube,
@@ -316,6 +327,9 @@ impl Scene {
         }
         if !(0.0..=1.).contains(&self.render.dither_strength) {
             bail!("render.dither_strength: expected 0..1");
+        }
+        if !matches!(self.render.absorption_cache_resolution, 8 | 16) {
+            bail!("render.absorption_cache_resolution: expected 8 or 16");
         }
         if !(0.0..=1.).contains(&self.environment.fog_density) {
             bail!("environment.fog_density: expected 0..1");

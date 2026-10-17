@@ -4,6 +4,16 @@ A proprietary Rust desktop engine for expressive pixel-art 3D games. The first
 scene is a woodland fire with illuminated volumetric smoke, shadows and embers.
 The reusable engine and the lab are separate workspace packages.
 
+See [the work queue](TODO.md) and [optimisation plans](docs/OPTIMIZATION_PLAN.md)
+for completed profiling instrumentation, whole-map shadow reuse, tiled effect lists,
+opt-in projected fire detail and geometry culling. Further smoke-lighting, optical
+and memory work remains proposed. Measurements are recorded in
+[docs/measurements-o01.json](docs/measurements-o01.json),
+[docs/measurements-o02.json](docs/measurements-o02.json),
+[docs/measurements-o03.json](docs/measurements-o03.json),
+[docs/measurements-o04.json](docs/measurements-o04.json) and
+[docs/measurements-o07-culling.json](docs/measurements-o07-culling.json).
+
 ## Start
 
 Install Rust using [rustup](https://rust-lang.org/tools/install/). The project
@@ -23,6 +33,8 @@ cargo run --release -p engine-lab -- validate
 cargo run --release -p engine-lab -- describe
 cargo run --release -p engine-lab -- capture --camera hero --tick 300 --output artifacts/hero.png
 cargo run --release -p engine-lab -- benchmark --duration 120 --warmup 10
+cargo run --release -p engine-lab -- benchmark-native --duration 120 --warmup 10
+python3 scripts/profile_compare.py --baseline assets/scenes/materials.json --candidate assets/scenes/materials.json --measure-overhead
 python3 scripts/verify.py --gpu --native
 python3 scripts/package.py
 ```
@@ -59,8 +71,10 @@ specify other aspect ratios. Windows use integer scaling and
 letterboxing. No automatic scene-resolution changes are made.
 
 Use `--experiments pixel_cluster_lighting`, `stable_smoke_detail`,
-`connected_motion`, a comma-separated combination, or `all`. The inspector uses
-the same mutations as the protocol. Shader files can be edited live and reloaded;
+`connected_motion`, `projected_detail_lod`, a comma-separated combination, or
+`all`. Projected fire detail is opt-in and leaves the selected pixel grid,
+simulation frame, bounds and emitted lights unchanged. The inspector uses the
+same mutations as the protocol. Shader files can be edited live and reloaded;
 invalid replacements retain the last working pipelines.
 
 ```sh
@@ -69,6 +83,12 @@ python3 scripts/experiments.py
 
 This generates matched views and a 120-second camera-route benchmark per variant.
 See docs/RESEARCH.md for hypotheses and docs/STATUS.md for actual validation.
+`profile_compare.py` alternates baseline/candidate offscreen route runs and writes
+untouched raw reports, fingerprints, per-stage paired deltas, and optional timed/
+untimed overhead comparisons. `benchmark-native` records actual surface acquisition,
+present and vsync spans in a native window. `assets/scenes/profiling-heavy.json`
+provides the single-plume, eight-point-light workload; it keeps the chosen 640×360
+grid and clearing route.
 
 ## Game-authored effects
 
@@ -134,6 +154,13 @@ local-light occlusion with radial distance falloff; this is a cheap metaball-lik
 an implicit-surface ray marcher. `self_shadow_strength` (0..4) controls absorption
 and `internal_glow` (0..4, default 0) adds emission from within the plume.
 `emitters.campfire.style` switches between `ink` and `volume`.
+
+The experimental `render.experiments.smoke_absorption_cache` option caches
+optical depth for the primary authored fire light. Choose
+`render.absorption_cache_resolution` as 8 or 16 (default 8); the cache rebuilds
+each rendered frame, while particle lights and fallback points keep direct
+sampling. It is off by default and has not shown a GPU-time reduction on the
+measured Metal workload. See [O05 measurements](docs/measurements-o05.json).
 
 `inspect_scene` returns a compact overview. Select an object with
 `{"id":1,"method":"inspect_scene","params":{"section":"objects","id":"fire-ring-0"}}`.

@@ -3,6 +3,215 @@
 16 October 2026. The first development implementation is runnable; visual and
 platform acceptance are still open. This is a rendering lab and engine foundation.
 
+Optimisation planning: [eight workstream plans](OPTIMIZATION_PLAN.md) and the
+[execution queue](../TODO.md) define profiling, cached shadows, tiled effects,
+projected detail, smoke absorption reuse, optical specialisation, object culling/
+instancing and resource efficiency. O01's profiling implementation and M1 Max/Metal
+workload evidence are complete. O08's first resource and logical-traffic inventory
+is complete on M1 Max/Metal; all layout/pass changes remain proposals pending
+cross-backend measurements and comparisons. O03's bounded single-emitter tile
+lists and O07's per-camera/per-light culling, shared meshes and instancing are
+implemented and measured on M1 Max/Metal. Platform acceptance gates remain open.
+
+O04's opt-in projected fire-segment LOD is implemented at 40/20 px with 48/24 px
+hysteresis. Three matched 640×360 still pairs cover full, medium and low detail;
+an 8-second repeated zoom route records tier occupancy. Medium/small tiers lowered
+GPU render medians by about 0.11 ms in short serial pairs, while total frame-work
+medians were slower and noisy. It remains disabled by default. Slow-orbit visual
+review, native-window measurement, Windows/DX12 and other GPU qualification remain
+open; see [measurements-o04.json](measurements-o04.json).
+
+O05 now has an opt-in primary fire-light absorption cache at 8³ or 16³, rebuilt
+each rendered frame so paused density and light edits are reflected on the next
+render. Fixed-tick stills and three short paired orbit runs are recorded in
+[measurements-o05.json](measurements-o05.json). The 16³ still is closer to direct
+sampling by mean RGB error, but both tiers add a roughly 0.026–0.029 ms GPU build
+pass and total GPU render medians were slightly slower. No default promotion is
+recommended. Motion/temporal review, rapid density/light edit checks, cache
+allocation cleanup while disabled, Windows/DX12 and other GPU qualification remain
+open.
+
+O01 profiling implementation now includes bounded asynchronous timestamps for
+smoke compute, shadows, opaque geometry, atmosphere/fire, optical resolve and post;
+serial latency and buffered throughput reports; a native vsynced route report;
+fixed-step counts; CPU upload/simulation/render/UI/acquisition/presentation spans;
+paired per-stage comparisons; optional timing-on/off overhead comparisons; source,
+shader, scene and GLB hashes; draw/light/primitive counts; and a known-allocation
+GPU memory estimate. `get_metrics` exposes frame-tagged timings. Native presentation
+and egui GPU timestamps are recorded. Exact queue-latency measurement remains open:
+wgpu timestamps have no calibrated host-clock mapping, so reports preserve
+submit-to-readback completion latency separately. The memory figure excludes driver
+alignment, transient allocations and timestamp storage. Three alternating 120-second
+pairs plus timed/untimed controls cover clearing, `assets/scenes/profiling-heavy.json`
+(one plume and eight point lights), and Material Atelier; a separate 120-second
+native clearing route records presentation/UI/acquisition/vsync spans. Summary,
+provenance and raw-report checksums are in [measurements-o01.json](measurements-o01.json);
+full sample reports remain in the local ignored `artifacts/o01/` directory. Identical
+baseline/candidate scene inputs characterize run variance and profiling overhead,
+not optimization gains. Exact queue latency, adapters without timestamp support,
+Windows DX12 and RTX-class rendering remain unverified.
+
+## O08 resource and bandwidth inventory
+
+The 640×360 clearing/heavy workload has 29,806,088 bytes of known allocations:
+11,059,200 bytes of render targets (including two optical snapshots that are
+allocated even without optical materials), 5,767,168 bytes of shadow maps,
+2,359,296 bytes of smoke ping-pong volumes, 10,539,720 bytes of static geometry,
+65,536 bytes of atlas data, and 15,168 bytes of material/fixed buffers. Material
+Atelier is 20,370,208 known bytes because its geometry is smaller. These are
+descriptor/structure-size estimates; driver alignment and transient/pipeline
+storage are excluded.
+
+At 640×360, the clearing/heavy frame has 16,826,368 bytes of modeled full-frame
+attachment clear/write/load/store traffic before shader sampling: shadow maps,
+opaque color/normal/depth, atmosphere HDR/effect target, and post output. Optical
+frames add 7,372,800 logical bytes for snapshot copy reads/writes and 7,372,800
+bytes of optical attachment load/store. Seven shadow draws plus opaque geometry
+reference 84,317,760 bytes of vertex input if each draw fetches the full buffer;
+optical geometry adds one more full-buffer reference. These quantities are API/
+shader logical work estimates, not measured DRAM bandwidth. Metal tile storage,
+caches, compression and overdraw can change external traffic substantially.
+
+The smoke shader nominally reads two trilinear samples and writes one RGBA16F
+voxel. Counting two 8-texel full-format samples plus the 8-byte store gives
+20,054,016 nominal bytes per 48×64×48 fixed step. This is not physical bandwidth:
+the shader consumes only x/y from the samples, and filtered sampling, channel
+elimination and cache behavior are hardware-dependent. O01 measured smoke compute
+at about 0.0205 ms median, compared with multi-millisecond post and atmosphere/fire
+stages; current evidence does not justify active-region simulation.
+
+A live M1 Max/Metal wgpu format query reported sampled, storage, render-attachment,
+copy and filtering support for Rg16Float and the probed alternatives. This is one
+adapter's feature report, not DX12 support or proof that a narrower layout has
+acceptable precision. Candidate follow-ups are a two-channel effect target
+(921,600 bytes saved at this resolution), two-channel smoke volumes (1,179,648
+bytes saved), lazy optical snapshots (3,686,400 bytes saved in non-optical scenes),
+and removing the two full-frame optical copies (7,372,800 logical read/write bytes
+per optical frame). None has been implemented. Format fallback, image/state
+comparisons, total pass timing and Windows DX12/RTX acceptance remain open. Full
+provenance and per-resource breakdown are in [measurements-o08.json](measurements-o08.json).
+The required `python3 scripts/verify.py --gpu` run passed on this M1 Max/Metal
+host, including Clippy, workspace tests, scene validation and GPU integration
+checks. This verifies the current layout and diagnostic query, not alternate
+format creation or cross-backend behavior.
+
+## O03 single-emitter tile lists
+
+The renderer builds ordered 16×16 scene-pixel lists for fire primitives, ink-smoke
+lobes, point lights and particle lights. Per-tile capacities are 64, 36, 8 and 12
+respectively. Conservative projection handles camera-inside/near-plane/invalid
+cases by including the viewport. Overflow flags select exhaustive shader evaluation
+for the affected category; tiled evaluation is enabled by default in this build
+and can be switched to exhaustive mode. `set_tile_lists`, capture flags and
+benchmark flags also expose an exhaustive baseline and a forced-fallback
+diagnostic. Asynchronous frame-tagged counters report candidate memberships,
+maximum occupancy and overflow tiles. At 640×360, the buffers add 471,040 list
+bytes and 192 counter bytes; the known-allocation estimate for clearing is
+30,277,320 bytes.
+
+Four exact-tick view sets (hero perspective, close smoke, orthographic and glass
+close-up) matched byte-for-byte among tiled, exhaustive and forced-fallback modes.
+The hero clearing capture was visually inspected. Three alternating 10-second
+serial pairs after 5-second warm-ups on M1 Max/Metal measured full-render GPU
+medians from 3.017 to 2.575 ms for clearing, 3.878 to 3.393 ms for the heavy
+single-plume/eight-light scene, and 2.984 to 2.478 ms for Material Atelier. Full
+frame work paired median deltas were -2.202, -0.991 and -1.022 ms. List build cost
+was 0.413–0.633 ms GPU median and 0.10–0.16 ms CPU encoding; the material case had
+a +0.279 ms CPU encode delta even as full-frame work fell. Route runs recorded no
+natural overflow. These stills and M1 Max results do not establish motion quality,
+native performance or cross-device support. Multi-emitter ownership, 8×8 tile
+evaluation, natural over-capacity stress, Windows/DX12 and other GPU vendors remain
+open. Details and hashes are in [measurements-o03.json](measurements-o03.json); raw
+pair reports are in local ignored `artifacts/o03/`.
+
+`python3 scripts/verify.py --gpu` passed on this host: formatting, Clippy,
+25 workspace tests, scene validation and material/fire GPU checks. The verifier
+reports `native: false`; native-window lifecycle and Windows/DX12 rendering remain
+unverified.
+
+## O02 whole-map shadow cache
+
+The renderer now keeps all seven shadow maps valid across frames with unchanged
+casters, effective shadow transmission, sun projection and fire-light projection.
+Camera and light color/power changes retain the maps. Reset, successful shader
+reload, shadow-material edits and projection changes invalidate the whole set.
+Unknown key state redraws rather than reuses. Cache-hit metrics report the dirty
+reason, redrawn map count, 5,767,168 resident map bytes and CPU shadow-encoding
+time. `set_shadow_cache` forces redraw through the protocol; benchmark reports also
+accept `--force-shadow-redraw`. Per-face invalidation remains open until O07 adds
+live transforms and affected-object tracking; the current bounds are metadata only.
+
+The captures at 640×360 with seed 42/tick 0 were byte-identical for first cache
+render, forced redraw and subsequent cache hit. Protocol checks confirmed hits on
+camera/light-power changes and invalidation for sun movement, reset, successful
+shader reload and material shadow-class change; unit checks cover caster, material,
+sun and point projection/range revisions. O01's transactional shader rollback
+checks still apply; failed reloads do not invalidate because the working pipelines
+remain installed.
+
+Three alternating serial offscreen 120-second clearing-orbit pairs after 10-second
+warm-up on Apple M1 Max/64 GB/Metal at 640×360 compared identical scene inputs.
+Forced redraw versus cached medians of run medians were 6.365 versus 5.592 ms frame
+work and 3.151 versus 2.672 ms whole-render GPU time; paired candidate-minus-control
+median deltas were -0.769 and -0.479 ms. CPU shadow encoding was 0.558 ms versus
+0.000083 ms; CPU upload was 0.345 versus 0.219 ms, as matrix writes stop with shadow
+reuse. In the measured cached runs, all 7200 frames were hits and none redrew a map;
+forced mode redrew seven maps each frame. These are M1 Max static-route results,
+not native-window or Windows DX12 acceptance. Full pair/run provenance is in
+[measurements-o02.json](measurements-o02.json), with raw samples under local ignored
+`artifacts/o02/shadow-static/`.
+
+Final `python3 scripts/verify.py --gpu` completed successfully on Apple M1 Max
+with Metal (`verified: true`, `gpu: true`, `native: false`). Workspace formatting,
+clippy, 24 unit tests, scene validation and material/fire GPU checks passed. Native
+window lifecycle and Windows DX12 rendering remain unverified.
+
+## O07 object bounds, culling and shared meshes
+
+The renderer stores each geometry/material key once in local space and retains a
+stable object/material identity, transform, range and conservative world AABB for
+every scene object. Camera visibility and each of the seven shadow frusta are
+computed independently; invalid/unknown bounds remain visible. Batching extends
+only across consecutive compatible objects, preserving authored draw order. The
+shared Session command and engine-lab flags independently select culling and
+instancing, including the baked exhaustive reference mode.
+
+On the 276-object clearing scene, 68 geometry/material keys use 143,454 shared
+vertices (8,607,240 GPU bytes), versus 175,662 object-expanded vertices
+(10,539,720 bytes). The selectable instance transform buffers use 247,296 bytes.
+The normal shared path reduces geometry GPU storage by about 16% versus one
+object-expanded vertex buffer. For exact comparison mode, the renderer lazily adds
+the 10,539,720-byte unshared GPU buffer; it also retains 10,539,720 bytes of CPU
+baked reference vertices so the setting can be switched during a Session.
+
+Three alternating 6-second clearing-orbit pairs with 2-second warm-up on Apple
+M1 Max/Metal compared culling disabled against culling enabled while instancing
+stayed enabled. Median camera visibility fell from 276 to 157 objects; median
+submitted vertices fell from 175,662 to 89,571 and camera draw batches from 69 to
+26. Across the seven maps, median visible-object counts were 276/61/81/2/31/72/76;
+the sun map retains all 276, including objects outside the camera view. Median CPU
+culling cost was 0.023 ms (p95 0.063 ms). Paired whole-frame work delta was
+-0.388 ms; GPU render delta was -0.018 ms, which is effectively unchanged within
+three short pairs. A separate exhaustive-versus-shared/culling paired run also
+showed nearly flat frame and GPU times. See the measurements report for all run
+summaries and limits.
+
+At 640×360, seed 42 and tick 0, the baked culling-off/instancing-off hero capture
+matches the saved pre-change PNG byte-for-byte. Instanced GPU transforms change 1
+hero pixel, 1 orthographic pixel, 4 smoke-close pixels and 12 glass-close pixels
+against their baked references due to floating-point/raster quantization. In all
+four inspected views, enabling culling adds zero further pixel differences versus
+instancing-only. The four images were visually inspected. Bounds and frustum tests
+cover GLB geometry, transformed positive nonuniform scale/rotation, perspective,
+orthographic, behind-camera, side-plane and invalid-bound cases.
+
+`python3 scripts/verify.py --gpu` passed on M1 Max/Metal: formatting, Clippy, 27
+workspace tests, validation, material GPU and pixel-fire GPU checks. It reports
+`native: false`; native window and Windows DX12 rendering remain unverified.
+O02 per-face invalidation still awaits live object transform/revision support.
+Full provenance and checksums are in
+[measurements-o07-culling.json](measurements-o07-culling.json).
+
 Implemented: reusable engine/library separation, native Metal/DX12 selection,
 versioned/validated JSON scenes, static GLB/PNG assets, fixed-step smoke grid,
 seeded fire/embers, directional/point shadows, HDR pixel rendering, integer
@@ -21,7 +230,7 @@ Atelier comparison scene are implemented. See MATERIALS.md for explicit limits.
 
 ## Verification on this host
 
-- Rust formatting, Clippy with warnings denied, 20 unit tests, asset decoding,
+- Rust formatting, Clippy with warnings denied, 22 unit tests, asset decoding,
   schema discovery and scene validation passed.
 - Metal GPU integration passed: deterministic same-device replay, malformed
   commands/invalid edits, capture completion, orthographic rendering, visible
@@ -42,6 +251,30 @@ Atelier comparison scene are implemented. See MATERIALS.md for explicit limits.
   and motion review against the reference remain open. See SMOKE_DIRECTION.md.
 
 ## Measured performance
+
+### O01 profiling characterization
+
+M1 Max / 64 GB / Metal at 640×360. Each offscreen value is the median of three
+120-second run medians after a 10-second warm-up. Baseline and candidate scene
+inputs are identical within a workload. Pass intervals can overlap, so stage values
+must not be summed; the whole-render measurement is separate.
+
+| Workload | Frame work median / p95 ms | Whole-render GPU median / p95 ms | Leading GPU stage medians ms | Known GPU allocations |
+|---|---:|---:|---|---:|
+| Clearing orbit | 6.31 / 10.61 | 3.15 / 4.17 | post 2.53; atmosphere/fire 2.42; opaque 1.71 | 29.8 MB |
+| Heavy plume + 8 lights | 6.75 / 11.97 | 3.87 / 5.04 | post 3.25; atmosphere/fire 3.13; opaque 2.40 | 29.8 MB |
+| Material Atelier | 6.43 / 10.73 | 3.39 / 4.70 | post 2.75; optical resolve 2.65; atmosphere/fire 1.59 | 20.4 MB |
+
+GPU timestamp instrumentation raised median frame work by 0.11–0.28 ms in the
+paired timed/untimed controls. Timing-disabled exact-tick captures were byte-
+identical to the timed capture. The separate native clearing route ran for 120 s
+at 43.48 measured frames/s on this desktop, with 8.83 ms median / 70.28 ms p95
+native CPU frame and 6.36 ms median / 64.79 ms p95 surface acquisition. These
+native results include the active display and vsync path and must not be compared
+directly with unpaced offscreen values. Exact queue time is null because wgpu
+timestamps have no host-clock calibration; async readback completion latency is
+reported separately. See [measurements-o01.json](measurements-o01.json) for source
+hashes, paired deltas, coverage, workloads and report checksums.
 
 Apple M1 Max / 64 GB / Metal, 640×360 pixels, 48×64×48 smoke grid. Each route
 contains 7,200 frames over 120 simulation seconds after 10 seconds warm-up.

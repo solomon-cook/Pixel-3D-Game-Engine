@@ -6,6 +6,11 @@
     if optical_strength(materials[v.material])<=0. {result.clip=vec4(2.,2.,2.,1.);}
     return result;
 }
+@vertex fn optical_vs_baked(@location(0) position:vec3<f32>, @location(1) normal:vec3<f32>, @location(2) color:vec3<f32>, @location(3) uv:vec2<f32>, @location(4) texture:f32, @location(5) emission:f32, @location(6) roughness:f32, @location(7) material:u32)->Varying {
+    var result:Varying; result.clip=g.view_proj*vec4(position,1.);result.position=position;result.normal=normal;result.color=color;result.uv=uv;result.texture=texture;result.emission=emission;result.roughness=roughness;result.material=material;
+    if optical_strength(materials[material])<=0. {result.clip=vec4(2.,2.,2.,1.);}
+    return result;
+}
 fn project_uv(p:vec3<f32>)->vec3<f32> {
     let q=g.view_proj*vec4(p,1.);return vec3(q.xy/q.w*vec2(0.5,-0.5)+0.5,q.w);
 }
@@ -56,14 +61,15 @@ fn reflected_scene(p:vec3<f32>,n:vec3<f32>,view:vec3<f32>,rough:f32)->vec3<f32> 
     return fallback;
 }
 @fragment fn optical_fs(v:Varying,@builtin(front_facing) front:bool)->Output {
-    let base=shade_surface(v);let m=materials[v.material];
+    let tile=tile_index(v.clip.xy);
+    let base=shade_surface(v,tile);let m=materials[v.material];
     if optical_strength(m)<=0. {discard;}
     // Closed glass uses the entry face only; nearest entries win the depth test.
     if transmission(m)>0. && !front {discard;}
     let n=normalize(v.normal);let view=surface_view(v);
     let rough=clamp(m.surface.x*v.roughness,0.,1.);let albedo=surface_albedo(v,m);
     let f=fresnel(material_f0(m,albedo),max(dot(n,view),0.));
-    let foreground=atmosphere(v.clip,v.clip.z);
+    let foreground=atmosphere(v.clip,v.clip.z,tile);
     // An opaque foreground smoke lobe hides the complete optical surface.
     if foreground.a>0.985 {
         var hidden:Output;hidden.color=vec4(foreground.rgb,1.);hidden.normal_depth=base.normal_depth;return hidden;
