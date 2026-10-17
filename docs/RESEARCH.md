@@ -242,3 +242,18 @@ mean absolute RGB error versus direct sampling was lower at 16Â³ (0.056) than 8Â
 or a useful performance range. Review motion, edits while paused and other GPU
 backends before promotion; full provenance is in
 [measurements-o05.json](measurements-o05.json).
+
+## Reuse shaded bases for opaque optical surfaces (17 October)
+
+Hypothesis: an opaque reflective surface already has its lit base color in the
+post-volume HDR snapshot. The optical pass can recover that base by removing the
+same-pixel foreground atmosphere contribution, avoiding a second full surface
+lighting evaluation. The opt-in path uses the matching normal/depth snapshot and
+keeps the existing shader for transmissive materials, which are discarded by the
+opaque pass. No extra texture is allocated. In three short M1 Max/Metal
+material-orbit pairs, median optical-resolve time fell about 0.19 ms and total GPU
+render about 0.21 ms; CPU frame-work results were noisy. Metal, hero, glass-close
+and smoke-over-reflector captures stayed visually close, with small localized
+half-float differences. The consistent short-run GPU result merits longer review,
+but does not qualify the change for a default. See
+[measurements-o06.json](measurements-o06.json).

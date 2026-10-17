@@ -6,12 +6,14 @@ The reusable engine and the lab are separate workspace packages.
 
 See [the work queue](TODO.md) and [optimisation plans](docs/OPTIMIZATION_PLAN.md)
 for completed profiling instrumentation, whole-map shadow reuse, tiled effect lists,
-opt-in projected fire detail and geometry culling. Further smoke-lighting, optical
-and memory work remains proposed. Measurements are recorded in
+opt-in projected fire detail, smoke absorption reuse, optical surface reuse and
+geometry culling. Further memory work remains proposed. Measurements are recorded in
 [docs/measurements-o01.json](docs/measurements-o01.json),
 [docs/measurements-o02.json](docs/measurements-o02.json),
 [docs/measurements-o03.json](docs/measurements-o03.json),
 [docs/measurements-o04.json](docs/measurements-o04.json) and
+[docs/measurements-o05.json](docs/measurements-o05.json),
+[docs/measurements-o06.json](docs/measurements-o06.json) and
 [docs/measurements-o07-culling.json](docs/measurements-o07-culling.json).
 
 ## Start
@@ -161,6 +163,11 @@ optical depth for the primary authored fire light. Choose
 each rendered frame, while particle lights and fallback points keep direct
 sampling. It is off by default and has not shown a GPU-time reduction on the
 measured Metal workload. See [O05 measurements](docs/measurements-o05.json).
+
+The experimental `render.experiments.optical_surface_reuse` option reuses opaque
+reflector shading from the matching scene snapshot. It retains direct shading for
+transmissive materials and is off by default pending longer and cross-backend
+validation. See [O06 measurements](docs/measurements-o06.json).
 
 `inspect_scene` returns a compact overview. Select an object with
 `{"id":1,"method":"inspect_scene","params":{"section":"objects","id":"fire-ring-0"}}`.

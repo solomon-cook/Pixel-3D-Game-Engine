@@ -110,6 +110,7 @@ struct Globals {
     fire_warm: [f32; 4],
     fire_hot: [f32; 4],
     presentation: [f32; 4],
+    optical_settings: [f32; 4],
     fire_shape: [f32; 4],
     fire_pixels: [f32; 4],
     light_info: [u32; 4],
@@ -2306,6 +2307,12 @@ impl Renderer {
                 scene.render.reflection_steps as f32,
                 u32::from(scene.render.experiments.smoke_absorption_cache) as f32,
             ],
+            optical_settings: [
+                u32::from(scene.render.experiments.optical_surface_reuse) as f32,
+                0.,
+                0.,
+                0.,
+            ],
         };
         let upload_started = Instant::now();
         self.queue
@@ -2644,6 +2651,7 @@ impl Renderer {
             .iter()
             .filter(|batch| batch.optical)
             .count() as u32;
+        self.metrics.optical_surface_reuse_enabled = scene.render.experiments.optical_surface_reuse;
         let upload_started = Instant::now();
         if !camera_draws.instances.is_empty() {
             self.queue.write_buffer(

@@ -15,6 +15,7 @@ pub struct FrameMetrics {
     pub camera_draw_batches: u32,
     pub camera_vertices_submitted: u64,
     pub optical_draw_batches: u32,
+    pub optical_surface_reuse_enabled: bool,
     pub shadow_objects_visible: [u32; 7],
     pub shadow_draw_batches: [u32; 7],
     pub shadow_vertices_submitted: [u64; 7],
@@ -85,6 +86,7 @@ impl FrameMetrics {
         self.camera_draw_batches = 0;
         self.camera_vertices_submitted = 0;
         self.optical_draw_batches = 0;
+        self.optical_surface_reuse_enabled = false;
         self.shadow_objects_visible = [0; 7];
         self.shadow_draw_batches = [0; 7];
         self.shadow_vertices_submitted = [0; 7];

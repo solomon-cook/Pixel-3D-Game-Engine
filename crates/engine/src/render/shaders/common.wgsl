@@ -11,7 +11,7 @@ struct Globals {
     sky: vec4<f32>, horizon: vec4<f32>, wind_time: vec4<f32>,
     volume_min: vec4<f32>, volume_max: vec4<f32>, params: vec4<f32>,
     resolution: vec4<f32>, experiments: vec4<f32>, simulation: vec4<f32>, effect_settings: vec4<f32>,
-    thermal:vec4<f32>,fire_outer:vec4<f32>,fire_warm:vec4<f32>,fire_hot:vec4<f32>,presentation:vec4<f32>,
+    thermal:vec4<f32>,fire_outer:vec4<f32>,fire_warm:vec4<f32>,fire_hot:vec4<f32>,presentation:vec4<f32>,optical_settings:vec4<f32>,
     fire_shape:vec4<f32>,fire_pixels:vec4<f32>,light_info:vec4<u32>,point_lights:array<PointLight,8>,
 };
 @group(0) @binding(0) var<uniform> g: Globals;

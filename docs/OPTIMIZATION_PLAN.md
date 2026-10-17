@@ -4,8 +4,8 @@
 single-emitter tile lists and the first O07 object bounds/draw-range foundation
 are implemented. O08's first resource inventory is recorded; its layout/pass
 changes remain proposed. O04 has an opt-in projected fire-segment experiment;
-its default-promotion and visual/platform acceptance gates remain open. O05 has
-an opt-in prototype and first measurements; O06 remains planning-only. O07
+its default-promotion and visual/platform acceptance gates remain open. O05 and
+O06 have opt-in prototypes and first measurements. O07
 culling/instancing remain renderer work; these plans extend the current
 renderer and do not replace the smoke/fire art direction.
 [TODO.md](../TODO.md) tracks execution. Runtime and acceptance evidence remain in
@@ -352,6 +352,17 @@ claim nested-glass or camera-inside support from this work.
 Dependencies: O01; geometry partitioning needs O07. Optional SSR prior work:
 [AMD stochastic screen-space reflections](https://gpuopen.com/manuals/fidelityfx_sdk/techniques/stochastic-screen-space-reflections/).
 This is a technique reference, not a requirement to adopt its SDK.
+
+**Prototype result:** `render.experiments.optical_surface_reuse` reuses opaque
+reflector shading from the matching atmosphere-composited snapshot, subtracting
+the foreground contribution before recovering the base surface color. It adds no
+texture allocation. Transmissive surfaces retain direct lighting because the
+opaque pass omits them. On M1 Max/Metal, three short material-orbit pairs reduced
+the optical-resolve median by about 0.19 ms and GPU-render median by about 0.21 ms;
+CPU frame-work results were mixed. Matched stills were visually close, including a
+smoke-over-reflector stress view. The experiment remains off by default pending a
+120-second route, native-window measurement and cross-backend validation. See
+[measurements-o06.json](measurements-o06.json).
 
 ## O07 — Object bounds, culling and shared meshes
 

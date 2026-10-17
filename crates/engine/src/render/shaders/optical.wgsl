@@ -62,7 +62,7 @@ fn reflected_scene(p:vec3<f32>,n:vec3<f32>,view:vec3<f32>,rough:f32)->vec3<f32> 
 }
 @fragment fn optical_fs(v:Varying,@builtin(front_facing) front:bool)->Output {
     let tile=tile_index(v.clip.xy);
-    let base=shade_surface(v,tile);let m=materials[v.material];
+    let m=materials[v.material];
     if optical_strength(m)<=0. {discard;}
     // Closed glass uses the entry face only; nearest entries win the depth test.
     if transmission(m)>0. && !front {discard;}
@@ -72,9 +72,21 @@ fn reflected_scene(p:vec3<f32>,n:vec3<f32>,view:vec3<f32>,rough:f32)->vec3<f32> 
     let foreground=atmosphere(v.clip,v.clip.z,tile);
     // An opaque foreground smoke lobe hides the complete optical surface.
     if foreground.a>0.985 {
-        var hidden:Output;hidden.color=vec4(foreground.rgb,1.);hidden.normal_depth=base.normal_depth;return hidden;
+        var hidden:Output;hidden.color=vec4(foreground.rgb,1.);hidden.normal_depth=textureLoad(scene_normals,vec2<i32>(v.clip.xy),0);return hidden;
     }
-    var color=base.color.rgb;
+    var base_color:vec3<f32>;
+    var base_normal_depth:vec4<f32>;
+    if g.optical_settings.x>0.5 && transmission(m)<=0. {
+        let pixel_coord=vec2<i32>(v.clip.xy);
+        let composited=textureLoad(scene_color,pixel_coord,0).rgb;
+        base_color=max(composited-foreground.rgb,vec3(0.))/max(1.-foreground.a,0.015);
+        base_normal_depth=textureLoad(scene_normals,pixel_coord,0);
+    } else {
+        let base=shade_surface(v,tile);
+        base_color=base.color.rgb;
+        base_normal_depth=base.normal_depth;
+    }
+    var color=base_color;
     let reflection=reflected_scene(v.position,n,view,rough);
     color+=reflection*f*optical_strength(m);
     if transmission(m)>0. {
@@ -84,12 +96,12 @@ fn reflected_scene(p:vec3<f32>,n:vec3<f32>,view:vec3<f32>,rough:f32)->vec3<f32> 
         let refracted=project_uv(v.position+direction*path).xy;
         var uv=clamp(refracted,vec2(0.),vec2(1.));
         let behind=textureSampleLevel(scene_normals,optical_sampler,uv,0.).w;
-        if behind>0. && behind<base.normal_depth.w {uv=straight;}
+        if behind>0. && behind<base_normal_depth.w {uv=straight;}
         // Remove the estimated foreground contribution before tinting the
         // transmitted background, then composite it once above the surface.
         let background=max(blurred_scene(uv,rough)-foreground.rgb,vec3(0.))/max(1.-foreground.a,0.015);
         color+=background*exp(-m.absorption.rgb*path)*clamp(albedo,vec3(0.),vec3(1.))*(vec3(1.)-f)*transmission(m);
     }
     color=foreground.rgb+color*(1.-foreground.a);
-    var result:Output;result.color=vec4(color,1.);result.normal_depth=base.normal_depth;return result;
+    var result:Output;result.color=vec4(color,1.);result.normal_depth=base_normal_depth;return result;
 }

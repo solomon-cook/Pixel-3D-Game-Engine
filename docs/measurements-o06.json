@@ -1,0 +1,232 @@
+{
+  "task": "O06 optical surface specialization prototype and evidence",
+  "status": "opt-in opaque-surface lighting reuse implemented; keep default off pending longer motion and cross-backend acceptance",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal",
+    "os": "macOS"
+  },
+  "experiment": {
+    "scene_parameter": "render.experiments.optical_surface_reuse",
+    "default": false,
+    "behavior": "opaque reflective materials reconstruct the base color by removing the matching atmosphere contribution from the same-pixel HDR snapshot and reuse copied opaque normal/depth; transmissive materials retain direct shading because they are absent from the opaque pass",
+    "added_resource_bytes": 16,
+    "no_new_textures": true
+  },
+  "capture_comparison": {
+    "seed": 42,
+    "tick": 300,
+    "resolution": [
+      640,
+      360
+    ],
+    "baseline_scene": "assets/scenes/materials.json",
+    "views": {
+      "metal": {
+        "resolution": [
+          640,
+          360
+        ],
+        "changed_pixels": 1795,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0027994791666666667,
+          0.003029513888888889,
+          0.004092881944444444
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          4,
+          4,
+          7
+        ],
+        "direct_sha256": "44676834882e579439c0ec61fd20c85501f9a5ad32369f1d0e48b1b31c3c6208",
+        "reuse_sha256": "d6cdb2381153aee44eca73083ae65551f530e047c62a6a33c773ceabe766d506"
+      },
+      "hero": {
+        "resolution": [
+          640,
+          360
+        ],
+        "changed_pixels": 3139,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0054991319444444445,
+          0.004930555555555555,
+          0.005750868055555556
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          4,
+          4,
+          5
+        ],
+        "direct_sha256": "f80880d1a6b0fea5298caddd52948ad4d572b37017f224fa28f820af165d1413",
+        "reuse_sha256": "a35000370c59e5def0bc82bd3ca07bc97835a0560dee428b2a34ce17058dc5ba"
+      },
+      "glass": {
+        "resolution": [
+          640,
+          360
+        ],
+        "changed_pixels": 2377,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.004448784722222222,
+          0.0038194444444444443,
+          0.0054600694444444445
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          33,
+          34,
+          31
+        ],
+        "direct_sha256": "033cfad4f7aaf53fbed05bd94b43e847aef302be850e246e1e68b00c44d735b2",
+        "reuse_sha256": "20edbc0515fdee56e72ac915b2a4f94c223b9cd1a6ce51dff3a2155743859d29"
+      },
+      "smoke-metal": {
+        "resolution": [
+          640,
+          360
+        ],
+        "changed_pixels": 1795,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0028125,
+          0.003042534722222222,
+          0.0041015625
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          4,
+          4,
+          7
+        ],
+        "direct_sha256": "e10259a69195ea9d66e883e26986fb39fb6746514a1c65157e95b587504bfe62",
+        "reuse_sha256": "a46d2ebf3f9f2298a6c2b58a626674472790000975163cb45e5a4adf848e311a"
+      }
+    },
+    "smoke_over_reflector_stress": {
+      "scene_input_sha256": "537c73c58fdffdf605c1b4dee4ee529e2909fdc46a6b96bd5e9c7746f5fd4de6",
+      "emitter_and_fire_light_position": [
+        -3.25,
+        0.18,
+        0.1
+      ],
+      "foreground_smoke_over_opaque_reflector": true,
+      "changed_pixels": 1866,
+      "pixel_count": 230400,
+      "mean_absolute_rgb_error_0_255": [
+        0.003125,
+        0.0033680555555555556,
+        0.004205729166666667
+      ],
+      "maximum_absolute_rgb_error_0_255": [
+        4,
+        4,
+        6
+      ],
+      "direct_sha256": "157a7a451584e5bed96ad16e94706a2b5a3d9d2aa84d57e2d26a14891a871b39",
+      "reuse_sha256": "d1e79d339ba239222f9d5141c660bbfe973992e1a31b6ce94a1458159ea39ebd"
+    }
+  },
+  "paired_route_profile": {
+    "route": "material-orbit",
+    "camera": "hero",
+    "mode": "serial",
+    "duration_seconds": 8,
+    "warmup_seconds": 2,
+    "pairs": 3,
+    "scene_sha256": "945fcb11f73dd78ec6d6966c855af74f018915cd8aadac2051b1812d68d420c9",
+    "candidate_scene_sha256": "ba4eedeface2aeb005c0fe68dad13a1be009bc4f29e2c885e9dd328f517fd054",
+    "interpretation": "GPU optical-resolve and complete-render times improved consistently across these short pairs; total CPU frame-work deltas were mixed and noisy.",
+    "frame_work": {
+      "baseline_run_medians_ms": [
+        3.684084,
+        4.241875,
+        3.766292
+      ],
+      "candidate_run_medians_ms": [
+        3.9544999999999995,
+        3.532666,
+        3.721958
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        0.27041599999999955,
+        -0.7092090000000004,
+        -0.044334000000000096
+      ],
+      "paired_delta_median_ms": -0.044334000000000096,
+      "paired_delta_p95_ms": 0.27041599999999955
+    },
+    "gpu_render": {
+      "baseline_run_medians_ms": [
+        2.292124,
+        2.278459,
+        2.280208
+      ],
+      "candidate_run_medians_ms": [
+        2.055333,
+        2.077458,
+        2.0665829999999996
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        -0.23679099999999975,
+        -0.20100099999999976,
+        -0.2136250000000004
+      ],
+      "paired_delta_median_ms": -0.2136250000000004,
+      "paired_delta_p95_ms": -0.20100099999999976
+    },
+    "optical_resolve": {
+      "baseline_run_medians_ms": [
+        1.633958,
+        1.597708,
+        1.597416
+      ],
+      "candidate_run_medians_ms": [
+        1.3968749999999999,
+        1.413125,
+        1.405625
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        -0.23708300000000015,
+        -0.18458299999999994,
+        -0.19179100000000004
+      ],
+      "paired_delta_median_ms": -0.19179100000000004,
+      "paired_delta_p95_ms": -0.18458299999999994
+    },
+    "atmosphere_fire": {
+      "baseline_run_medians_ms": [
+        0.8837499999999999,
+        0.8641249999999999,
+        0.876375
+      ],
+      "candidate_run_medians_ms": [
+        0.8877499999999999,
+        0.891208,
+        0.8905
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        0.0040000000000000036,
+        0.02708300000000008,
+        0.014124999999999943
+      ],
+      "paired_delta_median_ms": 0.014124999999999943,
+      "paired_delta_p95_ms": 0.02708300000000008
+    }
+  },
+  "verification": {
+    "command": "python3 scripts/verify.py --gpu",
+    "result": "passed",
+    "unit_tests": 29,
+    "gpu_backend": "Metal",
+    "gpu_device": "Apple M1 Max",
+    "native_window": false,
+    "windows_dx12_verified": false
+  },
+  "open_gates": [
+    "120-second repeated orbit and native-window confirmation",
+    "deeper review of rare glass edge differences and light/smoke ordering",
+    "Windows DX12 and other GPU backend validation",
+    "no production default promotion until image-quality and timing results persist across representative scenes"
+  ]
+}

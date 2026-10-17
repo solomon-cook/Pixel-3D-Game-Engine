@@ -65,6 +65,9 @@ pub struct Experiments {
     pub projected_detail_lod: bool,
     #[serde(default)]
     pub smoke_absorption_cache: bool,
+    /// Reuse the opaque surface result from the atmosphere-composited snapshot.
+    #[serde(default)]
+    pub optical_surface_reuse: bool,
 }
 
 #[derive(Clone, Serialize, Deserialize, JsonSchema)]

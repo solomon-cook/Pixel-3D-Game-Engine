@@ -1160,7 +1160,7 @@ fn draw_inspector(ctx: &egui::Context, session: &Session, commands: &mut Vec<(&s
         ui.separator();
         ui.label("EXPERIMENTS / independent toggles");
         let e=&session.scene.render.experiments;
-        for (key,label,initial) in [("pixel_cluster_lighting","Pixel-cluster lighting",e.pixel_cluster_lighting),("stable_smoke_detail","Smoke-field detail",e.stable_smoke_detail),("connected_motion","Connected wind",e.connected_motion),("projected_detail_lod","Projected fire detail LOD",e.projected_detail_lod),("smoke_absorption_cache","Smoke absorption cache",e.smoke_absorption_cache)] {
+        for (key,label,initial) in [("pixel_cluster_lighting","Pixel-cluster lighting",e.pixel_cluster_lighting),("stable_smoke_detail","Smoke-field detail",e.stable_smoke_detail),("connected_motion","Connected wind",e.connected_motion),("projected_detail_lod","Projected fire detail LOD",e.projected_detail_lod),("smoke_absorption_cache","Smoke absorption cache",e.smoke_absorption_cache),("optical_surface_reuse","Reuse optical surface lighting",e.optical_surface_reuse)] {
             let mut value=initial;
             if ui.checkbox(&mut value,label).changed() {commands.push(("set_parameter",json!({"path":format!("render.experiments.{key}"),"value":value})));}
         }

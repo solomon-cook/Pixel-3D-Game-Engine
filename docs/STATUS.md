@@ -31,6 +31,16 @@ recommended. Motion/temporal review, rapid density/light edit checks, cache
 allocation cleanup while disabled, Windows/DX12 and other GPU qualification remain
 open.
 
+O06 now has an opt-in opaque-reflector lighting reuse path. It reverses the
+matching same-pixel foreground atmosphere contribution from the HDR snapshot and
+uses the opaque normal/depth snapshot; transmissive surfaces keep direct shading.
+Three short M1 Max/Metal material-orbit pairs reduced optical-resolve medians by
+about 0.19 ms and GPU-render medians by about 0.21 ms. CPU frame-work differences
+were noisy. Fixed-tick material and smoke-over-reflector stills were visually close.
+The path is disabled by default pending the longer moving route, native-window
+measurements and Windows/DX12 or other GPU qualification; see
+[measurements-o06.json](measurements-o06.json).
+
 O01 profiling implementation now includes bounded asynchronous timestamps for
 smoke compute, shadows, opaque geometry, atmosphere/fire, optical resolve and post;
 serial latency and buffered throughput reports; a native vsynced route report;

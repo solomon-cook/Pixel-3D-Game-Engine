@@ -301,12 +301,14 @@ pub fn prepare(options: &Options) -> Result<(Scene, PathBuf, PathBuf)> {
                 "connected_motion" => scene.render.experiments.connected_motion = true,
                 "projected_detail_lod" => scene.render.experiments.projected_detail_lod = true,
                 "smoke_absorption_cache" => scene.render.experiments.smoke_absorption_cache = true,
+                "optical_surface_reuse" => scene.render.experiments.optical_surface_reuse = true,
                 "all" => {
                     scene.render.experiments.pixel_cluster_lighting = true;
                     scene.render.experiments.stable_smoke_detail = true;
                     scene.render.experiments.connected_motion = true;
                     scene.render.experiments.projected_detail_lod = true;
                     scene.render.experiments.smoke_absorption_cache = true;
+                    scene.render.experiments.optical_surface_reuse = true;
                 }
                 _ => bail!("experiments: unknown '{e}'"),
             }
@@ -427,6 +429,7 @@ fn benchmark(
                 "camera_draw_batches":metrics.camera_draw_batches,
                 "camera_vertices_submitted":metrics.camera_vertices_submitted,
                 "optical_draw_batches":metrics.optical_draw_batches,
+                "surface_lighting_reuse_enabled":metrics.optical_surface_reuse_enabled,
                 "shadow_objects_visible":metrics.shadow_objects_visible,
                 "shadow_draw_batches":metrics.shadow_draw_batches,
                 "shadow_vertices_submitted":metrics.shadow_vertices_submitted
@@ -683,6 +686,12 @@ fn benchmark(
             "gpu_build":timing_summary(&samples.iter().filter_map(|s|s["smoke_absorption_cache"]["gpu_build_ms"].as_f64()).collect::<Vec<_>>()),
             "texture_dimensions":[session.scene.render.absorption_cache_resolution,session.scene.render.absorption_cache_resolution,session.scene.render.absorption_cache_resolution],
             "note":"Caches only primary authored fire-light smoke optical depth. Other authored/particle lights and out-of-volume points use direct sampling. Cache rebuilds every rendered frame so paused density/light edits are current."
+        },
+        "optical_surface_reuse":{
+            "enabled":session.scene.render.experiments.optical_surface_reuse,
+            "opaque_surface_only":true,
+            "optical_resolve_gpu":timing_summary(&samples.iter().filter_map(|s|s["gpu_passes_ms"]["optical_resolve"].as_f64()).collect::<Vec<_>>()),
+            "note":"Opaque reflectors recover the same-pixel shaded base from the atmosphere-composited snapshot. Transmissive surfaces retain direct lighting because the opaque pass discards them."
         },
         "shadow_cache":shadow_cache,
         "geometry_rendering":{
