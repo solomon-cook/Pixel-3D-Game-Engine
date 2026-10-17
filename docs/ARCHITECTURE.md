@@ -62,6 +62,9 @@ shared by the inked and soft volume render paths, with analytic intersections
 and bounds/depth rejection. Fire geometry is not rebuilt by a ray-march search
 inside every pixel. This remains a one-emitter prototype, with explicit budgets
 and counters rather than a claim of arbitrary source scalability.
+The bounded two-emitter proposal and its runtime/memory acceptance gates are in
+[MULTI_EMITTER_PLAN.md](MULTI_EMITTER_PLAN.md); no multi-emitter runtime is
+implemented yet.
 
 Smoke density and heat advect together but dissipate/cool independently. Source
 heat and light flicker follow the same slow fire envelope. Profile switching

@@ -35,6 +35,7 @@ Detailed steps, dependencies and acceptance criteria live in
 
 - [x] Simulation-driven surface heat cue — implemented and reviewed at fixed ticks across four named cameras. Readability is projection-dependent and the measured GPU-render increase is small; keep it opt-in, with authored-scene promotion gated on O08 and broader visual/DX12 acceptance. Evidence: [measurements-heat-cue.json](docs/measurements-heat-cue.json).
 - [x] Bind emitters to their thermal/fire profile and primary point light by stable IDs; legacy scenes retain positional light binding. Multi-fire stress tests and per-emitter simulation/render ownership remain open.
+- [ ] Implement the bounded two-emitter runtime described in [MULTI_EMITTER_PLAN.md](docs/MULTI_EMITTER_PLAN.md); do not expand scene validation before per-source simulation/render support exists.
 - [x] Evaluate active-region smoke simulation against O01 stage data. Current M1 Max/Metal measurements put smoke compute at 0.0205–0.0206 ms median versus 2.42–3.25 ms render stages, so there is no timing case for an active-region prototype; re-evaluate if compute cost or workload changes.
 
 Keep selected pixel density and simulation state independent of camera detail.
