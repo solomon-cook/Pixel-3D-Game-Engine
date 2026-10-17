@@ -214,6 +214,7 @@ pub struct Renderer {
     absorption_groups: [wgpu::BindGroup; 2],
     hdr_texture: wgpu::Texture,
     normals_texture: wgpu::Texture,
+    effect_depth_format: wgpu::TextureFormat,
     volume_groups: [wgpu::BindGroup; 2],
     volume_layout: wgpu::BindGroupLayout,
     smoke_groups: [wgpu::BindGroup; 2],
@@ -668,6 +669,18 @@ impl Renderer {
             })
             .await
             .context("no compatible desktop GPU adapter")?;
+        let rg16_features = adapter.get_texture_format_features(wgpu::TextureFormat::Rg16Float);
+        let effect_depth_format = if rg16_features
+            .allowed_usages
+            .contains(wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING)
+            && rg16_features
+                .flags
+                .contains(wgpu::TextureFormatFeatureFlags::FILTERABLE)
+        {
+            wgpu::TextureFormat::Rg16Float
+        } else {
+            HDR
+        };
         let timestamp =
             enable_timestamps && adapter.features().contains(wgpu::Features::TIMESTAMP_QUERY);
         let (device, queue) = adapter
@@ -1317,7 +1330,7 @@ impl Renderer {
             &device,
             "visible atmosphere depth and flame mask",
             [w, h, 1],
-            HDR,
+            effect_depth_format,
             use_color,
             wgpu::TextureDimension::D2,
         )
@@ -1438,6 +1451,7 @@ impl Renderer {
             &shadow_material_layout,
             &tile_list_layout,
             &tile_build_layout,
+            effect_depth_format,
             &shader_directory,
         )?;
         let timing = timestamp.then(|| Timing {
@@ -1497,7 +1511,13 @@ impl Renderer {
         });
         let pixel_count =
             u64::from(scene.render.resolution[0]) * u64::from(scene.render.resolution[1]);
-        let render_targets_bytes = pixel_count * (3 * 8 + 4 + 4);
+        let effect_depth_bytes_per_pixel = if effect_depth_format == wgpu::TextureFormat::Rg16Float
+        {
+            4
+        } else {
+            8
+        };
+        let render_targets_bytes = pixel_count * (2 * 8 + effect_depth_bytes_per_pixel + 4 + 4);
         let smoke_bytes =
             u64::from(VOLUME[0]) * u64::from(VOLUME[1]) * u64::from(VOLUME[2]) * 8 * 2;
         let shadow_bytes = 1024u64 * 1024 * 4 + 256 * 256 * 6 * 4;
@@ -1558,6 +1578,8 @@ impl Renderer {
         let resource_inventory = serde_json::json!({
             "estimate_kind":"known allocation sizes; excludes driver alignment, transient capture/surface buffers, pipelines, bind groups and timestamp query storage",
             "render_targets_bytes":render_targets_bytes,
+            "effect_depth_format":format!("{effect_depth_format:?}"),
+            "effect_depth_bytes":pixel_count*effect_depth_bytes_per_pixel,
             "optical_snapshot_bytes":0,
             "smoke_volumes_bytes":smoke_bytes,
             "smoke_absorption_cache_bytes":(scene.render.absorption_cache_resolution as u64).pow(3)*8,
@@ -1589,6 +1611,7 @@ impl Renderer {
             device,
             queue,
             adapter,
+            effect_depth_format,
             pixels,
             pixel_texture,
             resolution: scene.render.resolution,
@@ -1742,6 +1765,7 @@ impl Renderer {
         shadow_materials: &wgpu::BindGroupLayout,
         tile_lists: &wgpu::BindGroupLayout,
         tile_build: &wgpu::BindGroupLayout,
+        effect_depth_format: wgpu::TextureFormat,
         dir: &Path,
     ) -> Result<Pipelines> {
         let read = |name: &str| {
@@ -1931,7 +1955,7 @@ impl Renderer {
             Some("volume_fs"),
             &[
                 color_target(HDR, Some(wgpu::BlendState::PREMULTIPLIED_ALPHA_BLENDING)),
-                color_target(HDR, None),
+                color_target(effect_depth_format, None),
             ],
             false,
             false,
@@ -2051,6 +2075,7 @@ impl Renderer {
             &self.shadow_material_layout,
             &self.tile_list_layout,
             &self.tile_build_layout,
+            self.effect_depth_format,
             &self.shader_directory,
         )?;
         self.pipelines = replacement;

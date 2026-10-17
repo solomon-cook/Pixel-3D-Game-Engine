@@ -456,18 +456,23 @@ repeat the audit after O03/O05/O06 introduce resources. Background:
 lazily when a scene first uses an optical material. Diffuse 640×360 scenes save
 3,686,400 known bytes until an optical material is activated; a live material edit
 was verified to allocate the pair without changing fixed-tick output relative to
-the pre-change build. Optical-frame copy traffic is unchanged. This does not close
-the broader O08 task: format packing, pass-copy redesign, longer timing, and
+the pre-change build. Optical-frame copy traffic is unchanged. The effect-depth and
+flame-coverage target also uses adapter-gated Rg16Float when filterable and usable
+as a render attachment and sampled texture, with Rgba16Float fallback. On M1
+Max/Metal at 640×360 this saves 921,600 known bytes and matched smoke and metal
+captures were pixel-identical at native capture scale. These are allocation
+changes; no frame-time gain is claimed. Pass-copy redesign, longer timing, and
 Windows/DX12 validation remain open. See [measurements-o08.json](measurements-o08.json).
 
-**Inventory checkpoint (16 October 2026):** known allocations, resource lifetimes,
+**Inventory checkpoint (17 October 2026):** known allocations, resource lifetimes,
 per-frame logical attachment/copy traffic, nominal smoke sample/store footprint,
 dynamic/startup upload payloads and a live M1 Max/Metal texture-format query are
 recorded in [measurements-o08.json](measurements-o08.json). The report does not
-measure external-memory bandwidth. Lazy optical snapshot allocation is implemented
-with a measured 3,686,400-byte reduction for diffuse 640×360 scenes. RG16 layouts
-and copy elimination remain candidates; validate on both Metal and DX12 before
-changing those paths. O08 layout/pass experiments and the later sparse-smoke gate
+measure external-memory bandwidth. Lazy optical snapshots reduce diffuse-scene
+allocations by 3,686,400 bytes; adapter-gated Rg16Float effect coverage saves
+921,600 bytes on the measured M1 Max/Metal adapter. Two-channel smoke storage and
+copy elimination remain candidates; validate layouts on both Metal and DX12.
+O08 layout/pass experiments and the later sparse-smoke gate
 remain open.
 
 ## Delivery order and promotion

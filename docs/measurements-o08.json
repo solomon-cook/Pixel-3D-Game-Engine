@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "date": "2026-10-16",
+  "date": "2026-10-17",
   "purpose": "O08 resource size, lifetime and logical traffic inventory; not a physical bandwidth measurement or optimization result",
   "device": {
     "name": "Apple M1 Max",
@@ -19,7 +19,7 @@
     "format_capability_probe": "artifacts/o08/capability-probe.json",
     "format_capability_probe_sha256": "dfd283f6782f96a368dc2a7b207d0ea9073d90ee9c926163b038178d5d3d9edd",
     "format_capability_probe_scope": "one-second clearing route used to initialize the adapter and return wgpu format feature reports; timings are discarded",
-    "format_query_limit": "Adapter-reported format features are recorded; no alternate-format texture/pipeline was created. Device-specific format feature enablement and pipeline validation remain part of any follow-up trial."
+    "format_query_limit": "The original query recorded adapter-reported format features only. The later effect-target trial created the Rg16Float render attachment and render pipeline on this M1 Max/Metal adapter; fallback selection remains capability-gated and other adapters still require runtime validation."
   },
   "provenance": {
     "source_revision": "f5632ef210f82c2556110d487392b445e41b2ff6",
@@ -202,11 +202,11 @@
     "clearing_or_heavy": {
       "shadow_attachment_clear_and_write_bytes": 5767168,
       "opaque_color_normal_depth_clear_and_write_bytes": 4608000,
-      "atmosphere_hdr_load_store_and_effect_target_clear_write_bytes": 5529600,
+      "atmosphere_hdr_load_store_and_effect_target_clear_write_bytes": 4608000,
       "post_output_full_frame_write_bytes": 921600,
-      "fixed_attachment_total_bytes": 16826368,
+      "fixed_attachment_total_bytes": 15904768,
       "vertex_input_bytes_if_each_draw_fetches_the_full_buffer": 84317760,
-      "notes": "Vertex input is seven shadow draws plus opaque draw. These are logical attachment and vertex references, not physical DRAM traffic. Tile memory, caches, compression and overdraw change external traffic. Shader texture reads are variable and excluded."
+      "notes": "Vertex input is seven shadow draws plus opaque draw. These are logical attachment and vertex references, not physical DRAM traffic. Tile memory, caches, compression and overdraw change external traffic. Shader texture reads are variable and excluded. Effect target uses Rg16Float here, reducing modeled full-frame effect-target clear/write traffic by 921600 bytes versus the original Rgba16Float estimate; this remains logical traffic, not measured DRAM bandwidth."
     },
     "optical_frame_additions": {
       "two_snapshot_copy_payload_bytes": 3686400,
@@ -274,7 +274,7 @@
         "candidate": "Pack effect depth and flame coverage into a two-channel target",
         "inventory_saving_bytes_at_640x360": 921600,
         "evidence": "Rgba16Float target is 8 bytes/pixel; post shader consumes x and y; this M1 Max reports Rg16Float renderable and filterable.",
-        "status": "candidate only; requires matched images, depth precision checks and Metal plus DX12 capability/results"
+        "status": "implemented on this M1 Max/Metal adapter with Rgba16Float fallback; matching 640x360 smoke and opaque-metal captures are byte-identical; DX12 and other-adapter validation remain open"
       },
       {
         "candidate": "Use a two-channel density/temperature ping-pong texture",
@@ -350,5 +350,61 @@
       "Known GPU allocation is a descriptor-size estimate and excludes driver alignment, transient allocations, pipelines and timestamp storage.",
       "Measurements cover Apple M1 Max/Metal only; Windows DX12 and other GPU backends remain open."
     ]
+  },
+  "implementation_trials": {
+    "effect_depth_rg16": {
+      "selected_format": "Rg16Float",
+      "fallback_format": "Rgba16Float",
+      "selection_requirement": "filterable plus RENDER_ATTACHMENT and TEXTURE_BINDING usages",
+      "adapter": "Apple M1 Max / Metal / IntegratedGpu",
+      "resolution": [
+        640,
+        360
+      ],
+      "bytes_per_pixel": {
+        "rgba16float": 8,
+        "rg16float": 4
+      },
+      "target_bytes": {
+        "rgba16float": 1843200,
+        "rg16float": 921600
+      },
+      "known_allocation_saving_bytes": 921600,
+      "captures": [
+        {
+          "scene": "assets/scenes/clearing.json",
+          "camera": "smoke-close",
+          "seed": 42,
+          "tick": 300,
+          "scale": 1,
+          "candidate": "artifacts/o08/clearing-rg16-scale1.png",
+          "baseline": "artifacts/o05/captures/clearing-direct.png",
+          "candidate_sha256": "c080df09137173b984f48d39137da5a8719b2110965d0fd270a801e76f0adbfe",
+          "baseline_sha256": "c080df09137173b984f48d39137da5a8719b2110965d0fd270a801e76f0adbfe",
+          "changed_pixels": 0,
+          "mean_absolute_channel_error": 0,
+          "max_channel_error": 0
+        },
+        {
+          "scene": "assets/scenes/materials.json",
+          "camera": "metal-close",
+          "seed": 42,
+          "tick": 300,
+          "scale": 1,
+          "candidate": "artifacts/o08/metal-rg16-scale1.png",
+          "baseline": "artifacts/o06/captures/metal-direct.png",
+          "candidate_sha256": "44676834882e579439c0ec61fd20c85501f9a5ad32369f1d0e48b1b31c3c6208",
+          "baseline_sha256": "44676834882e579439c0ec61fd20c85501f9a5ad32369f1d0e48b1b31c3c6208",
+          "changed_pixels": 0,
+          "mean_absolute_channel_error": 0,
+          "max_channel_error": 0
+        }
+      ],
+      "performance_claim": "none; allocation and image parity were measured, not frame-time improvement",
+      "limits": "One adapter only; Windows DX12 and unsupported-format fallback behavior on another adapter remain unverified.",
+      "modeled_clear_write_traffic_saving_per_frame_bytes": 921600,
+      "baseline_fixed_attachment_total_bytes": 16826368,
+      "candidate_fixed_attachment_total_bytes": 15904768
+    }
   }
 }

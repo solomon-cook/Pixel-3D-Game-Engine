@@ -1,14 +1,14 @@
 # Milestone status
 
-16 October 2026. The first development implementation is runnable; visual and
+17 October 2026. The first development implementation is runnable; visual and
 platform acceptance are still open. This is a rendering lab and engine foundation.
 
 Optimisation planning: [eight workstream plans](OPTIMIZATION_PLAN.md) and the
 [execution queue](../TODO.md) define profiling, cached shadows, tiled effects,
 projected detail, smoke absorption reuse, optical specialisation, object culling/
 instancing and resource efficiency. O01's profiling implementation and M1 Max/Metal
-workload evidence are complete. O08's first resource and logical-traffic inventory
-is complete on M1 Max/Metal; all layout/pass changes remain proposals pending
+workload evidence are complete. O08's inventory and two targeted allocation changes
+are implemented on M1 Max/Metal; broader layout/pass changes still need
 cross-backend measurements and comparisons. O03's bounded single-emitter tile
 lists and O07's per-camera/per-light culling, shared meshes and instancing are
 implemented and measured on M1 Max/Metal. Platform acceptance gates remain open.
@@ -63,16 +63,17 @@ Windows DX12 and RTX-class rendering remain unverified.
 
 ## O08 resource and bandwidth inventory
 
-The original 640×360 clearing/heavy inventory recorded 29,806,088 bytes, including
-two full-resolution optical snapshots. The current renderer reports 24,909,848
-known bytes before first optical use and 28,596,248 bytes after live optical
-activation; snapshots contribute 3,686,400 bytes. The Material Atelier inventory
-in the original report was 20,370,208 bytes. These are descriptor/structure-size
-estimates; driver alignment and transient/pipeline storage are excluded.
+The original 640×360 clearing/heavy inventory recorded 29,806,088 bytes. The current
+renderer reports 23,988,248 known bytes before first optical use and 27,674,648
+bytes after live optical activation; lazy optical snapshots add 3,686,400 bytes.
+The current Material Atelier capture reports 19,905,264 known bytes. These are
+descriptor/structure-size estimates; driver alignment and transient/pipeline
+storage are excluded.
 
-At 640×360, the clearing/heavy frame has 16,826,368 bytes of modeled full-frame
-attachment clear/write/load/store traffic before shader sampling: shadow maps,
-opaque color/normal/depth, atmosphere HDR/effect target, and post output. Optical
+At 640×360, the clearing/heavy frame has 15,904,768 bytes of modeled full-frame
+attachment clear/write/load/store traffic before shader sampling with the current
+Rg16Float effect target (the original RGBA16F estimate was 16,826,368 bytes):
+shadow maps, opaque color/normal/depth, atmosphere HDR/effect target, and post output. Optical
 frames add 7,372,800 logical bytes for snapshot copy reads/writes and 7,372,800
 bytes of optical attachment load/store. Seven shadow draws plus opaque geometry
 reference 84,317,760 bytes of vertex input if each draw fetches the full buffer;
@@ -89,23 +90,24 @@ at about 0.0205 ms median, compared with multi-millisecond post and atmosphere/f
 stages; current evidence does not justify active-region simulation.
 
 A live M1 Max/Metal wgpu format query reported sampled, storage, render-attachment,
-copy and filtering support for Rg16Float and the probed alternatives. This is one
-adapter's feature report, not DX12 support or proof that a narrower layout has
-acceptable precision. Candidate follow-ups are a two-channel effect target
-(921,600 bytes saved at this resolution), two-channel smoke volumes (1,179,648
-bytes saved), and removing the two full-frame optical copies (7,372,800 logical
-read/write bytes per optical frame). Optical snapshots now allocate on first
-optical-material use, saving 3,686,400 known bytes in a diffuse 640×360 scene. A
-live reflectivity edit was verified to allocate the snapshots and render an
-optical draw; fixed-tick diffuse and optical captures stayed pixel-identical to
-pre-change captures. This changes allocation lifetime only: optical-frame copy
-traffic is unchanged. Format packing, pass-copy redesign, total pass timing and
-Windows DX12/RTX acceptance remain open. Full provenance and per-resource
-breakdown are in [measurements-o08.json](measurements-o08.json).
+copy and filtering support for Rg16Float and the probed alternatives. The effect
+depth/flame-coverage target now selects Rg16Float only when it is filterable and
+supports render attachment plus texture binding; otherwise it falls back to
+Rgba16Float. At 640×360 this saves 921,600 known bytes. Smoke and opaque-metal
+captures at matching 640×360 output were pixel-identical to saved baselines. This
+is one adapter's result, not DX12 support. Two-channel smoke volumes (1,179,648
+bytes saved) and removing the two full-frame optical copies (7,372,800 logical
+read/write bytes per optical frame) remain candidates. Optical snapshots allocate
+on first optical-material use, saving another 3,686,400 known bytes in diffuse
+scenes; live reflectivity activation and fixed-tick capture parity were verified.
+No frame-time gain is claimed for either allocation change. Pass-copy redesign,
+total pass timing and Windows DX12/RTX acceptance remain open. Full provenance and
+per-resource breakdown are in [measurements-o08.json](measurements-o08.json).
 The required `python3 scripts/verify.py --gpu` run passed on this M1 Max/Metal
 host, including Clippy, workspace tests, scene validation and GPU integration
-checks. This verifies the lazy snapshot lifetime on Metal, not alternate format
-creation or cross-backend behavior.
+checks. This verifies Rg16Float texture/pipeline creation and lazy snapshot
+lifetime on Metal, not fallback execution on another adapter or cross-backend
+behavior.
 
 ## O03 single-emitter tile lists
 

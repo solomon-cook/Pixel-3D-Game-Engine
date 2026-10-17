@@ -268,5 +268,10 @@ the known allocation falls by 3,686,400 bytes for diffuse scenes. A live reflect
 edit activated the optical pass and allocated the snapshots; the diffuse smoke and
 opaque-metal fixed-tick captures were byte-identical to pre-change captures. No
 frame-time reduction is claimed because the old diffuse path already skipped the
-copy and optical draw. The full live-allocation report and limits are in
+copy and optical draw. The effect-depth/flame-coverage attachment now uses Rg16Float
+when the adapter reports filterable sampled and render-attachment support, falling
+back to Rgba16Float. On this M1 Max/Metal adapter it saves 921,600 bytes at 640×360;
+matched smoke and opaque-metal captures at scale 1 were pixel-identical to saved
+baselines. This confirms the path on one Metal adapter only; no timing benefit is
+claimed. The full live-allocation report, format selection and limits are in
 [measurements-o08.json](measurements-o08.json).
