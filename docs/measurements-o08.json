@@ -741,6 +741,223 @@
       "raw_reports": "artifacts/o08/timing-optical-copy/",
       "interpretation": "No meaningful timing gain established. Optical-resolve paired GPU deltas were mixed and had a -0.004874 ms median; total GPU render median delta was -0.011916 ms, while frame-work deltas were mixed (-0.042875, -0.047626, +0.108209 ms). Three route pairs are insufficient to claim a performance improvement. Memory and logical-traffic reductions are reported separately and are not measured bandwidth.",
       "limits": "One Apple M1 Max/Metal adapter; short 20-second serial route pairs, no DX12/RTX or native-window results."
+    },
+    "optical_normal_snapshot_removal_60s": {
+      "baseline_revision": "1742044",
+      "candidate_revision": "632be12",
+      "adapter": "Apple M1 Max / Metal",
+      "scene": "assets/scenes/materials.json",
+      "route": "material-orbit",
+      "mode": "serial",
+      "resolution": [
+        640,
+        360
+      ],
+      "seed": 42,
+      "camera": "hero",
+      "pairs": 3,
+      "route_duration_seconds": 60,
+      "warmup_seconds_per_run": 10,
+      "frames_per_run": 3600,
+      "baseline_candidate_order": [
+        {
+          "pair": 1,
+          "variant": "baseline",
+          "elapsed_seconds": 20.14
+        },
+        {
+          "pair": 1,
+          "variant": "candidate",
+          "elapsed_seconds": 20.08
+        },
+        {
+          "pair": 2,
+          "variant": "candidate",
+          "elapsed_seconds": 18.63
+        },
+        {
+          "pair": 2,
+          "variant": "baseline",
+          "elapsed_seconds": 18.49
+        },
+        {
+          "pair": 3,
+          "variant": "baseline",
+          "elapsed_seconds": 19.47
+        },
+        {
+          "pair": 3,
+          "variant": "candidate",
+          "elapsed_seconds": 18.09
+        }
+      ],
+      "metrics": {
+        "frame_work": {
+          "baseline_run_medians_ms": [
+            4.323666,
+            3.764208,
+            3.990291
+          ],
+          "candidate_run_medians_ms": [
+            4.313834,
+            3.630542,
+            3.5835
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.009832000000000285,
+            -0.13366599999999984,
+            -0.4067910000000001
+          ],
+          "paired_delta_median_ms": -0.13366599999999984
+        },
+        "cpu_encode": {
+          "baseline_run_medians_ms": [
+            0.5045,
+            0.27191699999999974,
+            0.345583
+          ],
+          "candidate_run_medians_ms": [
+            0.492792,
+            0.266126,
+            0.25133300000000003
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.01170799999999994,
+            -0.0057909999999997686,
+            -0.09424999999999994
+          ],
+          "paired_delta_median_ms": -0.01170799999999994
+        },
+        "cpu_upload": {
+          "baseline_run_medians_ms": [
+            0.1915,
+            0.10991599999999999,
+            0.13145800000000002
+          ],
+          "candidate_run_medians_ms": [
+            0.18725,
+            0.107875,
+            0.10133299999999999
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.004250000000000004,
+            -0.0020409999999999873,
+            -0.030125000000000027
+          ],
+          "paired_delta_median_ms": -0.004250000000000004
+        },
+        "simulation_cpu": {
+          "baseline_run_medians_ms": [
+            0.225709,
+            0.157917,
+            0.181959
+          ],
+          "candidate_run_medians_ms": [
+            0.21520799999999998,
+            0.15720900000000002,
+            0.149125
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.01050100000000001,
+            -0.0007079999999999864,
+            -0.032834
+          ],
+          "paired_delta_median_ms": -0.01050100000000001
+        },
+        "queue_submit_cpu": {
+          "baseline_run_medians_ms": [
+            0.1125,
+            0.054958999999999994,
+            0.078792
+          ],
+          "candidate_run_medians_ms": [
+            0.1095,
+            0.054000000000000006,
+            0.050125
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.0030000000000000027,
+            -0.0009589999999999876,
+            -0.028666999999999998
+          ],
+          "paired_delta_median_ms": -0.0030000000000000027
+        },
+        "gpu_render": {
+          "baseline_run_medians_ms": [
+            2.565041,
+            2.5909590000000002,
+            2.5726679999999997
+          ],
+          "candidate_run_medians_ms": [
+            2.565334,
+            2.582084,
+            2.597416
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.00029300000000009874,
+            -0.008875000000000188,
+            0.024748000000000214
+          ],
+          "paired_delta_median_ms": 0.00029300000000009874
+        },
+        "gpu_stages.optical_resolve": {
+          "baseline_run_medians_ms": [
+            1.817667,
+            1.8630419999999999,
+            1.8353329999999999
+          ],
+          "candidate_run_medians_ms": [
+            1.826333,
+            1.8508749999999998,
+            1.869792
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.008666000000000063,
+            -0.012167000000000039,
+            0.03445900000000002
+          ],
+          "paired_delta_median_ms": 0.008666000000000063
+        },
+        "gpu_stages.post": {
+          "baseline_run_medians_ms": [
+            1.917625,
+            1.9748329999999998,
+            1.9469159999999999
+          ],
+          "candidate_run_medians_ms": [
+            1.927833,
+            1.960917,
+            1.9857079999999998
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.010207999999999995,
+            -0.013915999999999817,
+            0.03879199999999994
+          ],
+          "paired_delta_median_ms": 0.010207999999999995
+        },
+        "gpu_stages.smoke_compute": {
+          "baseline_run_medians_ms": [
+            0.01775,
+            0.017791,
+            0.017667
+          ],
+          "candidate_run_medians_ms": [
+            0.017666,
+            0.017667,
+            0.017875
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -8.399999999999727e-05,
+            -0.00012400000000000258,
+            0.00020799999999999985
+          ],
+          "paired_delta_median_ms": -8.399999999999727e-05
+        }
+      },
+      "raw_reports": "artifacts/o08/timing-optical-copy-60s/",
+      "interpretation": "No GPU timing benefit measured on this route. Whole-GPU paired deltas were +0.000293, -0.008875, +0.024748 ms (median +0.000293 ms); optical-resolve deltas were +0.008666, -0.012167, +0.034459 ms (median +0.008666 ms). Frame-work deltas were all negative but varied substantially (-0.009832, -0.133666, -0.406791 ms), so do not attribute them to the GPU pass change. Keep the result as memory/logical traffic savings only.",
+      "limits": "One Apple M1 Max/Metal adapter; three 60-second serial material-orbit pairs with 10-second warmup, no Windows DX12/RTX or native-window results."
     }
   }
 }
