@@ -32,7 +32,7 @@ Detailed steps, dependencies and acceptance criteria live in
 - [ ] Simulation-driven surface heat cue — opt-in material response backed by
   the existing temperature volume; evaluate pixel readability and shader cost
   after O08 before enabling it in authored scenes by default.
-- [ ] Extend explicit emitter/thermal/light ownership before multi-fire stress tests.
+- [x] Bind emitters to their thermal/fire profile and primary point light by stable IDs; legacy scenes retain positional light binding. Multi-fire stress tests and per-emitter simulation/render ownership remain open.
 - [ ] Consider active-region smoke simulation only if compute measurements justify it.
 
 Keep selected pixel density and simulation state independent of camera detail.

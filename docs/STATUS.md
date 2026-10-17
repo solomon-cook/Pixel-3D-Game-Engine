@@ -192,8 +192,15 @@ evaluation, natural over-capacity stress, Windows/DX12 and other GPU vendors rem
 open. Details and hashes are in [measurements-o03.json](measurements-o03.json); raw
 pair reports are in local ignored `artifacts/o03/`.
 
+Emitter/profile ownership remains one-emitter at runtime. Scene emitters now
+bind their thermal/fire profile by `effect_profile` and their colocated primary
+point light by `light_id`; legacy scenes may omit the light link and use the
+original position match. This removes renderer-side light identity inference
+from migrated scenes, but does not add per-emitter smoke fields, tile lists, or
+fire-light shadow maps. Multi-emitter stress and Windows/DX12 checks remain open.
+
 `python3 scripts/verify.py --gpu` passed on this host: formatting, Clippy,
-25 workspace tests, scene validation and material/fire GPU checks. The verifier
+30 workspace tests, scene validation and material/fire GPU checks. The verifier
 reports `native: false`; native-window lifecycle and Windows/DX12 rendering remain
 unverified.
 

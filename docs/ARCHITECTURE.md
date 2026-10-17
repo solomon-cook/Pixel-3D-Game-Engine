@@ -54,7 +54,9 @@ surface representation of the volume, not a replacement fluid solver.
 ## Reusable effect profiles
 
 Scene `effects` profiles own fire motion/budget, thermal settings and HDR palette;
-emitters refer to them by stable ID. `effects.rs` reconstructs bounded world-space
+emitters refer to profiles and their colocated primary point lights by stable ID
+(`light_id`; older scenes may omit it and retain position-based binding).
+`effects.rs` reconstructs bounded world-space
 curves/fragments/embers from seed and fixed tick. A cached storage buffer is
 shared by the inked and soft volume render paths, with analytic intersections
 and bounds/depth rejection. Fire geometry is not rebuilt by a ray-march search

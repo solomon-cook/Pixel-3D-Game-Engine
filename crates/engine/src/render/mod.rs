@@ -293,10 +293,7 @@ fn shadow_cache_key(scene: &Scene) -> Option<ShadowCacheKey> {
         .iter()
         .find(|light| light.kind == LightKind::Directional)?;
     let emitter = scene.emitters.first()?;
-    let fire = scene
-        .lights
-        .iter()
-        .find(|light| light.kind == LightKind::Point && light.position == emitter.position)?;
+    let fire = scene.light_for_emitter(emitter)?;
     Some(ShadowCacheKey {
         casters: scene.objects.clone(),
         shadow_materials: scene
@@ -656,12 +653,8 @@ fn shadow_matrices(scene: &Scene) -> [Mat4; 7] {
         .find(|light| light.kind == LightKind::Directional)
         .expect("validated scene has a directional light");
     let fire = scene
-        .lights
-        .iter()
-        .find(|light| {
-            light.kind == LightKind::Point && light.position == scene.emitters[0].position
-        })
-        .expect("validated scene has a fire point light");
+        .light_for_emitter(&scene.emitters[0])
+        .expect("validated scene has an emitter point light");
     let sun_direction = Vec3::from(sun.position).normalize();
     let mut result = [Mat4::IDENTITY; 7];
     result[0] = Mat4::orthographic_rh(-24., 24., -24., 24., 0.1, 100.)
@@ -2566,12 +2559,8 @@ impl Renderer {
             .iter()
             .find(|light| light.kind == LightKind::Directional)
             .unwrap();
-        let fire = scene
-            .lights
-            .iter()
-            .find(|l| l.kind == LightKind::Point && l.position == scene.emitters[0].position)
-            .unwrap();
         let emitter = &scene.emitters[0];
+        let fire = scene.light_for_emitter(emitter).unwrap();
         let sun_direction = Vec3::from(sun.position).normalize();
         let sun_matrix = Mat4::orthographic_rh(-24., 24., -24., 24., 0.1, 100.)
             * Mat4::look_at_rh(

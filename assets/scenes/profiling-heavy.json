@@ -6455,7 +6455,8 @@
       "style": "ink",
       "self_shadow_strength": 0.9,
       "internal_glow": 0.0,
-      "effect_profile": "effect-campfire"
+      "effect_profile": "effect-campfire",
+      "light_id": "fire-light"
     }
   ],
   "cameras": [

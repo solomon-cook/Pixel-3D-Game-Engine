@@ -143,6 +143,21 @@ smoke absorption sampling. Only the fire source casts geometry shadows.
 This preserves a bounded sample budget but leaves multi-light selection
 transitions and many-emitter scaling as explicit research limits.
 
+## Stable emitter light ownership (17 October)
+
+Hypothesis: stable scene IDs should identify an emitter's thermal/fire profile
+and primary point light, so later multi-emitter work does not infer ownership
+from coincident floating-point positions. Emitters now accept `light_id`; the
+linked point light must exist and remain colocated with the emitter. Shipped
+scenes declare `fire-light`. Older scenes without the field keep the previous
+position-based binding. The current renderer still processes one emitter and
+one simulation field, so this is a data-contract foundation only: no multi-fire
+visual or scaling claim is made. The baseline fire representation is unchanged;
+there is no pixel or shader cost. Verification should cover scene validation,
+live `describe` schema, fixed-tick captures and the GPU verify workflow. Per-
+emitter simulation buffers, light budgets, tile-list ownership and multi-source
+stress tests remain open.
+
 ## Material response beneath pixel treatment (16 October)
 
 Hypothesis: independent HDR metalness/refraction/scattering parameters retain

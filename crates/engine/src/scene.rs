@@ -188,6 +188,10 @@ pub enum LightKind {
 #[serde(deny_unknown_fields)]
 pub struct Emitter {
     pub id: String,
+    /// Authored point light owned by this emitter. Omitted only for legacy scenes,
+    /// which bind the point light colocated with the emitter position.
+    #[serde(default)]
+    pub light_id: Option<String>,
     pub position: [f32; 3],
     pub intensity: f32,
     pub smoke_density: f32,
@@ -294,6 +298,18 @@ impl Route {
 }
 
 impl Scene {
+    pub fn light_for_emitter(&self, emitter: &Emitter) -> Option<&Light> {
+        if let Some(light_id) = &emitter.light_id {
+            self.lights
+                .iter()
+                .find(|light| light.id == *light_id && light.kind == LightKind::Point)
+        } else {
+            self.lights
+                .iter()
+                .find(|light| light.kind == LightKind::Point && light.position == emitter.position)
+        }
+    }
+
     pub fn load(path: &Path) -> Result<Self> {
         let text =
             std::fs::read_to_string(path).with_context(|| format!("scene {}", path.display()))?;
@@ -515,15 +531,29 @@ impl Scene {
                 );
             }
         }
-        if !self
-            .lights
-            .iter()
-            .any(|l| l.kind == LightKind::Point && l.position == self.emitters[0].position)
-        {
-            bail!(
-                "emitter '{}'.position: one point light must coincide with the fire source",
-                self.emitters[0].id
-            );
+        for emitter in &self.emitters {
+            if let Some(light_id) = &emitter.light_id {
+                if !self
+                    .lights
+                    .iter()
+                    .any(|light| light.id == *light_id && light.kind == LightKind::Point)
+                {
+                    bail!(
+                        "emitter '{}'.light_id: expected an existing point light",
+                        emitter.id
+                    );
+                }
+            }
+            let linked_light = self.light_for_emitter(emitter);
+            if linked_light.is_none() {
+                bail!(
+                    "emitter '{}'.position: one point light must coincide with the fire source",
+                    emitter.id
+                );
+            }
+            if linked_light.is_some_and(|light| light.position != emitter.position) {
+                bail!("emitter '{}'.light_id: linked point light must coincide with the emitter position", emitter.id);
+            }
         }
         for r in &self.routes {
             if !r.duration_seconds.is_finite() || r.duration_seconds <= 0. || r.keyframes.len() < 2
