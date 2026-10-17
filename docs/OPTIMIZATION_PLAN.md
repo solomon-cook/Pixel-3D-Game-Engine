@@ -468,9 +468,12 @@ captures were pixel-identical at native capture scale. Smoke density/temperature
 also use adapter-gated Rg16Float storage when `TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES`
 and sampled/write-only storage support are available, with an Rgba16Float fallback.
 The measured pair saves 1,179,648 bytes; reset/replay verification and matched
-smoke/metal captures passed on M1 Max/Metal. No frame-time gain is claimed; the
-remaining HDR snapshot and its copy still need pass-layout work, longer timing,
-and Windows/DX12 validation. See [measurements-o08.json](measurements-o08.json).
+smoke/metal captures passed on M1 Max/Metal. Three alternating 20-second
+material-orbit pairs found a −0.0049 ms median optical-resolve delta and a
+−0.0119 ms median total GPU-render delta, with mixed frame-work results; this is
+inconclusive for timing benefit. The remaining HDR snapshot and its copy still
+need pass-layout work, longer timing, and Windows/DX12 validation. See
+[measurements-o08.json](measurements-o08.json).
 
 **Inventory checkpoint (17 October 2026):** known allocations, resource lifetimes,
 per-frame logical attachment/copy traffic, nominal smoke sample/store footprint,

@@ -541,5 +541,206 @@
       "performance_claim": "none; logical traffic and allocation reductions are estimates, frame-time was not measured",
       "limits": "One M1 Max/Metal adapter only; Windows DX12 remains unverified."
     }
+  },
+  "timing_trials": {
+    "optical_normal_snapshot_removal": {
+      "baseline_revision": "1742044",
+      "candidate_revision": "632be12",
+      "adapter": "Apple M1 Max / Metal",
+      "scene": "assets/scenes/materials.json",
+      "scene_sha256": "945fcb11f73dd78ec6d6966c855af74f018915cd8aadac2051b1812d68d420c9",
+      "route": "material-orbit",
+      "mode": "serial",
+      "resolution": [
+        640,
+        360
+      ],
+      "seed": 42,
+      "camera": "hero",
+      "pairs": 3,
+      "route_duration_seconds": 20,
+      "warmup_seconds_per_run": 5,
+      "baseline_candidate_order": [
+        {
+          "pair": 1,
+          "variant": "baseline",
+          "elapsed_seconds": 9.32
+        },
+        {
+          "pair": 1,
+          "variant": "candidate",
+          "elapsed_seconds": 7.95
+        },
+        {
+          "pair": 2,
+          "variant": "candidate",
+          "elapsed_seconds": 6.86
+        },
+        {
+          "pair": 2,
+          "variant": "baseline",
+          "elapsed_seconds": 6.83
+        },
+        {
+          "pair": 3,
+          "variant": "baseline",
+          "elapsed_seconds": 6.8
+        },
+        {
+          "pair": 3,
+          "variant": "candidate",
+          "elapsed_seconds": 7.01
+        }
+      ],
+      "metrics": {
+        "frame_work": {
+          "baseline_run_medians_ms": [
+            3.9870829999999997,
+            4.178834,
+            4.121333
+          ],
+          "candidate_run_medians_ms": [
+            3.944208,
+            4.131208,
+            4.229542
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.04287499999999955,
+            -0.04762600000000017,
+            0.10820900000000044
+          ],
+          "paired_delta_median_ms": -0.04287499999999955
+        },
+        "cpu_encode": {
+          "baseline_run_medians_ms": [
+            0.355875,
+            0.456874,
+            0.4420010000000001
+          ],
+          "candidate_run_medians_ms": [
+            0.393001,
+            0.43462399999999995,
+            0.4688340000000001
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.03712599999999999,
+            -0.022250000000000048,
+            0.026832999999999996
+          ],
+          "paired_delta_median_ms": 0.026832999999999996
+        },
+        "cpu_upload": {
+          "baseline_run_medians_ms": [
+            0.130584,
+            0.167707,
+            0.154919
+          ],
+          "candidate_run_medians_ms": [
+            0.14633400000000002,
+            0.160042,
+            0.18004299999999998
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.015750000000000014,
+            -0.007665000000000005,
+            0.02512399999999998
+          ],
+          "paired_delta_median_ms": 0.015750000000000014
+        },
+        "queue_submit_cpu": {
+          "baseline_run_medians_ms": [
+            0.076042,
+            0.099375,
+            0.10341700000000001
+          ],
+          "candidate_run_medians_ms": [
+            0.09425,
+            0.09745799999999999,
+            0.101751
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.018208000000000002,
+            -0.001917000000000016,
+            -0.0016660000000000147
+          ],
+          "paired_delta_median_ms": -0.0016660000000000147
+        },
+        "gpu_render": {
+          "baseline_run_medians_ms": [
+            2.563541,
+            2.556791,
+            2.553708
+          ],
+          "candidate_run_medians_ms": [
+            2.541833,
+            2.5448749999999998,
+            2.554667
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.02170799999999984,
+            -0.01191600000000026,
+            0.0009589999999999321
+          ],
+          "paired_delta_median_ms": -0.01191600000000026
+        },
+        "gpu_stages.optical_resolve": {
+          "baseline_run_medians_ms": [
+            1.819542,
+            1.8053329999999999,
+            1.7985419999999999
+          ],
+          "candidate_run_medians_ms": [
+            1.792333,
+            1.8004589999999998,
+            1.819167
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.02720900000000004,
+            -0.004874000000000045,
+            0.020625000000000115
+          ],
+          "paired_delta_median_ms": -0.004874000000000045
+        },
+        "gpu_stages.post": {
+          "baseline_run_medians_ms": [
+            1.9235829999999998,
+            1.907916,
+            1.895166
+          ],
+          "candidate_run_medians_ms": [
+            1.8932499999999999,
+            1.901333,
+            1.9200419999999998
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.030332999999999943,
+            -0.0065830000000000055,
+            0.024875999999999898
+          ],
+          "paired_delta_median_ms": -0.0065830000000000055
+        },
+        "gpu_stages.smoke_compute": {
+          "baseline_run_medians_ms": [
+            0.017667,
+            0.017667,
+            0.0175
+          ],
+          "candidate_run_medians_ms": [
+            0.017625,
+            0.017792,
+            0.017875
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -4.200000000000037e-05,
+            0.0001250000000000001,
+            0.00037499999999999686
+          ],
+          "paired_delta_median_ms": 0.0001250000000000001
+        }
+      },
+      "raw_reports": "artifacts/o08/timing-optical-copy/",
+      "interpretation": "No meaningful timing gain established. Optical-resolve paired GPU deltas were mixed and had a -0.004874 ms median; total GPU render median delta was -0.011916 ms, while frame-work deltas were mixed (-0.042875, -0.047626, +0.108209 ms). Three route pairs are insufficient to claim a performance improvement. Memory and logical-traffic reductions are reported separately and are not measured bandwidth.",
+      "limits": "One Apple M1 Max/Metal adapter; short 20-second serial route pairs, no DX12/RTX or native-window results."
+    }
   }
 }

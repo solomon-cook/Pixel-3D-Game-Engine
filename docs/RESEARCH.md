@@ -295,3 +295,10 @@ attachment load/store (3,686,400 logical bytes) per frame. Matched smoke-close,
 opaque-metal and glass captures were pixel-identical; no frame-time gain is
 claimed. The HDR copy remains for future pass-layout work. See
 [measurements-o08.json](measurements-o08.json).
+
+Three alternating 20-second serial material-orbit pairs compared revision
+1742044 against 632be12 on the same M1 Max/Metal host. The median paired GPU
+optical-resolve delta was −0.0049 ms, whole GPU-render delta −0.0119 ms, and
+frame-work deltas were mixed. This is inconclusive for a timing benefit. Full
+per-stage medians, run order and raw reports are in
+[measurements-o08.json](measurements-o08.json) and `artifacts/o08/timing-optical-copy/`.

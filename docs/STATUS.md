@@ -107,9 +107,11 @@ M1 Max/Metal adapter. This is one adapter's result, not DX12 support. The HDR
 snapshot allocates on first optical-material use, saving 3,686,400 known bytes in
 diffuse scenes; on optical scenes, direct normal/depth sampling removes another
 1,843,200 bytes from the prior pair-of-snapshots design. Live material activation
-and fixed-tick capture parity were verified. No frame-time gain is claimed for
-these allocation and pass changes. Pass-copy redesign,
-total pass timing and Windows DX12/RTX acceptance remain open. Full provenance and
+and fixed-tick capture parity were verified. Three alternating 20-second
+material-orbit pairs found mixed timing results: median optical-resolve delta was
+−0.0049 ms and whole GPU-render delta was −0.0119 ms, while frame-work deltas were
+mixed. This does not establish a timing gain. Longer routes and Windows DX12/RTX
+acceptance remain open. Full provenance and
 per-resource breakdown are in [measurements-o08.json](measurements-o08.json).
 The required `python3 scripts/verify.py --gpu` run passed on this M1 Max/Metal
 host, including Clippy, workspace tests, scene validation and GPU integration
