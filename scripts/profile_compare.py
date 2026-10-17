@@ -99,6 +99,9 @@ def main() -> int:
     parser.add_argument("--candidate-disable-object-culling", action="store_true", help="draw all objects in every applicable pass for candidate runs")
     parser.add_argument("--baseline-disable-instancing", action="store_true", help="issue one object draw per instance in baseline runs")
     parser.add_argument("--candidate-disable-instancing", action="store_true", help="issue one object draw per instance in candidate runs")
+    parser.add_argument("--moving-caster", help="move this scene object around the primary fire light in both benchmark variants")
+    parser.add_argument("--caster-orbit-radius", type=float, default=5.0)
+    parser.add_argument("--caster-orbit-period", type=float, default=20.0)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--camera", default="hero")
     parser.add_argument("--resolution", help="explicit scene buffer, for example 640x360")
@@ -166,6 +169,12 @@ def main() -> int:
                 "--warmup", str(args.warmup), "--seed", str(args.seed),
                 "--camera", args.camera, "--output", str(raw_path),
             ]
+            if args.moving_caster:
+                command.extend([
+                    "--moving-caster", args.moving_caster,
+                    "--caster-orbit-radius", str(args.caster_orbit_radius),
+                    "--caster-orbit-period", str(args.caster_orbit_period),
+                ])
             if args.resolution:
                 command.extend(["--resolution", args.resolution])
             if args.shaders:
@@ -313,6 +322,9 @@ def main() -> int:
             "seed": args.seed,
             "camera": args.camera,
             "resolution_override": args.resolution,
+            "moving_caster": args.moving_caster,
+            "caster_orbit_radius": args.caster_orbit_radius if args.moving_caster else None,
+            "caster_orbit_period_seconds": args.caster_orbit_period if args.moving_caster else None,
         },
         "pair_interpretation": (
             "same scene content with different tile-list settings; paired deltas compare tiled candidate evaluation against exhaustive baseline evaluation"

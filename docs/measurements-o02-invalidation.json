@@ -1,0 +1,252 @@
+{
+  "scene": "assets/scenes/clearing.json",
+  "camera": "hero",
+  "seed": 42,
+  "resolution": [
+    640,
+    360
+  ],
+  "face_order": [
+    "sun",
+    "+X",
+    "-X",
+    "+Y",
+    "-Y",
+    "+Z",
+    "-Z"
+  ],
+  "events": [
+    {
+      "event": "material-shadow-class",
+      "images_match": true,
+      "cached_sha256": "6c4fae0d62596f2fb7ffbb3e1ce1988487ba5ef0d01c7384d1d9d13a9e01b7bd",
+      "cached": {
+        "shadow_cache_hit": false,
+        "shadow_redrawn": true,
+        "shadow_maps_redrawn": 2,
+        "shadow_dirty_faces": [
+          true,
+          false,
+          true,
+          false,
+          false,
+          false,
+          false
+        ],
+        "shadow_dirty_reason": "shadow_materials_changed",
+        "cpu_shadow_encode_ms": 0.13725
+      },
+      "forced": {
+        "shadow_cache_hit": false,
+        "shadow_maps_redrawn": 7,
+        "shadow_dirty_faces": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "shadow_dirty_reason": "forced_redraw"
+      }
+    },
+    {
+      "event": "sun-projection",
+      "images_match": true,
+      "cached_sha256": "724260e49495518e7ae5122ca78973771af1e05945d3d9b6679caf846c6d60a0",
+      "cached": {
+        "shadow_cache_hit": false,
+        "shadow_redrawn": true,
+        "shadow_maps_redrawn": 1,
+        "shadow_dirty_faces": [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "shadow_dirty_reason": "directional_light_projection_changed",
+        "cpu_shadow_encode_ms": 0.07370800000000001
+      },
+      "forced": {
+        "shadow_cache_hit": false,
+        "shadow_maps_redrawn": 7,
+        "shadow_dirty_faces": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "shadow_dirty_reason": "forced_redraw"
+      }
+    },
+    {
+      "event": "linked-fire-light-position",
+      "images_match": true,
+      "cached_sha256": "692642a765af088ca787a4d2ba2ab161e1f8896176f71e4cd5d25d3258f2d42b",
+      "cached": {
+        "shadow_cache_hit": false,
+        "shadow_redrawn": true,
+        "shadow_maps_redrawn": 6,
+        "shadow_dirty_faces": [
+          false,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "shadow_dirty_reason": "point_light_projection_changed",
+        "cpu_shadow_encode_ms": 0.19158399999999998
+      },
+      "forced": {
+        "shadow_cache_hit": false,
+        "shadow_maps_redrawn": 7,
+        "shadow_dirty_faces": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "shadow_dirty_reason": "forced_redraw"
+      }
+    },
+    {
+      "event": "fire-light-range",
+      "images_match": true,
+      "cached_sha256": "2cc92e635b2beaa375cc5a5cee0a403050ac48aa8f5631bb4d8e3136893660ea",
+      "cached": {
+        "shadow_cache_hit": false,
+        "shadow_redrawn": true,
+        "shadow_maps_redrawn": 6,
+        "shadow_dirty_faces": [
+          false,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "shadow_dirty_reason": "point_light_range_changed",
+        "cpu_shadow_encode_ms": 0.180291
+      },
+      "forced": {
+        "shadow_cache_hit": false,
+        "shadow_maps_redrawn": 7,
+        "shadow_dirty_faces": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "shadow_dirty_reason": "forced_redraw"
+      }
+    },
+    {
+      "event": "successful-shader-reload",
+      "images_match": true,
+      "cached_sha256": "40e7e82cda9fdf4965fb2cafba7f06a050158c73cf80e6576250ccac24bc8524",
+      "cached": {
+        "shadow_cache_hit": false,
+        "shadow_redrawn": true,
+        "shadow_maps_redrawn": 7,
+        "shadow_dirty_faces": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "shadow_dirty_reason": "shader_reload",
+        "cpu_shadow_encode_ms": 0.23875
+      },
+      "forced": {
+        "shadow_cache_hit": false,
+        "shadow_maps_redrawn": 7,
+        "shadow_dirty_faces": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "shadow_dirty_reason": "forced_redraw"
+      }
+    },
+    {
+      "event": "reset",
+      "images_match": true,
+      "cached_sha256": "2cc92e635b2beaa375cc5a5cee0a403050ac48aa8f5631bb4d8e3136893660ea",
+      "cached": {
+        "shadow_cache_hit": false,
+        "shadow_redrawn": true,
+        "shadow_maps_redrawn": 7,
+        "shadow_dirty_faces": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "shadow_dirty_reason": "reset",
+        "cpu_shadow_encode_ms": 0.216125
+      },
+      "forced": {
+        "shadow_cache_hit": false,
+        "shadow_maps_redrawn": 7,
+        "shadow_dirty_faces": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "shadow_dirty_reason": "forced_redraw"
+      }
+    }
+  ],
+  "workstream": "O02 shadow-cache live invalidation matrix",
+  "date": "2026-10-17",
+  "status": "discrete correctness evidence; continuous route and cross-platform gates remain open",
+  "adapter": {
+    "name": "Apple M1 Max",
+    "device_type": "IntegratedGpu",
+    "backend": "Metal"
+  },
+  "provenance": {
+    "git_revision_before_changes": "4bfd8ba2587252a13759f82d5bcdc678be7a97ac",
+    "release_binary_sha256": "7afba2dd2bb8478e2518bb00c18bf569e8a11b202376486cf167db5e24230053",
+    "session_source_sha256": "b314d69d83f417a9cec11b9ed7b85da06738cb327aef0c6201a7a9f7e4d95d84",
+    "scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+    "protocol": "engine-lab serve; seed 42; hero camera; 640x360; per-event paused captures; one deliberate 30-tick advance before successful shader reload, followed by reset",
+    "report": "artifacts/o02/invalidation/report.json"
+  },
+  "limitations": [
+    "discrete invalidation checks, not continuous route timing",
+    "linked point-light move also moves the fire emitter atomically to preserve scene validity",
+    "unknown-bound fallback is covered by existing unit checks but was not induced through this live scene",
+    "native-window and Windows/DX12 behavior unverified"
+  ]
+}

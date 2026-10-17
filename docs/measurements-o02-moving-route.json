@@ -1,0 +1,205 @@
+{
+  "workstream": "O02 continuous moving-caster invalidation route",
+  "date": "2026-10-18",
+  "status": "three alternating 120-second pairs complete; offscreen M1 Max/Metal evidence only",
+  "device": {
+    "name": "Apple M1 Max",
+    "device_type": "IntegratedGpu",
+    "backend": "Metal",
+    "memory_gb": 64
+  },
+  "configuration": {
+    "scene": "assets/scenes/clearing.json",
+    "scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+    "resolution": [
+      640,
+      360
+    ],
+    "seed": 42,
+    "camera": "hero",
+    "route": "clearing-orbit",
+    "mode": "serial",
+    "warmup_seconds": 10,
+    "route_seconds": 120,
+    "sample_hz": 60,
+    "pairs": 3,
+    "moving_caster": {
+      "object": "fallen-log",
+      "orbit_center_xz": [
+        0.0,
+        0.0
+      ],
+      "height": 0.28,
+      "radius": 5.0,
+      "period_seconds": 20.0
+    },
+    "variants": {
+      "baseline": "forced redraw of all seven maps each frame",
+      "candidate": "per-face cached invalidation with the same transform route"
+    },
+    "transform_path": "shared Session set_object_transform operation before each measured/warmup frame; included in frame_work"
+  },
+  "results": {
+    "frame_work": {
+      "baseline_run_medians_ms": [
+        4.300792,
+        4.265667,
+        4.2538339999999994
+      ],
+      "candidate_run_medians_ms": [
+        4.249375,
+        4.291834,
+        4.235459
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        -0.05141700000000071,
+        0.02616700000000005,
+        -0.018374999999999808
+      ],
+      "p95_by_run": {
+        "baseline": [
+          7.7631250000000005,
+          7.674417,
+          7.71025
+        ],
+        "candidate": [
+          7.933000000000001,
+          8.0815,
+          8.038708999999999
+        ]
+      }
+    },
+    "cpu_shadow_encode": {
+      "baseline_run_medians_ms": [
+        0.209458,
+        0.206458,
+        0.206833
+      ],
+      "candidate_run_medians_ms": [
+        0.123958,
+        0.126666,
+        0.122708
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        -0.0855,
+        -0.079792,
+        -0.08412499999999999
+      ]
+    },
+    "cpu_upload": {
+      "baseline_run_medians_ms": [
+        0.21162599999999998,
+        0.20549899999999996,
+        0.20612499999999995
+      ],
+      "candidate_run_medians_ms": [
+        0.194457,
+        0.198457,
+        0.18687499999999999
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        -0.01716899999999999,
+        -0.007041999999999965,
+        -0.01924999999999996
+      ]
+    },
+    "gpu_render": {
+      "baseline_run_medians_ms": [
+        2.7039999999999997,
+        2.708917,
+        2.707083
+      ],
+      "candidate_run_medians_ms": [
+        2.657459,
+        2.6505419999999997,
+        2.6574999999999998
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        -0.046540999999999944,
+        -0.05837500000000029,
+        -0.049583000000000155
+      ]
+    },
+    "gpu_shadow_maps_stage": {
+      "baseline_run_medians_ms": [
+        0.433583,
+        0.435625,
+        0.43341599999999997
+      ],
+      "candidate_run_medians_ms": [
+        0.16949999999999998,
+        0.169042,
+        0.16916599999999998
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        -0.264083,
+        -0.266583,
+        -0.26425
+      ],
+      "note": "GPU stage intervals can overlap and must not be summed."
+    },
+    "shadow_passes": {
+      "baseline_total_per_run": [
+        50400,
+        50400,
+        50400
+      ],
+      "candidate_total_per_run": [
+        16968,
+        16968,
+        16968
+      ],
+      "baseline_per_run": 50400,
+      "candidate_per_run": 16968,
+      "candidate_reduction_fraction": 0.6633333333333333,
+      "candidate_face_redraw_counts": [
+        7200,
+        1896,
+        2988,
+        0,
+        0,
+        2442,
+        2442
+      ],
+      "candidate_cache_hits_per_run": [
+        0,
+        0,
+        0
+      ],
+      "face_order": [
+        "sun",
+        "+X",
+        "-X",
+        "+Y",
+        "-Y",
+        "+Z",
+        "-Z"
+      ]
+    }
+  },
+  "provenance": {
+    "git_revision_before_changes": "4bfd8ba2587252a13759f82d5bcdc678be7a97ac",
+    "comparison_path": "artifacts/o02/moving-route-120s/comparison.json",
+    "comparison_sha256": "6917283237aa15604ad14a7d2e156dbd8e52dc23e5357dd204bf162a45fbd2d1",
+    "run_reports_sha256": {
+      "pair-01-baseline.json": "3a8cc6fbb2eeeac60a64ef7b2deb091a402b5b95b05195e5b19c7b6c7734e5b8",
+      "pair-02-baseline.json": "724dd886c4eb06bf348c523cdd399522df65a11f9e4e68faba33a6d9ad9543c7",
+      "pair-03-baseline.json": "2a179eb3b7f1378d9e7f4b4c5abe023bdce4bbaa480820109252a627549bae6a",
+      "pair-01-candidate.json": "5af81420705b2dd289e822e58dcab26a22df178d7828ff820bbb581355049bf6",
+      "pair-02-candidate.json": "1082ad0b0c45e29be15e709e1cbbc3eff47da3854c2fc0a94ffb80966a361fd0",
+      "pair-03-candidate.json": "be9f6f7eb12934634e4b785d1691105fe9daae0fd442288e82bba61c09d8042a"
+    },
+    "benchmark_source_sha256": {
+      "crates/engine-lab/src/main.rs": "5b41122ffe3394900d4b568b9ab25daa1201811aab86bfcc359e59da00a0f379",
+      "crates/engine/src/session.rs": "b314d69d83f417a9cec11b9ed7b85da06738cb327aef0c6201a7a9f7e4d95d84",
+      "scripts/profile_compare.py": "1d5025ca0913200fba28f86540a6b9495edd9a84da6694b720d3566056400a58"
+    }
+  },
+  "interpretation": "Per-face invalidation reduced shadow passes and shadow encode time under continuous motion. All frames still redrew at least one map, so cache hits were zero. The small whole-GPU delta was consistent but whole-frame work deltas straddled zero and p95 varied; do not treat this as a whole-frame performance win.",
+  "limitations": [
+    "one M1 Max/Metal adapter and one clearing scene",
+    "offscreen benchmark; native presentation and Windows/DX12 unverified",
+    "no PNG capture was taken during the timed route; discrete six-pose cached/forced captures are in measurements-o02-moving-caster.json",
+    "unknown-bound fallback was not induced through the scene; conservative fallback has unit coverage"
+  ]
+}

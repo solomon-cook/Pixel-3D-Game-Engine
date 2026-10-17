@@ -93,6 +93,15 @@ enum Command {
         /// Issue one draw per visible object instead of grouping compatible instances.
         #[arg(long)]
         disable_instancing: bool,
+        /// Move a scene object around the primary fire light during the route.
+        #[arg(long)]
+        moving_caster: Option<String>,
+        /// Orbit radius in world units for --moving-caster.
+        #[arg(long, default_value_t = 5.0)]
+        caster_orbit_radius: f32,
+        /// Orbit period in seconds for --moving-caster.
+        #[arg(long, default_value_t = 20.0)]
+        caster_orbit_period: f32,
         #[arg(long, default_value = "clearing-orbit")]
         route: String,
         #[arg(long, default_value_t = 120.)]
@@ -129,6 +138,17 @@ struct BenchmarkSettings {
     force_tile_overflow: bool,
     object_culling_enabled: bool,
     instancing_enabled: bool,
+}
+#[derive(Clone, Copy)]
+struct CasterMotion<'a> {
+    object_id: Option<&'a str>,
+    radius: f32,
+    period: f32,
+}
+#[derive(Clone, Copy)]
+struct BenchmarkRoute<'a> {
+    id: &'a str,
+    caster_motion: CasterMotion<'a>,
 }
 #[derive(Args, Clone)]
 pub struct Options {
@@ -219,6 +239,9 @@ fn start() -> Result<()> {
             force_tile_overflow,
             disable_object_culling,
             disable_instancing,
+            moving_caster,
+            caster_orbit_radius,
+            caster_orbit_period,
             route,
             duration,
             warmup,
@@ -234,7 +257,14 @@ fn start() -> Result<()> {
                 object_culling_enabled: !disable_object_culling,
                 instancing_enabled: !disable_instancing,
             },
-            &route,
+            BenchmarkRoute {
+                id: &route,
+                caster_motion: CasterMotion {
+                    object_id: moving_caster.as_deref(),
+                    radius: caster_orbit_radius,
+                    period: caster_orbit_period,
+                },
+            },
             duration,
             warmup,
             &output,
@@ -355,11 +385,32 @@ fn headless_with_timing(options: &Options, enable_timestamps: bool) -> Result<Se
     session.execute("set_camera", json!({"id":options.camera}))?;
     Ok(session)
 }
+
+fn update_benchmark_caster(
+    session: &mut Session,
+    caster: Option<&(String, f32)>,
+    frame: u32,
+    motion: CasterMotion<'_>,
+    center_xz: [f32; 2],
+) -> Result<Option<[f32; 3]>> {
+    let Some((id, height)) = caster else {
+        return Ok(None);
+    };
+    let angle = std::f32::consts::TAU * (frame as f32 / 60.) / motion.period;
+    let position = [
+        center_xz[0] + motion.radius * angle.cos(),
+        *height,
+        center_xz[1] + motion.radius * angle.sin(),
+    ];
+    session.execute("set_object_transform", json!({"id":id,"position":position}))?;
+    Ok(Some(position))
+}
+
 fn benchmark(
     options: &Options,
     mode: &str,
     settings: BenchmarkSettings,
-    route_id: &str,
+    benchmark_route: BenchmarkRoute<'_>,
     duration: f32,
     warmup: f32,
     path: &Path,
@@ -373,6 +424,14 @@ fn benchmark(
         || !(0.0..=120.).contains(&warmup)
     {
         bail!("duration: expected 0.1..600 seconds; warmup: expected 0..120 seconds");
+    }
+    let caster_motion = benchmark_route.caster_motion;
+    if !caster_motion.radius.is_finite()
+        || !(0.1..=100.).contains(&caster_motion.radius)
+        || !caster_motion.period.is_finite()
+        || !(0.1..=600.).contains(&caster_motion.period)
+    {
+        bail!("caster orbit: radius must be 0.1..100 and period 0.1..600 seconds");
     }
     let setup_started = Instant::now();
     let mut session = headless_with_timing(options, !settings.disable_gpu_timing)?;
@@ -390,11 +449,37 @@ fn benchmark(
         .scene
         .routes
         .iter()
-        .find(|r| r.id == route_id)
-        .with_context(|| format!("route '{route_id}': unknown ID"))?
+        .find(|r| r.id == benchmark_route.id)
+        .with_context(|| format!("route '{}': unknown ID", benchmark_route.id))?
         .clone();
     let base = session.camera.clone();
-    for tick in 0..(warmup * 60.) as u32 {
+    let moving_caster = caster_motion
+        .object_id
+        .map(|id| {
+            session
+                .scene
+                .objects
+                .iter()
+                .find(|object| object.id == id)
+                .map(|object| (id.to_string(), object.position[1]))
+                .with_context(|| format!("moving caster '{id}': unknown object ID"))
+        })
+        .transpose()?;
+    let orbit_center = session
+        .scene
+        .emitters
+        .first()
+        .map(|emitter| [emitter.position[0], emitter.position[2]])
+        .unwrap_or([0., 0.]);
+    let warmup_frames = (warmup * 60.) as u32;
+    for tick in 0..warmup_frames {
+        update_benchmark_caster(
+            &mut session,
+            moving_caster.as_ref(),
+            tick,
+            caster_motion,
+            orbit_center,
+        )?;
         session.camera = route.camera_at(tick as f32 / 60., &base);
         session.begin_measurement_frame();
         session.step(1);
@@ -410,7 +495,19 @@ fn benchmark(
     let start = Instant::now();
     for frame in 0..count {
         let started = Instant::now();
-        session.camera = route.camera_at(frame as f32 / 60., &base);
+        let route_frame = if moving_caster.is_some() {
+            warmup_frames + frame
+        } else {
+            frame
+        };
+        let caster_position = update_benchmark_caster(
+            &mut session,
+            moving_caster.as_ref(),
+            route_frame,
+            caster_motion,
+            orbit_center,
+        )?;
+        session.camera = route.camera_at(route_frame as f32 / 60., &base);
         session.begin_measurement_frame();
         let sim = Instant::now();
         session.step(1);
@@ -422,6 +519,7 @@ fn benchmark(
         let metrics = &session.renderer.metrics;
         samples.push(json!({
             "frame":frame,
+            "moving_caster_position":caster_position,
             "render_frame":metrics.frame,
             "tick":session.tick,
             "frame_work_ms":started.elapsed().as_secs_f64()*1000.,
@@ -457,6 +555,7 @@ fn benchmark(
             "shadow_redrawn":metrics.shadow_redrawn,
             "shadow_cache_resident":metrics.shadow_cache_resident,
             "shadow_maps_redrawn":metrics.shadow_maps_redrawn,
+            "shadow_dirty_faces":metrics.shadow_dirty_faces,
             "shadow_dirty_reason":metrics.shadow_dirty_reason,
             "tile_count":metrics.tile_count,
             "tile_list_bytes":metrics.tile_list_bytes,
@@ -553,6 +652,18 @@ fn benchmark(
         .iter()
         .filter(|sample| sample["shadow_redrawn"] == true)
         .count();
+    let shadow_maps_redrawn = samples
+        .iter()
+        .filter_map(|sample| sample["shadow_maps_redrawn"].as_u64())
+        .sum::<u64>();
+    let shadow_faces_redrawn = (0..7)
+        .map(|face| {
+            samples
+                .iter()
+                .filter(|sample| sample["shadow_dirty_faces"][face] == true)
+                .count()
+        })
+        .collect::<Vec<_>>();
     let shadow_draw_calls_per_frame = if total_frames == 0 {
         0.
     } else {
@@ -656,7 +767,10 @@ fn benchmark(
         "redraws":shadow_redraws,
         "shadow_map_count":7,
         "shadow_map_bytes_resident":capabilities["resource_inventory"]["shadow_maps_bytes"],
-        "redrawn_shadow_passes":shadow_redraws * 7,
+        "redrawn_shadow_passes":shadow_maps_redrawn,
+        "frames_with_redraw":shadow_redraws,
+        "face_redraws_by_index":shadow_faces_redrawn,
+        "face_order":["sun","+X","-X","+Y","-Y","+Z","-Z"],
         "dirty_reasons":shadow_dirty_reasons
     });
     let report = json!({
@@ -669,6 +783,15 @@ fn benchmark(
         "seed":options.seed,
         "route":route,
         "route_seconds":duration,
+        "moving_caster":moving_caster.as_ref().map(|(id, height)| json!({
+            "object":id,
+            "orbit_center_xz":orbit_center,
+            "height":height,
+            "radius":caster_motion.radius,
+            "period_seconds":caster_motion.period,
+            "sample_hz":60,
+            "note":"Deterministic circular transform updates use the shared Session operation before each route frame."
+        })),
         "sample_hz":60,
         "warmup_seconds":warmup,
         "renderer_setup_seconds":setup_seconds,

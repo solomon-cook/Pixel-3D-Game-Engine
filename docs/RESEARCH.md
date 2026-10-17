@@ -498,3 +498,43 @@ This is correctness evidence for discrete edits, not a continuous-motion timing
 result. The moved log was outside the selected camera view; no art conclusion is
 drawn. The unknown-bounds fallback, 120-second moving route, native window and
 Windows/DX12 remain open.
+
+## O02 live projection and material invalidation (17 October)
+
+The live-edit matrix initially could not move the fire point light: scene
+validation correctly requires it to remain coincident with its emitter, but the
+shared parameter edit changed only the light. `set_parameter` now moves a linked
+emitter in the same validated transaction when its light position changes;
+legacy position-bound emitters follow the same rule. Invalid edits remain
+transactional. The focused unit check covers explicit and legacy links plus
+rejection without partial mutation.
+
+On M1 Max/Metal at 640×360, log transmission, sun projection, linked point-light
+position, point-light range, successful shader reload and reset each produced
+byte-identical cached/forced captures. Masks were respectively 2, 1, 6, 6, 7 and
+7 maps, with reasons `shadow_materials_changed`,
+`directional_light_projection_changed`, `point_light_projection_changed`,
+`point_light_range_changed`, `shader_reload` and `reset`. See
+[measurements-o02-invalidation.json](measurements-o02-invalidation.json). These
+paused checkpoints do not measure continuous invalidation cost; unknown bounds,
+native-window and non-Metal behavior remain open.
+
+## O02 continuous moving-caster cost (18 October)
+
+Three alternating serial 120-second pairs with a 10-second warm-up used the same
+seed-42 clearing orbit and a deterministic radius-5, 20-second `fallen-log`
+circle, updated through the shared Session transform operation every frame. The
+cache path reduced shadow-map submissions by 66.3% (16,968 vs 50,400 per run),
+CPU shadow encoding by about 0.084 ms, and the shadow GPU interval by about
+0.264 ms. There were no cache-hit frames because movement invalidated at least one
+map every frame.
+
+The paired whole-render GPU delta was consistently around -0.05 ms, but whole-frame
+work deltas straddled zero and p95 frame work was worse for the candidate. The
+overlapping GPU pass intervals are reported separately. Per-face invalidation
+therefore saves map work on this moving path without a demonstrated whole-frame
+win. The fixed-pose capture study supplies cached/forced image checks; the timed
+route did not capture PNGs. Keep the established static-cache benefit separate
+from this continuous-invalidation result. See
+[measurements-o02-moving-route.json](measurements-o02-moving-route.json); raw
+frame samples are local under ignored `artifacts/o02/moving-route-120s/`.

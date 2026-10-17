@@ -334,6 +334,19 @@ fn default_scale() -> u32 {
 /// transactionally at startup. An invalid edit leaves the original scene intact.
 pub fn set_parameter(scene: &mut Scene, path: &str, value: Value, base: &Path) -> Result<()> {
     let segments = path.split('.').collect::<Vec<_>>();
+    let linked_emitter_ids = match segments.as_slice() {
+        ["lights", light_id, "position"] => scene
+            .emitters
+            .iter()
+            .filter(|emitter| {
+                scene
+                    .light_for_emitter(emitter)
+                    .is_some_and(|light| light.id == *light_id)
+            })
+            .map(|emitter| emitter.id.clone())
+            .collect::<Vec<_>>(),
+        _ => Vec::new(),
+    };
     let allowed = match segments.as_slice() {
         ["render", property] => matches!(
             *property,
@@ -446,6 +459,25 @@ pub fn set_parameter(scene: &mut Scene, path: &str, value: Value, base: &Path) -
     *cursor
         .get_mut(*field)
         .with_context(|| format!("parameter '{path}': unknown property"))? = value;
+    if !linked_emitter_ids.is_empty() {
+        let ["lights", light_id, "position"] = segments.as_slice() else {
+            unreachable!("linked emitters only exist for light position edits");
+        };
+        let light_position = data["lights"]
+            .as_array()
+            .and_then(|lights| lights.iter().find(|light| light["id"] == *light_id))
+            .and_then(|light| light.get("position"))
+            .cloned()
+            .context("linked point light position disappeared during edit")?;
+        for emitter in data["emitters"]
+            .as_array_mut()
+            .context("scene emitters must be an array")?
+        {
+            if linked_emitter_ids.iter().any(|id| emitter["id"] == *id) {
+                emitter["position"] = light_position.clone();
+            }
+        }
+    }
     let replacement: Scene = serde_json::from_value(data)
         .with_context(|| format!("parameter '{path}': invalid value type"))?;
     replacement.validate(base)?;
@@ -459,7 +491,7 @@ pub fn description() -> Value {
         "pause":{"paused":"boolean"},"step":{"ticks":"integer 0..36000"},"reset":{"seed":"u32"},
         "set_camera":{"id":"named camera, OR supply camera object matching scene schema"},
         "set_object_transform":{"id":"stable scene object ID","position":"optional [x,y,z]","rotation":"optional [x,y,z] radians, XYZ order","scale":"optional positive [x,y,z]","result":"updated transform and per-object transform revision"},
-        "set_parameter":{"path":"render.{exposure,shading_steps,dither_strength,smoke_steps,palette_strength,bloom_strength,reflection_steps}; render.experiments.{pixel_cluster_lighting,stable_smoke_detail,connected_motion,projected_detail_lod,smoke_absorption_cache,optical_surface_reuse}; environment.{wind,ambient,fog_density,sky_color,horizon_color}; emitters.<id>.{enabled,intensity,smoke_density,buoyancy,dissipation,style,secondary_bubbles,bubble_scale,self_shadow_strength,internal_glow,effect_profile}; effects.<id>.fire.{width,height,motion_speed,curl,edge_breakup,tip_breakup,fragment_size,lobe_roundness,solid,color_bands,heat_distortion,heat_distortion_height,branches,particle_lights,particle_light_strength,particle_light_range,tongues,segments,fragment_rate,fragment_lifetime,ember_rate,ember_lifetime,emission}; effects.<id>.thermal.{heat_output,cooling_rate,lift}; effects.<id>.palette.{outer,warm,hot}; lights.<id>.{intensity,flicker,color,position,range}; materials.<id>.{color,roughness,emission,metallic,reflectivity,transmission,ior,thickness,absorption,subsurface,scatter_color,heat_response}","value":"typed JSON value"},
+        "set_parameter":{"path":"render.{exposure,shading_steps,dither_strength,smoke_steps,palette_strength,bloom_strength,reflection_steps}; render.experiments.{pixel_cluster_lighting,stable_smoke_detail,connected_motion,projected_detail_lod,smoke_absorption_cache,optical_surface_reuse}; environment.{wind,ambient,fog_density,sky_color,horizon_color}; emitters.<id>.{enabled,intensity,smoke_density,buoyancy,dissipation,style,secondary_bubbles,bubble_scale,self_shadow_strength,internal_glow,effect_profile}; effects.<id>.fire.{width,height,motion_speed,curl,edge_breakup,tip_breakup,fragment_size,lobe_roundness,solid,color_bands,heat_distortion,heat_distortion_height,branches,particle_lights,particle_light_strength,particle_light_range,tongues,segments,fragment_rate,fragment_lifetime,ember_rate,ember_lifetime,emission}; effects.<id>.thermal.{heat_output,cooling_rate,lift}; effects.<id>.palette.{outer,warm,hot}; lights.<id>.{intensity,flicker,color,position,range}; materials.<id>.{color,roughness,emission,metallic,reflectivity,transmission,ior,thickness,absorption,subsurface,scatter_color,heat_response}","value":"typed JSON value; moving a linked fire-light position also moves its emitter atomically"},
         "get_window":{"availability":"native run only"},"set_window":{"availability":"native run only","size":"optional logical [width,height]","minimized":"optional boolean","fullscreen":"optional boolean"},"shutdown":{"availability":"native run only"},
         "set_shadow_cache":{"force_redraw":"boolean; true redraws all seven shadow maps on every frame for comparison"},
         "set_tile_lists":{"enabled":"boolean; false uses exhaustive candidate evaluation for the correctness baseline","force_overflow":"optional boolean; forces exhaustive fallback for every tile to validate overflow behavior"},
@@ -540,6 +572,53 @@ mod tests {
         assert!(
             set_parameter(&mut scene, "materials.missing.roughness", json!(0.2), base).is_err()
         );
+    }
+
+    #[test]
+    fn moving_linked_fire_light_moves_emitter_atomically() {
+        let mut s = scene();
+        let base = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../assets/scenes");
+        let position = json!([1.0, 0.5, -2.0]);
+        set_parameter(
+            &mut s,
+            "lights.fire-light.position",
+            position.clone(),
+            &base,
+        )
+        .unwrap();
+        assert_eq!(s.emitters[0].position, [1.0, 0.5, -2.0]);
+        assert_eq!(
+            s.lights
+                .iter()
+                .find(|light| light.id == "fire-light")
+                .unwrap()
+                .position,
+            [1.0, 0.5, -2.0]
+        );
+        let before_invalid_edit = serde_json::to_value(&s).unwrap();
+        assert!(set_parameter(
+            &mut s,
+            "lights.fire-light.position",
+            json!("invalid"),
+            &base,
+        )
+        .is_err());
+        assert_eq!(serde_json::to_value(&s).unwrap(), before_invalid_edit);
+
+        let mut legacy_data = serde_json::to_value(scene()).unwrap();
+        legacy_data["emitters"][0]
+            .as_object_mut()
+            .unwrap()
+            .remove("light_id");
+        let mut legacy_scene: Scene = serde_json::from_value(legacy_data).unwrap();
+        set_parameter(
+            &mut legacy_scene,
+            "lights.fire-light.position",
+            position,
+            &base,
+        )
+        .unwrap();
+        assert_eq!(legacy_scene.emitters[0].position, [1.0, 0.5, -2.0]);
     }
 
     #[test]

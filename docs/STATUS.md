@@ -255,6 +255,37 @@ sun and point projection/range revisions. O01's transactional shader rollback
 checks still apply; failed reloads do not invalidate because the working pipelines
 remain installed.
 
+The live invalidation matrix covers a log transmission edit, sun projection move,
+linked fire-light position move, point-light range edit, successful shader reload
+and reset. All six captures matched forced redraw byte-for-byte. Material edits
+dirtied the sun and affected cube face; sun movement dirtied only sun; point
+position/range changes dirtied all six cube faces; reload and reset dirtied all
+seven maps. The position edit moves its linked fire emitter atomically, preserving
+the scene invariant and enabling this projection check through the shared API.
+Per-event masks, reasons and CPU encoding samples are in
+[measurements-o02-invalidation.json](measurements-o02-invalidation.json); rerun
+with `python3 scripts/shadow_invalidation_study.py`. This remains discrete
+correctness evidence, not continuous-motion cost or native/cross-platform
+acceptance. Unknown-bound fallback remains verified by unit coverage only.
+
+Three alternating serial pairs now cover a 120-second clearing orbit with a
+radius-5 `fallen-log` orbit around the fire source, sampled at 60 Hz, after a
+10-second warm-up. Each run contains 7,200 moved-caster frames. Forced redraw
+submitted 50,400 shadow maps per run; per-face caching submitted 16,968 (66.3%
+fewer), with zero cache-hit frames because the caster moved every frame. Median
+CPU shadow encoding fell from 0.207 to 0.124 ms; the shadow-map GPU stage fell
+from 0.434 to 0.169 ms. The whole-render GPU paired deltas were consistently near
+−0.05 ms, while frame-work paired deltas straddled zero (−0.051, +0.026, −0.018
+ms) and candidate p95 frame work was higher. Per-pass GPU intervals overlap; do
+not sum them. This shows selective invalidation saves shadow work under motion,
+but not a clear whole-frame benefit. Full provenance and paired values are in
+[measurements-o02-moving-route.json](measurements-o02-moving-route.json); raw
+per-frame reports remain under ignored `artifacts/o02/moving-route-120s/`. The
+timed run did not capture images; six deterministic boundary-pose pairs match in
+the moving-caster capture report above. Reproduce with
+`python3 scripts/profile_compare.py --baseline assets/scenes/clearing.json --candidate assets/scenes/clearing.json --baseline-force-shadow-redraw --moving-caster fallen-log --duration 120 --warmup 10 --pairs 3 --output artifacts/o02/moving-route-120s`.
+Native-window and Windows/DX12 remain unverified.
+
 Three alternating serial offscreen 120-second clearing-orbit pairs after 10-second
 warm-up on Apple M1 Max/64 GB/Metal at 640×360 compared identical scene inputs.
 Forced redraw versus cached medians of run medians were 6.365 versus 5.592 ms frame
@@ -281,7 +312,7 @@ and Windows/DX12 behavior remain unverified.
 
 Final `python3 scripts/verify.py --gpu` completed successfully on Apple M1 Max
 with Metal (`verified: true`, `gpu: true`, `native: false`). Workspace formatting,
-clippy, 31 unit tests, scene validation and material/fire GPU checks passed. Native
+clippy, 32 unit tests, scene validation and material/fire GPU checks passed. Native
 window lifecycle and Windows DX12 rendering remain unverified.
 
 ## O07 object bounds, culling and shared meshes
