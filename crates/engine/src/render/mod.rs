@@ -217,10 +217,11 @@ pub struct Renderer {
     optical_post_groups: Option<[wgpu::BindGroup; 2]>,
     optical_no_copy_enabled: bool,
     optical_mask_required: bool,
-    _absorption_texture: wgpu::Texture,
+    absorption_texture: Option<wgpu::Texture>,
     absorption_cache_resolution: u32,
     absorption_layout: wgpu::BindGroupLayout,
-    absorption_groups: [wgpu::BindGroup; 2],
+    absorption_groups: Option<[wgpu::BindGroup; 2]>,
+    absorption_cache_active: bool,
     hdr_texture: wgpu::Texture,
     hdr_color_format: wgpu::TextureFormat,
     effect_depth_format: wgpu::TextureFormat,
@@ -255,6 +256,11 @@ pub struct Renderer {
     tile_build_layout: wgpu::BindGroupLayout,
     tile_build_group: wgpu::BindGroup,
     tile_list_groups: [wgpu::BindGroup; 2],
+    tile_headers: wgpu::Buffer,
+    fire_tile_indices: wgpu::Buffer,
+    smoke_tile_indices: wgpu::Buffer,
+    point_tile_indices: wgpu::Buffer,
+    particle_tile_indices: wgpu::Buffer,
     tile_config_buffer: wgpu::Buffer,
     tile_stats_buffer: wgpu::Buffer,
     tile_stats_readbacks: Vec<TileStatsReadback>,
@@ -1203,15 +1209,20 @@ impl Renderer {
             .each_ref()
             .map(|t| t.create_view(&Default::default()));
         let absorption_cache_resolution = scene.render.absorption_cache_resolution;
-        let absorption_texture = texture(
-            &device,
-            "coarse fire-light smoke transmittance",
-            [absorption_cache_resolution; 3],
-            HDR,
-            wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::STORAGE_BINDING,
-            wgpu::TextureDimension::D3,
-        );
-        let absorption_view = absorption_texture.create_view(&Default::default());
+        let absorption_cache_enabled = scene.render.experiments.smoke_absorption_cache;
+        let absorption_texture = absorption_cache_enabled.then(|| {
+            texture(
+                &device,
+                "coarse fire-light smoke transmittance",
+                [absorption_cache_resolution; 3],
+                HDR,
+                wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::STORAGE_BINDING,
+                wgpu::TextureDimension::D3,
+            )
+        });
+        let absorption_view = absorption_texture
+            .as_ref()
+            .map(|texture| texture.create_view(&Default::default()));
         let linear = device.create_sampler(&wgpu::SamplerDescriptor {
             mag_filter: wgpu::FilterMode::Linear,
             min_filter: wgpu::FilterMode::Linear,
@@ -1310,7 +1321,9 @@ impl Renderer {
                     wgpu::BindingResource::TextureView(&depth),
                     wgpu::BindingResource::TextureView(&smoke_views[i]),
                     wgpu::BindingResource::Sampler(&linear),
-                    wgpu::BindingResource::TextureView(&absorption_view),
+                    wgpu::BindingResource::TextureView(
+                        absorption_view.as_ref().unwrap_or(&smoke_views[i]),
+                    ),
                 ],
             )
         });
@@ -1383,7 +1396,9 @@ impl Renderer {
                     },
                     wgpu::BindGroupEntry {
                         binding: 8,
-                        resource: wgpu::BindingResource::TextureView(&absorption_view),
+                        resource: wgpu::BindingResource::TextureView(
+                            absorption_view.as_ref().unwrap_or(&smoke_views[i]),
+                        ),
                     },
                 ],
             })
@@ -1453,16 +1468,18 @@ impl Renderer {
                 ),
             ],
         });
-        let absorption_groups = std::array::from_fn(|i| {
-            group(
-                &device,
-                &absorption_layout,
-                &[
-                    wgpu::BindingResource::TextureView(&smoke_views[i]),
-                    wgpu::BindingResource::Sampler(&linear),
-                    wgpu::BindingResource::TextureView(&absorption_view),
-                ],
-            )
+        let absorption_groups = absorption_view.as_ref().map(|absorption_view| {
+            std::array::from_fn(|i| {
+                group(
+                    &device,
+                    &absorption_layout,
+                    &[
+                        wgpu::BindingResource::TextureView(&smoke_views[i]),
+                        wgpu::BindingResource::Sampler(&linear),
+                        wgpu::BindingResource::TextureView(absorption_view),
+                    ],
+                )
+            })
         });
         let effect_depth = texture(
             &device,
@@ -1749,7 +1766,11 @@ impl Renderer {
         .collect::<Vec<_>>();
         let known_gpu_bytes = render_targets_bytes
             + smoke_bytes
-            + (scene.render.absorption_cache_resolution as u64).pow(3) * 8
+            + if scene.render.experiments.smoke_absorption_cache {
+                (scene.render.absorption_cache_resolution as u64).pow(3) * 8
+            } else {
+                0
+            }
             + shadow_bytes
             + atlas_bytes
             + tile_list_bytes
@@ -1780,7 +1801,7 @@ impl Renderer {
             "optical_output_bytes":0,
             "optical_mask_bytes":0,
             "smoke_volumes_bytes":smoke_bytes,
-            "smoke_absorption_cache_bytes":(scene.render.absorption_cache_resolution as u64).pow(3)*8,
+            "smoke_absorption_cache_bytes":if scene.render.experiments.smoke_absorption_cache {(scene.render.absorption_cache_resolution as u64).pow(3)*8}else{0},
             "shadow_maps_bytes":shadow_bytes,
             "material_atlas_bytes":atlas_bytes,
             "geometry_buffer_bytes":geometry_bytes,
@@ -1848,10 +1869,11 @@ impl Renderer {
             optical_post_groups: None,
             optical_no_copy_enabled,
             optical_mask_required,
-            _absorption_texture: absorption_texture,
+            absorption_texture,
             absorption_cache_resolution,
             absorption_layout,
             absorption_groups,
+            absorption_cache_active: absorption_cache_enabled,
             hdr_texture,
             hdr_color_format,
             volume_groups,
@@ -1884,6 +1906,11 @@ impl Renderer {
             tile_build_layout,
             tile_build_group,
             tile_list_groups,
+            tile_headers,
+            fire_tile_indices,
+            smoke_tile_indices,
+            point_tile_indices,
+            particle_tile_indices,
             tile_config_buffer,
             tile_stats_buffer,
             tile_stats_readbacks,
@@ -3036,8 +3063,164 @@ impl Renderer {
         self.completed_compute_timings.drain(..).collect()
     }
 
+    fn ensure_absorption_cache(&mut self, enabled: bool) {
+        if self.absorption_cache_active == enabled {
+            return;
+        }
+        let smoke_views = self
+            .smoke_textures
+            .each_ref()
+            .map(|texture| texture.create_view(&Default::default()));
+        let cache_bytes = (self.absorption_cache_resolution as u64).pow(3) * 8;
+        if enabled {
+            let texture = texture(
+                &self.device,
+                "coarse fire-light smoke transmittance",
+                [self.absorption_cache_resolution; 3],
+                HDR,
+                wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::STORAGE_BINDING,
+                wgpu::TextureDimension::D3,
+            );
+            let view = texture.create_view(&Default::default());
+            self.absorption_groups = Some(std::array::from_fn(|i| {
+                group(
+                    &self.device,
+                    &self.absorption_layout,
+                    &[
+                        wgpu::BindingResource::TextureView(&smoke_views[i]),
+                        wgpu::BindingResource::Sampler(&self.optical_sampler),
+                        wgpu::BindingResource::TextureView(&view),
+                    ],
+                )
+            }));
+            self.volume_groups = std::array::from_fn(|i| {
+                group(
+                    &self.device,
+                    &self.volume_layout,
+                    &[
+                        wgpu::BindingResource::TextureView(&self.depth),
+                        wgpu::BindingResource::TextureView(&smoke_views[i]),
+                        wgpu::BindingResource::Sampler(&self.optical_sampler),
+                        wgpu::BindingResource::TextureView(&view),
+                    ],
+                )
+            });
+            self.optical_smoke_groups = std::array::from_fn(|i| {
+                self.device.create_bind_group(&wgpu::BindGroupDescriptor {
+                    label: Some("optical foreground atmosphere"),
+                    layout: &self.optical_smoke_layout,
+                    entries: &[
+                        wgpu::BindGroupEntry {
+                            binding: 1,
+                            resource: wgpu::BindingResource::TextureView(&smoke_views[i]),
+                        },
+                        wgpu::BindGroupEntry {
+                            binding: 2,
+                            resource: wgpu::BindingResource::Sampler(&self.optical_sampler),
+                        },
+                        wgpu::BindGroupEntry {
+                            binding: 3,
+                            resource: self.tile_headers.as_entire_binding(),
+                        },
+                        wgpu::BindGroupEntry {
+                            binding: 4,
+                            resource: self.fire_tile_indices.as_entire_binding(),
+                        },
+                        wgpu::BindGroupEntry {
+                            binding: 5,
+                            resource: self.smoke_tile_indices.as_entire_binding(),
+                        },
+                        wgpu::BindGroupEntry {
+                            binding: 6,
+                            resource: self.point_tile_indices.as_entire_binding(),
+                        },
+                        wgpu::BindGroupEntry {
+                            binding: 7,
+                            resource: self.particle_tile_indices.as_entire_binding(),
+                        },
+                        wgpu::BindGroupEntry {
+                            binding: 8,
+                            resource: wgpu::BindingResource::TextureView(&view),
+                        },
+                    ],
+                })
+            });
+            self.absorption_texture = Some(texture);
+            let allocation = self.resource_inventory["known_gpu_allocation_bytes"]
+                .as_u64()
+                .unwrap_or(0);
+            self.resource_inventory["known_gpu_allocation_bytes"] =
+                (allocation + cache_bytes).into();
+            self.resource_inventory["smoke_absorption_cache_bytes"] = cache_bytes.into();
+        } else {
+            self.volume_groups = std::array::from_fn(|i| {
+                group(
+                    &self.device,
+                    &self.volume_layout,
+                    &[
+                        wgpu::BindingResource::TextureView(&self.depth),
+                        wgpu::BindingResource::TextureView(&smoke_views[i]),
+                        wgpu::BindingResource::Sampler(&self.optical_sampler),
+                        // This slot is unused by direct sampling; bind an existing volume.
+                        wgpu::BindingResource::TextureView(&smoke_views[i]),
+                    ],
+                )
+            });
+            self.optical_smoke_groups = std::array::from_fn(|i| {
+                self.device.create_bind_group(&wgpu::BindGroupDescriptor {
+                    label: Some("optical foreground atmosphere"),
+                    layout: &self.optical_smoke_layout,
+                    entries: &[
+                        wgpu::BindGroupEntry {
+                            binding: 1,
+                            resource: wgpu::BindingResource::TextureView(&smoke_views[i]),
+                        },
+                        wgpu::BindGroupEntry {
+                            binding: 2,
+                            resource: wgpu::BindingResource::Sampler(&self.optical_sampler),
+                        },
+                        wgpu::BindGroupEntry {
+                            binding: 3,
+                            resource: self.tile_headers.as_entire_binding(),
+                        },
+                        wgpu::BindGroupEntry {
+                            binding: 4,
+                            resource: self.fire_tile_indices.as_entire_binding(),
+                        },
+                        wgpu::BindGroupEntry {
+                            binding: 5,
+                            resource: self.smoke_tile_indices.as_entire_binding(),
+                        },
+                        wgpu::BindGroupEntry {
+                            binding: 6,
+                            resource: self.point_tile_indices.as_entire_binding(),
+                        },
+                        wgpu::BindGroupEntry {
+                            binding: 7,
+                            resource: self.particle_tile_indices.as_entire_binding(),
+                        },
+                        wgpu::BindGroupEntry {
+                            binding: 8,
+                            resource: wgpu::BindingResource::TextureView(&smoke_views[i]),
+                        },
+                    ],
+                })
+            });
+            self.absorption_groups = None;
+            self.absorption_texture = None;
+            let allocation = self.resource_inventory["known_gpu_allocation_bytes"]
+                .as_u64()
+                .unwrap_or(0);
+            self.resource_inventory["known_gpu_allocation_bytes"] =
+                allocation.saturating_sub(cache_bytes).into();
+            self.resource_inventory["smoke_absorption_cache_bytes"] = 0.into();
+        }
+        self.absorption_cache_active = enabled;
+    }
+
     pub fn render(&mut self, scene: &Scene, camera: &Camera, tick: u64, seed: u32) {
         self.poll_timing(false);
+        self.ensure_absorption_cache(scene.render.experiments.smoke_absorption_cache);
         let started = Instant::now();
         if self.material_cache != scene.materials {
             let upload_started = Instant::now();
@@ -3317,8 +3500,8 @@ impl Renderer {
         self.metrics.smoke_absorption_cache_enabled =
             scene.render.experiments.smoke_absorption_cache;
         self.metrics.gpu_absorption_cache_ms = None;
-        let absorption_encode_started = Instant::now();
         if scene.render.experiments.smoke_absorption_cache {
+            let absorption_encode_started = Instant::now();
             let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
                 label: Some("coarse fire-light smoke absorption"),
                 timestamp_writes: timing_slot.map(|index| wgpu::ComputePassTimestampWrites {
@@ -3329,15 +3512,25 @@ impl Renderer {
             });
             pass.set_pipeline(&self.pipelines.absorption);
             pass.set_bind_group(0, &self.globals, &[]);
-            pass.set_bind_group(1, &self.absorption_groups[self.smoke_index], &[]);
+            pass.set_bind_group(
+                1,
+                &self
+                    .absorption_groups
+                    .as_ref()
+                    .expect("enabled cache has build bind groups")[self.smoke_index],
+                &[],
+            );
             pass.dispatch_workgroups(
                 self.absorption_cache_resolution / 4,
                 self.absorption_cache_resolution / 4,
                 self.absorption_cache_resolution / 4,
             );
+            drop(pass);
+            self.metrics.cpu_absorption_cache_ms =
+                absorption_encode_started.elapsed().as_secs_f64() * 1000.;
+        } else {
+            self.metrics.cpu_absorption_cache_ms = 0.;
         }
-        self.metrics.cpu_absorption_cache_ms =
-            absorption_encode_started.elapsed().as_secs_f64() * 1000.;
         let shadow_encode_started = Instant::now();
         if shadow_redrawn {
             self.update_shadow_matrices(scene, dirty_faces);

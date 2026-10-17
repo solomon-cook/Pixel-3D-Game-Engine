@@ -337,7 +337,10 @@ three short paired orbit runs recorded roughly 0.026 ms and 0.029 ms median cach
 build cost. Total GPU render medians were slightly higher with the cache enabled,
 so neither tier is promoted. At the fixed smoke-close still, 16³ had lower mean
 absolute RGB error than 8³. Longer motion, rapid light/density edit, paused-edit,
-and non-Metal acceptance remain open. See [measurements-o05.json](measurements-o05.json).
+and non-Metal acceptance remain open. The disabled path now allocates no cache
+texture, dispatches no build pass, and reports zero cache timing/allocation. An
+off/on/off GPU protocol replay confirmed 0/4096/0 cache bytes and identical
+disabled output before and after. See [measurements-o05.json](measurements-o05.json).
 
 ## O06 — Specialise optical materials and avoid repeated shading
 

@@ -1,6 +1,6 @@
 {
   "task": "O05 smoke absorption cache prototype and evidence",
-  "status": "opt-in prototype implemented; promotion and temporal/platform acceptance remain open",
+  "status": "opt-in prototype implemented; disabled allocation and work corrected and verified; optimization, temporal and portability acceptance remain open",
   "host": {
     "gpu": "Apple M1 Max",
     "backend": "Metal",
@@ -98,6 +98,30 @@
     "One fixed still at one camera/tick does not quantify temporal error or establish moving-ember/light quality.",
     "Windows DX12 and other GPU backends remain unverified.",
     "Cache currently handles only the primary authored fire light; particle lights and fallback points use direct sampling.",
-    "Cache resource is allocated even when the opt-in experiment is disabled."
-  ]
+    "Longer motion, rapid density/light edit, paused-edit, native-window, Windows DX12 and other GPU acceptance remain open."
+  ],
+  "disabled_path_followup": {
+    "date": "2026-10-18",
+    "change": "Allocate the 3D absorption cache only while enabled. Disabled shading binds an existing smoke volume as an unused fallback texture, does not dispatch the build pass, and reports zero cache bytes and zero cache CPU encode time. Live toggles rebuild the dependent volume and optical bind groups transactionally at the next render.",
+    "protocol": "Metal serve session, seed 42, tick 300; start disabled, toggle enabled, toggle disabled; inspect_effects/get_metrics and capture at each state",
+    "cache_bytes_off_on_off": [
+      0,
+      4096,
+      0
+    ],
+    "known_allocation_returns_to_baseline": true,
+    "disabled_capture_before_after_identical": true,
+    "gpu_verify": "python3 scripts/verify.py --gpu passed; Metal; native false",
+    "source": "crates/engine/src/render/mod.rs",
+    "captured_image_sha256_off_on_off": [
+      "1e62d2c76c2008826ef69df6671cf548b137046970e2c3804010fa1fe3ee6767",
+      "b8d6bf2b0391383efc905199e1eef02fa93e3f073a1711beb88ad8c8318111b",
+      "1e62d2c76c2008826ef69df6671cf548b137046970e2c3804010fa1fe3ee6767"
+    ],
+    "cpu_cache_encode_ms_off_on_off": [
+      0.0,
+      0.061459,
+      0.0
+    ]
+  }
 }

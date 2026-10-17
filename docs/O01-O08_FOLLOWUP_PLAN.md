@@ -95,8 +95,11 @@ Fewer primitives alone are not a frame-win claim.
 
 ### 4. O05 smoke absorption cache
 
-1. Make the disabled path avoid cache allocation and cache work. Verify direct
-   sampling remains the selected fallback when the experiment is off or invalid.
+1. **Complete:** the disabled path now allocates no absorption field and does no
+   cache build or cache timing work. It reuses an existing smoke volume only as an
+   unused binding fallback; direct density sampling remains selected. Off/on/off
+   GPU captures report 0/4096/0 cache bytes and identical images at the same tick
+   before and after the enabled interval.
 2. Compare direct sampling with 8³ and 16³ cache modes over small, medium and
    screen-filling smoke. Separate cache construction/update, lookup and direct
    sampling time; include memory and invalidation costs in total work.

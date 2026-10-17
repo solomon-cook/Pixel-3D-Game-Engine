@@ -35,9 +35,10 @@ render. Fixed-tick stills and three short paired orbit runs are recorded in
 [measurements-o05.json](measurements-o05.json). The 16³ still is closer to direct
 sampling by mean RGB error, but both tiers add a roughly 0.026–0.029 ms GPU build
 pass and total GPU render medians were slightly slower. No default promotion is
-recommended. Motion/temporal review, rapid density/light edit checks, cache
-allocation cleanup while disabled, Windows/DX12 and other GPU qualification remain
-open.
+recommended. The disabled path now allocates no cache field or build pass; a live
+off/on/off Metal capture reports 0/4096/0 cache bytes and reproduces the same
+disabled image. Motion/temporal review, rapid density/light edit checks,
+Windows/DX12 and other GPU qualification remain open.
 
 O06 now has an opt-in opaque-reflector lighting reuse path. It reverses the
 matching same-pixel foreground atmosphere contribution from the HDR snapshot and
