@@ -501,6 +501,16 @@ adapter. Copy elimination remains a candidate; validate layouts on both Metal an
 O08 layout/pass experiments and the later sparse-smoke gate
 remain open.
 
+An opt-in `Rg11b10Ufloat` HDR color-target trial is available with
+`--compact-hdr` (or `render.compact_hdr` in scene JSON). It halves bytes for the
+primary HDR target and its optical snapshot when the adapter exposes the required
+render feature and filterable sampled/copy/render usages. On one M1 Max/Metal
+adapter, three fixed-tick material/smoke still pairs looked very similar, but
+were not pixel-identical: mean absolute RGB error was 0.32–0.45/255 and the
+smoke view reached 30/255 in sparse pixels. The variant remains opt-in; motion,
+timing, DX12 and other-adapter fallback/rendering checks remain open. See
+[measurements-o08.json](measurements-o08.json).
+
 ## Delivery order and promotion
 
 | Wave | Work | Exit evidence |

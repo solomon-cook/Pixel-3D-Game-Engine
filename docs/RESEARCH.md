@@ -320,3 +320,16 @@ no optical-resolve timestamp; the previously allocated snapshot remained residen
 The M1 Max/Metal test does not detect full occlusion, demonstrate a GPU-time gain,
 or validate DX12/other adapters. Evidence and hashes are in
 [measurements-o08.json](measurements-o08.json).
+
+## Packed HDR target probe (17 October)
+
+`Rg11b10Ufloat` is available as a renderable, filterable, sampled/copy target on the
+current M1 Max/Metal adapter when `RG11B10UFLOAT_RENDERABLE` is requested. The
+`--compact-hdr` startup variant uses four bytes per pixel for the primary HDR color
+target and lazy optical snapshot, instead of eight; `Rgba16Float` remains the
+default and unsupported-adapter fallback. Three matched fixed-tick views for metal,
+smoke and glass looked very similar at native capture scale, but are not pixel
+identical. Mean absolute RGB error ranged from 0.32 to 0.45/255; the smoke view had
+a sparse maximum channel difference of 30/255. This gives a useful selectable
+memory/precision tradeoff, not an accepted default or a performance result. Motion,
+timing, fallback and DX12 review remain open. See [measurements-o08.json](measurements-o08.json).

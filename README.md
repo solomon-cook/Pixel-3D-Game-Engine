@@ -41,6 +41,7 @@ Choose named perspective or orthographic views in the inspector.
 cargo run --release -p engine-lab -- validate
 cargo run --release -p engine-lab -- describe
 cargo run --release -p engine-lab -- capture --camera hero --tick 300 --output artifacts/hero.png
+cargo run --release -p engine-lab -- capture --scene assets/scenes/materials.json --camera metal-close --compact-hdr --output artifacts/metal-compact-hdr.png
 cargo run --release -p engine-lab -- benchmark --duration 120 --warmup 10
 cargo run --release -p engine-lab -- benchmark-native --duration 120 --warmup 10
 python3 scripts/profile_compare.py --baseline assets/scenes/materials.json --candidate assets/scenes/materials.json --measure-overhead
@@ -99,6 +100,12 @@ untimed overhead comparisons. `benchmark-native` records actual surface acquisit
 present and vsync spans in a native window. `assets/scenes/profiling-heavy.json`
 provides the single-plume, eight-point-light workload; it keeps the chosen 640×360
 grid and clearing route.
+
+`--compact-hdr` opts into an `Rg11b10Ufloat` HDR color target when the active adapter
+supports filtered sampling, render targets, copies and the required render feature.
+The default remains `Rgba16Float`; selected format and fallback capability appear in
+capture metadata and the `serve` readiness report. This experimental format is
+startup-only and may change final pixel colors slightly.
 
 ## Game-authored effects
 

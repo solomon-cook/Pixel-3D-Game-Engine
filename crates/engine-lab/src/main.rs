@@ -150,6 +150,9 @@ pub struct Options {
     /// Smoke absorption cache resolution per axis (8 or 16).
     #[arg(long, value_parser = clap::value_parser!(u32).range(8..=16))]
     pub absorption_cache_resolution: Option<u32>,
+    /// Use experimental Rg11b10Ufloat HDR color targets when supported.
+    #[arg(long)]
+    pub compact_hdr: bool,
     #[arg(long)]
     pub shaders: Option<PathBuf>,
 }
@@ -275,6 +278,9 @@ pub fn resolve_path(path: &Path) -> PathBuf {
 pub fn prepare(options: &Options) -> Result<(Scene, PathBuf, PathBuf)> {
     let path = resolve_path(&options.scene);
     let mut scene = Scene::load(&path)?;
+    if options.compact_hdr {
+        scene.render.compact_hdr = true;
+    }
     if let Some(profile) = &options.effect_profile {
         scene.emitters[0].effect_profile = profile.clone();
     }

@@ -305,7 +305,8 @@
     "The only live format capability probe is Apple M1 Max/Metal. Windows DX12 and RTX-class feature reports and measured pass costs remain open.",
     "RG16 capability in this probe does not make it a portable default; query each adapter and retain an RGBA16F fallback unless DX12 and target GPU results pass.",
     "Repeat the inventory after O03/O05/O06 introduce or specialize targets, as required by the plan.",
-    "One HDR snapshot and its copy remain necessary in the current pass layout; eliminating it requires a larger sampling/output redesign and matched backend timing."
+    "One HDR snapshot and its copy remain necessary in the current pass layout; eliminating it requires a larger sampling/output redesign and matched backend timing.",
+    "The opt-in Rg11b10Ufloat HDR target was tested only on Apple M1 Max/Metal; baseline/fallback rendering, Windows DX12 and other adapters remain required. Three fixed-tick still views show low mean channel error but are not temporal or performance acceptance."
   ],
   "lazy_optical_snapshots": {
     "status": "implemented; HDR snapshot allocates on first camera-visible optical batch and remains resident for live camera/material edits",
@@ -603,6 +604,79 @@
         "One Apple M1 Max / Metal adapter only; Windows DX12, fallback execution on another adapter and native-window behavior remain unverified.",
         "The snapshot remains allocated after first visible optical use for later camera/material edits."
       ]
+    },
+    "compact_hdr_rg11b10": {
+      "status": "implemented as an opt-in startup format; Rgba16Float remains the default and fallback",
+      "adapter": "Apple M1 Max / Metal / IntegratedGpu",
+      "resolution": [
+        640,
+        360
+      ],
+      "seed": 42,
+      "tick": 300,
+      "format": "Rg11b10Ufloat",
+      "adapter_capabilities": {
+        "render_feature_available": true,
+        "texture_binding": true,
+        "render_attachment": true,
+        "copy_src": true,
+        "copy_dst": true,
+        "filterable": true
+      },
+      "bytes_per_pixel": {
+        "baseline_rgba16float": 8,
+        "candidate_rg11b10ufloat": 4
+      },
+      "known_allocation_reduction": {
+        "diffuse_scene_bytes": 921600,
+        "active_optical_scene_bytes_including_snapshot": 1843200,
+        "materials_scene_before_bytes": 16882416,
+        "materials_scene_after_bytes": 15039216,
+        "clearing_scene_before_first_optical_use_bytes": 22808600,
+        "clearing_scene_after_first_optical_use_bytes": 22808600
+      },
+      "capture_comparisons": [
+        {
+          "scene": "assets/scenes/materials.json",
+          "camera": "metal-close",
+          "changed_pixels": 180691,
+          "changed_pixel_fraction": 0.7842491319,
+          "mean_absolute_rgb_channel_error_0_255": 0.3899985532,
+          "max_absolute_channel_error": 8,
+          "baseline_sha256": "44676834882e579439c0ec61fd20c85501f9a5ad32369f1d0e48b1b31c3c6208",
+          "candidate_sha256": "ce5e724db9ab12c20dd921b1c292f035966969871551ce3af5b535cf71f396ab"
+        },
+        {
+          "scene": "assets/scenes/clearing.json",
+          "camera": "smoke-close",
+          "changed_pixels": 113289,
+          "changed_pixel_fraction": 0.4917057292,
+          "mean_absolute_rgb_channel_error_0_255": 0.3202517361,
+          "max_absolute_channel_error": 30,
+          "baseline_sha256": "c080df09137173b984f48d39137da5a8719b2110965d0fd270a801e76f0adbfe",
+          "candidate_sha256": "630f34d04e11d8b44b2970c5ba5021623ff519cf5e8d8dde79e5e1bcaecd5e07"
+        },
+        {
+          "scene": "assets/scenes/materials.json",
+          "camera": "glass-close",
+          "changed_pixels": 178098,
+          "changed_pixel_fraction": 0.7729947917,
+          "mean_absolute_rgb_channel_error_0_255": 0.4503616898,
+          "max_absolute_channel_error": 9,
+          "baseline_sha256": "033cfad4f7aaf53fbed05bd94b43e847aef302be850e246e1e68b00c44d735b2",
+          "candidate_sha256": "06a0e454e0a3fd3c729746ebb29d00b9fce0e40763e3dd64b9d1cdaf2b4bb876"
+        }
+      ],
+      "visual_review": "The matched metal, smoke and glass stills were inspected at native capture scale and look very similar; output pixels are not byte-identical, and smoke has a 30/255 maximum single-channel difference in sparse pixels.",
+      "captures_directory": "artifacts/o08/compact-hdr/",
+      "performance_claim": "none; no route timings or motion/temporal review were run for this format.",
+      "source_base_revision": "4e519f3b2d133dc1f55951d27e84da9f5cea3885",
+      "source_hashes_sha256": {
+        "crates/engine/src/render/mod.rs": "b4c9141d2f7ca3f05e5a89a1c294e1021023c4d9ce2c97f584bbdf6ce3987d80",
+        "crates/engine/src/scene.rs": "ac157b5dd8864925fd09ce9520e6e264b3587b9547813e38566915cc7bac7b8a",
+        "crates/engine-lab/src/main.rs": "cad1fd1a0a36994ec593ecc68b6b02272784fcc655f7d51f4482774ced3b1dec",
+        "crates/engine/src/session.rs": "4d4b50779257949faf3b48b624ec9231d5674939bc2f310ab79bf4b8f8ed240c"
+      }
     }
   },
   "timing_trials": {

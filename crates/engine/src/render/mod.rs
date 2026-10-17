@@ -212,6 +212,7 @@ pub struct Renderer {
     absorption_layout: wgpu::BindGroupLayout,
     absorption_groups: [wgpu::BindGroup; 2],
     hdr_texture: wgpu::Texture,
+    hdr_color_format: wgpu::TextureFormat,
     effect_depth_format: wgpu::TextureFormat,
     smoke_volume_format: wgpu::TextureFormat,
     volume_groups: [wgpu::BindGroup; 2],
@@ -708,6 +709,26 @@ impl Renderer {
             })
             .await
             .context("no compatible desktop GPU adapter")?;
+        let compact_hdr_format = wgpu::TextureFormat::Rg11b10Ufloat;
+        let compact_hdr_features = adapter.get_texture_format_features(compact_hdr_format);
+        let compact_hdr_render_feature = adapter
+            .features()
+            .contains(wgpu::Features::RG11B10UFLOAT_RENDERABLE);
+        let compact_hdr_supported = compact_hdr_render_feature
+            && compact_hdr_features.allowed_usages.contains(
+                wgpu::TextureUsages::RENDER_ATTACHMENT
+                    | wgpu::TextureUsages::TEXTURE_BINDING
+                    | wgpu::TextureUsages::COPY_SRC
+                    | wgpu::TextureUsages::COPY_DST,
+            )
+            && compact_hdr_features
+                .flags
+                .contains(wgpu::TextureFormatFeatureFlags::FILTERABLE);
+        let hdr_color_format = if scene.render.compact_hdr && compact_hdr_supported {
+            compact_hdr_format
+        } else {
+            HDR
+        };
         let rg16_features = adapter.get_texture_format_features(wgpu::TextureFormat::Rg16Float);
         let effect_depth_format = if rg16_features
             .allowed_usages
@@ -745,6 +766,9 @@ impl Renderer {
         }
         if smoke_rg16_supported {
             required_features |= adapter_format_feature;
+        }
+        if hdr_color_format == compact_hdr_format {
+            required_features |= wgpu::Features::RG11B10UFLOAT_RENDERABLE;
         }
         let (device, queue) = adapter
             .request_device(
@@ -1090,7 +1114,7 @@ impl Renderer {
             &device,
             "HDR",
             [w, h, 1],
-            HDR,
+            hdr_color_format,
             use_color | wgpu::TextureUsages::COPY_SRC,
             wgpu::TextureDimension::D2,
         );
@@ -1511,6 +1535,7 @@ impl Renderer {
             &tile_build_layout,
             effect_depth_format,
             smoke_volume_format,
+            hdr_color_format,
             &shader_directory,
         )?;
         let timing = timestamp.then(|| Timing {
@@ -1576,7 +1601,13 @@ impl Renderer {
         } else {
             8
         };
-        let render_targets_bytes = pixel_count * (2 * 8 + effect_depth_bytes_per_pixel + 4 + 4);
+        let hdr_color_bytes_per_pixel = if hdr_color_format == wgpu::TextureFormat::Rg11b10Ufloat {
+            4
+        } else {
+            8
+        };
+        let render_targets_bytes =
+            pixel_count * (8 + hdr_color_bytes_per_pixel + effect_depth_bytes_per_pixel + 4 + 4);
         let smoke_bytes_per_voxel = if smoke_volume_format == wgpu::TextureFormat::Rg16Float {
             4
         } else {
@@ -1626,6 +1657,7 @@ impl Renderer {
             wgpu::TextureFormat::Rg16Float,
             wgpu::TextureFormat::R32Float,
             wgpu::TextureFormat::Rg32Float,
+            wgpu::TextureFormat::Rg11b10Ufloat,
             wgpu::TextureFormat::Rgba8Unorm,
         ]
         .into_iter()
@@ -1647,6 +1679,10 @@ impl Renderer {
             "render_targets_bytes":render_targets_bytes,
             "effect_depth_format":format!("{effect_depth_format:?}"),
             "effect_depth_bytes":pixel_count*effect_depth_bytes_per_pixel,
+            "hdr_color_format":format!("{hdr_color_format:?}"),
+            "hdr_color_requested_compact":scene.render.compact_hdr,
+            "compact_hdr_supported":compact_hdr_supported,
+            "rg11b10_renderable_feature_available":compact_hdr_render_feature,
             "smoke_volume_format":format!("{smoke_volume_format:?}"),
             "smoke_rg16_storage_enabled":smoke_rg16_supported,
             "optical_snapshot_bytes":0,
@@ -1714,6 +1750,7 @@ impl Renderer {
             absorption_layout,
             absorption_groups,
             hdr_texture,
+            hdr_color_format,
             volume_groups,
             volume_layout,
             smoke_groups,
@@ -1782,7 +1819,7 @@ impl Renderer {
             &self.device,
             "opaque + atmosphere snapshot",
             [width, height, 1],
-            HDR,
+            self.hdr_color_format,
             usage,
             wgpu::TextureDimension::D2,
         );
@@ -1797,7 +1834,12 @@ impl Renderer {
             ],
         );
         self.scene_color = Some(scene_color);
-        let bytes = u64::from(width) * u64::from(height) * 8;
+        let bytes_per_pixel = if self.hdr_color_format == wgpu::TextureFormat::Rg11b10Ufloat {
+            4
+        } else {
+            8
+        };
+        let bytes = u64::from(width) * u64::from(height) * bytes_per_pixel;
         self.resource_inventory["optical_snapshot_bytes"] = bytes.into();
         for key in ["render_targets_bytes", "known_gpu_allocation_bytes"] {
             let current = self.resource_inventory[key].as_u64().unwrap_or(0);
@@ -1822,6 +1864,7 @@ impl Renderer {
         tile_build: &wgpu::BindGroupLayout,
         effect_depth_format: wgpu::TextureFormat,
         smoke_volume_format: wgpu::TextureFormat,
+        hdr_color_format: wgpu::TextureFormat,
         dir: &Path,
     ) -> Result<Pipelines> {
         let read = |name: &str| {
@@ -1974,7 +2017,10 @@ impl Renderer {
             &mesh_layout,
             "vs",
             Some("fs"),
-            &[color_target(HDR, None), color_target(HDR, None)],
+            &[
+                color_target(hdr_color_format, None),
+                color_target(HDR, None),
+            ],
             true,
             true,
             true,
@@ -1985,7 +2031,10 @@ impl Renderer {
             &mesh_layout,
             "vs_baked",
             Some("fs"),
-            &[color_target(HDR, None), color_target(HDR, None)],
+            &[
+                color_target(hdr_color_format, None),
+                color_target(HDR, None),
+            ],
             true,
             true,
             false,
@@ -1996,7 +2045,7 @@ impl Renderer {
             &optical_layout,
             "optical_vs",
             Some("optical_fs"),
-            &[color_target(HDR, None)],
+            &[color_target(hdr_color_format, None)],
             true,
             true,
             true,
@@ -2007,7 +2056,7 @@ impl Renderer {
             &optical_layout,
             "optical_vs_baked",
             Some("optical_fs"),
-            &[color_target(HDR, None)],
+            &[color_target(hdr_color_format, None)],
             true,
             true,
             false,
@@ -2019,7 +2068,10 @@ impl Renderer {
             "fullscreen",
             Some("volume_fs"),
             &[
-                color_target(HDR, Some(wgpu::BlendState::PREMULTIPLIED_ALPHA_BLENDING)),
+                color_target(
+                    hdr_color_format,
+                    Some(wgpu::BlendState::PREMULTIPLIED_ALPHA_BLENDING),
+                ),
                 color_target(effect_depth_format, None),
             ],
             false,
@@ -2142,6 +2194,7 @@ impl Renderer {
             &self.tile_build_layout,
             self.effect_depth_format,
             self.smoke_volume_format,
+            self.hdr_color_format,
             &self.shader_directory,
         )?;
         self.pipelines = replacement;

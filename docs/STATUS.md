@@ -7,9 +7,10 @@ Optimisation planning: [eight workstream plans](OPTIMIZATION_PLAN.md) and the
 [execution queue](../TODO.md) define profiling, cached shadows, tiled effects,
 projected detail, smoke absorption reuse, optical specialisation, object culling/
 instancing and resource efficiency. O01's profiling implementation and M1 Max/Metal
-workload evidence are complete. O08's inventory and two targeted allocation changes
-are implemented on M1 Max/Metal; broader layout/pass changes still need
-cross-backend measurements and comparisons. O03's bounded single-emitter tile lists and O07's per-camera/per-light culling,
+workload evidence are complete. O08's inventory and targeted allocation changes
+are implemented on M1 Max/Metal; an opt-in packed HDR format now halves target
+storage with small still-image differences. Broader layout/pass changes still need
+motion and cross-backend measurements. O03's bounded single-emitter tile lists and O07's per-camera/per-light culling,
 shared meshes, instancing and live object transforms are implemented and measured
 on M1 Max/Metal. Platform acceptance gates remain open.
 
@@ -126,6 +127,14 @@ zero optical batches and no optical-resolve timestamp while retaining the snapsh
 metal-close seed-42 tick-300 image remained byte-identical to the saved reference. This
 is frustum visibility, not full occlusion detection, and has only been exercised on
 M1 Max/Metal.
+
+The experimental `Rg11b10Ufloat` HDR target reduces the primary color target and
+optical snapshot from 8 to 4 bytes per pixel when the adapter exposes the required
+feature/usages. Three fixed-tick M1 Max stills looked very similar on visual review,
+but 49–78% of pixels changed at low mean RGB error; sparse smoke pixels had a
+30/255 maximum channel difference. The format remains off by default pending motion,
+timing and cross-backend review. The HDR snapshot/pass-layout and sparse-smoke gates
+remain open.
 
 ## O03 single-emitter tile lists
 

@@ -26,6 +26,9 @@ pub struct Scene {
 #[serde(deny_unknown_fields)]
 pub struct RenderSettings {
     pub resolution: [u32; 2],
+    /// Experimental 32-bit packed HDR target for comparison; disabled by default.
+    #[serde(default)]
+    pub compact_hdr: bool,
     pub exposure: f32,
     pub shading_steps: u32,
     pub dither_strength: f32,
