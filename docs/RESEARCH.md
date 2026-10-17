@@ -376,3 +376,30 @@ unverified. Captures and raw timing reports are under ignored
 `artifacts/o08/optical-no-copy-captures/` and
 `artifacts/o08/optical-no-copy-timing/`; full details are in
 [measurements-o08.json](measurements-o08.json).
+
+# Simulation-driven surface heat cue
+
+Hypothesis: a small stepped warm shift plus an edge accent can make simulated
+fire heat legible as a gameplay risk cue on selected opaque materials while
+reusing the current fixed-step temperature volume and pixel grid. `heat_response`
+is an opt-in per-material scalar (0..1, default 0); zero avoids the shader sample.
+The prototype adds no readback, simulation pass, or per-particle work. Heat is an
+artistic signal, not a physical temperature or damage measurement.
+
+Prior art in this engine includes the fire point-light contribution to material
+lighting and the post-process heat shimmer driven by the same temperature field.
+This experiment moves a compact signal into opaque surface shading and uses
+material authoring to select gameplay-relevant surfaces.
+
+Visual check: with `heat_response=1`, the matched `fire-study` capture at seed 42,
+tick 300 and 640×360 changed 220 scene pixels around the fire base; repeating the
+capture produced identical pixels. The cue reads as a localized warm mark on the
+ground. A zero-response capture was pixel-identical to the baseline. This is a
+single-view style check, not a full art review.
+
+Cost check: three alternating 120-second `clearing-orbit` pairs with 10-second
+warmup on Apple M1 Max/Metal measured a 0.0112 ms median paired increase in GPU
+render time (2.5669 ms baseline vs 2.5781 ms candidate); opaque geometry increased
+0.0068 ms. Full route/frame work varied more than the GPU delta. See
+[`measurements-heat-cue.json`](measurements-heat-cue.json). Keep the feature
+opt-in; Windows DX12 and broader visual acceptance remain open.

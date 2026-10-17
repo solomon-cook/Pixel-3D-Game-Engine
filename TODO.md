@@ -29,6 +29,9 @@ Detailed steps, dependencies and acceptance criteria live in
 
 ## Later scaling research
 
+- [ ] Simulation-driven surface heat cue — opt-in material response backed by
+  the existing temperature volume; evaluate pixel readability and shader cost
+  after O08 before enabling it in authored scenes by default.
 - [ ] Extend explicit emitter/thermal/light ownership before multi-fire stress tests.
 - [ ] Consider active-region smoke simulation only if compute measurements justify it.
 

@@ -1136,6 +1136,7 @@ fn draw_inspector(ctx: &egui::Context, session: &Session, commands: &mut Vec<(&s
                         ("ior","Index of refraction",material.ior,1.,2.5),
                         ("thickness","Optical thickness",material.thickness,0.,10.),
                         ("subsurface","Subsurface wrap",material.subsurface,0.,1.),
+                        ("heat_response","Gameplay heat response",material.heat_response,0.,1.),
                         ("emission","Emission",material.emission,0.,8.),
                     ] {
                         if ui.add(egui::Slider::new(&mut value,low..=high).text(label)).changed() {commands.push(("set_parameter",json!({"path":format!("materials.{}.{property}",material.id),"value":value})));}

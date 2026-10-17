@@ -62,7 +62,7 @@ fn material_table(scene: &Scene) -> Vec<MaterialGpu> {
         .map(|m| MaterialGpu {
             color_emission: [m.color[0], m.color[1], m.color[2], m.emission],
             surface: [m.roughness, m.metallic, m.reflectivity, m.transmission],
-            optical: [m.ior, m.thickness, m.subsurface, 0.],
+            optical: [m.ior, m.thickness, m.subsurface, m.heat_response],
             absorption: [m.absorption[0], m.absorption[1], m.absorption[2], 0.],
             scatter: [
                 m.scatter_color[0],
@@ -254,7 +254,7 @@ pub struct Renderer {
     tile_list_layout: wgpu::BindGroupLayout,
     tile_build_layout: wgpu::BindGroupLayout,
     tile_build_group: wgpu::BindGroup,
-    tile_list_group: wgpu::BindGroup,
+    tile_list_groups: [wgpu::BindGroup; 2],
     tile_config_buffer: wgpu::Buffer,
     tile_stats_buffer: wgpu::Buffer,
     tile_stats_readbacks: Vec<TileStatsReadback>,
@@ -1034,11 +1034,26 @@ impl Renderer {
         };
         let tile_list_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("per-tile effect lists"),
-            entries: &(0..5)
-                .map(|binding_index| {
-                    binding(binding_index, wgpu::ShaderStages::FRAGMENT, storage(true))
-                })
-                .collect::<Vec<_>>(),
+            entries: &[
+                binding(0, wgpu::ShaderStages::FRAGMENT, storage(true)),
+                binding(1, wgpu::ShaderStages::FRAGMENT, storage(true)),
+                binding(2, wgpu::ShaderStages::FRAGMENT, storage(true)),
+                binding(3, wgpu::ShaderStages::FRAGMENT, storage(true)),
+                binding(4, wgpu::ShaderStages::FRAGMENT, storage(true)),
+                binding(
+                    5,
+                    wgpu::ShaderStages::FRAGMENT,
+                    sampled(
+                        wgpu::TextureViewDimension::D3,
+                        wgpu::TextureSampleType::Float { filterable: true },
+                    ),
+                ),
+                binding(
+                    6,
+                    wgpu::ShaderStages::FRAGMENT,
+                    wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
+                ),
+            ],
         });
         let tile_build_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("tile-list build outputs"),
@@ -1123,17 +1138,6 @@ impl Renderer {
                 tile_stats_buffer.as_entire_binding(),
             ],
         );
-        let tile_list_group = group(
-            &device,
-            &tile_list_layout,
-            &[
-                tile_headers.as_entire_binding(),
-                fire_tile_indices.as_entire_binding(),
-                smoke_tile_indices.as_entire_binding(),
-                point_tile_indices.as_entire_binding(),
-                particle_tile_indices.as_entire_binding(),
-            ],
-        );
         let use_color =
             wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING;
         let hdr_texture = texture(
@@ -1206,6 +1210,21 @@ impl Renderer {
             mag_filter: wgpu::FilterMode::Linear,
             min_filter: wgpu::FilterMode::Linear,
             ..Default::default()
+        });
+        let tile_list_groups = std::array::from_fn(|i| {
+            group(
+                &device,
+                &tile_list_layout,
+                &[
+                    tile_headers.as_entire_binding(),
+                    fire_tile_indices.as_entire_binding(),
+                    smoke_tile_indices.as_entire_binding(),
+                    point_tile_indices.as_entire_binding(),
+                    particle_tile_indices.as_entire_binding(),
+                    wgpu::BindingResource::TextureView(&smoke_views[i]),
+                    wgpu::BindingResource::Sampler(&linear),
+                ],
+            )
         });
         let scene_color = None;
         let optical_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -1842,7 +1861,7 @@ impl Renderer {
             tile_list_layout,
             tile_build_layout,
             tile_build_group,
-            tile_list_group,
+            tile_list_groups,
             tile_config_buffer,
             tile_stats_buffer,
             tile_stats_readbacks,
@@ -3400,7 +3419,7 @@ impl Renderer {
             });
             pass.set_bind_group(0, &self.globals, &[]);
             pass.set_bind_group(1, &self.textures, &[]);
-            pass.set_bind_group(2, &self.tile_list_group, &[]);
+            pass.set_bind_group(2, &self.tile_list_groups[self.smoke_index], &[]);
             let vertex_buffer = if self.geometry_instancing_enabled {
                 &self.vertex
             } else {
@@ -3448,7 +3467,7 @@ impl Renderer {
             pass.set_bind_group(0, &self.globals, &[]);
             pass.set_bind_group(1, &self.textures, &[]);
             pass.set_bind_group(2, &self.volume_groups[self.smoke_index], &[]);
-            pass.set_bind_group(3, &self.tile_list_group, &[]);
+            pass.set_bind_group(3, &self.tile_list_groups[self.smoke_index], &[]);
             pass.draw(0..3, 0..1);
         }
         // Skip the copies and extra draw entirely for existing diffuse scenes.

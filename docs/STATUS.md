@@ -397,6 +397,16 @@ launch instructions and dependency notices. Mac signing is ad hoc; Windows is
 unsigned. Production signing/notarization/distribution remain outside this lab.
 Water, clouds, browser support, gameplay frameworks and a full editor are later work.
 
+## Simulation-driven surface heat cue
+
+An opt-in material `heat_response` samples the existing temperature volume for
+opaque shading and adds a stepped warm mark with a pixel edge cue. Zero response
+preserves pixel output. Matched captures at seed 42/tick 300 were repeatable; the
+active cue changed 220 pixels near the fire base. Three 120-second M1 Max/Metal
+route pairs measured a 0.0112 ms median paired GPU-render increase. The prototype
+remains opt-in; DX12 and broader visual review are open. See
+[RESEARCH.md](RESEARCH.md) and [measurements-heat-cue.json](measurements-heat-cue.json).
+
 ## Material comparison validation
 
 - The original clearing at seed 42 / hero / tick 300 was pixel-identical before

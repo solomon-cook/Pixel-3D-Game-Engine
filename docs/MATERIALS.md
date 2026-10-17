@@ -38,6 +38,7 @@ Every scene material has these live fields, with old V1 scenes receiving default
 | `absorption` | [0,0,0] / RGB 0..64 | Per-world-unit colour extinction, exponential with path length |
 | `subsurface` | 0 / 0..1 | Wrapped diffuse plus transmitted backlight |
 | `scatter_color` | [1,1,1] / RGB 0..64 | Colour of faux subsurface light |
+| `heat_response` | 0 / 0..1 | Opt-in stepped warm tint and pixel edge cue from the existing simulated temperature field |
 
 Thickness is authored, not measured from back faces, and does not automatically
 change when an object's scale changes. Use material variants for different
@@ -55,7 +56,15 @@ materials plus an internal procedural bark entry.
 {"id":1,"method":"set_parameter","params":{"path":"materials.glass.thickness","value":0.8}}
 {"id":2,"method":"set_parameter","params":{"path":"materials.copper.roughness","value":0.5}}
 {"id":3,"method":"set_parameter","params":{"path":"render.reflection_steps","value":8}}
+{"id":4,"method":"set_parameter","params":{"path":"materials.earth.heat_response","value":0.8}}
 ```
+
+`heat_response` applies only to opaque world shading. It samples the existing
+smoke temperature volume 0.45 world units above the surface; it is an artistic
+gameplay cue, not a calibrated temperature or damage value. Zero skips the sample and
+preserves the previous material appearance. Positive values add a stepped warm
+shift and a small edge accent before palette quantisation. The field and pixel
+grid are shared with the existing simulation and presentation passes.
 
 Procedural `sphere` keeps existing faceted rocks. `smooth_sphere` provides smooth
 vertex normals for material studies. PNG/GLB base-colour textures still use the

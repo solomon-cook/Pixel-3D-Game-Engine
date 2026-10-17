@@ -3,6 +3,8 @@
 @group(1) @binding(2) var shadow_sampler: sampler_comparison;
 @group(1) @binding(3) var atlas: texture_2d_array<f32>;
 @group(1) @binding(4) var atlas_sampler: sampler;
+@group(2) @binding(5) var heat_volume:texture_3d<f32>;
+@group(2) @binding(6) var heat_sampler:sampler;
 
 fn sun_visibility(p:vec3<f32>, n:vec3<f32>) -> f32 {
     let q=g.sun_matrix*vec4<f32>(p+n*0.025,1.); let uv=q.xy/q.w*vec2<f32>(0.5,-0.5)+0.5;
@@ -107,7 +109,20 @@ fn shade_surface(v:Varying,tile:u32)->Output {
     o.normal_depth=vec4(n,length(g.camera.xyz-v.position));return o;
 }
 @fragment fn fs(v:Varying)->Output {
-    let result=shade_surface(v,tile_index(v.clip.xy));
+    var result=shade_surface(v,tile_index(v.clip.xy));
+    let m=materials[v.material];
+    if m.optical.w>0. {
+        let heat_position=v.position+vec3(0.,0.45,0.);
+        let heat_uv=(heat_position-g.volume_min.xyz)/(g.volume_max.xyz-g.volume_min.xyz);
+        if all(heat_uv>=vec3(0.)) && all(heat_uv<=vec3(1.)) {
+            let temperature=clamp(textureSampleLevel(heat_volume,heat_sampler,heat_uv,0.).y,0.,1.);
+            let heat_level=floor(clamp(temperature*16.,0.,0.9999)*4.)/3.;
+            let response=clamp(heat_level*m.optical.w,0.,1.);
+            let edge=select(0.,1.,abs(dpdx(heat_level))+abs(dpdy(heat_level))>0.2 && heat_level>0.);
+            result.color=vec4(mix(result.color.rgb,g.fire_warm.rgb,response*0.22),result.color.a);
+            result.color=vec4(mix(result.color.rgb,g.fire_hot.rgb,edge*m.optical.w*0.18),result.color.a);
+        }
+    }
     if transmission(materials[v.material])>0. {discard;}
     return result;
 }

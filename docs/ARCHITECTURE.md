@@ -22,6 +22,13 @@ fire/smoke/embers, and colour treatment into an sRGB pixel buffer.
 The native host presents that buffer at an integer physical-pixel scale and draws
 the inspector at display resolution. Captures read the same pixel buffer.
 
+Opaque materials may opt into a bounded gameplay heat cue through
+`heat_response`. The world shader samples the current fixed-step temperature
+volume 0.45 world units above the surface only for responsive materials, then
+applies a stepped warm shift and pixel edge accent before the existing colour
+treatment. It shares the simulation volume and render pass: no GPU readback,
+extra solver, or pixel-grid change.
+
 GPU resource ownership is explicit in Renderer. Device/queue never live in a
 global singleton. Render passes are explicit and ordered; a general render graph
 will be added only when effects require one.

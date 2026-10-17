@@ -117,6 +117,9 @@ pub struct Material {
     pub subsurface: f32,
     #[serde(default = "unit_scale")]
     pub scatter_color: [f32; 3],
+    /// Visual response to the existing simulated temperature field (0 disables the cue).
+    #[serde(default)]
+    pub heat_response: f32,
 }
 fn material_ior() -> f32 {
     1.5
@@ -373,6 +376,7 @@ impl Scene {
                 ("ior", m.ior, 1., 2.5),
                 ("thickness", m.thickness, 0., 10.),
                 ("subsurface", m.subsurface, 0., 1.),
+                ("heat_response", m.heat_response, 0., 1.),
             ] {
                 if !value.is_finite() || !(low..=high).contains(&value) {
                     bail!("material '{}'.{property}: expected {low}..{high}", m.id);

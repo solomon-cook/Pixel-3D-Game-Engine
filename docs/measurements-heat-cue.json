@@ -1,0 +1,74 @@
+{
+  "workload": {
+    "scene": "assets/scenes/clearing.json",
+    "candidate_material": "earth",
+    "candidate_heat_response": 0.8,
+    "route": "clearing-orbit",
+    "camera": "hero",
+    "resolution": [
+      640,
+      360
+    ],
+    "seed": 42,
+    "warmup_seconds": 10,
+    "route_seconds": 120,
+    "pairs": 3,
+    "mode": "serial"
+  },
+  "hardware": {
+    "device": "Apple M1 Max",
+    "backend": "Metal"
+  },
+  "gpu_render_ms": {
+    "baseline_run_medians": [
+      2.570041,
+      2.566917,
+      2.5664999999999996
+    ],
+    "candidate_run_medians": [
+      2.575542,
+      2.5780839999999996,
+      2.5785419999999997
+    ],
+    "paired_candidate_minus_baseline": [
+      0.0055010000000002,
+      0.011166999999999483,
+      0.012042000000000108
+    ],
+    "paired_delta_median": 0.011166999999999483,
+    "paired_delta_p95": 0.012042000000000108
+  },
+  "opaque_geometry_ms": {
+    "baseline_run_medians": [
+      1.347375,
+      1.347959,
+      1.346833
+    ],
+    "candidate_run_medians": [
+      1.354167,
+      1.354417,
+      1.3554579999999998
+    ],
+    "paired_delta_median": 0.006791999999999909,
+    "paired_delta_p95": 0.008624999999999883
+  },
+  "frame_work_ms": {
+    "baseline_run_medians": [
+      4.240833,
+      4.2401670000000005,
+      4.1917919999999995
+    ],
+    "candidate_run_medians": [
+      4.251166,
+      4.300833000000001,
+      4.259833
+    ],
+    "paired_delta_median": 0.06066600000000033,
+    "paired_delta_p95": 0.0680410000000009
+  },
+  "limitations": [
+    "Single-device Metal evidence only; DX12 remains unverified.",
+    "Offscreen serial runs exclude native presentation, UI and vsync.",
+    "Feature remains opt-in; no promotion decision is supported by these results."
+  ]
+}
