@@ -50,13 +50,22 @@ It preserves the full deterministic frame for bounds and particle lights. At
 the small flame silhouette. An 8-second repeated zoom route spent 64/314/102 frames
 in tiers 0/1/2 without frame-to-frame tier chatter.
 
-Three alternating 2-second serial pairs per size on M1 Max/Metal reduced median
-GPU render time by about 0.11 ms in medium and small views, but paired total frame
-work was mixed and the candidate run medians were 0.13–0.23 ms slower overall.
-This is too small and noisy to support promotion. The implementation stays off by
-default pending longer moving-route review and Windows/DX12 qualification. Full
-commands, hashes, measurements and caveats are in [measurements-o04.json](measurements-o04.json);
-local captures and raw runs are under ignored `artifacts/o04/`.
+The 8-second zoom suggested small GPU savings but noisy frame cost. A follow-up
+20-second orbit, including a close-smoke approach and repeated six times in three
+alternating 120-second serial pairs on M1 Max/Metal, occupied tiers 0/1/2 for
+27.5/54.4/18.1% of frames. Median rendered primitives fell from 81 to 71; GPU
+render improved 0.065 ms at the median of paired deltas, while whole-frame deltas
+were mixed and improved only 0.012 ms at the median. Fourteen matched threshold
+checkpoints preserved deterministic fire counts, bounds, emitted lighting and
+particle identities; heat is not directly exposed by the inspection API, though
+the segment reduction follows full simulation sampling in code. Contact-sheet
+review found differences localized to the small flame. This still does not review
+continuous flicker/crawl/attachment or establish value across other fire sizes and
+profiles. Keep the experiment disabled by default pending broader artistic and
+portability review. Reproduce with
+`python3 scripts/projected_detail_orbit_study.py --benchmark`; tracked summary is
+in [measurements-o04.json](measurements-o04.json), and captures/raw runs remain in
+ignored `artifacts/o04/`.
 
 ## Evidence procedure
 

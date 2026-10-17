@@ -73,20 +73,25 @@ continuous-invalidation cost even if caching is not beneficial during motion.
 
 ### 3. O04 projected fire detail
 
-1. Extend review beyond a zoom threshold route to a 120-second orbit with repeated
-   threshold crossings, close smoke, branching flames and bright small embers.
-2. Capture both sides of each hysteresis boundary and replay with the same camera
-   history. Verify simulation state, particle births, heat and derived lights are
-   unchanged by the detail toggle.
-3. Report tier occupancy and retained primitives beside GPU stage and whole-frame
-   timing. Review silhouette, flicker, silhouette crawl, flame attachment and lost
-   glow against the full-detail baseline.
-4. Keep the feature opt-in unless its quality/cost tradeoff is useful across more
-   than the original single-fire sizes and passes portability checks.
+1. **Complete on M1 Max/Metal:** add a 120-second orbit with repeated threshold
+   crossings, branching flames and ember lights; report tier occupancy, retained
+   primitives, GPU stages and whole-frame timing.
+2. **Complete at deterministic checkpoints:** capture both sides of both
+   hysteresis bands using the same camera/tick history. Counts, bounds, lighting
+   and particle event identities match with LOD off/on. The capture API does not
+   expose the heat field; code inspection confirms segment reduction occurs after
+   full deterministic `FireFrame` sampling.
+3. **Partial visual review:** matched PNG checkpoints were inspected. A continuous
+   motion review for flicker, silhouette crawl, attachment and lost glow remains
+   open; checkpoint stills cannot settle those temporal questions.
+4. Keep the feature opt-in until a continuous visual review passes, the useful
+   range is confirmed across additional fire profiles/sizes, and portability
+   checks pass.
 
-**Exit gate:** repeatable transition behavior, acceptable motion review and a
-measured useful range. Otherwise retain as a lab-only experiment or remove the
-unsupported promotion claim; do not conflate fewer primitives with a frame win.
+**Remaining exit gate:** repeatable transitions and a measured small M1 Max/Metal
+win are now documented. Continuous motion review, broader fire/profile coverage,
+native-window timing, and Windows/DX12 or other GPU qualification remain open.
+Fewer primitives alone are not a frame-win claim.
 
 ### 4. O05 smoke absorption cache
 

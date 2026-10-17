@@ -16,12 +16,18 @@ shared meshes, instancing and live object transforms are implemented and measure
 on M1 Max/Metal. Platform acceptance gates remain open.
 
 O04's opt-in projected fire-segment LOD is implemented at 40/20 px with 48/24 px
-hysteresis. Three matched 640×360 still pairs cover full, medium and low detail;
-an 8-second repeated zoom route records tier occupancy. Medium/small tiers lowered
-GPU render medians by about 0.11 ms in short serial pairs, while total frame-work
-medians were slower and noisy. It remains disabled by default. Slow-orbit visual
-review, native-window measurement, Windows/DX12 and other GPU qualification remain
-open; see [measurements-o04.json](measurements-o04.json).
+hysteresis. In the 120-second 640×360 clearing orbit, including a close-smoke
+approach and repeated crossings, the candidate occupied tiers 0/1/2 for
+27.5/54.4/18.1% of frames and reduced median retained primitives from 81 to 71.
+Three alternating M1 Max/Metal pairs measured a median GPU-render improvement of
+0.065 ms; whole-frame deltas were mixed, with a median improvement of only
+0.012 ms. These are small, single-profile results. Fourteen same-tick camera
+checkpoints confirmed repeatable
+transitions and exact parity for fire counts, bounds, lighting and particle event
+identities. Checkpoint images show differences confined to the small flame, but a
+continuous motion review remains open. It remains disabled by default pending
+broader fire-size/profile and portability evidence; see
+[measurements-o04.json](measurements-o04.json).
 
 O05 now has an opt-in primary fire-light absorption cache at 8³ or 16³, rebuilt
 each rendered frame so paused density and light edits are reflected on the next

@@ -1,7 +1,7 @@
 {
   "workstream": "O04 projected-pixel detail",
-  "status": "opt-in implementation and initial evidence complete; default promotion and visual/platform acceptance remain open",
-  "date": "2026-10-16",
+  "status": "opt-in implementation, threshold transitions, same-tick fire-state parity, checkpoint visual review, and sustained 120-second route timing complete; continuous motion quality, default promotion, and portability remain open",
+  "date": "2026-10-18",
   "implementation": {
     "setting": "render.experiments.projected_detail_lod",
     "default": false,
@@ -148,10 +148,87 @@
     "native": false
   },
   "open_gates": [
-    "slow orbit and prolonged temporal/popping visual review",
+    "continuous motion review for flicker, silhouette crawl, flame attachment and lost glow",
     "native-window performance",
     "Windows DX12 rendering",
     "other GPU vendors",
-    "larger/screen-filling effect workloads before default promotion"
-  ]
+    "larger and additional fire profiles before default promotion"
+  ],
+  "sustained_orbit": {
+    "route": "projected-detail-orbit; 20-second circular orbit repeated six times; camera depth crosses both thresholds and return thresholds",
+    "capture_method": "same 14 camera checkpoints and tick schedule in separate LOD-off/on serve sessions; started at tick 300; seed 42",
+    "checkpoint_projected_heights_and_tiers": "40.3px tier0; 39.7px tier1; 47.7px tier1; 48.3px tier0; 20.3px tier1; 19.7px tier2; 23.7px tier2; 24.3px tier1; additional return transitions confirmed in study report.",
+    "fire_state_parity": "exact at all 14 checkpoints for counts, bounds_min/max, lighting and particle_lights (including stable particle event identities)",
+    "heat": "not directly exposed by inspect_effects; implementation reduces curve segments after deterministic FireFrame sampling, so heat field is not modified by the LOD branch; thermal values not independently inspected in this capture API",
+    "visual_review": "inspected contact sheet of matched off/on PNGs across both hysteresis bands; changes confined to the tiny flame at visible tier-1/2 checkpoints, with several views occluded enough to show no changed pixels; a continuous motion movie has not yet been reviewed",
+    "checkpoint_capture_directory": "local ignored artifacts/o04/slow-orbit/captures/",
+    "contact_sheet": "local ignored artifacts/o04/slow-orbit/contact.png",
+    "state_report": "local ignored artifacts/o04/slow-orbit/study.json",
+    "benchmark": {
+      "workflow": "scripts/profile_compare.py alternating paired serial route benchmarks",
+      "duration_seconds_per_run": 120,
+      "warmup_seconds_per_run": 10,
+      "pairs": 3,
+      "seed": 42,
+      "resolution": [
+        640,
+        360
+      ],
+      "device": "Apple M1 Max / Metal",
+      "native_window": false,
+      "tier_frames_per_candidate_run": [
+        1980,
+        3918,
+        1302
+      ],
+      "tier_occupancy_percent": [
+        27.5,
+        54.42,
+        18.08
+      ],
+      "segments_rendered_median": 4,
+      "segments_full_median": 6,
+      "primitives_rendered_median": 71,
+      "primitives_full_median": 81,
+      "gpu_render_median_ms": {
+        "baseline": 2.796624,
+        "candidate": 2.730709,
+        "paired_delta_median": -0.065166,
+        "paired_deltas": [
+          -0.076665,
+          -0.065166,
+          -0.063875
+        ]
+      },
+      "gpu_atmosphere_fire_median_ms": {
+        "baseline": 1.901959,
+        "candidate": 1.86575,
+        "paired_delta_median": -0.033958,
+        "paired_deltas": [
+          -0.039291,
+          -0.033958,
+          -0.033375
+        ]
+      },
+      "frame_work_median_ms": {
+        "baseline": 4.517584,
+        "candidate": 4.502083,
+        "paired_delta_median": -0.011709,
+        "paired_deltas": [
+          0.026417,
+          -0.020125,
+          -0.011709
+        ]
+      },
+      "note": "GPU render improved consistently by roughly 0.065 ms in this single fire/profile and M1 Max/Metal route. Whole-frame paired deltas are mixed and small (median -0.012 ms); this does not establish broad usefulness or portability.",
+      "raw_reports": "local ignored artifacts/o04/slow-orbit/benchmark/"
+    },
+    "camera_route": "20-second orbit with a close-smoke approach at the loop seam (120 px projected height), repeated six times; the path then crosses both LOD thresholds and both return thresholds.",
+    "sha256": {
+      "scripts/projected_detail_orbit_study.py": "8897e83f350f11767945b9e4d9a4c549e3d44c464db6f6641f9adefb17f1b686",
+      "artifacts/o04/slow-orbit/baseline/scene.json": "997fe815164cc8bfd2865015fc8f9f19f70a917c017c74f443fbc5e9400f114b",
+      "artifacts/o04/slow-orbit/candidate/scene.json": "87756385c1b15e105cb1b95440a5278ba9987ed55acf8120e9d8e50ee78f0f6c",
+      "artifacts/o04/slow-orbit/benchmark/comparison.json": "116d3f7dccc2aaff91d8d53be0deb3c157f638db1c6b25cd99e4590422162012"
+    }
+  }
 }
