@@ -240,6 +240,21 @@ other GPUs remain open. Full data, hashes, commands and limits are in
 [measurements-o03.json](measurements-o03.json); raw route reports are under local
 ignored `artifacts/o03/`.
 
+**Natural overflow follow-up (17 October 2026):** the deterministic diagnostic
+scene [tile-overflow-stress.json](../assets/scenes/tile-overflow-stress.json)
+produces fire-list occupancy up to 101 candidates against the 64-entry capacity;
+maxima for smoke and light lists remain within their fixed bounds. At 16×16,
+1.48% of measured tile-frame samples overflowed the fire list; an experiment-only
+8×8 build reduced this to 0.56%. All four same-tick tiled/exhaustive captures
+matched byte-for-byte. The 8×8 allocation is 1,843,200 bytes versus 471,040 for
+16×16, and one short benchmark per mode is inconclusive: build medians were 1.396
+and 1.416 ms respectively, with no alternating long-run comparison. A benchmark
+summary field was corrected to read tile size from live capabilities rather than
+hard-coding 16. The production setting remains 16×16. This is diagnostic evidence,
+not natural-overflow acceptance or a promotion decision. Full values, hashes and
+limits are in [measurements-o03-overflow.json](measurements-o03-overflow.json);
+raw reports and captures are under ignored `artifacts/o03/`.
+
 ## O04 — Detail based on projected pixel contribution
 
 **Purpose:** spend geometry and shading effort where the chosen pixel grid can

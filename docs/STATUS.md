@@ -199,11 +199,18 @@ single-plume/eight-light scene, and 2.984 to 2.478 ms for Material Atelier. Full
 frame work paired median deltas were -2.202, -0.991 and -1.022 ms. List build cost
 was 0.413–0.633 ms GPU median and 0.10–0.16 ms CPU encoding; the material case had
 a +0.279 ms CPU encode delta even as full-frame work fell. Route runs recorded no
-natural overflow. These stills and M1 Max results do not establish motion quality,
-native performance or cross-device support. Multi-emitter ownership, 8×8 tile
-evaluation, natural over-capacity stress, Windows/DX12 and other GPU vendors remain
-open. Details and hashes are in [measurements-o03.json](measurements-o03.json); raw
-pair reports are in local ignored `artifacts/o03/`.
+natural overflow. A deterministic diagnostic scene now produces fire-list
+occupancy up to 101 against capacity 64, with fire fallback in 1.48% of sampled
+16×16 tile frames and 0.56% in an experiment-only 8×8 build. Tiled/exhaustive
+captures at both sizes are byte-identical. The 8×8 lists use four times the storage
+(1,843,200 vs 471,040 bytes); short unpaired timing is inconclusive and production
+remains 16×16. Smoke and light categories did not overflow because their bounded
+candidate counts fit their capacities. This does not establish route-scale fallback
+cost, motion quality, native-window performance or cross-device support.
+Multi-emitter ownership, longer alternating stress routes, Windows/DX12 and other
+GPU vendors remain open. Results are in
+[measurements-o03-overflow.json](measurements-o03-overflow.json); raw reports and
+captures are in ignored `artifacts/o03/`.
 
 Emitter/profile ownership remains one-emitter at runtime. Scene emitters now
 bind their thermal/fire profile by `effect_profile` and their colocated primary

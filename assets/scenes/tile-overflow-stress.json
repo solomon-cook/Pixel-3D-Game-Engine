@@ -1,0 +1,395 @@
+{
+  "version": 1,
+  "name": "Emberwood \u2014 tile overflow stress (diagnostic only)",
+  "render": {
+    "resolution": [
+      640,
+      360
+    ],
+    "exposure": 1.25,
+    "shading_steps": 18,
+    "dither_strength": 0.18,
+    "smoke_steps": 56,
+    "experiments": {
+      "pixel_cluster_lighting": false,
+      "stable_smoke_detail": false,
+      "connected_motion": false
+    },
+    "bloom_strength": 0.0,
+    "palette_strength": 0.55
+  },
+  "environment": {
+    "sky_color": [
+      0.015,
+      0.027,
+      0.07
+    ],
+    "horizon_color": [
+      0.12,
+      0.065,
+      0.095
+    ],
+    "ambient": [
+      0.045,
+      0.07,
+      0.11
+    ],
+    "wind": [
+      0.23,
+      0,
+      0.08
+    ],
+    "fog_density": 0.012
+  },
+  "materials": [
+    {
+      "id": "earth",
+      "color": [
+        0.24,
+        0.27,
+        0.15
+      ],
+      "roughness": 0.95,
+      "emission": 0
+    }
+  ],
+  "objects": [
+    {
+      "id": "forest-floor",
+      "material": "earth",
+      "geometry": {
+        "kind": "terrain",
+        "size": 52,
+        "subdivisions": 72
+      },
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "lights": [
+    {
+      "id": "sun",
+      "kind": "directional",
+      "position": [
+        -0.8,
+        0.55,
+        -0.55
+      ],
+      "color": [
+        1,
+        0.62,
+        0.38
+      ],
+      "intensity": 0.32,
+      "flicker": 0,
+      "range": 20.0
+    },
+    {
+      "id": "fire-light",
+      "kind": "point",
+      "position": [
+        0,
+        0.55,
+        0
+      ],
+      "color": [
+        1,
+        0.28,
+        0.055
+      ],
+      "intensity": 10,
+      "flicker": 0.55,
+      "range": 20.0
+    }
+  ],
+  "emitters": [
+    {
+      "id": "campfire",
+      "position": [
+        0,
+        0.55,
+        0
+      ],
+      "intensity": 1,
+      "smoke_density": 2.8,
+      "buoyancy": 0.95,
+      "dissipation": 0.28,
+      "enabled": true,
+      "style": "ink",
+      "self_shadow_strength": 0.9,
+      "internal_glow": 0.0,
+      "effect_profile": "effect-campfire",
+      "light_id": "fire-light"
+    }
+  ],
+  "cameras": [
+    {
+      "id": "hero",
+      "position": [
+        5.8,
+        3.2,
+        7.2
+      ],
+      "target": [
+        0,
+        2.65,
+        0
+      ],
+      "projection": {
+        "kind": "perspective",
+        "fov_degrees": 52
+      }
+    },
+    {
+      "id": "smoke-close",
+      "position": [
+        3.4,
+        2.6,
+        4.2
+      ],
+      "target": [
+        0,
+        2.1,
+        0
+      ],
+      "projection": {
+        "kind": "perspective",
+        "fov_degrees": 48
+      }
+    },
+    {
+      "id": "orthographic",
+      "position": [
+        9,
+        8,
+        11
+      ],
+      "target": [
+        0,
+        1.2,
+        0
+      ],
+      "projection": {
+        "kind": "orthographic",
+        "height": 13
+      }
+    },
+    {
+      "id": "fire-study",
+      "position": [
+        2.4,
+        1.35,
+        3.0
+      ],
+      "target": [
+        0.0,
+        1.05,
+        0.0
+      ],
+      "projection": {
+        "kind": "perspective",
+        "fov_degrees": 42
+      }
+    },
+    {
+      "id": "overflow-close",
+      "position": [
+        0.0,
+        0.8,
+        8.0
+      ],
+      "target": [
+        0.0,
+        0.8,
+        0.0
+      ],
+      "projection": {
+        "kind": "perspective",
+        "fov_degrees": 42.0
+      }
+    }
+  ],
+  "routes": [
+    {
+      "id": "clearing-orbit",
+      "duration_seconds": 120,
+      "keyframes": [
+        {
+          "time": 0,
+          "position": [
+            9.0,
+            3.5,
+            0.0
+          ],
+          "target": [
+            0,
+            2.7,
+            0
+          ]
+        },
+        {
+          "time": 24,
+          "position": [
+            2.781152949374527,
+            4.355950864665639,
+            8.559508646656381
+          ],
+          "target": [
+            0,
+            2.7,
+            0
+          ]
+        },
+        {
+          "time": 48,
+          "position": [
+            -7.281152949374526,
+            4.029006727063226,
+            5.290067270632259
+          ],
+          "target": [
+            0,
+            2.7,
+            0
+          ]
+        },
+        {
+          "time": 72,
+          "position": [
+            -7.281152949374527,
+            2.9709932729367745,
+            -5.290067270632258
+          ],
+          "target": [
+            0,
+            2.7,
+            0
+          ]
+        },
+        {
+          "time": 96,
+          "position": [
+            2.7811529493745253,
+            2.644049135334362,
+            -8.559508646656383
+          ],
+          "target": [
+            0,
+            2.7,
+            0
+          ]
+        },
+        {
+          "time": 120,
+          "position": [
+            9.0,
+            3.5,
+            -2.204364238465236e-15
+          ],
+          "target": [
+            0,
+            2.7,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "overflow-hold",
+      "duration_seconds": 4.0,
+      "keyframes": [
+        {
+          "time": 0.0,
+          "position": [
+            0.0,
+            0.8,
+            8.0
+          ],
+          "target": [
+            0.0,
+            0.8,
+            0.0
+          ]
+        },
+        {
+          "time": 4.0,
+          "position": [
+            0.0,
+            0.8,
+            8.0
+          ],
+          "target": [
+            0.0,
+            0.8,
+            0.0
+          ]
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "id": "effect-campfire",
+      "fire": {
+        "width": 2.0,
+        "height": 2.5,
+        "motion_speed": 1.5,
+        "curl": 0.8,
+        "tongues": 16,
+        "segments": 10,
+        "fragment_rate": 8.0,
+        "fragment_lifetime": 1.8,
+        "ember_rate": 16.0,
+        "ember_lifetime": 4.5,
+        "emission": 1.25,
+        "edge_breakup": 0.5,
+        "tip_breakup": 0.8,
+        "fragment_size": 0.2,
+        "lobe_roundness": 1.0,
+        "branches": 3,
+        "particle_lights": 12,
+        "particle_light_strength": 2.5,
+        "particle_light_range": 2.0,
+        "solid": true,
+        "color_bands": 4,
+        "heat_distortion": 1.8,
+        "heat_distortion_height": 2.8
+      },
+      "thermal": {
+        "heat_output": 2.5,
+        "cooling_rate": 0.9,
+        "lift": 0.6
+      },
+      "palette": {
+        "outer": [
+          1.6,
+          0.085,
+          0.008
+        ],
+        "warm": [
+          3.0,
+          0.78,
+          0.045
+        ],
+        "hot": [
+          5.0,
+          2.8,
+          0.75
+        ]
+      }
+    }
+  ]
+}

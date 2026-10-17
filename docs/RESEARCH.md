@@ -190,6 +190,32 @@ not expose its allocation size. The corrected delta is 880 bytes for timed
 sessions (16 bytes untimed); this improves inventory completeness but has no
 meaningful optimization value.
 
+## O03 natural overflow and tile-size diagnostic (17 October)
+
+Added [tile-overflow-stress.json](../assets/scenes/tile-overflow-stress.json), a
+deterministic one-emitter scene that saturates the bounded fire-primitive list.
+At seed 42/tick 1800, tiled and exhaustive captures matched byte-for-byte for
+both 16×16 and experiment-only 8×8 builds. In 120 sampled frames after a 10-second
+warm-up, max tile occupancy was 101/64 for 16×16 and 91/64 for 8×8; corresponding
+fire-list fallback rates were 1.48% and 0.56%. Smoke and light categories did not
+overflow because their candidate maxima match their fixed capacities.
+
+The 8×8 list allocation is 1.843 MB, four times the 16×16 allocation of 471 KB.
+One two-second serial run per mode is too short and unpaired to select a tile size;
+the measured GPU build medians were 1.396 ms (16×16) and 1.416 ms (8×8), while
+tile-enabled whole-render medians exceeded exhaustive in this saturated scene.
+Keep the production 16×16 setting. This stress flame intentionally sacrifices
+artistic scale for occupancy coverage; no motion, native-window or DX12 claim is
+made. Full sample metrics and image hashes are in
+[measurements-o03-overflow.json](measurements-o03-overflow.json); raw reports and
+captures are local under ignored `artifacts/o03/`.
+
+The 8×8 experiment also found a benchmark-reporting bug: tile size was hard-coded
+to 16 in the summary even though allocation/capability values reflected the shader
+configuration. The summary now reads the live capability value, and the refreshed
+8×8 raw reports identify 8 correctly. Production shaders and renderer constants
+were restored to 16×16.
+
 ## Material response beneath pixel treatment (16 October)
 
 Hypothesis: independent HDR metalness/refraction/scattering parameters retain

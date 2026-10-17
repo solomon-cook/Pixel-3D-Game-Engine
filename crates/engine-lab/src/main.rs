@@ -725,7 +725,7 @@ fn benchmark(
         "tile_lists":{
             "enabled":settings.tile_lists_enabled,
             "force_overflow":settings.force_tile_overflow,
-            "tile_size":16,
+            "tile_size":capabilities["tile_lists"]["tile_size"],
             "capacity_bytes":capabilities["tile_lists"]["list_bytes"],
             "cpu_encode_ms":summary("cpu_tile_list_encode_ms"),
             "gpu_build":timing_summary(&samples.iter().filter_map(|sample| sample["gpu_tile_list_ms"].as_f64()).collect::<Vec<_>>()),
