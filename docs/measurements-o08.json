@@ -87,13 +87,13 @@
         "resource": "optical color snapshot",
         "format": "Rgba16Float",
         "bytes": 1843200,
-        "lifetime": "allocated on first optical material use; copied each active optical frame; retained to support later live material edits"
+        "lifetime": "allocated on first camera-visible optical batch; copied on each frame with a camera-visible optical batch; retained after activation for later camera/material edits"
       },
       {
         "resource": "optical normal/depth snapshot",
         "format": "Rgba16Float",
         "bytes": 1843200,
-        "lifetime": "allocated on first optical material use; copied each active optical frame; retained to support later live material edits"
+        "lifetime": "historical inventory entry; removed by the optical normal snapshot removal trial below"
       },
       {
         "resource": "smoke density/temperature ping",
@@ -210,7 +210,7 @@
     },
     "optical_frame_additions": {
       "additional_vertex_input_bytes_for_optical_draw": 10539720,
-      "notes": "One HDR snapshot is allocated on first optical use and copied each active optical frame. The original normal/depth target is sampled read-only and is no longer copied or attached for optical output. This removes 7,372,800 modeled logical copy/attachment bytes per optical frame versus the prior two-snapshot/two-attachment path; estimates are not physical DRAM traffic.",
+      "notes": "One HDR snapshot is allocated on first camera-visible optical batch and copied on each frame with a camera-visible optical batch. The original normal/depth target is sampled read-only and is no longer copied or attached for optical output. This removes 7,372,800 modeled logical copy/attachment bytes per active optical frame versus the prior two-snapshot/two-attachment path; estimates are not physical DRAM traffic.",
       "hdr_snapshot_copy_payload_bytes": 1843200,
       "hdr_snapshot_copy_logical_read_plus_write_bytes": 3686400,
       "optical_hdr_attachment_load_store_bytes": 3686400,
@@ -308,7 +308,7 @@
     "One HDR snapshot and its copy remain necessary in the current pass layout; eliminating it requires a larger sampling/output redesign and matched backend timing."
   ],
   "lazy_optical_snapshots": {
-    "status": "implemented; snapshots allocate on first optical material use and remain allocated for live edit safety",
+    "status": "implemented; HDR snapshot allocates on first camera-visible optical batch and remains resident for live camera/material edits",
     "host": {
       "gpu": "Apple M1 Max",
       "backend": "Metal"
@@ -318,21 +318,25 @@
       360
     ],
     "bytes_before_first_optical_material": 0,
-    "bytes_after_live_reflectivity_edit": 3686400,
+    "bytes_after_live_reflectivity_edit": 1843200,
     "memory_estimate_before": {
-      "render_targets_bytes": 7372800,
-      "known_gpu_allocation_bytes": 24909848
+      "render_targets_bytes": 6451200,
+      "known_gpu_allocation_bytes": 15039216
     },
     "memory_estimate_after": {
-      "render_targets_bytes": 11059200,
-      "known_gpu_allocation_bytes": 28596248
+      "render_targets_bytes": 8294400,
+      "known_gpu_allocation_bytes": 16882416
     },
     "saved_for_non_optical_scene_bytes": 3686400,
     "live_edit_check": {
-      "path": "materials.grass.reflectivity",
+      "path": "materials.chalk.reflectivity",
       "value": 0.3,
-      "optical_draw_batches": 1,
-      "capture_created": true
+      "offscreen_camera": "away",
+      "snapshot_bytes_after_edit_while_offscreen": 0,
+      "visible_camera_after_switch": "hero",
+      "optical_draw_batches": 3,
+      "snapshot_bytes_after_visible": 1843200,
+      "capture": "artifacts/o08/optical-live-edit-hero-tick0.png"
     },
     "parity_captures": {
       "materials_atelier_opaque_metal": {
@@ -348,11 +352,12 @@
         "candidate_sha256": "c080df09137173b984f48d39137da5a8719b2110965d0fd270a801e76f0adbfe"
       }
     },
-    "interpretation": "memory estimate savings only; no frame-time gain is claimed. Optical scenes allocate full snapshots at startup, and diffuse scenes allocate them at first live optical material edit. Snapshot copy traffic is unchanged on optical frames.",
+    "interpretation": "memory estimate savings only; no frame-time gain is claimed. Offscreen optical geometry does not allocate the snapshot or run optical copy/resolve. The first camera-visible optical batch allocates the HDR snapshot; the copy is skipped on later frames with no visible optical batches.",
     "limitations": [
       "Known GPU allocation is a descriptor-size estimate and excludes driver alignment, transient allocations, pipelines and timestamp storage.",
       "Measurements cover Apple M1 Max/Metal only; Windows DX12 and other GPU backends remain open."
-    ]
+    ],
+    "bytes_before_first_visible_optical_batch": 0
   },
   "implementation_trials": {
     "effect_depth_rg16": {
@@ -540,6 +545,64 @@
       ],
       "performance_claim": "none; logical traffic and allocation reductions are estimates, frame-time was not measured",
       "limits": "One M1 Max/Metal adapter only; Windows DX12 remains unverified."
+    },
+    "camera_visible_optical_resolve": {
+      "status": "implemented and exercised on Apple M1 Max / Metal",
+      "activation_predicate": "After camera-frustum draw preparation, optical snapshot allocation and the optical copy/pass run only when at least one camera-visible batch is marked optical.",
+      "scene_resolution": [
+        640,
+        360
+      ],
+      "offscreen_materials_scene": {
+        "camera": "away",
+        "seed": 42,
+        "tick": 300,
+        "visible_objects": 0,
+        "optical_draw_batches": 0,
+        "optical_snapshot_bytes": 0,
+        "capture": "artifacts/o08/optical-offscreen-tick300.png",
+        "sha256": "f8d7045da3040f81afb74b428f4a5d1d8b28555b39b87fdb94e73c316d5fa998"
+      },
+      "live_material_edit": {
+        "initial_state": "derived materials scene with optical material values set to zero; camera away",
+        "edit": "materials.chalk.reflectivity = 0.3",
+        "after_edit_while_offscreen": {
+          "optical_snapshot_bytes": 0,
+          "optical_draw_batches": 0
+        },
+        "after_switch_to_camera": "hero",
+        "after_camera_switch": {
+          "visible_objects": 37,
+          "optical_draw_batches": 3,
+          "optical_snapshot_bytes": 1843200
+        },
+        "capture": "artifacts/o08/optical-live-edit-hero-tick0.png"
+      },
+      "visible_optical_parity": {
+        "scene": "assets/scenes/materials.json",
+        "camera": "metal-close",
+        "seed": 42,
+        "tick": 300,
+        "optical_draw_batches": 5,
+        "optical_snapshot_bytes": 1843200,
+        "capture": "artifacts/o08/optical-metal-close-tick300.png",
+        "reference_sha256": "44676834882e579439c0ec61fd20c85501f9a5ad32369f1d0e48b1b31c3c6208",
+        "candidate_sha256": "44676834882e579439c0ec61fd20c85501f9a5ad32369f1d0e48b1b31c3c6208",
+        "changed_pixels": 0
+      },
+      "camera_turned_away_after_activation": {
+        "camera": "away",
+        "visible_objects": 0,
+        "optical_draw_batches": 0,
+        "snapshot_bytes_retained": 1843200,
+        "optical_resolve_timestamp_present": false,
+        "capture": "artifacts/o08/optical-offscreen-tick300.png"
+      },
+      "interpretation": "The first visible optical batch triggers the retained HDR snapshot allocation. Frames with no camera-visible optical batch skip the copy and resolve. This is frustum/culling visibility; fully occluded optical objects can still activate the pass. No GPU timing gain is claimed.",
+      "limits": [
+        "One Apple M1 Max / Metal adapter only; Windows DX12, fallback execution on another adapter and native-window behavior remain unverified.",
+        "The snapshot remains allocated after first visible optical use for later camera/material edits."
+      ]
     }
   },
   "timing_trials": {

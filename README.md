@@ -11,8 +11,8 @@ experiments grounded in visual and performance evidence.
 See [the work queue](TODO.md) and [optimisation plans](docs/OPTIMIZATION_PLAN.md)
 for completed profiling instrumentation, whole-map shadow reuse, tiled effect lists,
 opt-in projected fire detail, smoke absorption reuse, optical surface reuse and
-geometry culling. Optical snapshots are lazy for diffuse scenes; the effect
-coverage target and smoke volumes use adapter-gated two-channel formats with
+geometry culling. Optical snapshots allocate on first camera-visible optical
+geometry; the effect coverage target and smoke volumes use adapter-gated two-channel formats with
 fallbacks. Other memory layout work remains proposed. Measurements are recorded in
 [docs/measurements-o01.json](docs/measurements-o01.json),
 [docs/measurements-o02.json](docs/measurements-o02.json),

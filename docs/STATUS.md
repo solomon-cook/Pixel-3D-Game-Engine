@@ -64,8 +64,8 @@ Windows DX12 and RTX-class rendering remain unverified.
 ## O08 resource and bandwidth inventory
 
 The original 640×360 clearing/heavy inventory recorded 29,806,088 bytes. The current
-renderer reports 22,808,600 known bytes before first optical use and 24,651,800
-bytes after live optical activation; the color snapshot adds 1,843,200 bytes. The
+renderer reports 22,808,600 known bytes before first camera-visible optical use and
+24,651,800 bytes after live optical activation; the color snapshot adds 1,843,200 bytes. The
 current Material Atelier capture reports 16,882,416 known bytes. These are
 descriptor/structure-size estimates; driver alignment and transient/pipeline
 storage are excluded.
@@ -77,8 +77,7 @@ shadow maps, opaque color/normal/depth, atmosphere HDR/effect target, and post o
 frames add 3,686,400 logical bytes for the HDR snapshot copy read/write and
 3,686,400 bytes of HDR optical attachment load/store. The normal/depth target stays
 read-only as an optical shader input, removing its snapshot copy and optical
-attachment writes. Seven shadow draws plus opaque geometry
-reference 84,317,760 bytes of vertex input if each draw fetches the full buffer;
+attachment writes. Seven shadow draws plus opaque geometry reference 84,317,760 bytes of vertex input if each draw fetches the full buffer;
 optical geometry adds one more full-buffer reference. These quantities are API/
 shader logical work estimates, not measured DRAM bandwidth. Metal tile storage,
 caches, compression and overdraw can change external traffic substantially.
@@ -104,11 +103,13 @@ select Rg16Float only with the adapter-specific format feature and required
 storage/sample support, falling back to Rgba16Float; they save 1,179,648 bytes.
 Matched images stayed pixel-identical, and reset/replay checks passed on this
 M1 Max/Metal adapter. This is one adapter's result, not DX12 support. The HDR
-snapshot allocates on first optical-material use, saving 3,686,400 known bytes in
-diffuse scenes; on optical scenes, direct normal/depth sampling removes another
-1,843,200 bytes from the prior pair-of-snapshots design. Live material activation
-and fixed-tick capture parity were verified. Three alternating 20-second pairs
-were followed by three 60-second material-orbit pairs. In the longer runs, median
+snapshot now allocates only when a camera-visible optical batch first appears, saving
+3,686,400 known bytes in diffuse scenes and optical scenes whose optical geometry
+remains outside the camera. Frames without visible optical batches skip the HDR copy
+and resolve; the snapshot remains resident after activation. Direct normal/depth sampling removes
+another 1,843,200 bytes from the prior pair-of-snapshots design. Live material
+activation, camera-away gating and fixed-tick capture parity were verified. Three
+alternating 20-second pairs were followed by three 60-second material-orbit pairs. In the longer runs, median
 paired optical-resolve delta was +0.0087 ms and whole GPU-render delta was
 +0.0003 ms; frame-work deltas varied and do not establish GPU benefit. These
 results support the memory and logical-traffic findings, not a timing claim.
@@ -116,9 +117,15 @@ Broader routes and Windows DX12/RTX acceptance remain open. Full provenance and
 per-resource breakdown are in [measurements-o08.json](measurements-o08.json).
 The required `python3 scripts/verify.py --gpu` run passed on this M1 Max/Metal
 host, including Clippy, workspace tests, scene validation and GPU integration
-checks. This verifies Rg16Float texture/pipeline creation and lazy snapshot
-lifetime on Metal, not fallback execution on another adapter or cross-backend
-behavior.
+checks. This verifies Rg16Float texture/pipeline creation and lazy snapshot lifetime on
+Metal, not fallback execution on another adapter or cross-backend behavior. A valid 640×360 Material Atelier scene with an away-facing camera reported
+zero visible objects, zero optical batches and zero snapshot bytes. A live reflectivity
+edit remained unallocated while offscreen, then allocated one 1,843,200-byte HDR snapshot
+when the camera switched to the edited geometry. Turning the camera away again reported
+zero optical batches and no optical-resolve timestamp while retaining the snapshot. The
+metal-close seed-42 tick-300 image remained byte-identical to the saved reference. This
+is frustum visibility, not full occlusion detection, and has only been exercised on
+M1 Max/Metal.
 
 ## O03 single-emitter tile lists
 

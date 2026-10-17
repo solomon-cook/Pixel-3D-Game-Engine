@@ -1725,11 +1725,6 @@ impl Renderer {
             shader_directory,
         };
         renderer.reset_smoke();
-        if scene.materials.iter().any(|material| {
-            material.metallic > 0. || material.reflectivity > 0. || material.transmission > 0.
-        }) {
-            renderer.ensure_optical_snapshot();
-        }
         renderer.shadow_invalidation_reason = Some("resource_initialization");
         renderer.update_globals(scene, &scene.cameras[0], 0, 42);
         Ok(renderer)
@@ -2648,12 +2643,6 @@ impl Renderer {
 
     pub fn render(&mut self, scene: &Scene, camera: &Camera, tick: u64, seed: u32) {
         self.poll_timing(false);
-        let optical_active = scene.materials.iter().any(|material| {
-            material.metallic > 0. || material.reflectivity > 0. || material.transmission > 0.
-        });
-        if optical_active {
-            self.ensure_optical_snapshot();
-        }
         let started = Instant::now();
         if self.material_cache != scene.materials {
             let upload_started = Instant::now();
@@ -2723,6 +2712,12 @@ impl Renderer {
             self.geometry_culling_enabled,
             self.geometry_instancing_enabled,
         );
+        // Only snapshot and shade optical geometry that survives camera culling.
+        // Scene materials can remain optical while all their objects are offscreen.
+        let optical_active = camera_draws.batches.iter().any(|batch| batch.optical);
+        if optical_active {
+            self.ensure_optical_snapshot();
+        }
         let shadow_draws = if shadow_redrawn {
             shadow_matrices(scene)
                 .into_iter()

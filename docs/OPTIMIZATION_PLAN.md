@@ -453,7 +453,8 @@ repeat the audit after O03/O05/O06 introduce resources. Background:
 [Apple GPU and tile-based rendering guidance](https://developer.apple.com/documentation/metal/tailor-your-apps-for-apple-gpus-and-tile-based-deferred-rendering).
 
 **Implemented O08 change:** one optical HDR color snapshot allocates lazily when a
-scene first uses an optical material. The original normal/depth target remains
+camera-visible optical
+batch first appears. The original normal/depth target remains
 read-only during optical resolve, so the pass no longer copies it or writes a
 second color attachment. Diffuse 640×360 scenes save 3,686,400 known bytes relative
 to the original unconditional snapshot pair; optical scenes use one snapshot and
@@ -472,7 +473,10 @@ smoke/metal captures passed on M1 Max/Metal. Three alternating 20-second and
 three 60-second material-orbit pairs found no GPU timing benefit: the longer run
 had a +0.0087 ms median optical-resolve delta and +0.0003 ms total GPU-render
 delta, while frame-work results varied. The remaining HDR snapshot and its copy
-still need pass-layout work and Windows/DX12 validation. See
+still need pass-layout work and Windows/DX12 validation. The per-frame gate uses
+camera-frustum draw batches, so offscreen optical materials skip both the copy and
+resolve; fully occluded surfaces may still activate the pass. The snapshot remains
+resident after first visibility to support later camera/material edits. See
 [measurements-o08.json](measurements-o08.json).
 
 **Inventory checkpoint (17 October 2026):** known allocations, resource lifetimes,

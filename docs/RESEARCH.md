@@ -263,7 +263,8 @@ but does not qualify the change for a default. See
 The original O08 renderer allocated two full-resolution RGBA16F snapshots in every
 scene although diffuse scenes skip optical resolve. The initial lazy-allocation
 change saved 3,686,400 bytes in diffuse scenes. The current pass allocates only one
-HDR snapshot on first optical use and reads the opaque normal/depth target directly.
+HDR snapshot on first camera-visible optical use and reads the opaque normal/depth
+target directly.
 A live reflectivity edit activates the pass; fixed-tick smoke, metal and glass
 captures remain byte-identical. No frame-time reduction is claimed for lazy
 allocation. The effect-depth/flame-coverage attachment now uses Rg16Float
@@ -303,3 +304,19 @@ GPU-render delta +0.0003 ms. Frame-work deltas were variable and CPU-side; no GP
 timing gain was measured. Full per-stage medians, run order and raw reports are in
 [measurements-o08.json](measurements-o08.json), `artifacts/o08/timing-optical-copy/`
 and `artifacts/o08/timing-optical-copy-60s/`.
+
+## Camera-visible optical resolve gate (17 October)
+
+Optical materials can stay in scene data while their objects leave the camera
+frustum. The renderer now derives optical activation from the camera-culled draw
+batches, allocates the retained HDR snapshot on the first visible optical batch,
+and skips the snapshot copy and optical pass on frames with no such batches. This
+keeps the snapshot lazy across offscreen startup and live edits. A live reflectivity
+edit while the camera faced away left the snapshot at zero bytes; switching to the
+edited geometry allocated 1,843,200 bytes and produced three optical batches. In a
+separate fixed-tick run, metal-close remained byte-identical to the saved O08
+reference. Returning to the away camera reported zero visible optical batches and
+no optical-resolve timestamp; the previously allocated snapshot remained resident.
+The M1 Max/Metal test does not detect full occlusion, demonstrate a GPU-time gain,
+or validate DX12/other adapters. Evidence and hashes are in
+[measurements-o08.json](measurements-o08.json).
