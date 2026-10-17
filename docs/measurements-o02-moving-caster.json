@@ -1,0 +1,306 @@
+{
+  "scene": "assets/scenes/clearing.json",
+  "camera": "hero",
+  "seed": 42,
+  "tick": 0,
+  "object": "fallen-log",
+  "face_order": [
+    "sun",
+    "+X",
+    "-X",
+    "+Y",
+    "-Y",
+    "+Z",
+    "-Z"
+  ],
+  "poses": [
+    {
+      "pose": "east",
+      "position": [
+        5.0,
+        0.3,
+        0.0
+      ],
+      "cached_sha256": "7347e48633ff98413687d561201f35ca87d63b683c792835c89205a2a669047c",
+      "forced_sha256": "7347e48633ff98413687d561201f35ca87d63b683c792835c89205a2a669047c",
+      "images_match": true,
+      "cached": {
+        "shadow_cache_hit": false,
+        "shadow_redrawn": true,
+        "shadow_maps_redrawn": 3,
+        "shadow_dirty_faces": [
+          true,
+          true,
+          true,
+          false,
+          false,
+          false,
+          false
+        ],
+        "shadow_dirty_reason": "casters_changed",
+        "cpu_shadow_encode_ms": 0.169042
+      },
+      "forced": {
+        "shadow_cache_hit": false,
+        "shadow_redrawn": true,
+        "shadow_maps_redrawn": 7,
+        "shadow_dirty_faces": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "shadow_dirty_reason": "forced_redraw",
+        "cpu_shadow_encode_ms": 0.25837499999999997
+      }
+    },
+    {
+      "pose": "diagonal-east-north",
+      "position": [
+        5.0,
+        0.3,
+        5.0
+      ],
+      "cached_sha256": "9540b4312a558686ec235f477a4b7648e43a650ba698ace80f9e2f4de55b4597",
+      "forced_sha256": "9540b4312a558686ec235f477a4b7648e43a650ba698ace80f9e2f4de55b4597",
+      "images_match": true,
+      "cached": {
+        "shadow_cache_hit": false,
+        "shadow_redrawn": true,
+        "shadow_maps_redrawn": 3,
+        "shadow_dirty_faces": [
+          true,
+          true,
+          false,
+          false,
+          false,
+          true,
+          false
+        ],
+        "shadow_dirty_reason": "casters_changed",
+        "cpu_shadow_encode_ms": 0.14008299999999999
+      },
+      "forced": {
+        "shadow_cache_hit": false,
+        "shadow_redrawn": true,
+        "shadow_maps_redrawn": 7,
+        "shadow_dirty_faces": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "shadow_dirty_reason": "forced_redraw",
+        "cpu_shadow_encode_ms": 0.18229199999999998
+      }
+    },
+    {
+      "pose": "north",
+      "position": [
+        0.0,
+        0.3,
+        5.0
+      ],
+      "cached_sha256": "13c5a0e0048c00ec8431a82a26b7dd3d7b545a03fdfd0283506a66470d6ac1ed",
+      "forced_sha256": "13c5a0e0048c00ec8431a82a26b7dd3d7b545a03fdfd0283506a66470d6ac1ed",
+      "images_match": true,
+      "cached": {
+        "shadow_cache_hit": false,
+        "shadow_redrawn": true,
+        "shadow_maps_redrawn": 3,
+        "shadow_dirty_faces": [
+          true,
+          true,
+          false,
+          false,
+          false,
+          true,
+          false
+        ],
+        "shadow_dirty_reason": "casters_changed",
+        "cpu_shadow_encode_ms": 0.14075000000000001
+      },
+      "forced": {
+        "shadow_cache_hit": false,
+        "shadow_redrawn": true,
+        "shadow_maps_redrawn": 7,
+        "shadow_dirty_faces": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "shadow_dirty_reason": "forced_redraw",
+        "cpu_shadow_encode_ms": 0.17441700000000002
+      }
+    },
+    {
+      "pose": "west",
+      "position": [
+        -5.0,
+        0.3,
+        0.0
+      ],
+      "cached_sha256": "9af8d13c06c7d481b1747cfd695f8058e7a8187e3c9962cf6a5fc9cceea3c023",
+      "forced_sha256": "9af8d13c06c7d481b1747cfd695f8058e7a8187e3c9962cf6a5fc9cceea3c023",
+      "images_match": true,
+      "cached": {
+        "shadow_cache_hit": false,
+        "shadow_redrawn": true,
+        "shadow_maps_redrawn": 3,
+        "shadow_dirty_faces": [
+          true,
+          false,
+          true,
+          false,
+          false,
+          true,
+          false
+        ],
+        "shadow_dirty_reason": "casters_changed",
+        "cpu_shadow_encode_ms": 0.107667
+      },
+      "forced": {
+        "shadow_cache_hit": false,
+        "shadow_redrawn": true,
+        "shadow_maps_redrawn": 7,
+        "shadow_dirty_faces": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "shadow_dirty_reason": "forced_redraw",
+        "cpu_shadow_encode_ms": 0.18525
+      }
+    },
+    {
+      "pose": "south",
+      "position": [
+        0.0,
+        0.3,
+        -5.0
+      ],
+      "cached_sha256": "a9dc207d7e44d372952a6fe5173d6631699baf59d345d07845ee26477b07201a",
+      "forced_sha256": "a9dc207d7e44d372952a6fe5173d6631699baf59d345d07845ee26477b07201a",
+      "images_match": true,
+      "cached": {
+        "shadow_cache_hit": false,
+        "shadow_redrawn": true,
+        "shadow_maps_redrawn": 3,
+        "shadow_dirty_faces": [
+          true,
+          false,
+          true,
+          false,
+          false,
+          false,
+          true
+        ],
+        "shadow_dirty_reason": "casters_changed",
+        "cpu_shadow_encode_ms": 0.097792
+      },
+      "forced": {
+        "shadow_cache_hit": false,
+        "shadow_redrawn": true,
+        "shadow_maps_redrawn": 7,
+        "shadow_dirty_faces": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "shadow_dirty_reason": "forced_redraw",
+        "cpu_shadow_encode_ms": 0.204041
+      }
+    },
+    {
+      "pose": "return-east",
+      "position": [
+        5.0,
+        0.3,
+        0.0
+      ],
+      "cached_sha256": "7347e48633ff98413687d561201f35ca87d63b683c792835c89205a2a669047c",
+      "forced_sha256": "7347e48633ff98413687d561201f35ca87d63b683c792835c89205a2a669047c",
+      "images_match": true,
+      "cached": {
+        "shadow_cache_hit": false,
+        "shadow_redrawn": true,
+        "shadow_maps_redrawn": 3,
+        "shadow_dirty_faces": [
+          true,
+          true,
+          false,
+          false,
+          false,
+          false,
+          true
+        ],
+        "shadow_dirty_reason": "casters_changed",
+        "cpu_shadow_encode_ms": 0.121375
+      },
+      "forced": {
+        "shadow_cache_hit": false,
+        "shadow_redrawn": true,
+        "shadow_maps_redrawn": 7,
+        "shadow_dirty_faces": [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "shadow_dirty_reason": "forced_redraw",
+        "cpu_shadow_encode_ms": 0.177625
+      }
+    }
+  ],
+  "stable_cache_hit": {
+    "shadow_cache_hit": true,
+    "shadow_redrawn": false,
+    "shadow_maps_redrawn": 0,
+    "shadow_dirty_faces": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "shadow_dirty_reason": "unchanged",
+    "cpu_shadow_encode_ms": 4.2e-05
+  },
+  "adapter": "Apple M1 Max",
+  "backend": "Metal",
+  "resolution": [
+    640,
+    360
+  ],
+  "runtime": "target/release/engine-lab serve; paused protocol, tick 0",
+  "capture_scope": "six discrete caster edits with cached and forced redraw at each pose; one unchanged follow-up frame",
+  "limitations": [
+    "not a 120-second continuous-motion timing route",
+    "does not cover native-window or Windows/DX12",
+    "object remained outside the selected camera view, so this is shadow-correctness evidence rather than an art review",
+    "unknown-bound full-map fallback not induced by this scene"
+  ]
+}

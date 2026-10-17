@@ -482,3 +482,19 @@ render time (2.5669 ms baseline vs 2.5781 ms candidate); opaque geometry increas
 [`measurements-heat-cue.json`](measurements-heat-cue.json). Keep the feature
 opt-in; the cue is subtle from wide views, and Windows DX12 and broader visual
 acceptance remain open.
+
+## O02 discrete moving-caster check (17 October)
+
+Hypothesis: per-face invalidation should redraw the sun plus only the point-light
+faces intersecting the caster's old or new conservative bounds. A paused seed-42
+protocol run moved `fallen-log` through six positions around the point light. Every
+cached capture matched a forced seven-map redraw byte-for-byte. Each edit redrew
+three maps (sun and the old/new point-face union); an unchanged follow-up rendered
+zero maps and reported a cache hit. Per-pose masks and CPU shadow-encoding samples
+are in [measurements-o02-moving-caster.json](measurements-o02-moving-caster.json),
+and `scripts/shadow_caster_study.py` reproduces the route.
+
+This is correctness evidence for discrete edits, not a continuous-motion timing
+result. The moved log was outside the selected camera view; no art conclusion is
+drawn. The unknown-bounds fallback, 120-second moving route, native window and
+Windows/DX12 remain open.

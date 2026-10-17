@@ -267,9 +267,21 @@ not native-window or Windows DX12 acceptance. Full pair/run provenance is in
 [measurements-o02.json](measurements-o02.json), with raw samples under local ignored
 `artifacts/o02/shadow-static/`.
 
+A deterministic paused protocol route now moves `fallen-log` through six positions
+around the point light, including +X/+Z and opposing-face transitions. At each
+pose, the cached capture matched the forced seven-map redraw byte-for-byte. Each
+move redrew three maps: the sun face plus the union of old and new point-light
+faces. The unchanged follow-up was a cache hit with zero maps redrawn. Captures
+and per-pose masks, dirty reasons and CPU shadow-encoding samples are recorded in
+[measurements-o02-moving-caster.json](measurements-o02-moving-caster.json); rerun
+with `python3 scripts/shadow_caster_study.py`. This checks discrete paused edits,
+not the planned 120-second continuous-motion timing route. The mover is outside
+the selected camera view, unknown-bound fallback was not induced, and native-window
+and Windows/DX12 behavior remain unverified.
+
 Final `python3 scripts/verify.py --gpu` completed successfully on Apple M1 Max
 with Metal (`verified: true`, `gpu: true`, `native: false`). Workspace formatting,
-clippy, 24 unit tests, scene validation and material/fire GPU checks passed. Native
+clippy, 31 unit tests, scene validation and material/fire GPU checks passed. Native
 window lifecycle and Windows DX12 rendering remain unverified.
 
 ## O07 object bounds, culling and shared meshes
