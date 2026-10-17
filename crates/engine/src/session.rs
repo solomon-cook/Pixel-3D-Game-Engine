@@ -212,6 +212,49 @@ impl Session {
                 self.camera = camera;
                 Ok(json!({"camera":self.camera}))
             }
+            "set_object_transform" => {
+                #[derive(Deserialize)]
+                #[serde(deny_unknown_fields)]
+                struct P {
+                    id: String,
+                    position: Option<[f32; 3]>,
+                    rotation: Option<[f32; 3]>,
+                    scale: Option<[f32; 3]>,
+                }
+                let p: P = serde_json::from_value(params)?;
+                if p.position.is_none() && p.rotation.is_none() && p.scale.is_none() {
+                    bail!("set_object_transform: provide position, rotation, or scale");
+                }
+                let mut next = self.scene.clone();
+                let object = next
+                    .objects
+                    .iter_mut()
+                    .find(|object| object.id == p.id)
+                    .with_context(|| format!("set_object_transform: unknown object '{}'", p.id))?;
+                if let Some(position) = p.position {
+                    object.position = position;
+                }
+                if let Some(rotation) = p.rotation {
+                    object.rotation = rotation;
+                }
+                if let Some(scale) = p.scale {
+                    object.scale = scale;
+                }
+                next.validate(self.scene_path.parent().unwrap_or(Path::new(".")))?;
+                let updated = next
+                    .objects
+                    .iter()
+                    .find(|object| object.id == p.id)
+                    .expect("validated scene retains its object");
+                let revision = self.renderer.set_object_transform(updated)?;
+                let transform = json!({
+                    "position":updated.position,
+                    "rotation":updated.rotation,
+                    "scale":updated.scale
+                });
+                self.scene = next;
+                Ok(json!({"id":p.id,"revision":revision,"transform":transform}))
+            }
             "set_parameter" => {
                 #[derive(Deserialize)]
                 #[serde(deny_unknown_fields)]
@@ -414,6 +457,7 @@ pub fn description() -> Value {
         "describe":{},"inspect_scene":{"section":"optional top-level scene field; omitted returns compact overview","id":"optional stable ID within selected array"},"get_metrics":{},"inspect_effects":{"result":"bounded runtime flame counts, bounds and particle light positions/powers with stable event identities"},"get_errors":{},
         "pause":{"paused":"boolean"},"step":{"ticks":"integer 0..36000"},"reset":{"seed":"u32"},
         "set_camera":{"id":"named camera, OR supply camera object matching scene schema"},
+        "set_object_transform":{"id":"stable scene object ID","position":"optional [x,y,z]","rotation":"optional [x,y,z] radians, XYZ order","scale":"optional positive [x,y,z]","result":"updated transform and per-object transform revision"},
         "set_parameter":{"path":"render.{exposure,shading_steps,dither_strength,smoke_steps,palette_strength,bloom_strength,reflection_steps}; render.experiments.{pixel_cluster_lighting,stable_smoke_detail,connected_motion,projected_detail_lod,smoke_absorption_cache,optical_surface_reuse}; environment.{wind,ambient,fog_density,sky_color,horizon_color}; emitters.<id>.{enabled,intensity,smoke_density,buoyancy,dissipation,style,secondary_bubbles,bubble_scale,self_shadow_strength,internal_glow,effect_profile}; effects.<id>.fire.{width,height,motion_speed,curl,edge_breakup,tip_breakup,fragment_size,lobe_roundness,solid,color_bands,heat_distortion,heat_distortion_height,branches,particle_lights,particle_light_strength,particle_light_range,tongues,segments,fragment_rate,fragment_lifetime,ember_rate,ember_lifetime,emission}; effects.<id>.thermal.{heat_output,cooling_rate,lift}; effects.<id>.palette.{outer,warm,hot}; lights.<id>.{intensity,flicker,color,position,range}; materials.<id>.{color,roughness,emission,metallic,reflectivity,transmission,ior,thickness,absorption,subsurface,scatter_color}","value":"typed JSON value"},
         "get_window":{"availability":"native run only"},"set_window":{"availability":"native run only","size":"optional logical [width,height]","minimized":"optional boolean","fullscreen":"optional boolean"},"shutdown":{"availability":"native run only"},
         "set_shadow_cache":{"force_redraw":"boolean; true redraws all seven shadow maps on every frame for comparison"},

@@ -67,8 +67,10 @@ the public authoring contract and current approximations.
 
 `Session::execute` is the shared authoring API. UI controls and JSON requests
 call it rather than directly editing render state. Live mutations are validated
-against a cloned scene before committing. Topology and resource changes require
-a restart in v1. Stable IDs address objects within scene arrays.
+against a cloned scene before committing. `set_object_transform` changes a stable
+object ID by position, XYZ Euler rotation or positive scale, and advances that draw
+range's transform revision. Topology, assets and resource changes still require a
+restart in v1.
 
 Commands in the window are drained between frames from both user events and
 redraw events, so minimization cannot strand the command queue. Captures submit rendering and await readback before returning success.

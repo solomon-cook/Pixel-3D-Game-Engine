@@ -9,9 +9,9 @@ projected detail, smoke absorption reuse, optical specialisation, object culling
 instancing and resource efficiency. O01's profiling implementation and M1 Max/Metal
 workload evidence are complete. O08's inventory and two targeted allocation changes
 are implemented on M1 Max/Metal; broader layout/pass changes still need
-cross-backend measurements and comparisons. O03's bounded single-emitter tile
-lists and O07's per-camera/per-light culling, shared meshes and instancing are
-implemented and measured on M1 Max/Metal. Platform acceptance gates remain open.
+cross-backend measurements and comparisons. O03's bounded single-emitter tile lists and O07's per-camera/per-light culling,
+shared meshes, instancing and live object transforms are implemented and measured
+on M1 Max/Metal. Platform acceptance gates remain open.
 
 O04's opt-in projected fire-segment LOD is implemented at 40/20 px with 48/24 px
 hysteresis. Three matched 640×360 still pairs cover full, medium and low detail;
@@ -170,8 +170,10 @@ reload, shadow-material edits and projection changes invalidate the whole set.
 Unknown key state redraws rather than reuses. Cache-hit metrics report the dirty
 reason, redrawn map count, 5,767,168 resident map bytes and CPU shadow-encoding
 time. `set_shadow_cache` forces redraw through the protocol; benchmark reports also
-accept `--force-shadow-redraw`. Per-face invalidation remains open until O07 adds
-live transforms and affected-object tracking; the current bounds are metadata only.
+accept `--force-shadow-redraw`. Live `set_object_transform` updates the draw transform,
+conservative bounds and baked reference vertices, and returns a per-object transform
+revision. Object moves currently invalidate all seven maps; O02 per-face affected-face
+tracking remains open.
 
 The captures at 640×360 with seed 42/tick 0 were byte-identical for first cache
 render, forced redraw and subsequent cache hit. Protocol checks confirmed hits on
@@ -240,8 +242,10 @@ orthographic, behind-camera, side-plane and invalid-bound cases.
 `python3 scripts/verify.py --gpu` passed on M1 Max/Metal: formatting, Clippy, 27
 workspace tests, validation, material GPU and pixel-fire GPU checks. It reports
 `native: false`; native window and Windows DX12 rendering remain unverified.
-O02 per-face invalidation still awaits live object transform/revision support.
-Full provenance and checksums are in
+Live object transforms now update the model matrix, conservative bounds and baked
+reference vertices, returning a per-object transform revision. Caster moves still use
+full-map invalidation; O02 per-face affected-face tracking remains open. Full provenance
+and checksums are in
 [measurements-o07-culling.json](measurements-o07-culling.json).
 
 Implemented: reusable engine/library separation, native Metal/DX12 selection,

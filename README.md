@@ -64,6 +64,7 @@ line and read one response with the matching ID. Diagnostics use stderr.
 {"id":3,"method":"set_camera","params":{"id":"smoke-close"}}
 {"id":4,"method":"capture_frame","params":{"path":"artifacts/smoke.png","scale":4}}
 {"id":5,"method":"set_parameter","params":{"path":"environment.wind","value":[0.7,0,0.1]}}
+{"id":6,"method":"set_object_transform","params":{"id":"fire-ring-0","position":[0,1,0]}}
 ```
 
 Use `describe` for command discovery and scene JSON schema. Image captures have

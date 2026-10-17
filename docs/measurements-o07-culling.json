@@ -192,5 +192,84 @@
     "crates/engine/src/session.rs": "8ee87c0b7dec3bcd420f60b9116caacf26ccad4a099d4103209e35f8d889f1cb",
     "crates/engine-lab/src/main.rs": "5645dce0d30e5f7b9607675c17d4a915b18466a1d602420653680f3bf85b5df0",
     "scripts/profile_compare.py": "c22ebbcbead6a71c71a50e562818810485ab7e26487ab975b606644aca6da32e"
+  },
+  "live_transform_protocol": {
+    "status": "implemented and exercised on Apple M1 Max / Metal",
+    "command": "set_object_transform",
+    "contract": "Stable object ID with optional position, XYZ Euler rotation in radians, and positive scale. Full scene validation runs before commit. Each changed object returns a monotonically increasing per-object revision.",
+    "renderer_updates": [
+      "Instanced model/normal transform",
+      "Conservative world AABB from retained local bounds",
+      "CPU baked reference vertex range and existing GPU reference buffer when allocated",
+      "Scene caster key; current cache conservatively redraws all seven shadow maps"
+    ],
+    "transform_case": {
+      "scene": "assets/scenes/materials.json",
+      "camera": "metal-close",
+      "seed": 42,
+      "tick": 0,
+      "object": "chrome-sample",
+      "position": [
+        -3.0,
+        1.5,
+        -2.0
+      ],
+      "rotation_radians_xyz": [
+        0.12,
+        0.25,
+        -0.08
+      ],
+      "scale": [
+        1.2,
+        0.8,
+        1.5
+      ],
+      "returned_revision": 1
+    },
+    "capture_comparison": {
+      "resolution": [
+        640,
+        360
+      ],
+      "instanced_live_vs_fresh_static_instanced": {
+        "changed_pixels": 0,
+        "sha256": "b7e95fa40aa7bd9c715bc73f4f26845d58ce878633642c1b0c71923f1d37b4bc",
+        "reference_sha256": "b7e95fa40aa7bd9c715bc73f4f26845d58ce878633642c1b0c71923f1d37b4bc"
+      },
+      "baked_live_vs_fresh_static_baked": {
+        "changed_pixels": 1,
+        "sha256": "134b17e01598e5045535582a4f007f4afc16e33562d0237ff59710573fd3a75f",
+        "reference_sha256": "77e67ad46a35eb2b7ecf933aab312905cfe17689637be91aae3d6a0d0697f2fb"
+      },
+      "static_instanced_vs_static_baked": {
+        "changed_pixels": 397,
+        "changed_channels": 670,
+        "mean_absolute_channel_error": 0.0076,
+        "max_channel_error": 120,
+        "interpretation": "Known transform precision difference between instanced and baked reference paths at this edited transform; both outputs were inspected and the live instanced path exactly matched its static-scene counterpart."
+      }
+    },
+    "culling_and_invalidation": {
+      "move_position": [
+        150,
+        1.5,
+        -2.0
+      ],
+      "visible_objects_after_move": 23,
+      "shadow_dirty_reason": "casters_changed",
+      "shadow_maps_redrawn": 7,
+      "negative_scale_edit": "rejected; follow-up capture retained the valid transform and reported unchanged shadow cache"
+    },
+    "capture_hashes": {
+      "live_transform_instanced": "b7e95fa40aa7bd9c715bc73f4f26845d58ce878633642c1b0c71923f1d37b4bc",
+      "live_transform_baked": "134b17e01598e5045535582a4f007f4afc16e33562d0237ff59710573fd3a75f",
+      "static_instanced_reference": "b7e95fa40aa7bd9c715bc73f4f26845d58ce878633642c1b0c71923f1d37b4bc",
+      "static_baked_reference": "77e67ad46a35eb2b7ecf933aab312905cfe17689637be91aae3d6a0d0697f2fb",
+      "offscreen_caster": "e54af3792e55c3877adc878a344297ed4467fae0021e5e998cc755cad2242b53"
+    },
+    "limits": [
+      "Point-face invalidation is not implemented yet; caster transforms still use safe whole-map invalidation.",
+      "Native-window and Windows DX12 transform behavior remain unverified."
+    ]
   }
 }

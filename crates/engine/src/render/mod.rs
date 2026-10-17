@@ -4,12 +4,12 @@ use crate::{
     effects,
     effects::{FireFrame, FireKey, MAX_FIRE_PRIMITIVES, MAX_PARTICLE_LIGHTS},
     platform,
-    scene::{Camera, LightKind, Material, Scene},
+    scene::{Camera, LightKind, Material, Object, Scene},
     simulation,
 };
-use anyhow::{anyhow, Context, Result};
+use anyhow::{anyhow, bail, Context, Result};
 use bytemuck::{Pod, Zeroable};
-use glam::{Mat3, Mat4, Vec3, Vec4};
+use glam::{EulerRot, Mat3, Mat4, Quat, Vec3, Vec4};
 use std::{
     collections::{BTreeMap, VecDeque},
     path::{Path, PathBuf},
@@ -2158,6 +2158,69 @@ impl Renderer {
         if changed {
             self.invalidate_shadow_cache("geometry_rendering_changed");
         }
+    }
+
+    /// Updates one validated scene object's model, conservative bounds, and baked
+    /// reference vertices. The scene key still invalidates shadow maps conservatively.
+    pub fn set_object_transform(&mut self, object: &Object) -> Result<u64> {
+        let index = self
+            .object_draws
+            .iter()
+            .position(|draw| draw.object_id == object.id)
+            .with_context(|| format!("object '{}': no renderer draw range", object.id))?;
+        let next_transform = Mat4::from_scale_rotation_translation(
+            object.scale.into(),
+            Quat::from_euler(
+                EulerRot::XYZ,
+                object.rotation[0],
+                object.rotation[1],
+                object.rotation[2],
+            ),
+            object.position.into(),
+        );
+        if !next_transform.is_finite() {
+            bail!("object '{}': transform matrix is not finite", object.id);
+        }
+        let previous_columns = self.object_draws[index].transform;
+        if next_transform.to_cols_array_2d() == previous_columns {
+            return Ok(self.object_draws[index].transform_revision);
+        }
+
+        let previous_transform = Mat4::from_cols_array_2d(&previous_columns);
+        let previous_inverse = previous_transform.inverse();
+        let delta = next_transform * previous_inverse;
+        let normal_delta = Mat3::from_mat4(delta).inverse().transpose();
+        if !previous_inverse.is_finite() || !delta.is_finite() || !normal_delta.is_finite() {
+            bail!("object '{}': transform delta is not finite", object.id);
+        }
+        let local_bounds = self.object_draws[index].local_bounds.clone();
+        let start = self.object_draws[index].baked_first_vertex as usize;
+        let end = start + self.object_draws[index].vertex_count as usize;
+        let bounds = local_bounds.and_then(|bounds| bounds.transformed(next_transform));
+        let (first_vertex, revision) = {
+            let draw = &mut self.object_draws[index];
+            draw.transform = next_transform.to_cols_array_2d();
+            draw.bounds = bounds;
+            draw.transform_revision = draw.transform_revision.wrapping_add(1);
+            (draw.baked_first_vertex, draw.transform_revision)
+        };
+        for vertex in &mut self.unshared_vertices[start..end] {
+            vertex.position = delta
+                .transform_point3(Vec3::from(vertex.position))
+                .to_array();
+            vertex.normal = (normal_delta * Vec3::from(vertex.normal))
+                .normalize_or_zero()
+                .to_array();
+        }
+        if let Some(buffer) = &self.unshared_vertex_buffer {
+            let offset = u64::from(first_vertex) * std::mem::size_of::<Vertex>() as u64;
+            self.queue.write_buffer(
+                buffer,
+                offset,
+                bytemuck::cast_slice(&self.unshared_vertices[start..end]),
+            );
+        }
+        Ok(revision)
     }
 
     pub fn set_tile_lists(&mut self, enabled: bool, force_overflow: bool) {

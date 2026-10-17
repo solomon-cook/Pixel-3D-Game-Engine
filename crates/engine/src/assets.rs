@@ -54,12 +54,16 @@ pub struct ObjectDrawRange {
     pub baked_first_vertex: u32,
     /// Local-to-world transform in column-major order.
     pub transform: [[f32; 4]; 4],
+    /// Conservative object-space bounds retained for live transform updates.
+    pub local_bounds: Option<Bounds3>,
     /// `None` means the range is empty or contains non-finite positions and must not be culled.
     pub bounds: Option<Bounds3>,
+    /// Monotonic within the session; shadow invalidation can track affected casters.
+    pub transform_revision: u64,
 }
 
 impl Bounds3 {
-    fn from_vertices(vertices: &[Vertex], transform: Mat4) -> Option<Self> {
+    pub(crate) fn from_vertices(vertices: &[Vertex], transform: Mat4) -> Option<Self> {
         let first = vertices.first()?;
         let first = transform.transform_point3(Vec3::from(first.position));
         if !first.is_finite() {
@@ -75,6 +79,29 @@ impl Bounds3 {
         Some(Self {
             min: min.to_array(),
             max: max.to_array(),
+        })
+    }
+
+    pub(crate) fn transformed(&self, transform: Mat4) -> Option<Self> {
+        let min = Vec3::from(self.min);
+        let max = Vec3::from(self.max);
+        let mut out_min = Vec3::splat(f32::INFINITY);
+        let mut out_max = Vec3::splat(f32::NEG_INFINITY);
+        for x in [min.x, max.x] {
+            for y in [min.y, max.y] {
+                for z in [min.z, max.z] {
+                    let point = transform.transform_point3(Vec3::new(x, y, z));
+                    if !point.is_finite() {
+                        return None;
+                    }
+                    out_min = out_min.min(point);
+                    out_max = out_max.max(point);
+                }
+            }
+        }
+        Some(Self {
+            min: out_min.to_array(),
+            max: out_max.to_array(),
         })
     }
 
@@ -491,6 +518,10 @@ pub fn load(scene: &Scene, base: &Path) -> Result<MeshData> {
         let first_vertex = mesh.first_vertex;
         let vertex_count = mesh.vertex_count;
         let end = first_vertex as usize + vertex_count as usize;
+        let local_bounds = Bounds3::from_vertices(
+            &builder.vertices[first_vertex as usize..end],
+            Mat4::IDENTITY,
+        );
         let baked_first_vertex =
             u32::try_from(baked_vertices.len()).context("objects: baked vertex range overflow")?;
         let object_normal = Mat3::from_mat4(object_transform).inverse().transpose();
@@ -512,10 +543,12 @@ pub fn load(scene: &Scene, base: &Path) -> Result<MeshData> {
             vertex_count,
             baked_first_vertex,
             transform: object_transform.to_cols_array_2d(),
+            local_bounds,
             bounds: Bounds3::from_vertices(
                 &builder.vertices[first_vertex as usize..end],
                 object_transform,
             ),
+            transform_revision: 0,
         });
     }
     if builder.vertices.is_empty() {

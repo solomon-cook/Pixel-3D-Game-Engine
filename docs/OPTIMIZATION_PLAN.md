@@ -384,9 +384,9 @@ Implementation:
 3. Introduce shared mesh streams and instance transforms for identical asset or
    procedural variants. Different procedural seeds can change shape; only share
    when the full geometry key matches. Keep texture/material identities stable.
-4. Add validated transform operations and revision propagation through Session
-   when needed, then connect them to O02 dirty maps/faces. Live transforms are new
-   functionality, not something the current topology contract already provides.
+4. Add validated transform operations and per-object revision propagation through
+   Session, then connect changed bounds to O02 dirty maps/faces. Live transforms are
+   a runtime feature; scene topology and assets remain startup-only.
 
 **Acceptance:** the explicit culling-off/instancing-off reference path must match
 saved pre-change captures. Culling-on is compared against instancing-only in
@@ -413,12 +413,19 @@ scene schema. Evidence, pixel comparisons, per-view submissions, GPU storage and
 paired M1 measurements are in
 [measurements-o07-culling.json](measurements-o07-culling.json). Exact baked
 reference rendering matches the saved baseline. Instanced GPU transforms introduce
-one to twelve changed pixels in reviewed 640×360 views; culling introduces no
-additional changes in those views. The measured culling route substantially reduces
+one to twelve changed pixels in reviewed original 640×360 views; culling introduces no
+additional changes in those views. The `set_object_transform` Session operation now
+validates object position, XYZ rotation and positive scale, updates local/world bounds,
+instance transforms and the baked comparison stream, and returns a per-object revision.
+A live transformed object matched a fresh static instanced capture byte-for-byte; the
+updated baked stream differed by one pixel from a fresh baked reference. Culling on and
+off captures matched. Moving the caster invalidates all seven maps safely; per-face
+tracking is the next O02 step. The measured culling route substantially reduces
 camera/light submissions, while whole-render GPU timing remains nearly unchanged.
 The selectable baked comparison stream retains 10.54 MB of CPU vertices for the
-clearing scene. Native-window and Windows DX12 verification remain open; O02
-per-face invalidation still depends on future live transform/revision support.
+clearing scene. Native-window and Windows DX12 verification remain open. Live transforms
+and per-object revisions are now available; O02 per-face invalidation remains the next
+cache refinement.
 
 ## O08 — Reduce memory traffic and unnecessary GPU work
 
