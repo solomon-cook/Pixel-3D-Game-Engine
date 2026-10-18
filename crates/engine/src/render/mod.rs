@@ -3009,6 +3009,17 @@ impl Renderer {
                 )
             })
             .collect::<Vec<_>>();
+        if !multi_emitter && !self.multi_fire_keys.is_empty() {
+            // Keep the fixed two-slot shader ABI safe if a future session
+            // replaces a multi-source scene with a single-source scene while
+            // retaining this renderer instance.
+            self.fire_key = None;
+            self.multi_fire_keys.clear();
+            self.multi_fire_tiers.clear();
+            self.fire_storage.sources[1] = FireFrame::zeroed();
+            self.fire_storage.source_origins[1] = [0.; 4];
+            self.fire_storage.presentations[1] = FirePresentation::zeroed();
+        }
         let fire_changed = self.fire_key.as_ref() != Some(&key);
         if fire_changed {
             self.fire_key = Some(key.clone());
