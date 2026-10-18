@@ -136,8 +136,10 @@ acceptance remain open. See
    12 fps quiet/bonfire profile pairs cross both hysteresis bands. Sampled
    threshold contact sheets were inspected; changes remain localized to the
    flame, with no obvious silhouette detachment or lost glow in the samples.
-   The full GIF/APNG could not be played for continuous human review in this
-   session, so flicker and silhouette crawl acceptance remain open.
+   A side-by-side in-app browser playback spot review of the baseline and LOD
+   campfire GIFs also found no obvious silhouette break or fire/smoke separation
+   across the viewed frames. This is not a full-duration human playback review;
+   flicker and silhouette-crawl acceptance remain open.
    A paired frame-delta analysis now measures the absolute temporal-change-image
    error within ±2 samples of every LOD transition. Mean RGB MAE is
    0.0047/0.0073/0.0048 per 255 for campfire/quiet/bonfire; nearest-rank p95 is

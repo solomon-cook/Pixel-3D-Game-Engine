@@ -165,9 +165,15 @@
     }
   },
   "visual_review": {
-    "method": "Inspected sampled side-by-side base/LOD threshold contact sheets for campfire, quiet and bonfire profiles.",
-    "finding": "Differences remain localized to the flame; sampled images show no obvious silhouette detachment or loss of glow.",
-    "continuous_playback": "Open: generated GIF/APNG previews could not be played in this session because the native Mac was locked and the in-app browser rejected local-file URLs. No workaround was attempted."
+    "method": "Inspected sampled side-by-side base/LOD threshold contact sheets and a side-by-side in-app browser playback of the campfire GIFs across several seconds.",
+    "finding": "The viewed baseline and LOD samples track the same camera and smoke motion; differences stay localized to the flame, with no obvious silhouette break or fire/smoke separation in the sampled views.",
+    "continuous_playback": "Agent spot playback succeeded in the in-app browser; full-duration human playback and owner acceptance remain open.",
+    "agent_playback_spot_review": {
+      "surface": "Codex in-app browser using locally served baseline and LOD GIFs",
+      "scope": "Several seconds sampled across the looping 400-frame campfire orbit",
+      "finding": "No obvious popping, silhouette detachment, or smoke/fire separation in the viewed samples.",
+      "acceptance_status": "Spot review only; full-duration human playback and owner visual acceptance remain open."
+    }
   },
   "limitations": [
     "One Apple M1 Max / Metal adapter only.",

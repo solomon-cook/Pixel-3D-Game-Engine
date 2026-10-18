@@ -44,9 +44,11 @@ evidence only; full fire-geometry, ember and particle-light count parity also
 holds at every sample. Continuous playback acceptance remains open. See
 [transition report](measurements-o04-transition-temporal.json) and
 [runner](../scripts/projected_detail_temporal_transition_study.py).
-The native Mac was locked during this turn, so the generated motion files still
-need continuous playback review. Native-window and portability evidence also
-remain open; see [measurements-o04.json](measurements-o04.json),
+An in-app browser spot review viewed the campfire baseline and LOD GIFs side by
+side across several seconds; no obvious silhouette break or fire/smoke
+separation appeared in the sampled frames. This does not close full-duration
+human review. Native-window and portability evidence also remain open; see
+[measurements-o04.json](measurements-o04.json),
 [measurements-o04-motion-review.json](measurements-o04-motion-review.json) and
 [measurements-o04-sustained-profiles.json](measurements-o04-sustained-profiles.json).
 

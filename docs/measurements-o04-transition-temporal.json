@@ -1,7 +1,7 @@
 {
   "title": "O04 projected fire detail temporal changes around LOD transitions",
   "source_report": "docs/measurements-o04-motion-review.json",
-  "source_report_sha256": "f70f01715bb8592b3b07ff316330e193e3ddcc5de07c4fc244b539cd581bf2c6",
+  "source_report_sha256": "cd6c4d328bb0c6b54757d6860798e639884db371e1c9b8355a8ed0cb2b79217b",
   "profiles": {
     "campfire": {
       "baseline_sequence": "artifacts/o04/continuous-motion/base-20fps/sequence.json",
