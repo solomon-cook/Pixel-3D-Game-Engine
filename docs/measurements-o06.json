@@ -224,9 +224,42 @@
     "windows_dx12_verified": false
   },
   "open_gates": [
-    "120-second repeated orbit and native-window confirmation",
+    "native-window confirmation and continuous route image review",
     "deeper review of rare glass edge differences and light/smoke ordering",
     "Windows DX12 and other GPU backend validation",
-    "no production default promotion until image-quality and timing results persist across representative scenes"
-  ]
+    "no production default promotion until image-quality and timing results persist across representative scenes and adapters",
+    "camera-inside and true near-plane stress remain untested"
+  ],
+  "sustained_study": {
+    "report": "measurements-o06-sustained.json",
+    "host": "Apple M1 Max / Metal / macOS",
+    "resolution": [640, 360],
+    "seed": 42,
+    "warmup_seconds": 10,
+    "duration_seconds_per_run": 120,
+    "pairs_per_workload": 3,
+    "workloads": {
+      "material_atelier": {
+        "route": "material-orbit",
+        "gpu_render_paired_deltas_ms": [-0.173415, -0.169, -0.169335],
+        "gpu_render_paired_median_ms": -0.169335,
+        "optical_resolve_paired_deltas_ms": [-0.174417, -0.164916, -0.165874],
+        "optical_resolve_paired_median_ms": -0.165874,
+        "frame_work_paired_deltas_ms": [-0.050542, -0.136917, -0.04025],
+        "frame_work_paired_median_ms": -0.050542
+      },
+      "mixed_smoke_material": {
+        "route": "mixed-smoke-material-orbit",
+        "gpu_render_paired_deltas_ms": [-0.087959, -0.069709, -0.08075],
+        "gpu_render_paired_median_ms": -0.08075,
+        "optical_resolve_paired_deltas_ms": [-0.078126, -0.055875, -0.075541],
+        "optical_resolve_paired_median_ms": -0.075541,
+        "frame_work_paired_deltas_ms": [-0.232084, -0.265583, -0.212166],
+        "frame_work_paired_median_ms": -0.232084
+      }
+    },
+    "capture_review": "Matched material close/hero views and mixed fire/smoke with transmissive foreground and opaque reflective background were inspected. A paused chrome roughness edit was captured. The material glass close still has rare pixels with maximum channel error 31-34; mean error remains below 0.006 per channel. Mixed views show at most 12 changed pixels and maximum channel error 1.",
+    "interpretation": "All three repeated pairs in both workloads show lower GPU render and optical-resolve time; atmosphere/fire GPU timing is effectively unchanged. Keep the feature opt-in until native-window, continuous quality and other-adapter acceptance.",
+    "verification": "Both generated scenes validated; exact same-seed direct/reuse captures were inspected. This is offscreen Metal evidence, not native or DX12 validation."
+  }
 }

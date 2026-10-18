@@ -49,12 +49,15 @@ and pause/resume checks remain open ([invalidation study](measurements-o05-inval
 O06 now has an opt-in opaque-reflector lighting reuse path. It reverses the
 matching same-pixel foreground atmosphere contribution from the HDR snapshot and
 uses the opaque normal/depth snapshot; transmissive surfaces keep direct shading.
-Three short M1 Max/Metal material-orbit pairs reduced optical-resolve medians by
-about 0.19 ms and GPU-render medians by about 0.21 ms. CPU frame-work differences
-were noisy. Fixed-tick material and smoke-over-reflector stills were visually close.
-The path is disabled by default pending the longer moving route, native-window
-measurements and Windows/DX12 or other GPU qualification; see
-[measurements-o06.json](measurements-o06.json).
+Three paired 120-second M1 Max/Metal routes in both Material Atelier and a mixed
+smoke/fire/material scene reduced GPU-render medians by 0.169 ms and 0.081 ms,
+respectively; optical-resolve medians fell by 0.166 ms and 0.076 ms. CPU frame-work
+medians also improved in these six runs. Matched hero, metal, glass, mixed-ordering
+and near-glass captures were inspected; a live opaque material edit had no stale
+output. Keep this feature disabled by default pending continuous motion review,
+camera-inside/near-plane cases, native-window measurements and other GPU
+qualification. See [measurements-o06.json](measurements-o06.json) and the full
+[sustained study](measurements-o06-sustained.json).
 
 O01 profiling implementation now includes bounded asynchronous timestamps for
 smoke compute, shadows, opaque geometry, atmosphere/fire, optical resolve and post;

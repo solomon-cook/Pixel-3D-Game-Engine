@@ -579,3 +579,22 @@ per-render rebuild follows these discrete edits. Representative stills show the
 expected approximation without an obvious new defect, but do not establish
 continuous temporal quality, wall-clock resume behavior, or native-window behavior. See
 [measurements-o05-invalidation.json](measurements-o05-invalidation.json).
+
+## O06 sustained opaque lighting reuse (18 October)
+
+Three paired 120-second routes on Material Atelier and three on a mixed
+smoke/fire/material scene used 640×360, seed 42 and a 10-second warm-up. On M1
+Max/Metal, all six pairs reduced total GPU render time: median paired deltas were
+-0.169 ms in Material Atelier and -0.081 ms in the mixed scene. Optical resolve
+fell by -0.166 ms and -0.076 ms, with atmosphere/fire timing effectively stable.
+CPU frame-work medians also improved in each workload. Fixed-tick captures
+included hero/metal/glass views, smoke ordering around reflective and transmissive
+objects, a near-glass view, and a live chrome roughness edit. The glass close view
+had rare pixels with up to 34/255 channel error; average error stayed below
+0.006/255 per channel. The mixed stress captures differed by at most 12 pixels,
+with maximum channel error 1/255.
+
+These offscreen results extend the earlier short profile but do not settle
+continuous motion, camera-inside/near-plane behavior, native-window output or
+other adapters. Keep the path opt-in pending those checks. Full captures and paired
+stage data: [measurements-o06-sustained.json](measurements-o06-sustained.json).

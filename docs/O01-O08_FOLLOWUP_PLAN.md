@@ -124,13 +124,16 @@ off and close the experiment with that result.
 
 ### 5. O06 opaque lighting reuse
 
-1. Run at least three alternating 120-second Material Atelier routes plus a mixed
-   smoke/fire/material route; include reflective and transmissive surfaces in front
-   of and behind atmosphere.
-2. Compare direct and reused opaque lighting; retain direct transmissive evaluation.
-   Review camera-inside/near-plane and live material edits as correctness cases.
-3. Report resolve, full GPU render, CPU frame work and image error separately. Add
-   native-window and other-adapter results before considering promotion.
+1. **Complete on M1 Max/Metal:** three alternating 120-second Material Atelier
+   pairs plus three pairs on a mixed smoke/fire/material orbit include reflective
+   and transmissive surfaces in front of and behind atmosphere.
+2. **Partially complete:** direct and reused opaque lighting retain direct
+   transmissive evaluation. A paused chrome roughness edit and a near-glass camera
+   were reviewed; camera-inside and true near-plane stress remain open.
+3. **Complete offscreen:** report optical resolve, full GPU render, CPU frame work
+   and image error separately. All six pairs show lower total GPU render time on
+   this host; native-window and other-adapter results are still required before
+   promotion. See [measurements-o06-sustained.json](measurements-o06-sustained.json).
 
 **Exit gate:** sustained total-render gain larger than run variance, acceptable
 images in reflection/transmission stress views and no stale live-edit output.

@@ -384,12 +384,14 @@ This is a technique reference, not a requirement to adopt its SDK.
 reflector shading from the matching atmosphere-composited snapshot, subtracting
 the foreground contribution before recovering the base surface color. It adds no
 texture allocation. Transmissive surfaces retain direct lighting because the
-opaque pass omits them. On M1 Max/Metal, three short material-orbit pairs reduced
-the optical-resolve median by about 0.19 ms and GPU-render median by about 0.21 ms;
-CPU frame-work results were mixed. Matched stills were visually close, including a
-smoke-over-reflector stress view. The experiment remains off by default pending a
-120-second route, native-window measurement and cross-backend validation. See
-[measurements-o06.json](measurements-o06.json).
+opaque pass omits them. On M1 Max/Metal, three paired 120-second routes reduced
+total GPU render by 0.169 ms in Material Atelier and 0.081 ms in a mixed
+smoke/fire/material scene; optical resolve fell by 0.166 ms and 0.076 ms. Frame
+work improved across all six pairs. Matched hero, close metal/glass, smoke-ordering
+and live roughness-edit captures were inspected. Keep the experiment off by default
+pending continuous motion review, camera-inside/near-plane cases, native-window
+measurement and cross-backend validation. See [measurements-o06.json](measurements-o06.json)
+and [measurements-o06-sustained.json](measurements-o06-sustained.json).
 
 ## O07 — Object bounds, culling and shared meshes
 
