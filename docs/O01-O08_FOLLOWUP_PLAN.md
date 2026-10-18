@@ -543,6 +543,14 @@ The approximate-cache image error is measured and inspected, but no sustained
 performance or temporal-quality decision is claimed. See
 [absorption evidence](measurements-multi-emitter-absorption.json) and
 [dual-source cache evidence](measurements-multi-emitter-absorption-cache.json).
+The cache also has a matched 120-frame, 20 fps fixed-camera temporal comparison
+across both emitters. At seed 42 and 640×360, direct and 8³-cache variants have
+identical effect counts at every frame. Mean RGB error is 0.026/255 (p95
+0.032/255), mean temporal-change-magnitude error is 0.020/255, and maximum
+channel difference is 21/255. This is one offscreen M1 Max/Metal workload, not
+continuous playback or performance acceptance. See
+[temporal report](measurements-multi-emitter-absorption-temporal.json) and
+[reproducible runner](../scripts/two_emitter_absorption_temporal_study.py).
 Opaque `heat_response` materials now sample the second emitter's local
 temperature volume as well. The source-zero Metal capture is byte-identical and
 the verifier passes. The dual-source scene is available for focused source-one

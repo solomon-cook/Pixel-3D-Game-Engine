@@ -426,6 +426,16 @@ dual-source scene inventory reports 25,889,280 known bytes at
 [two-source review](measurements-multi-emitter-shadows.json), [shadow invalidation evidence](measurements-multi-emitter-shadow-invalidation.json)
 and [cache evidence](measurements-multi-emitter-absorption-cache.json).
 
+A matched temporal comparison now covers the direct and 8³ source-local
+absorption paths over 120 frames at 20 fps with the fixed dual-wide camera.
+Both emitters advance from the same seed and start tick; effect counts match on
+every frame. Mean frame RGB error is 0.026/255 (p95 0.032/255), mean temporal-
+change-magnitude error is 0.020/255, and maximum channel error is 21/255. The
+contact sheet shows close sampled agreement with differences around the smoke.
+This adds one offscreen M1 Max/Metal workload; it does not establish playback
+acceptance, speedup, or portability. See [temporal report](measurements-multi-emitter-absorption-temporal.json)
+and [runner](../scripts/two_emitter_absorption_temporal_study.py).
+
 The maximum-budget close-camera route exposed two indexing errors in the expanded
 smoke tile buffer: the primary list used a 36-entry tile stride instead of the
 72-entry reserved stride, and the secondary reader omitted its 36-entry segment

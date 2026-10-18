@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-18",
+  "workstream": "O02 dual-source absorption-cache temporal comparison",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "source_scene": "assets/scenes/two-emitter-review.json",
+  "source_scene_sha256": "9ca7aee40dac7a9cde4010f6f90c2623e441c8e0c9a1f19ff2a9c570c1082892",
+  "scene_sha256": {
+    "direct": "f8161568794dd5a9be5dd39fa9644f7d4cb1a042e693b5fe6cf49923fd14b06c",
+    "cached": "ff72f34cedec3c9edb187ba862cccfe3b5af7f5777692882c43367ff4f39a08e"
+  },
+  "binary_sha256": "f49bdfcd6d867a7baca3572b46a586c2bbf14b979f9f6cdd12f8e141cc8980bc",
+  "capture_script_sha256": "32cb84904894b6c0581dbb18f85ba39e181aee2ed4f0556df66718bd67f2a098",
+  "study_script_sha256": "44bd83a1778956451672f3fcbc1135e447434d365e4543cceac08298b0b60f4a",
+  "source_ids": [
+    "campfire",
+    "watchfire"
+  ],
+  "seed": 42,
+  "camera": "dual-wide",
+  "route": null,
+  "resolution": [
+    640,
+    360
+  ],
+  "cache_resolution": [
+    8,
+    8,
+    8
+  ],
+  "start_tick": 300,
+  "end_tick": 657,
+  "frames": 120,
+  "fps": 20.0,
+  "effect_counts_match_every_frame": true,
+  "frame_rgb_mae_mean": 0.025883897569444446,
+  "frame_rgb_mae_p95": 0.03226996527777778,
+  "frame_rgb_mae_max": 0.03304832175925926,
+  "max_channel_difference": 21,
+  "temporal_change_magnitude_rgb_mae_mean": 0.02016935593681917,
+  "temporal_change_magnitude_rgb_mae_p95": 0.02388599537037037,
+  "method": "The fixed dual-wide camera frames both emitters while simulation advances by the same fixed tick stride for direct and cached variants.",
+  "visual_review": "Contact sheet is provided for inspection; continuous playback acceptance is not claimed.",
+  "limitations": [
+    "One M1 Max/Metal offscreen route; native-window and other-adapter behavior remain unverified."
+  ]
+}

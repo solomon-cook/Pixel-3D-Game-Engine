@@ -7,6 +7,13 @@ Metal reviews. Maximum-budget correctness and a three-pair sustained offscreen
 route are recorded; cache temporal quality, native-window and portability gates
 remain open. The single-source baseline remains selectable and pixel-identical.
 
+The opt-in 8³ source-local absorption cache also has a matched 120-frame, 20 fps
+temporal comparison using the fixed dual-wide camera. Effect counts match at all
+frames; mean frame RGB error is 0.026/255 and mean temporal-change-magnitude
+error is 0.020/255. This is offscreen M1 Max/Metal evidence, not a promotion
+decision. See [temporal report](measurements-multi-emitter-absorption-temporal.json)
+and [runner](../scripts/two_emitter_absorption_temporal_study.py).
+
 ## Current boundary
 
 - Scene validation accepts one or two emitters and requires explicit unique
