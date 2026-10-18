@@ -1,0 +1,764 @@
+{
+  "version": 1,
+  "purpose": "Expand O01 counter coverage across three fire profiles and four named views; counts are not timings.",
+  "scene": "assets/scenes/profiling-heavy.json",
+  "seed": 42,
+  "tick": 120,
+  "resolution": [
+    640,
+    360
+  ],
+  "profiles": [
+    "effect-campfire",
+    "effect-quiet",
+    "effect-bonfire"
+  ],
+  "cameras": [
+    "hero",
+    "smoke-close",
+    "fire-study",
+    "orthographic"
+  ],
+  "captures": [
+    {
+      "profile": "effect-campfire",
+      "camera": "hero",
+      "scene": "assets/scenes/profiling-heavy.json",
+      "seed": 42,
+      "tick": 120,
+      "normal": {
+        "image": "artifacts/o01-counter-profile-scope/effect-campfire-hero-normal.png",
+        "pixel_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "diagnostic": {
+        "image": "artifacts/o01-counter-profile-scope/effect-campfire-hero-diagnostic.png",
+        "pixel_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "pixel_identical": true,
+      "pixel_difference": {
+        "changed_pixels": 0,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 54006,
+        "fire_bounds_tests": 82097,
+        "fire_ellipsoid_tests": 10102,
+        "fire_primitive_candidates": 82097,
+        "fire_shadow_lookups": 284511,
+        "optical_reflection_refinement_steps": 0,
+        "optical_reflection_steps": 0,
+        "optical_surface_interactions": 0,
+        "optical_transmission_interactions": 0,
+        "particle_light_candidates": 10921,
+        "point_light_candidates": 26832,
+        "smoke_bubble_intersection_tests": 48796,
+        "smoke_density_samples": 71565,
+        "smoke_lobe_candidates": 50432,
+        "smoke_parent_bounds_tests": 50432,
+        "sun_shadow_lookups": 283463,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 245651,
+        "world_point_light_candidates": 2268088,
+        "world_shading_invocations": 283511
+      }
+    },
+    {
+      "profile": "effect-campfire",
+      "camera": "smoke-close",
+      "scene": "assets/scenes/profiling-heavy.json",
+      "seed": 42,
+      "tick": 120,
+      "normal": {
+        "image": "artifacts/o01-counter-profile-scope/effect-campfire-smoke-close-normal.png",
+        "pixel_sha256": "7a73a695a20a80b4d96f7f9b51ede027f34e48fcf99f0d3d24e8c99a8db620f3",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "diagnostic": {
+        "image": "artifacts/o01-counter-profile-scope/effect-campfire-smoke-close-diagnostic.png",
+        "pixel_sha256": "c47bc28a69fe596cab3bc52b609fc30974de03e1a3ec9ae3776ebacd9a2ad201",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "pixel_identical": false,
+      "pixel_difference": {
+        "changed_pixels": 2,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.00012731481481481483,
+        "max_channel_error": 31,
+        "difference_bounds": [
+          27,
+          139,
+          58,
+          177
+        ]
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 206568,
+        "fire_bounds_tests": 189597,
+        "fire_ellipsoid_tests": 35324,
+        "fire_primitive_candidates": 189597,
+        "fire_shadow_lookups": 387833,
+        "optical_reflection_refinement_steps": 0,
+        "optical_reflection_steps": 0,
+        "optical_surface_interactions": 0,
+        "optical_transmission_interactions": 0,
+        "particle_light_candidates": 32991,
+        "point_light_candidates": 103784,
+        "smoke_bubble_intersection_tests": 185089,
+        "smoke_density_samples": 272978,
+        "smoke_lobe_candidates": 155392,
+        "smoke_parent_bounds_tests": 155392,
+        "sun_shadow_lookups": 384140,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 674137,
+        "world_point_light_candidates": 3073120,
+        "world_shading_invocations": 384140
+      }
+    },
+    {
+      "profile": "effect-campfire",
+      "camera": "fire-study",
+      "scene": "assets/scenes/profiling-heavy.json",
+      "seed": 42,
+      "tick": 120,
+      "normal": {
+        "image": "artifacts/o01-counter-profile-scope/effect-campfire-fire-study-normal.png",
+        "pixel_sha256": "49b9d36280c5ce11471d9d40c1079960e1c13f789e4843b04652501f0dfdeebb",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "diagnostic": {
+        "image": "artifacts/o01-counter-profile-scope/effect-campfire-fire-study-diagnostic.png",
+        "pixel_sha256": "0444882cf12e10dce5f31e1e84ccd19cacb49b70feec1e773a9433955c910ec6",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "pixel_identical": false,
+      "pixel_difference": {
+        "changed_pixels": 2,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.00017505787037037034,
+        "max_channel_error": 50,
+        "difference_bounds": [
+          116,
+          23,
+          334,
+          125
+        ]
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 350406,
+        "fire_bounds_tests": 357096,
+        "fire_ellipsoid_tests": 93962,
+        "fire_primitive_candidates": 357096,
+        "fire_shadow_lookups": 527259,
+        "optical_reflection_refinement_steps": 0,
+        "optical_reflection_steps": 0,
+        "optical_surface_interactions": 0,
+        "optical_transmission_interactions": 0,
+        "particle_light_candidates": 81358,
+        "point_light_candidates": 124088,
+        "smoke_bubble_intersection_tests": 197481,
+        "smoke_density_samples": 429286,
+        "smoke_lobe_candidates": 185344,
+        "smoke_parent_bounds_tests": 185344,
+        "sun_shadow_lookups": 513847,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 1646916,
+        "world_point_light_candidates": 4110776,
+        "world_shading_invocations": 513847
+      }
+    },
+    {
+      "profile": "effect-campfire",
+      "camera": "orthographic",
+      "scene": "assets/scenes/profiling-heavy.json",
+      "seed": 42,
+      "tick": 120,
+      "normal": {
+        "image": "artifacts/o01-counter-profile-scope/effect-campfire-orthographic-normal.png",
+        "pixel_sha256": "8361bc1075c73be0985706cb3fdb4ba60b93cab71c53dbb32ddf74959ce43674",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "diagnostic": {
+        "image": "artifacts/o01-counter-profile-scope/effect-campfire-orthographic-diagnostic.png",
+        "pixel_sha256": "8361bc1075c73be0985706cb3fdb4ba60b93cab71c53dbb32ddf74959ce43674",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "pixel_identical": true,
+      "pixel_difference": {
+        "changed_pixels": 0,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 21216,
+        "fire_bounds_tests": 55804,
+        "fire_ellipsoid_tests": 4706,
+        "fire_primitive_candidates": 55804,
+        "fire_shadow_lookups": 667102,
+        "optical_reflection_refinement_steps": 0,
+        "optical_reflection_steps": 0,
+        "optical_surface_interactions": 0,
+        "optical_transmission_interactions": 0,
+        "particle_light_candidates": 8103,
+        "point_light_candidates": 10864,
+        "smoke_bubble_intersection_tests": 22066,
+        "smoke_density_samples": 29058,
+        "smoke_lobe_candidates": 32768,
+        "smoke_parent_bounds_tests": 32768,
+        "sun_shadow_lookups": 666747,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 123335,
+        "world_point_light_candidates": 5333976,
+        "world_shading_invocations": 666747
+      }
+    },
+    {
+      "profile": "effect-quiet",
+      "camera": "hero",
+      "scene": "assets/scenes/profiling-heavy.json",
+      "seed": 42,
+      "tick": 120,
+      "normal": {
+        "image": "artifacts/o01-counter-profile-scope/effect-quiet-hero-normal.png",
+        "pixel_sha256": "b8753310b82032095995d876bccd6607ec79b313befa61ec2fbb0151cb9d3305",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "diagnostic": {
+        "image": "artifacts/o01-counter-profile-scope/effect-quiet-hero-diagnostic.png",
+        "pixel_sha256": "b8753310b82032095995d876bccd6607ec79b313befa61ec2fbb0151cb9d3305",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "pixel_identical": true,
+      "pixel_difference": {
+        "changed_pixels": 0,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 44100,
+        "fire_bounds_tests": 35397,
+        "fire_ellipsoid_tests": 3084,
+        "fire_primitive_candidates": 35397,
+        "fire_shadow_lookups": 284511,
+        "optical_reflection_refinement_steps": 0,
+        "optical_reflection_steps": 0,
+        "optical_surface_interactions": 0,
+        "optical_transmission_interactions": 0,
+        "particle_light_candidates": 3238,
+        "point_light_candidates": 25992,
+        "smoke_bubble_intersection_tests": 48796,
+        "smoke_density_samples": 61554,
+        "smoke_lobe_candidates": 50432,
+        "smoke_parent_bounds_tests": 50432,
+        "sun_shadow_lookups": 283463,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 95302,
+        "world_point_light_candidates": 2268088,
+        "world_shading_invocations": 283511
+      }
+    },
+    {
+      "profile": "effect-quiet",
+      "camera": "smoke-close",
+      "scene": "assets/scenes/profiling-heavy.json",
+      "seed": 42,
+      "tick": 120,
+      "normal": {
+        "image": "artifacts/o01-counter-profile-scope/effect-quiet-smoke-close-normal.png",
+        "pixel_sha256": "9d38e4454bb40449e458fbe4e2111e6892eb110e1519f98e13f479b8db900c6a",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "diagnostic": {
+        "image": "artifacts/o01-counter-profile-scope/effect-quiet-smoke-close-diagnostic.png",
+        "pixel_sha256": "d47a215e58230bb895a595248be9bcedee08322752de27cd50b84c63cbad1a3c",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "pixel_identical": false,
+      "pixel_difference": {
+        "changed_pixels": 2,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.00012731481481481483,
+        "max_channel_error": 31,
+        "difference_bounds": [
+          27,
+          139,
+          58,
+          177
+        ]
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 169104,
+        "fire_bounds_tests": 77109,
+        "fire_ellipsoid_tests": 10912,
+        "fire_primitive_candidates": 77109,
+        "fire_shadow_lookups": 387833,
+        "optical_reflection_refinement_steps": 0,
+        "optical_reflection_steps": 0,
+        "optical_surface_interactions": 0,
+        "optical_transmission_interactions": 0,
+        "particle_light_candidates": 10322,
+        "point_light_candidates": 100464,
+        "smoke_bubble_intersection_tests": 185089,
+        "smoke_density_samples": 235099,
+        "smoke_lobe_candidates": 155392,
+        "smoke_parent_bounds_tests": 155392,
+        "sun_shadow_lookups": 384140,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 262882,
+        "world_point_light_candidates": 3073120,
+        "world_shading_invocations": 384140
+      }
+    },
+    {
+      "profile": "effect-quiet",
+      "camera": "fire-study",
+      "scene": "assets/scenes/profiling-heavy.json",
+      "seed": 42,
+      "tick": 120,
+      "normal": {
+        "image": "artifacts/o01-counter-profile-scope/effect-quiet-fire-study-normal.png",
+        "pixel_sha256": "28b084c2267ddb5b4ae6c2f532a24b0a19125342236a70dfed0a1fb2c25700c3",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "diagnostic": {
+        "image": "artifacts/o01-counter-profile-scope/effect-quiet-fire-study-diagnostic.png",
+        "pixel_sha256": "eb1e7b3d8b133801d6870864cc2f12913bee813e9e997d205f5eee751e64495f",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "pixel_identical": false,
+      "pixel_difference": {
+        "changed_pixels": 2,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.00017505787037037034,
+        "max_channel_error": 50,
+        "difference_bounds": [
+          116,
+          23,
+          334,
+          125
+        ]
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 252294,
+        "fire_bounds_tests": 140561,
+        "fire_ellipsoid_tests": 28327,
+        "fire_primitive_candidates": 140561,
+        "fire_shadow_lookups": 527259,
+        "optical_reflection_refinement_steps": 0,
+        "optical_reflection_steps": 0,
+        "optical_surface_interactions": 0,
+        "optical_transmission_interactions": 0,
+        "particle_light_candidates": 26613,
+        "point_light_candidates": 124088,
+        "smoke_bubble_intersection_tests": 197481,
+        "smoke_density_samples": 331174,
+        "smoke_lobe_candidates": 185344,
+        "smoke_parent_bounds_tests": 185344,
+        "sun_shadow_lookups": 513847,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 755448,
+        "world_point_light_candidates": 4110776,
+        "world_shading_invocations": 513847
+      }
+    },
+    {
+      "profile": "effect-quiet",
+      "camera": "orthographic",
+      "scene": "assets/scenes/profiling-heavy.json",
+      "seed": 42,
+      "tick": 120,
+      "normal": {
+        "image": "artifacts/o01-counter-profile-scope/effect-quiet-orthographic-normal.png",
+        "pixel_sha256": "872fd033a0a420291c12d7c34c383d44ff52573ce265fdbb4333c7305c1c7dbd",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "diagnostic": {
+        "image": "artifacts/o01-counter-profile-scope/effect-quiet-orthographic-diagnostic.png",
+        "pixel_sha256": "872fd033a0a420291c12d7c34c383d44ff52573ce265fdbb4333c7305c1c7dbd",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "pixel_identical": true,
+      "pixel_difference": {
+        "changed_pixels": 0,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 17328,
+        "fire_bounds_tests": 26374,
+        "fire_ellipsoid_tests": 1337,
+        "fire_primitive_candidates": 26374,
+        "fire_shadow_lookups": 667102,
+        "optical_reflection_refinement_steps": 0,
+        "optical_reflection_steps": 0,
+        "optical_surface_interactions": 0,
+        "optical_transmission_interactions": 0,
+        "particle_light_candidates": 3082,
+        "point_light_candidates": 10352,
+        "smoke_bubble_intersection_tests": 22066,
+        "smoke_density_samples": 25106,
+        "smoke_lobe_candidates": 32768,
+        "smoke_parent_bounds_tests": 32768,
+        "sun_shadow_lookups": 666747,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 50534,
+        "world_point_light_candidates": 5333976,
+        "world_shading_invocations": 666747
+      }
+    },
+    {
+      "profile": "effect-bonfire",
+      "camera": "hero",
+      "scene": "assets/scenes/profiling-heavy.json",
+      "seed": 42,
+      "tick": 120,
+      "normal": {
+        "image": "artifacts/o01-counter-profile-scope/effect-bonfire-hero-normal.png",
+        "pixel_sha256": "070439133dc670497fbf34494b6a7803530d23d1dea7fdc64a668d0098dae8b9",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "diagnostic": {
+        "image": "artifacts/o01-counter-profile-scope/effect-bonfire-hero-diagnostic.png",
+        "pixel_sha256": "070439133dc670497fbf34494b6a7803530d23d1dea7fdc64a668d0098dae8b9",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "pixel_identical": true,
+      "pixel_difference": {
+        "changed_pixels": 0,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 63030,
+        "fire_bounds_tests": 470511,
+        "fire_ellipsoid_tests": 79197,
+        "fire_primitive_candidates": 470511,
+        "fire_shadow_lookups": 284511,
+        "optical_reflection_refinement_steps": 0,
+        "optical_reflection_steps": 0,
+        "optical_surface_interactions": 0,
+        "optical_transmission_interactions": 0,
+        "particle_light_candidates": 25510,
+        "point_light_candidates": 26832,
+        "smoke_bubble_intersection_tests": 48796,
+        "smoke_density_samples": 80589,
+        "smoke_lobe_candidates": 50432,
+        "smoke_parent_bounds_tests": 50432,
+        "sun_shadow_lookups": 283463,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 394347,
+        "world_point_light_candidates": 2268088,
+        "world_shading_invocations": 283511
+      }
+    },
+    {
+      "profile": "effect-bonfire",
+      "camera": "smoke-close",
+      "scene": "assets/scenes/profiling-heavy.json",
+      "seed": 42,
+      "tick": 120,
+      "normal": {
+        "image": "artifacts/o01-counter-profile-scope/effect-bonfire-smoke-close-normal.png",
+        "pixel_sha256": "bf91f64d360c2f5ec34e66a14a9e63de58718767f140baa5f48e5b5580ec8ae8",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "diagnostic": {
+        "image": "artifacts/o01-counter-profile-scope/effect-bonfire-smoke-close-diagnostic.png",
+        "pixel_sha256": "772630c60320bd04fb4d112777f74f95a1ddbd941a6607517ddc6f91650362cf",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "pixel_identical": false,
+      "pixel_difference": {
+        "changed_pixels": 2,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.00012731481481481483,
+        "max_channel_error": 31,
+        "difference_bounds": [
+          27,
+          139,
+          58,
+          177
+        ]
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 243132,
+        "fire_bounds_tests": 1090198,
+        "fire_ellipsoid_tests": 273083,
+        "fire_primitive_candidates": 1090198,
+        "fire_shadow_lookups": 387833,
+        "optical_reflection_refinement_steps": 0,
+        "optical_reflection_steps": 0,
+        "optical_surface_interactions": 0,
+        "optical_transmission_interactions": 0,
+        "particle_light_candidates": 82639,
+        "point_light_candidates": 103784,
+        "smoke_bubble_intersection_tests": 185089,
+        "smoke_density_samples": 309542,
+        "smoke_lobe_candidates": 155392,
+        "smoke_parent_bounds_tests": 155392,
+        "sun_shadow_lookups": 384140,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 1066307,
+        "world_point_light_candidates": 3073120,
+        "world_shading_invocations": 384140
+      }
+    },
+    {
+      "profile": "effect-bonfire",
+      "camera": "fire-study",
+      "scene": "assets/scenes/profiling-heavy.json",
+      "seed": 42,
+      "tick": 120,
+      "normal": {
+        "image": "artifacts/o01-counter-profile-scope/effect-bonfire-fire-study-normal.png",
+        "pixel_sha256": "54d527026f02e3800fa90724f57de8aa3dcced9496552be2996e8bd9c131755a",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "diagnostic": {
+        "image": "artifacts/o01-counter-profile-scope/effect-bonfire-fire-study-diagnostic.png",
+        "pixel_sha256": "f3625d68f1bb13f8ae1378189ca731e7158654e1fb2ebef34acde51999c99538",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "pixel_identical": false,
+      "pixel_difference": {
+        "changed_pixels": 1,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.00017071759259259262,
+        "max_channel_error": 50,
+        "difference_bounds": [
+          116,
+          23,
+          117,
+          24
+        ]
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 372216,
+        "fire_bounds_tests": 2309781,
+        "fire_ellipsoid_tests": 804599,
+        "fire_primitive_candidates": 2309781,
+        "fire_shadow_lookups": 527259,
+        "optical_reflection_refinement_steps": 0,
+        "optical_reflection_steps": 0,
+        "optical_surface_interactions": 0,
+        "optical_transmission_interactions": 0,
+        "particle_light_candidates": 142886,
+        "point_light_candidates": 124088,
+        "smoke_bubble_intersection_tests": 197481,
+        "smoke_density_samples": 451096,
+        "smoke_lobe_candidates": 185344,
+        "smoke_parent_bounds_tests": 185344,
+        "sun_shadow_lookups": 513847,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 2277592,
+        "world_point_light_candidates": 4110776,
+        "world_shading_invocations": 513847
+      }
+    },
+    {
+      "profile": "effect-bonfire",
+      "camera": "orthographic",
+      "scene": "assets/scenes/profiling-heavy.json",
+      "seed": 42,
+      "tick": 120,
+      "normal": {
+        "image": "artifacts/o01-counter-profile-scope/effect-bonfire-orthographic-normal.png",
+        "pixel_sha256": "2728163673336023f64874269f6d54821d88d8f8d93d2cf5b411bf6a939db715",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "diagnostic": {
+        "image": "artifacts/o01-counter-profile-scope/effect-bonfire-orthographic-diagnostic.png",
+        "pixel_sha256": "2728163673336023f64874269f6d54821d88d8f8d93d2cf5b411bf6a939db715",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "pixel_identical": true,
+      "pixel_difference": {
+        "changed_pixels": 0,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 24048,
+        "fire_bounds_tests": 343178,
+        "fire_ellipsoid_tests": 35108,
+        "fire_primitive_candidates": 343178,
+        "fire_shadow_lookups": 667102,
+        "optical_reflection_refinement_steps": 0,
+        "optical_reflection_steps": 0,
+        "optical_surface_interactions": 0,
+        "optical_transmission_interactions": 0,
+        "particle_light_candidates": 13535,
+        "point_light_candidates": 10864,
+        "smoke_bubble_intersection_tests": 22066,
+        "smoke_density_samples": 31890,
+        "smoke_lobe_candidates": 32768,
+        "smoke_parent_bounds_tests": 32768,
+        "sun_shadow_lookups": 666747,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 203711,
+        "world_point_light_candidates": 5333976,
+        "world_shading_invocations": 666747
+      }
+    }
+  ],
+  "all_pixel_identical": false,
+  "scope": "Fixed-tick diagnostic counts, not timing. Diagnostic shader variants differ at a small set of pixels in some close views; exact output parity is not established. No continuous-motion claim."
+}

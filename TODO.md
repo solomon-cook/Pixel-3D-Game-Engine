@@ -41,12 +41,17 @@ Detailed steps, dependencies and acceptance criteria live in
   [O01-O08_FOLLOWUP_PLAN.md](docs/O01-O08_FOLLOWUP_PLAN.md) before promoting
   opt-in approximations or expanding the emitter cap.
 
-  O01 operation counters now cover world, volume and optical paths with
-  byte-identical fixed-tick captures; M1 Max/Metal results are in
+  O01 operation counters cover world, volume and optical paths. Earlier selected
+  views matched exactly; expanded campfire/quiet/bonfire and four-camera coverage
+  found one or two changed flame pixels in close views, so universal diagnostic
+  image parity remains open. Evidence is in
   [measurements-o01-shading-counters.json](docs/measurements-o01-shading-counters.json).
+  The expanded report and runner are
+  [measurements-o01-counter-profile-scope.json](docs/measurements-o01-counter-profile-scope.json)
+  and [shading_counter_profile_study.py](scripts/shading_counter_profile_study.py).
   Sparse counters also cover a full moving-caster camera route in
   [measurements-o01-shading-counter-route.json](docs/measurements-o01-shading-counter-route.json).
-  Native-window, additional optical-motion and other-adapter checks remain open.
+  Native-window, optical-motion and other-adapter checks remain open.
 
 - [x] Simulation-driven surface heat cue — implemented and reviewed at fixed ticks across four named cameras. Readability is projection-dependent and the measured GPU-render increase is small; keep it opt-in, with authored-scene promotion gated on O08 and broader visual/DX12 acceptance. Evidence: [measurements-heat-cue.json](docs/measurements-heat-cue.json).
 - [x] Bind emitters to their thermal/fire profile and primary point light by stable IDs; legacy scenes retain positional light binding. Multi-fire stress tests and per-emitter simulation/render ownership remain open.

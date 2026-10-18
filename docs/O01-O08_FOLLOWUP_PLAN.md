@@ -374,21 +374,35 @@ not isolate exact per-pixel operation costs.
 `engine-lab capture --shading-counters` selects isolated diagnostic variants for
 world, volumetric and optical passes and serializes fire primitive, smoke
 lobe/bubble, density/absorption, light-candidate, shadow, reflection and
-transmission counts. Baseline, diagnostic and optical no-copy paths produced
-byte-identical pixels at matched fixed ticks. Captures are recorded in
+transmission counts. Earlier selected baseline, diagnostic and optical no-copy
+captures produced byte-identical pixels at matched fixed ticks. Expanded coverage
+below found a small diagnostic-variant difference in some close views. Captures are recorded in
 [measurements-o01-shading-counters.json](measurements-o01-shading-counters.json).
 Atomic counter captures are diagnostic only; their timings are not comparable.
 Sparse start/mid/end samples now cover a full 120-second camera orbit with a
 moving caster; the separate report is
 [measurements-o01-shading-counter-route.json](measurements-o01-shading-counter-route.json).
-Native-window checks and other-adapter validation remain open. Broader optical
-motion and fire-profile samples remain useful for confirming workload coverage.
+Native-window checks and other-adapter validation remain open.
+
+**Expanded profile/view sample (18 October 2026):** fixed-tick counter captures
+now cover campfire, quiet and bonfire profiles at hero, smoke-close, fire-study
+and orthographic cameras on M1 Max/Metal. Operation counts range from 26,374 to
+2,309,781 fire-primitive candidates and 25,106 to 451,096 smoke-density samples
+across these views. Six of 12 normal/diagnostic pairs are byte-identical. The six
+close/fire-study pairs differ at only one or two pixels (maximum channel error
+31/50 out of 255; mean absolute channel error below 0.00018/255), near the
+projected flame. Repeated captures are stable within each pipeline, so this is a
+diagnostic-variant output difference, not replay noise. Counter values remain
+useful as operation counts, but exact image parity is not universal and the
+instrumented shader must not be used for visual acceptance. The optical
+camera-motion route and additional optical material coverage remain open. See
+[profile/view counter evidence](measurements-o01-counter-profile-scope.json) and
+its [capture runner](../scripts/shading_counter_profile_study.py).
 
 Use O01 stage data to split the multi-millisecond atmosphere/fire work by candidate
 category and representative coverage. O01 shows smoke advection near 0.02 ms on the
 measured M1 Max scene, so do not pursue active-region solver work without new data.
-Use the counters on additional fire profiles, close/distant views and the optical
-motion route. Pair them with uninstrumented stage timings; counter counts alone do
+Use the counters on the optical motion route. Pair them with uninstrumented stage timings; counter counts alone do
 not measure per-operation cost. Use O03 lists and O04 detail as independent switches
 to identify which operations dominate. Keep fixed pixel density and capture matched
 views.

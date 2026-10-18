@@ -125,6 +125,16 @@ baseline/candidate scene inputs characterize run variance and profiling overhead
 not optimization gains. Exact queue latency, adapters without timestamp support,
 Windows DX12 and RTX-class rendering remain unverified.
 
+Expanded O01 diagnostic-counter captures now cover three fire profiles and four
+named cameras on M1 Max/Metal. Counts span 26,374–2,309,781 fire-primitive
+candidates and 25,106–451,096 smoke-density samples. Six of twelve normal and
+instrumented captures match exactly; the other six differ at one or two projected
+flame pixels (maximum channel error 31 or 50/255). Each pipeline repeats exactly
+on its own, so the instrumented variant itself has a small view-dependent output
+difference. Treat the counters as diagnostic operation counts, not as a visually
+identical render or performance timing. The optical camera-motion sample remains
+open. See [counter profile/view evidence](measurements-o01-counter-profile-scope.json).
+
 ## O08 resource and bandwidth inventory
 
 The original 640×360 clearing/heavy inventory recorded 29,806,088 bytes. The current
