@@ -1390,8 +1390,17 @@ impl Renderer {
                         wgpu::TextureSampleType::Float { filterable: true },
                     ),
                 ),
+                binding(
+                    4,
+                    wgpu::ShaderStages::FRAGMENT,
+                    sampled(
+                        wgpu::TextureViewDimension::D3,
+                        wgpu::TextureSampleType::Float { filterable: true },
+                    ),
+                ),
             ],
         });
+        let secondary_smoke_views = smoke_views.get(1).unwrap_or(&smoke_views[0]);
         let volume_groups = std::array::from_fn(|i| {
             group(
                 &device,
@@ -1403,6 +1412,7 @@ impl Renderer {
                     wgpu::BindingResource::TextureView(
                         absorption_view.as_ref().unwrap_or(&smoke_views[0][i]),
                     ),
+                    wgpu::BindingResource::TextureView(&secondary_smoke_views[i]),
                 ],
             )
         });
@@ -1432,6 +1442,14 @@ impl Renderer {
                     binding(7, wgpu::ShaderStages::FRAGMENT, storage(true)),
                     binding(
                         8,
+                        wgpu::ShaderStages::FRAGMENT,
+                        sampled(
+                            wgpu::TextureViewDimension::D3,
+                            wgpu::TextureSampleType::Float { filterable: true },
+                        ),
+                    ),
+                    binding(
+                        9,
                         wgpu::ShaderStages::FRAGMENT,
                         sampled(
                             wgpu::TextureViewDimension::D3,
@@ -1478,6 +1496,10 @@ impl Renderer {
                         resource: wgpu::BindingResource::TextureView(
                             absorption_view.as_ref().unwrap_or(&smoke_views[0][i]),
                         ),
+                    },
+                    wgpu::BindGroupEntry {
+                        binding: 9,
+                        resource: wgpu::BindingResource::TextureView(&secondary_smoke_views[i]),
                     },
                 ],
             })
@@ -2211,7 +2233,9 @@ impl Renderer {
             "volumetrics",
             format!(
                 "{common}\n{tile_common}\n{tile_group3}\n{world}\n{fire_source}\n{}",
-                volume_source.replace("@group(2) @binding(8)", "@group(2) @binding(3)")
+                volume_source
+                    .replace("@group(2) @binding(8)", "@group(2) @binding(3)")
+                    .replace("@group(2) @binding(9)", "@group(2) @binding(4)")
             ),
         );
         let diagnostic_preamble = "@group(0) @binding(2) var<storage, read_write> shading_diag: array<atomic<u32>,22>; fn diag_add(i:u32) { atomicAdd(&shading_diag[i],1u); }";
@@ -2248,7 +2272,9 @@ impl Renderer {
             .replace("for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;}", "for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;} diag_add(12u);");
         let diagnostic_volume_module = shader(device, "instrumented volumetrics", format!(
             "{common}\n{tile_common}\n{tile_group3}\n{diagnostic_preamble}\n{diagnostic_world}\n{diagnostic_fire}\n{}",
-            diagnostic_volume.replace("@group(2) @binding(8)", "@group(2) @binding(3)")
+            diagnostic_volume
+                .replace("@group(2) @binding(8)", "@group(2) @binding(3)")
+                .replace("@group(2) @binding(9)", "@group(2) @binding(4)")
         ));
         let diagnostic_optical_source = optical_source
             .replace(
@@ -2961,7 +2987,13 @@ impl Renderer {
             .iter()
             .find(|light| light.kind == LightKind::Directional)
             .unwrap();
-        let emitter = &scene.emitters[0];
+        // Multi-source GPU slots are ordered by stable emitter ID. Keep the
+        // legacy globals aligned to slot zero when that path is populated.
+        let emitter = scene
+            .emitters
+            .iter()
+            .min_by(|left, right| left.id.cmp(&right.id))
+            .expect("validated scene contains an emitter");
         let fire = scene.light_for_emitter(emitter).unwrap();
         let sun_direction = Vec3::from(sun.position).normalize();
         let sun_matrix = Mat4::orthographic_rh(-24., 24., -24., 24., 0.1, 100.)
@@ -3608,6 +3640,15 @@ impl Renderer {
         let smoke_views = self.smoke_textures[0]
             .each_ref()
             .map(|texture| texture.create_view(&Default::default()));
+        let secondary_smoke_views = self
+            .smoke_textures
+            .get(1)
+            .map(|source| {
+                source
+                    .each_ref()
+                    .map(|texture| texture.create_view(&Default::default()))
+            })
+            .unwrap_or_else(|| smoke_views.clone());
         let cache_bytes = (self.absorption_cache_resolution as u64).pow(3) * 8;
         if enabled {
             let texture = texture(
@@ -3627,6 +3668,7 @@ impl Renderer {
                         wgpu::BindingResource::TextureView(&smoke_views[i]),
                         wgpu::BindingResource::Sampler(&self.optical_sampler),
                         wgpu::BindingResource::TextureView(&view),
+                        wgpu::BindingResource::TextureView(&secondary_smoke_views[i]),
                     ],
                 )
             }));
@@ -3679,6 +3721,10 @@ impl Renderer {
                             binding: 8,
                             resource: wgpu::BindingResource::TextureView(&view),
                         },
+                        wgpu::BindGroupEntry {
+                            binding: 9,
+                            resource: wgpu::BindingResource::TextureView(&secondary_smoke_views[i]),
+                        },
                     ],
                 })
             });
@@ -3700,6 +3746,7 @@ impl Renderer {
                         wgpu::BindingResource::Sampler(&self.optical_sampler),
                         // This slot is unused by direct sampling; bind an existing volume.
                         wgpu::BindingResource::TextureView(&smoke_views[i]),
+                        wgpu::BindingResource::TextureView(&secondary_smoke_views[i]),
                     ],
                 )
             });
@@ -3739,6 +3786,10 @@ impl Renderer {
                         wgpu::BindGroupEntry {
                             binding: 8,
                             resource: wgpu::BindingResource::TextureView(&smoke_views[i]),
+                        },
+                        wgpu::BindGroupEntry {
+                            binding: 9,
+                            resource: wgpu::BindingResource::TextureView(&secondary_smoke_views[i]),
                         },
                     ],
                 })

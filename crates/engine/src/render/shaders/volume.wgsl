@@ -3,6 +3,7 @@
 @group(2) @binding(1) var smoke:texture_3d<f32>;
 @group(2) @binding(2) var volume_sampler:sampler;
 @group(2) @binding(8) var smoke_absorption:texture_3d<f32>;
+@group(2) @binding(9) var secondary_smoke:texture_3d<f32>;
 
 @vertex fn fullscreen(@builtin(vertex_index) i:u32)->@builtin(position) vec4<f32> {
     let p=array<vec2<f32>,3>(vec2(-1.,-1.),vec2(3.,-1.),vec2(-1.,3.));return vec4(p[i],0.,1.);
@@ -54,6 +55,39 @@ fn atmosphere_info(pixel:vec4<f32>,z:f32,tile:u32)->AtmosphereSample {
             if transmittance<0.015 {break;}
         }
     }
+    // A second source keeps its own fixed world-space domain and smoke field.
+    // This branch is absent for v1 scenes, preserving their original integral.
+    if fire.sources[1].counts.x>0u {
+        let source=fire.source_origins[1].xyz;
+        let source_min=source+vec3(-3.,-0.6,-3.);
+        let source_max=source+vec3(3.,7.4,3.);
+        let source_a=(source_min-near)*inv;let source_b=(source_max-near)*inv;
+        let source_lo=min(source_a,source_b);let source_hi=max(source_a,source_b);
+        let source_enter=max(max(max(source_lo.x,source_lo.y),source_lo.z),0.);
+        let source_exit=min(min(min(source_hi.x,source_hi.y),source_hi.z),distance);
+        if source_exit>source_enter {
+            let steps=u32(g.params.w);let ds=(source_exit-source_enter)/f32(steps);
+            let screen_jitter=hash(vec3(floor(pixel.xy),17.));
+            for(var i=0u;i<128u;i++){if i>=steps {break;}
+                let t=source_enter+(f32(i)+mix(screen_jitter,0.5,g.experiments.y))*ds;
+                let p=near+direction*t;let volume_uv=(p-source_min)/(source_max-source_min);
+                let sample=textureSampleLevel(secondary_smoke,volume_sampler,volume_uv,0.);
+                let detail=noise(p*5.-vec3(0.,g.wind_time.w*0.6,0.));
+                let density=sample.x*mix(0.75+detail*0.5,smoothstep(0.2,0.75,detail)*1.4,g.experiments.y);
+                let extinction=density*2.6;let alpha=1.-exp(-extinction*ds);
+                let fire_light=smoke_local_lights(p,vec3(0.),3u,tile)*0.55;
+                var optical=0.;for(var j=1u;j<=4u;j++){
+                    let q=volume_uv+normalize(g.sun_direction.xyz)*f32(j)*0.025;
+                    optical+=textureSampleLevel(secondary_smoke,volume_sampler,q,0.).x*0.25;
+                }
+                let light=g.ambient.xyz*1.5+g.sun_color.xyz*g.sun_color.w*exp(-optical*2.)*sun_visibility(p,vec3(0.))+fire_light;
+                radiance+=transmittance*light*vec3(0.67,0.7,0.76)*alpha;
+                transmittance*=1.-alpha;
+                if transmittance<0.85 && first_smoke==distance {first_smoke=t;}
+                if transmittance<0.015 {break;}
+            }
+        }
+    }
     let flame=sample_fire(near,direction,distance,tile);
     // Approximate camera-to-flame smoke absorption with a bounded six-sample
     // integral. The soft-volume renderer does not claim exact per-lobe sorting.
@@ -64,6 +98,20 @@ fn atmosphere_info(pixel:vec4<f32>,z:f32,tile:u32)->AtmosphereSample {
             let p=near+direction*(enter+(f32(j)+0.5)*span/6.);
             let uv=(p-g.volume_min.xyz)/(g.volume_max.xyz-g.volume_min.xyz);
             absorption+=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x*span/6.*2.6;
+        }
+        if fire.sources[1].counts.x>0u {
+            let source=fire.source_origins[1].xyz;
+            let source_min=source+vec3(-3.,-0.6,-3.);let source_max=source+vec3(3.,7.4,3.);
+            let source_a=(source_min-near)*inv;let source_b=(source_max-near)*inv;
+            let source_lo=min(source_a,source_b);let source_hi=max(source_a,source_b);
+            let source_enter=max(max(max(source_lo.x,source_lo.y),source_lo.z),0.);
+            let source_exit=min(min(min(source_hi.x,source_hi.y),source_hi.z),min(flame.depth,distance));
+            let source_span=max(0.,source_exit-source_enter);
+            for(var j=0u;j<6u;j++) {
+                let p=near+direction*(source_enter+(f32(j)+0.5)*source_span/6.);
+                let uv=(p-source_min)/(source_max-source_min);
+                absorption+=textureSampleLevel(secondary_smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x*source_span/6.*2.6;
+            }
         }
     }
     let visibility=exp(-absorption);

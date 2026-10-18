@@ -476,9 +476,12 @@ both source frames and settings in stable-ID order, and merges sampled particle
 lights into the shared twelve-light budget. Tests cover reorder invariance,
 legacy sampler parity and selected-light/drop accounting. Smoke compute now has
 source-local ping-pong volumes, uniforms and per-source dispatches in stable-ID
-order. Scene validation still requires one emitter; atmosphere, heat,
-optical/cache sampling, shadows, live scene acceptance and visual review remain
-incomplete. `Renderer::update_globals` now has a keyed two-source sampling
+order. The soft atmosphere/optical integral now binds a second source volume and
+samples its independent domain; a fixed-tick source-zero capture remains
+byte-identical. Scene validation still requires one emitter, so no dual-source
+GPU image exists. Inked smoke, heat, source-specific lighting/cache work, shadows,
+live scene acceptance and visual review remain incomplete.
+`Renderer::update_globals` now has a keyed two-source sampling
 and upload branch with independent projected-detail tiers, but scene validation
 still prevents live access and no two-source GPU capture exists. The existing
 single-source profiling-heavy fixed-tick RGBA hash remains identical on M1
@@ -486,8 +489,9 @@ Max/Metal. See the
 [storage ABI](measurements-multi-emitter-storage-abi.json) and
 [fire consumer](measurements-multi-emitter-fire-consumer.json) and
 [storage packing](measurements-multi-emitter-storage-packing.json) comparisons,
-plus [per-source origin](measurements-multi-emitter-source-origins.json) and
-[presentation evidence](measurements-multi-emitter-presentation.json).
+plus [per-source origin](measurements-multi-emitter-source-origins.json),
+[presentation evidence](measurements-multi-emitter-presentation.json) and
+[atmosphere evidence](measurements-multi-emitter-atmosphere.json).
 
 **Exit gate:** all source ownership, deterministic replay, overflow, reset/edit and
 resource-recreation checks pass on Metal; then run the same evidence on DX12 and

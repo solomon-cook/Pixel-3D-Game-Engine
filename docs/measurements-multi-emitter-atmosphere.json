@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "purpose": "Record source-local second-volume sampling groundwork in soft atmosphere and optical shading while preserving the single-emitter image.",
+  "date": "2026-10-18",
+  "host": {
+    "adapter": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "implementation": {
+    "soft_atmosphere_secondary_volume_binding": true,
+    "source_local_domain": "emitter origin + [-3,-0.6,-3] to [3,7.4,3]",
+    "camera_to_flame_absorption_includes_secondary_volume": true,
+    "optical_pass_reuses_secondary_sampling": true,
+    "secondary_source_guard": "FireFrame source slot 1 primitive count > 0",
+    "legacy_global_domain_aligned_to_stable_id_slot_zero": true,
+    "inked_smoke_heat_and_absorption_cache_are_multi_source": false,
+    "scene_emitter_limit": 1
+  },
+  "single_source_baseline": {
+    "scene": "assets/scenes/profiling-heavy.json",
+    "camera": "hero",
+    "seed": 42,
+    "tick": 120,
+    "resolution": [640, 360],
+    "pixel_rgba_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48",
+    "comparison": "pixel-identical to the established single-source capture"
+  },
+  "verification": {
+    "command": "python3 scripts/verify.py --gpu",
+    "result": "passed",
+    "workspace_tests": "37 passed",
+    "gpu": "M1 Max/Metal",
+    "native_window": false
+  },
+  "limitations": [
+    "Scene validation still permits one emitter, so the secondary sampling branch is not exercised by a live scene.",
+    "No dual-source image, optical overlap review, or performance comparison is claimed.",
+    "Inked smoke, heat/refraction, source-specific lighting, absorption-cache construction and shadows remain incomplete.",
+    "Windows/DX12 and other adapters remain unverified."
+  ]
+}

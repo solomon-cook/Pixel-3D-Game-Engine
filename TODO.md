@@ -60,8 +60,8 @@ Detailed steps, dependencies and acceptance criteria live in
   Native-window, broader optical-material and other-adapter checks remain open.
 
 - [x] Simulation-driven surface heat cue — implemented and reviewed at fixed ticks across four named cameras. Readability is projection-dependent and the measured GPU-render increase is small; keep it opt-in, with authored-scene promotion gated on O08 and broader visual/DX12 acceptance. Evidence: [measurements-heat-cue.json](docs/measurements-heat-cue.json).
-- [x] Bind emitters to their thermal/fire profile and primary point light by stable IDs; legacy scenes retain positional light binding. Per-emitter smoke compute now has separate volumes, settings and dispatches, but live multi-emitter validation, smoke rendering, shadows and stress evidence remain open.
-- [ ] Implement the bounded two-emitter runtime described in [MULTI_EMITTER_PLAN.md](docs/MULTI_EMITTER_PLAN.md); deterministic stable-ID CPU sampling is groundwork only. Do not expand scene validation before per-source simulation/render support exists.
+- [x] Bind emitters to their thermal/fire profile and primary point light by stable IDs; legacy scenes retain positional light binding. Per-emitter smoke compute and soft-atmosphere/optical sampling now have source-local fields, but live multi-emitter validation, inked smoke, heat, shadows and stress evidence remain open.
+- [ ] Implement the bounded two-emitter runtime described in [MULTI_EMITTER_PLAN.md](docs/MULTI_EMITTER_PLAN.md); deterministic stable-ID CPU sampling, per-source compute and soft-atmosphere sampling are groundwork only. Do not expand scene validation before all source ownership and rendering paths are ready.
 - [x] Evaluate active-region smoke simulation against O01 stage data. Current M1 Max/Metal measurements put smoke compute at 0.0205–0.0206 ms median versus 2.42–3.25 ms render stages, so there is no timing case for an active-region prototype; re-evaluate if compute cost or workload changes.
 
 Keep selected pixel density and simulation state independent of camera detail.

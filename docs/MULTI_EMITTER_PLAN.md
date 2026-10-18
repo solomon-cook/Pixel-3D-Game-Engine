@@ -65,6 +65,16 @@ into a testable two-source runtime without changing the single-source baseline.
   GPU capture or performance result yet. The current single-source RGBA capture
   remains pixel-identical, with the 80-byte source config reflected in the known
   fixed-buffer inventory; see [smoke compute evidence](measurements-multi-emitter-smoke-compute.json).
+- The soft atmosphere integral now binds and samples a second source-local smoke
+  volume in its fixed world-space domain. Camera-to-flame absorption includes that
+  field, and the optical material pass shares the same integral. Stable-ID slot
+  zero now owns the legacy global domain when multiple sources are prepared. The
+  source-count guard leaves the one-emitter integral unchanged. Inked smoke,
+  heat/refraction, source-specific lighting and cache construction remain
+  incomplete; validation still prevents a live two-source GPU capture.
+  The fixed-tick `profiling-heavy.json` hero capture remains pixel-identical at
+  640×360 (SHA-256 `9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48`).
+  See [atmosphere evidence](measurements-multi-emitter-atmosphere.json).
 - One 48×64×48 Rg16Float density/temperature pair occupies 1,179,648 bytes.
   One point-light cubemap set occupies 1,572,864 bytes. The 8 authored point
   lights and 12 derived particle lights are global renderer budgets.

@@ -17,8 +17,11 @@ instancing switches for exhaustive reference comparisons.
 Each fixed step submits smoke advection into ping-pong density/temperature volumes
 per accepted emitter. Compute resources and uniforms are source-local and ordered
 by stable emitter ID; the current scene validator still accepts one emitter.
-The second-source compute path is groundwork only: flame, atmosphere, heat,
-optical and absorption-cache shading still consume the primary source.
+The soft atmosphere and optical integrals can sample a second source-local smoke
+volume, while flame coverage can consume both fixed FireFrame slots. The inked
+smoke representation, heat/refraction and absorption-cache construction still use
+the primary source. Scene validation remains single-emitter, so these two-source
+shader paths have not received a live two-emitter visual/performance review.
 Each render reuses valid directional/point shadow maps or redraws them after a
 relevant scene revision, builds bounded screen-tile candidate lists with an
 exhaustive overflow fallback, then submits HDR opaque geometry, volumetric
