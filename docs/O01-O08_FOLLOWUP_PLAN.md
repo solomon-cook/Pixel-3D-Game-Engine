@@ -233,8 +233,13 @@ format support and shader/pipeline creation failure.
 normal/depth reuse, Rg16Float targets, compact HDR and no-copy overlay are recorded
 in [DECISIONS_O08.md](DECISIONS_O08.md). The memory-saving implemented paths are
 retained with capability gates; compact HDR and no-copy remain independent,
-disabled-by-default experiments. Platform, continuous-temporal and broader-pass
-acceptance stays open as summarized in that record.
+disabled-by-default experiments. No-copy now also has three alternating native
+120-second pairs on the mixed optical route. Optical-resolve deltas are mixed
+(-0.014, +0.023, -0.043 ms), as are whole-window FPS deltas (-0.155, +0.306,
++0.293); this does not establish a reliable frame-time gain. See
+[measurements-o08-native-no-copy.json](measurements-o08-native-no-copy.json).
+Platform, continuous-temporal and broader-pass acceptance stays open as
+summarized in that record.
 
 Break the umbrella O08 item into decisions for lazy optical allocation, RG16 targets,
 compact HDR, normal/depth reuse and no-copy overlay. For each, record supported

@@ -29,6 +29,8 @@ Detailed steps, dependencies and acceptance criteria live in
 
   RG16 format-selection logic now has adapter-independent tests for usage/feature gating and the RGBA16F fallback. This does not replace physical fallback rendering or Windows/DX12 acceptance.
 
+  Optical no-copy now also has three alternating 120-second native-window pairs on the M1 Max/Metal. GPU resolve and whole-window FPS deltas are mixed, and median full native CPU-frame work is 0.028 ms higher for the candidate; keep the path experimental. Evidence: [native no-copy study](docs/measurements-o08-native-no-copy.json). Other-adapter, physical fallback and DX12 validation remain open.
+
   Runtime inventory also counts the tile debug uniform and optional timestamp staging buffers; opaque QuerySet allocation remains excluded.
 
 ## Later scaling research

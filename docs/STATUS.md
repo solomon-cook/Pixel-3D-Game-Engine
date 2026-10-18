@@ -218,6 +218,21 @@ with local captures and reports under `artifacts/o08/optical-no-copy-*`.
 The RGBA16F alpha-coverage refinement and its refreshed timing reports are under
 `artifacts/o08/optical-alpha-coverage/`.
 
+The native-window no-copy comparison now has three alternating 120-second pairs
+on the M1 Max/Metal using the mixed smoke/fire/reflector/glass orbit. The paired
+optical-resolve deltas were -0.014, +0.023 and -0.043 ms; FPS deltas were
+-0.155, +0.306 and +0.293. Median full native CPU-frame work was 0.028 ms
+higher for no-copy. The route rendered with timestamp coverage in all six runs,
+but the mixed deltas do not establish a reliable whole-frame gain. Known
+allocation stayed equal at 24,997,024 bytes as the 1,843,200-byte snapshot was
+replaced with an equal-sized output. Keep the option experimental and off by
+default. This is one native Metal workload; broader optical motion, another
+adapter, physical fallback formats and Windows/DX12 remain open. Full run
+summaries and provenance are in
+[measurements-o08-native-no-copy.json](measurements-o08-native-no-copy.json);
+the runnable study is `scripts/optical_no_copy_native_study.py` and full native
+frame traces are retained locally under `artifacts/o08/native-no-copy/`.
+
 ## O03 single-emitter tile lists
 
 The renderer builds ordered 16×16 scene-pixel lists for fire primitives, ink-smoke
