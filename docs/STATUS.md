@@ -767,8 +767,11 @@ ms. The 2,208-object GPU render stage improved by 0.096 ms while whole-frame wor
 increased by 0.202 ms. Keep the current path; no more complex draw submission is
 justified. Full run summaries, paired deltas, shadow counters, scene hashes and
 limitations are in [static scale evidence](measurements-o07-scale-study.json) and
-[moving-caster evidence](measurements-o07-moving-caster.json). Native-window,
-continuous-motion image review and non-Metal validation remain open.
+[moving-caster evidence](measurements-o07-moving-caster.json). Native-window
+measurement is complete on this Mac, with mixed whole-window results. The
+fixed-tick moving-caster image route is recorded in
+[continuous-motion evidence](measurements-o07-continuous-motion.json); owner
+continuous-playback review and non-Metal validation remain open.
 
 The native benchmark accepts culling/instancing modes and a moving caster, and
 reports per-frame caster positions, shadow invalidation/redraws, GPU render stages

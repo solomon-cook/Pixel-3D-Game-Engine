@@ -456,7 +456,9 @@ to baked rendering, culling+instancing changed frame work by approximately 0,
 −0.255 ms. Thus culling saves shadow-stage work as scene size grows, but the
 whole-frame result is not monotonic and turns slower at 2,208 objects. Keep the
 current path; these data do not justify indirect drawing or occlusion culling.
-Native-window, non-Metal, and continuous-motion image review remain open.
+Native-window measurement is complete on this Mac. Owner continuous-playback
+review and non-Metal acceptance remain open; fixed-tick moving-caster visual
+evidence is recorded below.
 
 `benchmark-native` now exposes the same culling, instancing and moving-caster
 controls and records per-frame caster positions and shadow-cache changes alongside

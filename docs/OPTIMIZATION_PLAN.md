@@ -522,13 +522,13 @@ records shadow-pass timing and invalidation counters. Culling lowers the GPU
 shadow-map stage by 0.022–0.309 ms versus instancing-only, but the complete-frame
 result is mixed and is slower at 2,208 objects. The gain does not justify adding
 indirect or occlusion drawing. Native culling/instancing/moving-caster controls
-and a resumable four-tier matrix runner are implemented, but sustained native
-window comparisons, continuous-motion visual review and non-Metal acceptance
-remain open. A 120-frame fixed-tick moving-caster comparison now covers baked,
-instancing-only and culling+instancing output on M1 Max/Metal; culling adds no
+and a resumable four-tier matrix runner are implemented. Sustained native-window
+measurement is complete on this Mac. A 120-frame fixed-tick moving-caster
+comparison now covers baked, instancing-only and culling+instancing output on
+M1 Max/Metal; culling adds no
 pixel changes to instancing-only, while sparse baked/instanced pixel differences
-remain. This does not replace owner playback review. See the
-[continuous-motion report](measurements-o07-continuous-motion.json) and
+remain. Owner continuous-playback review and non-Metal acceptance remain open.
+See the [continuous-motion report](measurements-o07-continuous-motion.json),
 [static measurements](measurements-o07-scale-study.json) and
 [moving-caster measurements](measurements-o07-moving-caster.json).
 
