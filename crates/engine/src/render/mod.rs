@@ -2542,7 +2542,7 @@ impl Renderer {
         let optical_layout = layout(&[global, textures, optical, optical_smoke]);
         let tile_build_pipeline_layout = layout(&[global, tile_build]);
         let post_layout = layout(&[global, post]);
-        let smoke_layout = layout(&[global, smoke]);
+        let smoke_layout = layout(&[smoke]);
         let absorption_layout = layout(&[global, absorption]);
         let shadow_layout = layout(&[shadow, shadow_materials]);
         let vertex_buffers = [vertex_layout(), instance_layout()];
@@ -3846,10 +3846,9 @@ impl Renderer {
                 }),
             });
             pass.set_pipeline(&self.pipelines.smoke);
-            pass.set_bind_group(0, &self.globals, &[]);
             for source_groups in &self.smoke_groups {
                 pass.set_bind_group(
-                    1,
+                    0,
                     &source_groups[self.smoke_index],
                     &[(SMOKE_CONFIG_STRIDE as u32) * batch_index as u32],
                 );

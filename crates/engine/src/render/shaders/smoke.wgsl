@@ -1,11 +1,11 @@
-@group(1) @binding(0) var previous: texture_3d<f32>;
-@group(1) @binding(1) var next: texture_storage_3d<rgba16float,write>;
-@group(1) @binding(2) var linear_sampler: sampler;
+@group(0) @binding(0) var previous: texture_3d<f32>;
+@group(0) @binding(1) var next: texture_storage_3d<rgba16float,write>;
+@group(0) @binding(2) var linear_sampler: sampler;
 struct SmokeSimulationConfig {
     volume_min:vec4<f32>,volume_max:vec4<f32>,fire_position:vec4<f32>,
     simulation:vec4<f32>,thermal:vec4<f32>,wind_time:vec4<f32>,
 };
-@group(1) @binding(3) var<uniform> source:SmokeSimulationConfig;
+@group(0) @binding(3) var<uniform> source:SmokeSimulationConfig;
 fn simulation_wind_at(p:vec3<f32>)->vec3<f32> {
     let t=source.wind_time.w;
     return source.wind_time.xyz+vec3<f32>(sin(p.y*1.7+t*1.9)*0.15,0.,cos(p.y*1.3+t)*0.12);

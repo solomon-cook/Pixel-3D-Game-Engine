@@ -1,0 +1,224 @@
+{
+  "version": 1,
+  "change": "Move smoke.wgsl bindings from group 1 to group 0 and give the advection compute pipeline only the source-local smoke bind-group layout. Each compute pass no longer binds render Globals.",
+  "configuration": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "scene": "assets/scenes/clearing.json",
+    "route": "clearing-orbit",
+    "camera": "hero",
+    "seed": 42,
+    "resolution": "640x360",
+    "warmup_seconds": 10,
+    "measured_route_seconds": 120,
+    "pairs": 3,
+    "mode": "serial offscreen",
+    "frames_per_run": 7200,
+    "fixed_steps_per_frame": 1
+  },
+  "source_provenance": {
+    "baseline_revision": "dfb090c (main before this change)",
+    "baseline_binary_captured_before_edits": true,
+    "baseline_shader_directory": "artifacts not retained; exact prior smoke.wgsl was restored from baseline revision for capture and route run",
+    "candidate": "working-tree Rust and WGSL changes; binary hash recorded"
+  },
+  "binary_sha256": {
+    "baseline": "b802b741d1c87b9fa6274506968baeb683431ec48fca6fd0e0f1a267c24293ab",
+    "candidate": "a51ad82631863cd1cfbb936587509e2d5f8f0adebd973dbf1c1779a78bfe9a62"
+  },
+  "fixed_tick_captures": {
+    "tick": 120,
+    "clearing": {
+      "baseline_sha256": "9ef9d7b40b22b1e68cb40ed46a4a87f0f5a5189e19e9bac4c2c04dcf23021d52",
+      "candidate_sha256": "9ef9d7b40b22b1e68cb40ed46a4a87f0f5a5189e19e9bac4c2c04dcf23021d52",
+      "pixel_identical": true
+    },
+    "two_emitter_dual_wide": {
+      "baseline_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+      "candidate_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+      "pixel_identical": true
+    }
+  },
+  "candidate_run_summaries": [
+    {
+      "pair": 1,
+      "frames": 7200,
+      "steps_per_frame": 1,
+      "simulation_submissions_per_sample": 1,
+      "cpu_simulation_encode": {
+        "median_ms": 0.13475,
+        "p95_ms": 0.526333,
+        "samples": 7200
+      },
+      "frame_work": {
+        "median_ms": 4.069708,
+        "p95_ms": 6.6127080000000005,
+        "samples": 7200
+      },
+      "gpu_render": {
+        "median_ms": 2.6912089999999997,
+        "p95_ms": 3.6588329999999996,
+        "samples": 7200
+      }
+    },
+    {
+      "pair": 2,
+      "frames": 7200,
+      "steps_per_frame": 1,
+      "simulation_submissions_per_sample": 1,
+      "cpu_simulation_encode": {
+        "median_ms": 0.142167,
+        "p95_ms": 0.48883299999999996,
+        "samples": 7200
+      },
+      "frame_work": {
+        "median_ms": 4.083208,
+        "p95_ms": 6.452916,
+        "samples": 7200
+      },
+      "gpu_render": {
+        "median_ms": 2.686125,
+        "p95_ms": 3.5095829999999997,
+        "samples": 7200
+      }
+    },
+    {
+      "pair": 3,
+      "frames": 7200,
+      "steps_per_frame": 1,
+      "simulation_submissions_per_sample": 1,
+      "cpu_simulation_encode": {
+        "median_ms": 0.19425,
+        "p95_ms": 0.596792,
+        "samples": 7200
+      },
+      "frame_work": {
+        "median_ms": 4.048042,
+        "p95_ms": 6.986041999999999,
+        "samples": 7200
+      },
+      "gpu_render": {
+        "median_ms": 2.70075,
+        "p95_ms": 3.746876,
+        "samples": 7200
+      }
+    }
+  ],
+  "metrics": {
+    "simulation_encode_cpu": {
+      "baseline_run_medians_ms": [
+        0.139708,
+        0.15712500000000001,
+        0.204875
+      ],
+      "candidate_run_medians_ms": [
+        0.13475,
+        0.142167,
+        0.19425
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        -0.00495799999999999,
+        -0.014958000000000027,
+        -0.010624999999999996
+      ],
+      "paired_delta_median_ms": -0.010624999999999996,
+      "paired_delta_p95_ms": -0.00495799999999999
+    },
+    "cpu_encode": {
+      "baseline_run_medians_ms": [
+        0.278167,
+        0.314375,
+        0.43724899999999994
+      ],
+      "candidate_run_medians_ms": [
+        0.27804100000000004,
+        0.29070799999999997,
+        0.4251670000000001
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        -0.00012599999999995948,
+        -0.02366700000000005,
+        -0.01208199999999987
+      ],
+      "paired_delta_median_ms": -0.01208199999999987,
+      "paired_delta_p95_ms": -0.00012599999999995948
+    },
+    "frame_work": {
+      "baseline_run_medians_ms": [
+        4.100584,
+        4.095750000000001,
+        4.1674169999999995
+      ],
+      "candidate_run_medians_ms": [
+        4.069708,
+        4.083208,
+        4.048042
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        -0.030875999999999237,
+        -0.01254200000000072,
+        -0.11937499999999979
+      ],
+      "paired_delta_median_ms": -0.030875999999999237,
+      "paired_delta_p95_ms": -0.01254200000000072
+    },
+    "gpu_render": {
+      "baseline_run_medians_ms": [
+        2.688292,
+        2.693626,
+        2.6987509999999997
+      ],
+      "candidate_run_medians_ms": [
+        2.6912089999999997,
+        2.686125,
+        2.70075
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        0.0029169999999996143,
+        -0.00750099999999998,
+        0.001999000000000528
+      ],
+      "paired_delta_median_ms": 0.001999000000000528,
+      "paired_delta_p95_ms": 0.0029169999999996143
+    },
+    "gpu_stages.smoke_compute": {
+      "baseline_run_medians_ms": [
+        0.017834,
+        0.017834,
+        0.017958
+      ],
+      "candidate_run_medians_ms": [
+        0.017833,
+        0.01775,
+        0.018
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        -9.999999999975306e-07,
+        -8.400000000000074e-05,
+        4.200000000000037e-05
+      ],
+      "paired_delta_median_ms": -9.999999999975306e-07,
+      "paired_delta_p95_ms": 4.200000000000037e-05
+    }
+  },
+  "interpretation": "Simulation CPU-encode medians were lower in all three pairs by 0.0050/0.0150/0.0106 ms. Whole frame-work deltas were -0.031/-0.013/-0.119 ms; GPU-render deltas were +0.003/-0.008/+0.002 ms. Keep the shader/layout change as a verified bind-call reduction and CPU-encode improvement on this route, but do not claim a GPU-render or native-window gain.",
+  "limitations": [
+    "single M1 Max/Metal route for timing",
+    "headless serial benchmark excludes native presentation, inspector and vsync",
+    "dual-emitter parity is fixed-tick only",
+    "Windows/DX12 and other-adapter behavior are unverified",
+    "native-window acceptance unavailable while the Mac is locked"
+  ],
+  "raw_reports": "artifacts/o08-smoke-bind-study/",
+  "shader_reload_rollback": {
+    "report": "artifacts/o08-smoke-bind-shader-rollback.json",
+    "all_checks_passed": true,
+    "runtime_shader_modules": 13,
+    "failed_reload_images_match": true,
+    "successful_reload_image_matches": true,
+    "shadow_cache_preserved_on_failure": true,
+    "successful_reload_invalidates_all_maps": true,
+    "host": "Apple M1 Max/Metal",
+    "native_window": false
+  }
+}

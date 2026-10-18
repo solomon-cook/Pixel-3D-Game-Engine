@@ -756,6 +756,23 @@ multi-workload and cross-adapter checks remain open. See
 [upload report](measurements-o08-globals-upload.json) and ignored raw runs in
 `artifacts/o08-globals-upload-study/`.
 
+**Smoke compute bind-group layout (18 October 2026):** the advection WGSL
+bindings now occupy group 0, and the compute pipeline layout contains only the
+source-local smoke resources. Each simulation compute pass therefore binds its
+smoke group once instead of binding render `Globals` and then the smoke group.
+Clearing and dual-emitter tick-120 captures match byte-for-byte. Three alternating
+120-second clearing-orbit pairs reduce the median CPU simulation-encode span by
+0.005/0.015/0.011 ms. Whole-frame deltas are -0.031/-0.013/-0.119 ms while
+GPU-render deltas are +0.003/-0.008/+0.002 ms. Keep the layout simplification as
+a CPU-side improvement for this measured route; it does not establish GPU-render,
+native-window or cross-adapter gains. See
+[layout report](measurements-o08-smoke-bind-layout.json) and ignored raw runs in
+`artifacts/o08-smoke-bind-study/`. The updated pipeline also passed the headless
+transactional reload study: all 13 reloadable shader modules rejected invalid
+source without changing the reference image or shadow cache, and the restored
+shader set reloaded successfully with the image unchanged. See
+`artifacts/o08-smoke-bind-shader-rollback.json`.
+
 **O06×O08 factorial (18 October):** the eight combinations of direct/reused
 opaque lighting, copy/no-copy optical output and RGBA16F/packed HDR were captured
 on a high-dynamic mixed smoke/fire/reflector/glass workload; each of seven

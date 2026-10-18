@@ -76,6 +76,20 @@ Keep numerical findings in docs/STATUS.md and record visual limitations there.
 Promotion requires visible improvement, acceptable frame cost and cross-platform
 review. A failed hypothesis is retained as useful evidence, not silently enabled.
 
+## Smoke compute bind-group simplification
+
+Hypothesis: because `smoke.wgsl` declares only group 1, the render `Globals`
+group at index 0 might be omitted from each compute pass. The direct removal
+experiment fails wgpu validation at dispatch: the explicit `advection` pipeline
+layout still requires a bind group at index 0. No render, visual, or timing result
+was produced. The coordinated follow-up moved smoke resources to group 0, changed
+the pipeline layout to contain only those source-local resources, and removed the
+render Globals bind. It passed GPU validation and preserved clearing/dual-emitter
+tick-120 images; three clearing-orbit pairs lowered median simulation encode by
+0.005–0.015 ms, while GPU-render changes were small and mixed. Keep the layout
+change as a CPU-side cleanup, without a GPU-render or native-window claim. See
+[the report](measurements-o08-smoke-bind-layout.json).
+
 
 ## Accepted visual direction from this session
 

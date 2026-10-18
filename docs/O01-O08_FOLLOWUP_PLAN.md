@@ -428,6 +428,16 @@ consistently, but whole-frame and GPU-render deltas are small and mixed. Treat
 this as a verified traffic reduction without a throughput claim. See
 [the report](measurements-o08-globals-upload.json).
 
+The next O08 pass-layout probe moved the smoke shader's resources to group 0 and
+removed render `Globals` from the advection pipeline layout. This coordinated
+change is required because the explicit prior pipeline layout demanded a group-0
+bind even though the shader did not declare group-0 resources. Clearing and
+dual-emitter tick-120 images match exactly. Three sustained pairs show a
+0.005–0.015 ms lower median simulation CPU-encode span on the clearing route,
+with small, mixed GPU-render deltas. Keep it as a measured CPU-side cleanup, with
+native, additional-workload, DX12 and other-adapter gates open. See
+[the report](measurements-o08-smoke-bind-layout.json).
+
 Break the umbrella O08 item into decisions for lazy optical allocation, RG16 targets,
 compact HDR, normal/depth reuse and no-copy overlay. For each, record supported
 adapters, fallback behavior, memory delta, temporal and route image evidence, GPU
