@@ -283,6 +283,14 @@ shadow-map GPU timing is therefore unavailable in those paired runs. A moving
 caster route is still required to measure shadow-submission scaling. Native-window
 and non-Metal adapter validation also remain open.
 
+The scene-scale runner now accepts `--moving-caster <scene-object-id>` and passes
+the same deterministic 5-unit, 20-second orbit to both variants. Its report and
+benchmark directories use separate moving-caster names, preserving the static
+baseline evidence. A 60-frame Metal smoke run confirmed the orbit and per-frame
+shadow dirty/redraw counters; it is instrumentation validation, not sustained
+scale evidence. Run the full three-pair 120-second tier matrix before drawing
+performance conclusions.
+
 1. Generate deterministic scenes at increasing object counts and mesh reuse rates,
    starting from the current 276-object clearing scene and increasing by measured
    steps. Include offscreen casters, mixed materials and shared versus unique meshes.

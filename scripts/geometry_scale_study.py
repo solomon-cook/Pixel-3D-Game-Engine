@@ -119,7 +119,7 @@ def capture_path(binary: Path, scene: Path, output: Path, mode: str) -> dict:
     }
 
 
-def compare_paths(binary: Path, scene: Path, output: Path, tier: str) -> dict:
+def compare_paths(binary: Path, scene: Path, output: Path, tier: str, moving_caster: str | None) -> dict:
     comparisons = {}
     pairs = [
         ("baked_vs_instancing_only", ["--baseline-disable-object-culling", "--baseline-disable-instancing"], ["--candidate-disable-object-culling"]),
@@ -127,7 +127,8 @@ def compare_paths(binary: Path, scene: Path, output: Path, tier: str) -> dict:
         ("baked_vs_culling_instancing", ["--baseline-disable-object-culling", "--baseline-disable-instancing"], []),
     ]
     for name, baseline_flags, candidate_flags in pairs:
-        directory = output / "benchmarks" / tier / name
+        benchmark_root = "benchmarks" if moving_caster is None else f"benchmarks-moving-caster-{moving_caster}"
+        directory = output / benchmark_root / tier / name
         directory.mkdir(parents=True, exist_ok=True)
         command = [
             "python3", str(ROOT / "scripts/profile_compare.py"),
@@ -137,6 +138,8 @@ def compare_paths(binary: Path, scene: Path, output: Path, tier: str) -> dict:
             "--seed", "42", "--resolution", "640x360", "--output", str(directory),
             "--binary", str(binary),
         ]
+        if moving_caster:
+            command.extend(["--moving-caster", moving_caster])
         flag_map = {
             "--baseline-disable-object-culling": "--baseline-disable-object-culling",
             "--baseline-disable-instancing": "--baseline-disable-instancing",
@@ -189,6 +192,10 @@ def main() -> int:
     parser.add_argument("--binary", type=Path, default=ROOT / "target/release" / ("engine-lab.exe" if os.name == "nt" else "engine-lab"))
     parser.add_argument("--output", type=Path, default=ROOT / "artifacts/o07/scale-study")
     parser.add_argument("--benchmark", action="store_true")
+    parser.add_argument(
+        "--moving-caster",
+        help="move this existing scene object around the primary fire light during paired benchmarks",
+    )
     args = parser.parse_args()
     binary, output = args.binary.resolve(), args.output.resolve()
     if not binary.is_file():
@@ -204,6 +211,12 @@ def main() -> int:
         "resolution": [640, 360],
         "timing": {"enabled": args.benchmark, "duration_seconds_per_run": 120, "warmup_seconds": 10, "pairs": 3},
         "method": "Deterministic clearing-derived scenes preserve the source 276 objects, then add mixed shared/unique pines, rocks and grass. Twenty percent of generated placements lie on the perimeter for independent camera/shadow visibility. At each tier compare baked reference, instancing-only, and culling+instancing.",
+        "moving_caster": {
+            "object_id": args.moving_caster,
+            "orbit_radius": 5.0 if args.moving_caster else None,
+            "orbit_period_seconds": 20.0 if args.moving_caster else None,
+            "applies_to_both_variants": True,
+        },
         "tiers": {},
         "limitations": ["Offscreen serial Metal only; native-window and non-Metal support remain open.", "Object-count tiers stress draw submission and scene storage, but do not model gameplay edits or multi-emitter simulation.", "Generated geometry uses the existing procedural pine, sphere and cone set; no GLB unique-mesh workload is included."],
     }
@@ -231,9 +244,10 @@ def main() -> int:
             for mode, capture in captures.items()
         }
         if args.benchmark:
-            details["benchmarks"] = compare_paths(binary, scene, output, str(count))
+            details["benchmarks"] = compare_paths(binary, scene, output, str(count), args.moving_caster)
         report["tiers"][str(count)] = details
-    report_path = output / "study.json"
+    report_name = "study.json" if args.moving_caster is None else f"study-moving-caster-{args.moving_caster}.json"
+    report_path = output / report_name
     report_path.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({"study": str(report_path), "tiers": list(report["tiers"]), "benchmark": args.benchmark}))
     return 0
