@@ -1,8 +1,10 @@
 # Bounded multi-emitter runtime plan
 
-17 October 2026. Proposal only; the renderer still accepts exactly one emitter.
-This plan turns the existing stable emitter/profile/light IDs into a testable
-two-source runtime without changing the single-source baseline.
+17 October 2026. The renderer and scene contract still accept exactly one
+emitter. A deterministic CPU sampling primitive now provides stable-ID source
+seeds and sorted two-source `FireFrame` reconstruction; this is groundwork, not a
+two-source runtime. This plan turns the existing stable emitter/profile/light IDs
+into a testable two-source runtime without changing the single-source baseline.
 
 ## Current boundary
 
@@ -24,11 +26,12 @@ byte-identical. Do not accept a scene with more emitters until both are rendered
 and simulated; there must be no silent first-emitter-only behavior.
 
 Give each source its own deterministic FireFrame and smoke density/temperature
-pair. Cache reconstructed fire by stable emitter ID and fixed tick; derive the
-event seed from the user seed plus an explicit stable hash of the emitter ID, not
-from its position or array index. Sort source processing by stable ID so scene
-array reordering cannot change pool admission or light selection. Keep all
-simulation active offscreen.
+pair. The CPU sampler in `crates/engine/src/effects.rs` now rejects more than two
+sources and duplicate IDs, derives event seeds from the user seed plus a stable
+FNV-1a hash of the emitter ID, and sorts source processing by stable ID. Tests
+confirm replay, array-reorder invariance, event identity stability and independence
+when one source changes. Renderer cache ownership, per-source smoke and offscreen
+simulation remain unimplemented.
 
 Use a fixed per-source smoke domain around each emitter so distant sources do not
 shrink the existing 48×64×48 resolution. Each source gets its own thermal output,
@@ -74,5 +77,5 @@ contribution. Existing tile overflow must remain correct under that load.
    least one other adapter before claiming portability. Keep the two-source cap
    until those results and the memory budget pass.
 
-No multi-emitter implementation, visual result, performance gain or target
-hardware support is implied by this proposal.
+No multi-emitter rendering/simulation runtime, visual result, performance gain or
+target hardware support is implied by this plan or the deterministic CPU sampler.

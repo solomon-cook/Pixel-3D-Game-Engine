@@ -271,7 +271,11 @@ fire-light shadow maps. Multi-emitter stress and Windows/DX12 checks remain open
 The next bounded two-emitter implementation proposal estimates about 2.77 MB
 additional known resources at 640×360 for a second smoke field, point-light
 cubemap and current-size FireFrame, before driver/bind-group costs. See
-[MULTI_EMITTER_PLAN.md](MULTI_EMITTER_PLAN.md); this is planning evidence only.
+[MULTI_EMITTER_PLAN.md](MULTI_EMITTER_PLAN.md). Deterministic CPU `FireFrame`
+sampling now sorts up to two sources by stable ID, hashes event seeds from each
+ID, rejects duplicate IDs/excess sources, and has replay, reorder, event-identity
+and source-independence tests. Scene validation and renderer ownership remain
+single-emitter; this helper is groundwork and is not used by live rendering.
 
 `python3 scripts/verify.py --gpu` passed on this host: formatting, Clippy,
 30 workspace tests, scene validation and material/fire GPU checks. The verifier

@@ -10,6 +10,18 @@ use std::f32::consts::TAU;
 
 pub const MAX_FIRE_PRIMITIVES: usize = 256;
 pub const MAX_PARTICLE_LIGHTS: usize = 12;
+pub const MAX_EMITTERS: usize = 2;
+
+/// Mix the user seed with a stable source ID without depending on array order,
+/// process hash randomization, source position, or platform endianness.
+pub fn stable_emitter_seed(seed: u32, emitter_id: &str) -> u32 {
+    let mut hash = 0x811c9dc5u32 ^ seed;
+    for byte in b"pixel-engine:emitter:".iter().chain(emitter_id.as_bytes()) {
+        hash ^= u32::from(*byte);
+        hash = hash.wrapping_mul(0x01000193);
+    }
+    hash
+}
 
 #[derive(Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(default, deny_unknown_fields)]
@@ -379,6 +391,28 @@ impl FireFrame {
         Self::sample_with_segments(key, key.profile.fire.segments)
     }
 
+    /// Sample a bounded source set in stable ID order with source-specific event
+    /// seeds. Existing single-emitter rendering continues to use `sample` so its
+    /// established output remains unchanged.
+    pub fn sample_emitters(sources: &[(String, FireKey)]) -> Result<Vec<(String, Self)>> {
+        if sources.len() > MAX_EMITTERS {
+            bail!("effects: at most {MAX_EMITTERS} emitters can be sampled");
+        }
+        let mut ordered = sources.iter().collect::<Vec<_>>();
+        ordered.sort_by(|left, right| left.0.cmp(&right.0));
+        if ordered.windows(2).any(|pair| pair[0].0 == pair[1].0) {
+            bail!("effects: emitter IDs must be unique");
+        }
+        Ok(ordered
+            .into_iter()
+            .map(|(id, source_key)| {
+                let mut key = source_key.clone();
+                key.seed = stable_emitter_seed(key.seed, id);
+                (id.clone(), Self::sample(&key))
+            })
+            .collect())
+    }
+
     /// Rebuild render geometry at a requested curve density. Callers preserve
     /// the full-detail frame's emitted lights and simulation bounds.
     pub fn sample_with_segments(key: &FireKey, segments: u32) -> Self {
@@ -657,6 +691,74 @@ mod tests {
             profile: EffectProfile::default(),
         }
     }
+    #[test]
+    fn multi_emitter_sampling_is_stable_ordered_and_source_independent() {
+        let first = ("campfire-a".to_string(), key());
+        let mut second_key = key();
+        second_key.source = [3.0, 0.4, -2.0];
+        let second = ("campfire-b".to_string(), second_key);
+
+        let forward = FireFrame::sample_emitters(&[first.clone(), second.clone()]).unwrap();
+        let reverse = FireFrame::sample_emitters(&[second.clone(), first.clone()]).unwrap();
+        assert_eq!(
+            forward
+                .iter()
+                .map(|entry| entry.0.as_str())
+                .collect::<Vec<_>>(),
+            ["campfire-a", "campfire-b"]
+        );
+        for (id, frame) in &forward {
+            assert!(frame.lighting[0] > 0);
+            let light = frame.lights[0];
+            assert_eq!(
+                light.identity[3],
+                stable_emitter_seed(42, id) + light.identity[0] * 7919
+            );
+        }
+        assert_ne!(
+            forward[0].1.lights[0].identity[3],
+            forward[1].1.lights[0].identity[3]
+        );
+        for ((forward_id, forward_frame), (reverse_id, reverse_frame)) in
+            forward.iter().zip(&reverse)
+        {
+            assert_eq!(forward_id, reverse_id);
+            assert_eq!(
+                bytemuck::bytes_of(forward_frame),
+                bytemuck::bytes_of(reverse_frame)
+            );
+        }
+
+        let mut changed_second = second.clone();
+        changed_second.1.tick += 17;
+        changed_second.1.profile.fire.curl *= 0.5;
+        let changed = FireFrame::sample_emitters(&[first, changed_second]).unwrap();
+        assert_eq!(
+            bytemuck::bytes_of(&forward[0].1),
+            bytemuck::bytes_of(&changed[0].1),
+            "changing one emitter must not perturb another source frame"
+        );
+        assert_ne!(
+            bytemuck::bytes_of(&forward[1].1),
+            bytemuck::bytes_of(&changed[1].1),
+            "changing an emitter must update that source frame"
+        );
+        assert_ne!(
+            stable_emitter_seed(42, "campfire-a"),
+            stable_emitter_seed(42, "campfire-b")
+        );
+    }
+
+    #[test]
+    fn multi_emitter_sampling_rejects_duplicate_ids_and_excess_sources() {
+        let source = ("same-id".to_string(), key());
+        assert!(FireFrame::sample_emitters(&[source.clone(), source.clone()]).is_err());
+        let sources = (0..=MAX_EMITTERS)
+            .map(|index| (format!("fire-{index}"), key()))
+            .collect::<Vec<_>>();
+        assert!(FireFrame::sample_emitters(&sources).is_err());
+    }
+
     #[test]
     fn pixel_treatment_does_not_change_particle_geometry_or_lights() {
         let mut k = key();
