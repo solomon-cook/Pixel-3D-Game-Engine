@@ -37,6 +37,12 @@ for campfire, 55→40 for quiet and 166→165 for bonfire. This identifies a str
 quiet-profile range but does not justify changing the disabled-by-default
 setting. Full pairs, GPU stages, run hashes, scene variants and tier counts are
 in [measurements-o04-sustained-profiles.json](measurements-o04-sustained-profiles.json).
+The paired deterministic sequences have also been compared frame-to-frame around
+every LOD transition (±2 samples): temporal-change-image mean RGB MAE is
+0.0047/0.0073/0.0048 per 255 for campfire/quiet/bonfire. This is sampled numeric
+evidence only; continuous playback acceptance remains open. See
+[transition report](measurements-o04-transition-temporal.json) and
+[runner](../scripts/projected_detail_temporal_transition_study.py).
 The native Mac was locked during this turn, so the generated motion files still
 need continuous playback review. Native-window and portability evidence also
 remain open; see [measurements-o04.json](measurements-o04.json),

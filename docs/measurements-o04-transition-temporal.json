@@ -1,0 +1,437 @@
+{
+  "title": "O04 projected fire detail temporal changes around LOD transitions",
+  "source_report": "docs/measurements-o04-motion-review.json",
+  "source_report_sha256": "f70f01715bb8592b3b07ff316330e193e3ddcc5de07c4fc244b539cd581bf2c6",
+  "profiles": {
+    "campfire": {
+      "baseline_sequence": "artifacts/o04/continuous-motion/base-20fps/sequence.json",
+      "baseline_sequence_sha256": "a32d2ceaea12608a4850b7c8a0de2551b06dee1f8109c866431a769e1be6b275",
+      "lod_sequence": "artifacts/o04/continuous-motion/lod-20fps/sequence.json",
+      "lod_sequence_sha256": "d030c0b8b8abbf2925b78ca51da96348b7e528b42c48a2a763b72340f2502696",
+      "frame_count": 400,
+      "fps": 20.0,
+      "transitions_zero_based_frame_index": [
+        {
+          "frame": 39,
+          "from": 0,
+          "to": 1,
+          "projected_fire_height_px": 39.73
+        },
+        {
+          "frame": 86,
+          "from": 1,
+          "to": 2,
+          "projected_fire_height_px": 19.95
+        },
+        {
+          "frame": 130,
+          "from": 2,
+          "to": 1,
+          "projected_fire_height_px": 24.32
+        },
+        {
+          "frame": 172,
+          "from": 1,
+          "to": 0,
+          "projected_fire_height_px": 48.3
+        },
+        {
+          "frame": 239,
+          "from": 0,
+          "to": 1,
+          "projected_fire_height_px": 39.73
+        },
+        {
+          "frame": 286,
+          "from": 1,
+          "to": 2,
+          "projected_fire_height_px": 19.95
+        },
+        {
+          "frame": 330,
+          "from": 2,
+          "to": 1,
+          "projected_fire_height_px": 24.32
+        },
+        {
+          "frame": 372,
+          "from": 1,
+          "to": 0,
+          "projected_fire_height_px": 48.3
+        }
+      ],
+      "transition_window_indexes_zero_based": [
+        37,
+        38,
+        39,
+        40,
+        41,
+        84,
+        85,
+        86,
+        87,
+        88,
+        128,
+        129,
+        130,
+        131,
+        132,
+        170,
+        171,
+        172,
+        173,
+        174,
+        237,
+        238,
+        239,
+        240,
+        241,
+        284,
+        285,
+        286,
+        287,
+        288,
+        328,
+        329,
+        330,
+        331,
+        332,
+        370,
+        371,
+        372,
+        373,
+        374
+      ],
+      "flame_difference_bbox": [
+        303,
+        177,
+        336,
+        206
+      ],
+      "metrics": {
+        "whole_route": {
+          "baseline_frame_to_frame_rgb_mae": {
+            "count": 399,
+            "mean": 3.3990668402777775,
+            "median": 4.351929976851852,
+            "p95_nearest_rank": 5.113116319444444,
+            "max": 5.897570891203704
+          },
+          "lod_frame_to_frame_rgb_mae": {
+            "count": 399,
+            "mean": 3.39929966336559,
+            "median": 4.350769675925926,
+            "p95_nearest_rank": 5.113116319444444,
+            "max": 5.897413194444444
+          },
+          "baseline_vs_lod_temporal_change_rgb_mae": {
+            "count": 399,
+            "mean": 0.0029219895804325625,
+            "median": 0.0016247106481481483,
+            "p95_nearest_rank": 0.01038917824074074,
+            "max": 0.019949363425925928
+          },
+          "baseline_vs_lod_frame_rgb_mae": {
+            "count": 399,
+            "mean": 0.003916489719669544,
+            "median": 0.003195891203703704,
+            "p95_nearest_rank": 0.01234375,
+            "max": 0.02147714120370371
+          }
+        },
+        "transition_window": {
+          "baseline_vs_lod_temporal_change_rgb_mae": {
+            "count": 40,
+            "mean": 0.004654260706018518,
+            "median": 0.003140190972222222,
+            "p95_nearest_rank": 0.011830150462962962,
+            "max": 0.019949363425925928
+          },
+          "local_flame_baseline_vs_lod_temporal_change_rgb_mae": {
+            "count": 40,
+            "mean": 1.120524207593173,
+            "median": 0.7560083594566354,
+            "p95_nearest_rank": 2.84813653779171,
+            "max": 4.802856147683734
+          },
+          "baseline_vs_lod_frame_rgb_mae": {
+            "count": 40,
+            "mean": 0.004152958622685185,
+            "median": 0.0037297453703703702,
+            "p95_nearest_rank": 0.00906539351851852,
+            "max": 0.02147714120370371
+          },
+          "local_flame_baseline_vs_lod_frame_rgb_mae": {
+            "count": 40,
+            "mean": 0.9998345524207594,
+            "median": 0.8979449669104842,
+            "p95_nearest_rank": 2.1825148032044583,
+            "max": 5.1706722396377565
+          }
+        },
+        "outside_transition_window": {
+          "baseline_vs_lod_temporal_change_rgb_mae": {
+            "count": 359,
+            "mean": 0.0027289788700608684,
+            "median": 0.0015248842592592595,
+            "p95_nearest_rank": 0.009832175925925925,
+            "max": 0.015480324074074075
+          },
+          "local_flame_baseline_vs_lod_temporal_change_rgb_mae": {
+            "count": 359,
+            "mean": 0.6570080790616762,
+            "median": 0.36711947056774646,
+            "p95_nearest_rank": 2.3671194705677467,
+            "max": 3.726924416579589
+          }
+        }
+      }
+    },
+    "quiet": {
+      "baseline_sequence": "artifacts/o04/continuous-motion/quiet-base/sequence.json",
+      "baseline_sequence_sha256": "a95f735bffca401ffcda552e1a498ae6c224280fb3a327c99f98f853d2f5c5a6",
+      "lod_sequence": "artifacts/o04/continuous-motion/quiet-lod/sequence.json",
+      "lod_sequence_sha256": "8090751a706d61c78b93a754f99167842b61051be685dabe5079335e06546727",
+      "frame_count": 120,
+      "fps": 12.0,
+      "transitions_zero_based_frame_index": [
+        {
+          "frame": 29,
+          "from": 1,
+          "to": 2,
+          "projected_fire_height_px": 19.95
+        },
+        {
+          "frame": 98,
+          "from": 2,
+          "to": 1,
+          "projected_fire_height_px": 24.48
+        }
+      ],
+      "transition_window_indexes_zero_based": [
+        27,
+        28,
+        29,
+        30,
+        31,
+        96,
+        97,
+        98,
+        99,
+        100
+      ],
+      "flame_difference_bbox": [
+        307,
+        181,
+        334,
+        209
+      ],
+      "metrics": {
+        "whole_route": {
+          "baseline_frame_to_frame_rgb_mae": {
+            "count": 119,
+            "mean": 3.982219985216309,
+            "median": 4.690251736111112,
+            "p95_nearest_rank": 6.044202835648147,
+            "max": 7.6999696180555555
+          },
+          "lod_frame_to_frame_rgb_mae": {
+            "count": 119,
+            "mean": 3.9825585876711793,
+            "median": 4.690134548611112,
+            "p95_nearest_rank": 6.044855324074073,
+            "max": 7.700164930555554
+          },
+          "baseline_vs_lod_temporal_change_rgb_mae": {
+            "count": 119,
+            "mean": 0.005926983640678493,
+            "median": 0.005209780092592593,
+            "p95_nearest_rank": 0.013682002314814814,
+            "max": 0.015925925925925927
+          },
+          "baseline_vs_lod_frame_rgb_mae": {
+            "count": 119,
+            "mean": 0.005409311293962029,
+            "median": 0.004283854166666667,
+            "p95_nearest_rank": 0.015622106481481482,
+            "max": 0.019438657407407408
+          }
+        },
+        "transition_window": {
+          "baseline_vs_lod_temporal_change_rgb_mae": {
+            "count": 10,
+            "mean": 0.007302806712962963,
+            "median": 0.006038049768518518,
+            "p95_nearest_rank": 0.012262731481481484,
+            "max": 0.012262731481481484
+          },
+          "local_flame_baseline_vs_lod_temporal_change_rgb_mae": {
+            "count": 10,
+            "mean": 2.2256172839506174,
+            "median": 1.840167548500882,
+            "p95_nearest_rank": 3.737213403880071,
+            "max": 3.737213403880071
+          },
+          "baseline_vs_lod_frame_rgb_mae": {
+            "count": 10,
+            "mean": 0.005118923611111111,
+            "median": 0.0053515624999999995,
+            "p95_nearest_rank": 0.009986979166666667,
+            "max": 0.009986979166666667
+          },
+          "local_flame_baseline_vs_lod_frame_rgb_mae": {
+            "count": 10,
+            "mean": 1.5600529100529101,
+            "median": 1.630952380952381,
+            "p95_nearest_rank": 3.043650793650794,
+            "max": 3.043650793650794
+          }
+        },
+        "outside_transition_window": {
+          "baseline_vs_lod_temporal_change_rgb_mae": {
+            "count": 109,
+            "mean": 0.005800761340468909,
+            "median": 0.0050188078703703705,
+            "p95_nearest_rank": 0.013682002314814814,
+            "max": 0.015925925925925927
+          },
+          "local_flame_baseline_vs_lod_temporal_change_rgb_mae": {
+            "count": 109,
+            "mean": 1.7678510751905248,
+            "median": 1.529541446208113,
+            "p95_nearest_rank": 4.169753086419753,
+            "max": 4.853615520282188
+          }
+        }
+      }
+    },
+    "bonfire": {
+      "baseline_sequence": "artifacts/o04/continuous-motion/bonfire-base/sequence.json",
+      "baseline_sequence_sha256": "021c98076e18f1fd7f3e0f6edecdcc6b6fd88fb2b7a1ab42bfda2369396de743",
+      "lod_sequence": "artifacts/o04/continuous-motion/bonfire-lod/sequence.json",
+      "lod_sequence_sha256": "d93dd9f54b1d3b82d723f670e8e4144259461841399f42ffc4b591b318abe882",
+      "frame_count": 120,
+      "fps": 12.0,
+      "transitions_zero_based_frame_index": [
+        {
+          "frame": 52,
+          "from": 0,
+          "to": 1,
+          "projected_fire_height_px": 39.59
+        },
+        {
+          "frame": 78,
+          "from": 1,
+          "to": 0,
+          "projected_fire_height_px": 48.64
+        }
+      ],
+      "transition_window_indexes_zero_based": [
+        50,
+        51,
+        52,
+        53,
+        54,
+        76,
+        77,
+        78,
+        79,
+        80
+      ],
+      "flame_difference_bbox": [
+        304,
+        168,
+        337,
+        193
+      ],
+      "metrics": {
+        "whole_route": {
+          "baseline_frame_to_frame_rgb_mae": {
+            "count": 119,
+            "mean": 3.9878744918106133,
+            "median": 4.723560474537037,
+            "p95_nearest_rank": 6.046164641203704,
+            "max": 7.704317129629629
+          },
+          "lod_frame_to_frame_rgb_mae": {
+            "count": 119,
+            "mean": 3.9879305385348585,
+            "median": 4.723560474537037,
+            "p95_nearest_rank": 6.046164641203704,
+            "max": 7.704317129629629
+          },
+          "baseline_vs_lod_temporal_change_rgb_mae": {
+            "count": 119,
+            "mean": 0.0014704666588857766,
+            "median": 0.0,
+            "p95_nearest_rank": 0.008862847222222222,
+            "max": 0.012138310185185186
+          },
+          "baseline_vs_lod_frame_rgb_mae": {
+            "count": 119,
+            "mean": 0.001302253540305011,
+            "median": 0.0,
+            "p95_nearest_rank": 0.007689525462962963,
+            "max": 0.012339409722222222
+          }
+        },
+        "transition_window": {
+          "baseline_vs_lod_temporal_change_rgb_mae": {
+            "count": 10,
+            "mean": 0.0047770543981481475,
+            "median": 0.0058203125,
+            "p95_nearest_rank": 0.012138310185185186,
+            "max": 0.012138310185185186
+          },
+          "local_flame_baseline_vs_lod_temporal_change_rgb_mae": {
+            "count": 10,
+            "mean": 1.33410101010101,
+            "median": 1.6254545454545455,
+            "p95_nearest_rank": 3.38989898989899,
+            "max": 3.38989898989899
+          },
+          "baseline_vs_lod_frame_rgb_mae": {
+            "count": 10,
+            "mean": 0.0029657118055555556,
+            "median": 0.0021860532407407406,
+            "p95_nearest_rank": 0.008835358796296296,
+            "max": 0.008835358796296296
+          },
+          "local_flame_baseline_vs_lod_frame_rgb_mae": {
+            "count": 10,
+            "mean": 0.8282424242424243,
+            "median": 0.6105050505050506,
+            "p95_nearest_rank": 2.4674747474747476,
+            "max": 2.4674747474747476
+          }
+        },
+        "outside_transition_window": {
+          "baseline_vs_lod_temporal_change_rgb_mae": {
+            "count": 109,
+            "mean": 0.0011671099855589536,
+            "median": 0.0,
+            "p95_nearest_rank": 0.007294560185185185,
+            "max": 0.010616319444444444
+          },
+          "local_flame_baseline_vs_lod_temporal_change_rgb_mae": {
+            "count": 109,
+            "mean": 0.32594198869428226,
+            "median": 0.0,
+            "p95_nearest_rank": 2.037171717171717,
+            "max": 2.964848484848485
+          }
+        }
+      }
+    }
+  },
+  "method": "Frame-to-frame absolute RGB changes are compared for baseline and LOD sequences. Transition windows include the transition sample and two samples on either side. The flame crop uses the baseline report's per-profile union difference bounds.",
+  "limitations": [
+    "This is a deterministic image-difference analysis, not human continuous-playback or silhouette/flicker acceptance.",
+    "Samples are 20 fps for campfire and 12 fps for quiet and bonfire; faster artifacts may be missed.",
+    "One Apple M1 Max/Metal adapter; native-window and other-adapter validation remain open."
+  ],
+  "all_checks_passed": true,
+  "runner": "scripts/projected_detail_temporal_transition_study.py",
+  "runner_sha256": "b3b0b40430dadaa70474592736bb877919883a7206a3ae6e3758a9d44952dd09",
+  "report_path": "docs/measurements-o04-transition-temporal.json"
+}

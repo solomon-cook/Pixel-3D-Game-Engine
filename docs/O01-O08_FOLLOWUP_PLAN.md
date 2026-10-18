@@ -138,6 +138,13 @@ acceptance remain open. See
    flame, with no obvious silhouette detachment or lost glow in the samples.
    The full GIF/APNG could not be played for continuous human review in this
    session, so flicker and silhouette crawl acceptance remain open.
+   A paired frame-delta analysis now measures the absolute temporal-change-image
+   error within ±2 samples of every LOD transition. Mean RGB MAE is
+   0.0047/0.0073/0.0048 per 255 for campfire/quiet/bonfire; nearest-rank p95 is
+   0.0118/0.0123/0.0121. This quantifies sampled transition differences but does
+   not establish continuous playback acceptance at 20/12 fps. See
+   [transition report](measurements-o04-transition-temporal.json) and
+   [runner](../scripts/projected_detail_temporal_transition_study.py).
 4. **Complete on M1 Max/Metal:** add three alternating 120-second offscreen
    pairs each for campfire, quiet and bonfire. Paired GPU-render medians fell by
    0.113/0.124/0.052 ms. Frame-work was flat for campfire (-0.006 ms median,
@@ -156,7 +163,8 @@ per-frame full primitive, ember and particle-light counts match the baseline.
 Sustained profile-specific timing is recorded on M1 Max/Metal. Continuous
 playback review, native-window timing, and Windows/DX12 or other GPU qualification
 remain open. Fewer primitives alone are not a frame-win claim. See
-[measurements-o04-motion-review.json](measurements-o04-motion-review.json) and
+[measurements-o04-motion-review.json](measurements-o04-motion-review.json),
+[transition temporal report](measurements-o04-transition-temporal.json) and
 [measurements-o04-sustained-profiles.json](measurements-o04-sustained-profiles.json).
 
 ### 4. O05 smoke absorption cache

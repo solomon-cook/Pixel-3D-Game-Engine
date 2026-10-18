@@ -22,7 +22,8 @@ fallbacks. Other memory layout work remains proposed. Measurements are recorded 
 [docs/measurements-o03.json](docs/measurements-o03.json),
 [docs/measurements-o03-native-tile-lists.json](docs/measurements-o03-native-tile-lists.json),
 [docs/measurements-o04.json](docs/measurements-o04.json),
-[docs/measurements-o04-sustained-profiles.json](docs/measurements-o04-sustained-profiles.json) and
+[docs/measurements-o04-sustained-profiles.json](docs/measurements-o04-sustained-profiles.json),
+[docs/measurements-o04-transition-temporal.json](docs/measurements-o04-transition-temporal.json) and
 [docs/measurements-o05.json](docs/measurements-o05.json),
 [docs/measurements-o05-temporal.json](docs/measurements-o05-temporal.json),
 [docs/measurements-o05-temporal-cache8.json](docs/measurements-o05-temporal-cache8.json),
