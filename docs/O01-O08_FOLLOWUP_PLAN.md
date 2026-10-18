@@ -474,9 +474,11 @@ source-specific flame palette, shape, breakup, pixel treatment and activity.
 The renderer still populates only slot zero; the CPU packing helper prepares
 both source frames and settings in stable-ID order, and merges sampled particle
 lights into the shared twelve-light budget. Tests cover reorder invariance,
-legacy sampler parity and selected-light/drop accounting. Dual-source smoke
-simulation, shadows, live scene acceptance and visual review remain
-unimplemented. `Renderer::update_globals` now has a keyed two-source sampling
+legacy sampler parity and selected-light/drop accounting. Smoke compute now has
+source-local ping-pong volumes, uniforms and per-source dispatches in stable-ID
+order. Scene validation still requires one emitter; atmosphere, heat,
+optical/cache sampling, shadows, live scene acceptance and visual review remain
+incomplete. `Renderer::update_globals` now has a keyed two-source sampling
 and upload branch with independent projected-detail tiers, but scene validation
 still prevents live access and no two-source GPU capture exists. The existing
 single-source profiling-heavy fixed-tick RGBA hash remains identical on M1

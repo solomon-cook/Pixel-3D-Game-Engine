@@ -1,0 +1,49 @@
+{
+  "workstream": "bounded multi-emitter smoke compute groundwork",
+  "date": "2026-10-18",
+  "host": {
+    "adapter": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "implementation": {
+    "volume_pairs_per_accepted_emitter": 1,
+    "volume_dimensions": [48, 64, 48],
+    "simulation_channels": ["density", "temperature"],
+    "stable_source_order": "emitter ID ascending",
+    "source_uniform_bytes": 80,
+    "reset_clears_every_source": true,
+    "compute_dispatches_per_fixed_step": "one per accepted emitter",
+    "current_scene_emitter_limit": 1,
+    "render_shading_consumes_secondary_volume": false,
+    "absorption_cache_is_per_source": false,
+    "dual_source_gpu_capture_verified": false
+  },
+  "single_source_baseline": {
+    "scene": "assets/scenes/profiling-heavy.json",
+    "camera": "hero",
+    "seed": 42,
+    "tick": 120,
+    "resolution": [640, 360],
+    "pixel_rgba_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48",
+    "comparison": "pixel-identical to the established source-zero capture"
+  },
+  "resource_evidence": {
+    "single_source_volume_pair_bytes_rg16float": 1179648,
+    "single_source_uniform_bytes": 80,
+    "allocation_estimate_excludes": ["driver alignment", "transient allocations", "opaque timestamp query-set storage"]
+  },
+  "verification": {
+    "command": "python3 scripts/verify.py --gpu",
+    "result": "passed",
+    "workspace_tests": "37 passed",
+    "gpu": "M1 Max/Metal",
+    "native_window": false
+  },
+  "limitations": [
+    "Scene validation still allows exactly one emitter, so the second source compute dispatch is not exercised by a live scene.",
+    "Flame-adjacent atmosphere shading, heat shimmer, optical integration, absorption cache and shadowing remain primary-source only.",
+    "No dual-source image or performance claim is made.",
+    "Windows/DX12 and other adapters remain unverified."
+  ]
+}

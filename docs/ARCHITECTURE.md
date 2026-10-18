@@ -14,7 +14,11 @@ and each shadow frustum culls independently; unknown bounds stay visible, so an
 object outside the camera can still cast a visible shadow. Consecutive compatible
 instances batch in scene order. The Session exposes independent culling and
 instancing switches for exhaustive reference comparisons.
-Each fixed step submits smoke advection into ping-pong density/temperature volumes.
+Each fixed step submits smoke advection into ping-pong density/temperature volumes
+per accepted emitter. Compute resources and uniforms are source-local and ordered
+by stable emitter ID; the current scene validator still accepts one emitter.
+The second-source compute path is groundwork only: flame, atmosphere, heat,
+optical and absorption-cache shading still consume the primary source.
 Each render reuses valid directional/point shadow maps or redraws them after a
 relevant scene revision, builds bounded screen-tile candidate lists with an
 exhaustive overflow fallback, then submits HDR opaque geometry, volumetric

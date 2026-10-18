@@ -8,9 +8,10 @@ into a testable two-source runtime without changing the single-source baseline.
 
 ## Current boundary
 
-- Scene validation requires exactly one emitter. `Renderer::update_globals`,
-  `shadow_matrices`, the smoke compute shader, post heat shimmer and the fire
-  shading shaders use one source position/profile.
+- Scene validation requires exactly one emitter. `shadow_matrices`, post heat
+  shimmer and smoke/fire shading still use one source position/profile. Smoke
+  compute now accepts per-emitter domains/settings, but the multi-source branch
+  is unreachable while validation remains single-source.
 - `FireFrame` owns one 256-primitive pool and at most 12 derived particle lights.
   O03 builds one emitter's tile candidates; overflow correctly falls back to
   exhaustive evaluation, but there is no multi-source stress evidence.
@@ -21,14 +22,14 @@ into a testable two-source runtime without changing the single-source baseline.
 - The GPU fire-storage ABI now reserves two contiguous `FireFrame` slots. A
   fixed-tick M1 Max/Metal
   comparison is byte-identical to the prior single-frame ABI; the known
-  allocation increases by 12,928 bytes. This is capacity groundwork only: the
-  renderer still samples, uploads and renders one source. See
+  allocation increases by 12,928 bytes. The renderer has a keyed multi-source
+  sampling/upload path, but validation prevents a two-source runtime. See
   [storage ABI evidence](measurements-multi-emitter-storage-abi.json).
 - Fire tile construction and flame shading now iterate both frame slots. Tile
   indices encode source slot and primitive index; overflow evaluates each
   source's complete primitive pool. The source-zero capture remains byte-identical
-  on M1 Max/Metal. The renderer still uploads only source zero; dual-source smoke,
-  global particle lights and shadow sets are not implemented. See
+  on M1 Max/Metal. No live two-source scene has exercised this shader path; shadow
+  sets and fire lighting remain single-source. See
   [fire consumer evidence](measurements-multi-emitter-fire-consumer.json).
 - The renderer now owns the two-slot storage value and uploads it as a unit. The
   CPU packer preserves legacy sampling for one source and sorts multi-source
@@ -55,6 +56,15 @@ into a testable two-source runtime without changing the single-source baseline.
   GPU; smoke, shadows, and non-flame lighting remain single-source. The existing
   single-source profiling-heavy fixed-tick RGBA capture remains byte-identical
   on M1 Max/Metal (SHA-256 `9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48`).
+- Smoke compute now allocates a separate ping-pong density/temperature pair and
+  source-config uniform per emitter, sorts those slots by stable ID, and dispatches
+  one advection pass per source. Bounds, buoyancy, dissipation, density and thermal
+  settings are source-local; reset clears every allocated source volume. Scene
+  validation still allows one emitter, and atmosphere, heat, optical and
+  absorption-cache shading still sample source zero only. There is no two-source
+  GPU capture or performance result yet. The current single-source RGBA capture
+  remains pixel-identical, with the 80-byte source config reflected in the known
+  fixed-buffer inventory; see [smoke compute evidence](measurements-multi-emitter-smoke-compute.json).
 - One 48×64×48 Rg16Float density/temperature pair occupies 1,179,648 bytes.
   One point-light cubemap set occupies 1,572,864 bytes. The 8 authored point
   lights and 12 derived particle lights are global renderer budgets.

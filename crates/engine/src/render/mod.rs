@@ -126,6 +126,16 @@ struct TileConfigGpu {
     force_overflow: [u32; 4],
 }
 
+#[repr(C)]
+#[derive(Clone, Copy, Pod, Zeroable, PartialEq)]
+struct SmokeSimulationConfig {
+    volume_min: [f32; 4],
+    volume_max: [f32; 4],
+    fire_position: [f32; 4],
+    simulation: [f32; 4],
+    thermal: [f32; 4],
+}
+
 struct Pipelines {
     mesh: wgpu::RenderPipeline,
     mesh_baked: wgpu::RenderPipeline,
@@ -246,7 +256,9 @@ pub struct Renderer {
     volume_layout: wgpu::BindGroupLayout,
     shading_diagnostic_buffer: wgpu::Buffer,
     shading_diagnostics_enabled: bool,
-    smoke_groups: [wgpu::BindGroup; 2],
+    smoke_groups: Vec<[wgpu::BindGroup; 2]>,
+    smoke_source_buffers: Vec<wgpu::Buffer>,
+    smoke_config_cache: Vec<SmokeSimulationConfig>,
     smoke_layout: wgpu::BindGroupLayout,
     post_groups: [wgpu::BindGroup; 2],
     effect_depth: wgpu::TextureView,
@@ -259,7 +271,7 @@ pub struct Renderer {
     hdr: wgpu::TextureView,
     normals: wgpu::TextureView,
     depth: wgpu::TextureView,
-    smoke_textures: [wgpu::Texture; 2],
+    smoke_textures: Vec<[wgpu::Texture; 2]>,
     smoke_index: usize,
     vertex: wgpu::Buffer,
     unshared_vertices: Vec<Vertex>,
@@ -1242,21 +1254,39 @@ impl Renderer {
             wgpu::TextureDimension::D2,
         );
         let pixels = pixel_texture.create_view(&Default::default());
-        let smoke_textures = std::array::from_fn(|_| {
-            texture(
-                &device,
-                "smoke density/temperature",
-                VOLUME,
-                smoke_volume_format,
-                wgpu::TextureUsages::TEXTURE_BINDING
-                    | wgpu::TextureUsages::STORAGE_BINDING
-                    | wgpu::TextureUsages::COPY_DST,
-                wgpu::TextureDimension::D3,
-            )
-        });
-        let smoke_views = smoke_textures
-            .each_ref()
-            .map(|t| t.create_view(&Default::default()));
+        let mut smoke_emitters = scene.emitters.iter().collect::<Vec<_>>();
+        smoke_emitters.sort_by(|left, right| left.id.cmp(&right.id));
+        let smoke_textures = smoke_emitters
+            .iter()
+            .map(|source| {
+                std::array::from_fn(|_| {
+                    texture(
+                        &device,
+                        &format!("smoke density/temperature source {}", source.id),
+                        VOLUME,
+                        smoke_volume_format,
+                        wgpu::TextureUsages::TEXTURE_BINDING
+                            | wgpu::TextureUsages::STORAGE_BINDING
+                            | wgpu::TextureUsages::COPY_DST,
+                        wgpu::TextureDimension::D3,
+                    )
+                })
+            })
+            .collect::<Vec<_>>();
+        let smoke_views: Vec<[wgpu::TextureView; 2]> = smoke_textures
+            .iter()
+            .map(|textures| std::array::from_fn(|i| textures[i].create_view(&Default::default())))
+            .collect::<Vec<_>>();
+        let smoke_source_buffers = smoke_emitters
+            .iter()
+            .map(|_| {
+                device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+                    label: Some("per-emitter smoke simulation config"),
+                    contents: bytemuck::bytes_of(&SmokeSimulationConfig::zeroed()),
+                    usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
+                })
+            })
+            .collect::<Vec<_>>();
         let absorption_cache_resolution = scene.render.absorption_cache_resolution;
         let absorption_cache_enabled = scene.render.experiments.smoke_absorption_cache;
         let absorption_texture = absorption_cache_enabled.then(|| {
@@ -1287,7 +1317,7 @@ impl Renderer {
                     smoke_tile_indices.as_entire_binding(),
                     point_tile_indices.as_entire_binding(),
                     particle_tile_indices.as_entire_binding(),
-                    wgpu::BindingResource::TextureView(&smoke_views[i]),
+                    wgpu::BindingResource::TextureView(&smoke_views[0][i]),
                     wgpu::BindingResource::Sampler(&linear),
                 ],
             )
@@ -1368,10 +1398,10 @@ impl Renderer {
                 &volume_layout,
                 &[
                     wgpu::BindingResource::TextureView(&depth),
-                    wgpu::BindingResource::TextureView(&smoke_views[i]),
+                    wgpu::BindingResource::TextureView(&smoke_views[0][i]),
                     wgpu::BindingResource::Sampler(&linear),
                     wgpu::BindingResource::TextureView(
-                        absorption_view.as_ref().unwrap_or(&smoke_views[i]),
+                        absorption_view.as_ref().unwrap_or(&smoke_views[0][i]),
                     ),
                 ],
             )
@@ -1417,7 +1447,7 @@ impl Renderer {
                 entries: &[
                     wgpu::BindGroupEntry {
                         binding: 1,
-                        resource: wgpu::BindingResource::TextureView(&smoke_views[i]),
+                        resource: wgpu::BindingResource::TextureView(&smoke_views[0][i]),
                     },
                     wgpu::BindGroupEntry {
                         binding: 2,
@@ -1446,7 +1476,7 @@ impl Renderer {
                     wgpu::BindGroupEntry {
                         binding: 8,
                         resource: wgpu::BindingResource::TextureView(
-                            absorption_view.as_ref().unwrap_or(&smoke_views[i]),
+                            absorption_view.as_ref().unwrap_or(&smoke_views[0][i]),
                         ),
                     },
                 ],
@@ -1477,19 +1507,33 @@ impl Renderer {
                     wgpu::ShaderStages::COMPUTE,
                     wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
                 ),
+                binding(
+                    3,
+                    wgpu::ShaderStages::COMPUTE,
+                    wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Uniform,
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                ),
             ],
         });
-        let smoke_groups = std::array::from_fn(|i| {
-            group(
-                &device,
-                &smoke_layout,
-                &[
-                    wgpu::BindingResource::TextureView(&smoke_views[i]),
-                    wgpu::BindingResource::TextureView(&smoke_views[1 - i]),
-                    wgpu::BindingResource::Sampler(&linear),
-                ],
-            )
-        });
+        let smoke_groups = (0..scene.emitters.len())
+            .map(|source| {
+                std::array::from_fn(|i| {
+                    group(
+                        &device,
+                        &smoke_layout,
+                        &[
+                            wgpu::BindingResource::TextureView(&smoke_views[source][i]),
+                            wgpu::BindingResource::TextureView(&smoke_views[source][1 - i]),
+                            wgpu::BindingResource::Sampler(&linear),
+                            smoke_source_buffers[source].as_entire_binding(),
+                        ],
+                    )
+                })
+            })
+            .collect::<Vec<_>>();
         let absorption_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("coarse smoke absorption build"),
             entries: &[
@@ -1523,7 +1567,7 @@ impl Renderer {
                     &device,
                     &absorption_layout,
                     &[
-                        wgpu::BindingResource::TextureView(&smoke_views[i]),
+                        wgpu::BindingResource::TextureView(&smoke_views[0][i]),
                         wgpu::BindingResource::Sampler(&linear),
                         wgpu::BindingResource::TextureView(absorption_view),
                     ],
@@ -1605,7 +1649,7 @@ impl Renderer {
                     wgpu::BindingResource::TextureView(&hdr),
                     wgpu::BindingResource::TextureView(&normals),
                     wgpu::BindingResource::TextureView(&effect_depth),
-                    wgpu::BindingResource::TextureView(&smoke_views[i]),
+                    wgpu::BindingResource::TextureView(&smoke_views[0][i]),
                     wgpu::BindingResource::Sampler(&linear),
                     wgpu::BindingResource::TextureView(&hdr),
                     wgpu::BindingResource::TextureView(&effect_depth),
@@ -1757,7 +1801,8 @@ impl Renderer {
             * u64::from(VOLUME[1])
             * u64::from(VOLUME[2])
             * smoke_bytes_per_voxel
-            * 2;
+            * 2
+            * scene.emitters.len() as u64;
         let shadow_bytes = 1024u64 * 1024 * 4 + 256 * 256 * 6 * 4;
         let atlas_bytes = 128u64 * 128 * 4 * mesh.textures.len() as u64;
         let tile_list_bytes = u64::from(tile_count)
@@ -1801,7 +1846,8 @@ impl Renderer {
         let fixed_buffer_bytes = std::mem::size_of::<Globals>() as u64
             + std::mem::size_of::<FireFrameStorage>() as u64
             + 7 * 64
-            + 22 * std::mem::size_of::<u32>() as u64;
+            + 22 * std::mem::size_of::<u32>() as u64
+            + std::mem::size_of::<SmokeSimulationConfig>() as u64 * scene.emitters.len() as u64;
         let format_support = [
             wgpu::TextureFormat::Rgba16Float,
             wgpu::TextureFormat::Rg16Float,
@@ -1936,6 +1982,8 @@ impl Renderer {
             shading_diagnostic_buffer,
             shading_diagnostics_enabled: false,
             smoke_groups,
+            smoke_source_buffers,
+            smoke_config_cache: vec![SmokeSimulationConfig::zeroed(); scene.emitters.len()],
             smoke_layout,
             post_groups,
             effect_depth,
@@ -2048,8 +2096,7 @@ impl Renderer {
                 .as_ref()
                 .map(|texture| texture.create_view(&Default::default()));
             let coverage_view = mask_view.as_ref().unwrap_or(&color_view);
-            let smoke_views = self
-                .smoke_textures
+            let smoke_views = self.smoke_textures[0]
                 .each_ref()
                 .map(|texture| texture.create_view(&Default::default()));
             self.optical_post_groups = Some(std::array::from_fn(|i| {
@@ -3128,6 +3175,61 @@ impl Renderer {
         } else {
             self.fire_frame.bounds_min[3]
         };
+        let mut smoke_emitters = [emitter, emitter];
+        let smoke_emitter_count = if multi_emitter {
+            smoke_emitters[0] = &scene.emitters[0];
+            smoke_emitters[1] = &scene.emitters[1];
+            smoke_emitters.sort_by(|left, right| left.id.cmp(&right.id));
+            2
+        } else {
+            1
+        };
+        let smoke_config_upload_started = Instant::now();
+        for (slot, source) in smoke_emitters[..smoke_emitter_count].iter().enumerate() {
+            let source_profile = scene
+                .effects
+                .iter()
+                .find(|candidate| candidate.id == source.effect_profile)
+                .expect("validated emitter profile exists");
+            let source_power = if multi_emitter {
+                let frame_slot = self
+                    .multi_fire_keys
+                    .iter()
+                    .position(|(id, _)| id == &source.id)
+                    .expect("emitter is present in the sorted fire source set");
+                self.fire_storage.sources[frame_slot].bounds_min[3]
+            } else {
+                power
+            };
+            let source_origin = Vec3::from(source.position);
+            let source_enabled = if source.enabled { source.intensity } else { 0. };
+            let config = SmokeSimulationConfig {
+                volume_min: vec4((source_origin + Vec3::new(-3., -0.6, -3.)).into(), 0.),
+                volume_max: vec4((source_origin + Vec3::new(3., 7.4, 3.)).into(), 0.),
+                fire_position: vec4(source.position, source_profile.fire.width),
+                simulation: [
+                    source.buoyancy,
+                    source.dissipation,
+                    source.smoke_density,
+                    source_enabled,
+                ],
+                thermal: [
+                    source_profile.thermal.heat_output,
+                    source_profile.thermal.cooling_rate,
+                    source_profile.thermal.lift,
+                    source_power,
+                ],
+            };
+            if self.smoke_config_cache[slot] != config {
+                self.queue.write_buffer(
+                    &self.smoke_source_buffers[slot],
+                    0,
+                    bytemuck::bytes_of(&config),
+                );
+                self.smoke_config_cache[slot] = config;
+            }
+        }
+        self.metrics.cpu_upload_ms += smoke_config_upload_started.elapsed().as_secs_f64() * 1000.;
         let mut point_lights = [PointLightGpu::zeroed(); 8];
         let ordered = std::iter::once(fire).chain(
             scene
@@ -3278,26 +3380,28 @@ impl Renderer {
             8
         };
         let bytes = vec![0u8; (VOLUME[0] * VOLUME[1] * VOLUME[2] * bytes_per_voxel) as usize];
-        for t in &self.smoke_textures {
-            self.queue.write_texture(
-                wgpu::TexelCopyTextureInfo {
-                    texture: t,
-                    mip_level: 0,
-                    origin: wgpu::Origin3d::ZERO,
-                    aspect: wgpu::TextureAspect::All,
-                },
-                &bytes,
-                wgpu::TexelCopyBufferLayout {
-                    offset: 0,
-                    bytes_per_row: Some(VOLUME[0] * bytes_per_voxel),
-                    rows_per_image: Some(VOLUME[1]),
-                },
-                wgpu::Extent3d {
-                    width: VOLUME[0],
-                    height: VOLUME[1],
-                    depth_or_array_layers: VOLUME[2],
-                },
-            );
+        for source in &self.smoke_textures {
+            for texture in source {
+                self.queue.write_texture(
+                    wgpu::TexelCopyTextureInfo {
+                        texture,
+                        mip_level: 0,
+                        origin: wgpu::Origin3d::ZERO,
+                        aspect: wgpu::TextureAspect::All,
+                    },
+                    &bytes,
+                    wgpu::TexelCopyBufferLayout {
+                        offset: 0,
+                        bytes_per_row: Some(VOLUME[0] * bytes_per_voxel),
+                        rows_per_image: Some(VOLUME[1]),
+                    },
+                    wgpu::Extent3d {
+                        width: VOLUME[0],
+                        height: VOLUME[1],
+                        depth_or_array_layers: VOLUME[2],
+                    },
+                );
+            }
         }
         self.smoke_index = 0;
     }
@@ -3329,8 +3433,10 @@ impl Renderer {
             });
             pass.set_pipeline(&self.pipelines.smoke);
             pass.set_bind_group(0, &self.globals, &[]);
-            pass.set_bind_group(1, &self.smoke_groups[self.smoke_index], &[]);
-            pass.dispatch_workgroups(VOLUME[0] / 4, VOLUME[1] / 4, VOLUME[2] / 4);
+            for source_groups in &self.smoke_groups {
+                pass.set_bind_group(1, &source_groups[self.smoke_index], &[]);
+                pass.dispatch_workgroups(VOLUME[0] / 4, VOLUME[1] / 4, VOLUME[2] / 4);
+            }
         }
         if let Some(index) = compute_slot {
             let slot = &self.timing.as_ref().unwrap().compute_slots[index];
@@ -3499,8 +3605,7 @@ impl Renderer {
         if self.absorption_cache_active == enabled {
             return;
         }
-        let smoke_views = self
-            .smoke_textures
+        let smoke_views = self.smoke_textures[0]
             .each_ref()
             .map(|texture| texture.create_view(&Default::default()));
         let cache_bytes = (self.absorption_cache_resolution as u64).pow(3) * 8;
