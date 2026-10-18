@@ -364,17 +364,24 @@ The bounded two-emitter extension now has a full 120-second, 20 fps moving-camer
 comparison on the maximum-budget scene. Across 2,400 direct/cache pairs, camera
 poses and effect counts match every frame; the 8³ cached output is byte-identical
 to direct output and has zero temporal-change error on this route. This is one
-offscreen M1 Max/Metal scene, not native playback or performance acceptance; the
-cache remains off by default because sustained total-render timings did not improve.
-See [moving-route report](measurements-multi-emitter-absorption-moving-route.json)
-and [runner](../scripts/two_emitter_absorption_moving_route_study.py).
+offscreen M1 Max/Metal scene, not continuous native playback or performance
+acceptance; the cache remains off by default because sustained total-render
+timings did not improve. A native-window session now toggles direct/cache/direct
+at six fixed orbit poses; every pair matches pixel-for-pixel and the 8³ residency
+is present only while enabled. Continuous native playback, cache timing and
+portability remain open. See [moving-route report](measurements-multi-emitter-absorption-moving-route.json)
+and [runner](../scripts/two_emitter_absorption_moving_route_study.py), plus the
+[native report](measurements-multi-emitter-absorption-native.json) and
+[native runner](../scripts/two_emitter_absorption_native_study.py).
 The bounded multi-emitter extension reuses the same RGBA16Float cache: source
 zero remains in red, and green stores source one's optical depth over its local
 domain for its colocated primary fire light. It adds no cache allocation and
-retains direct integration for other lights and out-of-domain points. The source-
-zero fixed-tick hash is unchanged, but the green channel has no dual-emitter
-visual or performance validation because the scene contract still accepts one
-emitter. See [multi-emitter cache evidence](measurements-multi-emitter-absorption.json).
+retains direct integration for other lights and out-of-domain points. Source-zero
+parity is preserved, and dual-emitter moving-route/native fixed-tick output now
+match direct sampling exactly on the measured Metal scenes. Sustained results show
+no total-render benefit; see [multi-emitter cache evidence](measurements-multi-emitter-absorption.json),
+[moving-route report](measurements-multi-emitter-absorption-moving-route.json) and
+[native report](measurements-multi-emitter-absorption-native.json).
 The matching 8³ temporal study recorded mean frame RGB MAE 0.285/255, p95
 0.426/255, maximum channel difference 39/255 and mean temporal-change magnitude
 error 0.183/255, with exact tick/effect-count parity. The 16³ cache is closer to

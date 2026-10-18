@@ -583,10 +583,13 @@ channel difference is 21/255. A second comparison now covers the full 120-second
 `clearing-orbit` on the maximum-budget two-emitter scene, split into four
 deterministic segments at 20 fps. Across 2,400 frames, direct and cached images
 and temporal deltas are byte-identical, with matching camera poses, cache mode,
-8³ residency and effect counts throughout. The contact sheet was inspected. This
-remains offscreen M1 Max/Metal, not native playback or a timing win; cache build
-cost still exceeds the measured stage savings. See [moving-route report](measurements-multi-emitter-absorption-moving-route.json) and
-[runner](../scripts/two_emitter_absorption_moving_route_study.py). See
+8³ residency and effect counts throughout. The contact sheet was inspected. A separate native-window session toggles
+direct/cache/direct at six route keyframes; repeated direct images are deterministic,
+cache mode/residency are correct, and every native pair matches pixel-for-pixel.
+These captures do not establish continuous native playback or a timing win; cache
+build cost still exceeds measured stage savings. See [native report](measurements-multi-emitter-absorption-native.json)
+and [runner](../scripts/two_emitter_absorption_native_study.py), plus [moving-route
+report](measurements-multi-emitter-absorption-moving-route.json) and [runner](../scripts/two_emitter_absorption_moving_route_study.py). See
 [8³ temporal report](measurements-multi-emitter-absorption-temporal.json),
 [16³ temporal report](measurements-multi-emitter-absorption-temporal-cache16.json)
 and [reproducible runner](../scripts/two_emitter_absorption_temporal_study.py).

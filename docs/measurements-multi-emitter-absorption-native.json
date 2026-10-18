@@ -1,0 +1,795 @@
+{
+  "version": 1,
+  "date": "2026-10-18",
+  "study": "native-window two-emitter absorption cache fixed-tick route-pose comparison",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": true,
+    "window": {
+      "fullscreen": false,
+      "minimized": false,
+      "physical_size": [
+        2560,
+        1600
+      ],
+      "scale_factor": 2.0
+    }
+  },
+  "source_revision": "df9a137a2f0179ad30deb2755946cdfd7e797d25",
+  "binary_sha256": "cceaa3c520243f31b3a2febe7c0ee778fe1039f9735c48e69452d042458de157",
+  "scene": "assets/scenes/two-emitter-overflow-stress.json",
+  "scene_sha256": "544662419ca3bb9882f2d59e83db5ef059eb1f4c8da4787c78092c6d9fa31772",
+  "runtime_scene_sha256": "544662419ca3bb9882f2d59e83db5ef059eb1f4c8da4787c78092c6d9fa31772",
+  "shader_sha256": "17f4d526e40b6fd78eca049dc99f26b9cf8dcdba5a96ba58f33e61695c478c50",
+  "study_script_sha256": "ea4c3cdc6077aae5a9585cb73fc5034afb1db3e536cb307fa023c67714835354",
+  "source_ids": [
+    "campfire",
+    "watchfire"
+  ],
+  "seed": 42,
+  "route": "clearing-orbit",
+  "camera": "dual-wide",
+  "resolution": [
+    640,
+    360
+  ],
+  "cache_resolution": [
+    8,
+    8,
+    8
+  ],
+  "poses": [
+    {
+      "index": 0,
+      "route_time_seconds": 0.0,
+      "tick": 300,
+      "camera_pose": {
+        "id": "dual-wide",
+        "position": [
+          9.0,
+          3.5,
+          0.0
+        ],
+        "projection": {
+          "height": 15.0,
+          "kind": "orthographic"
+        },
+        "target": [
+          0.0,
+          2.700000047683716,
+          0.0
+        ]
+      },
+      "captures": {
+        "direct_a": {
+          "image": "artifacts/multi-emitter/absorption-native/pose-00-direct-a.png",
+          "sha256": "d62f724196484b730c0908b7fd0ed4e277e06b5b8f6a714382061b0756f58557",
+          "tick": 300,
+          "camera": {
+            "id": "dual-wide",
+            "position": [
+              9.0,
+              3.5,
+              0.0
+            ],
+            "projection": {
+              "height": 15.0,
+              "kind": "orthographic"
+            },
+            "target": [
+              0.0,
+              2.700000047683716,
+              0.0
+            ]
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "cache_enabled": false,
+          "cache_builds": 0,
+          "cache_bytes": 0
+        },
+        "cached": {
+          "image": "artifacts/multi-emitter/absorption-native/pose-00-cached.png",
+          "sha256": "d62f724196484b730c0908b7fd0ed4e277e06b5b8f6a714382061b0756f58557",
+          "tick": 300,
+          "camera": {
+            "id": "dual-wide",
+            "position": [
+              9.0,
+              3.5,
+              0.0
+            ],
+            "projection": {
+              "height": 15.0,
+              "kind": "orthographic"
+            },
+            "target": [
+              0.0,
+              2.700000047683716,
+              0.0
+            ]
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "cache_enabled": true,
+          "cache_builds": 1,
+          "cache_bytes": 4096
+        },
+        "direct_b": {
+          "image": "artifacts/multi-emitter/absorption-native/pose-00-direct-b.png",
+          "sha256": "d62f724196484b730c0908b7fd0ed4e277e06b5b8f6a714382061b0756f58557",
+          "tick": 300,
+          "camera": {
+            "id": "dual-wide",
+            "position": [
+              9.0,
+              3.5,
+              0.0
+            ],
+            "projection": {
+              "height": 15.0,
+              "kind": "orthographic"
+            },
+            "target": [
+              0.0,
+              2.700000047683716,
+              0.0
+            ]
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "cache_enabled": false,
+          "cache_builds": 1,
+          "cache_bytes": 0
+        }
+      },
+      "direct_repeat_identical": true,
+      "camera_metadata_matches": true,
+      "cache_mode_correct": true,
+      "residency_correct": true,
+      "direct_vs_cache": {
+        "changed_pixel_count": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "route_time_seconds": 24.0,
+      "tick": 1740,
+      "camera_pose": {
+        "id": "dual-wide",
+        "position": [
+          2.7811529636383057,
+          4.355950832366943,
+          8.559508323669434
+        ],
+        "projection": {
+          "height": 15.0,
+          "kind": "orthographic"
+        },
+        "target": [
+          0.0,
+          2.700000047683716,
+          0.0
+        ]
+      },
+      "captures": {
+        "direct_a": {
+          "image": "artifacts/multi-emitter/absorption-native/pose-01-direct-a.png",
+          "sha256": "f5132093abb4c177811d591f4bda9c0b2efaacf64635cb8baece11cb3f818a26",
+          "tick": 1740,
+          "camera": {
+            "id": "dual-wide",
+            "position": [
+              2.7811529636383057,
+              4.355950832366943,
+              8.559508323669434
+            ],
+            "projection": {
+              "height": 15.0,
+              "kind": "orthographic"
+            },
+            "target": [
+              0.0,
+              2.700000047683716,
+              0.0
+            ]
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "cache_enabled": false,
+          "cache_builds": 1,
+          "cache_bytes": 0
+        },
+        "cached": {
+          "image": "artifacts/multi-emitter/absorption-native/pose-01-cached.png",
+          "sha256": "f5132093abb4c177811d591f4bda9c0b2efaacf64635cb8baece11cb3f818a26",
+          "tick": 1740,
+          "camera": {
+            "id": "dual-wide",
+            "position": [
+              2.7811529636383057,
+              4.355950832366943,
+              8.559508323669434
+            ],
+            "projection": {
+              "height": 15.0,
+              "kind": "orthographic"
+            },
+            "target": [
+              0.0,
+              2.700000047683716,
+              0.0
+            ]
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "cache_enabled": true,
+          "cache_builds": 2,
+          "cache_bytes": 4096
+        },
+        "direct_b": {
+          "image": "artifacts/multi-emitter/absorption-native/pose-01-direct-b.png",
+          "sha256": "f5132093abb4c177811d591f4bda9c0b2efaacf64635cb8baece11cb3f818a26",
+          "tick": 1740,
+          "camera": {
+            "id": "dual-wide",
+            "position": [
+              2.7811529636383057,
+              4.355950832366943,
+              8.559508323669434
+            ],
+            "projection": {
+              "height": 15.0,
+              "kind": "orthographic"
+            },
+            "target": [
+              0.0,
+              2.700000047683716,
+              0.0
+            ]
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "cache_enabled": false,
+          "cache_builds": 2,
+          "cache_bytes": 0
+        }
+      },
+      "direct_repeat_identical": true,
+      "camera_metadata_matches": true,
+      "cache_mode_correct": true,
+      "residency_correct": true,
+      "direct_vs_cache": {
+        "changed_pixel_count": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "route_time_seconds": 48.0,
+      "tick": 3180,
+      "camera_pose": {
+        "id": "dual-wide",
+        "position": [
+          -7.281152725219727,
+          4.0290069580078125,
+          5.290067195892334
+        ],
+        "projection": {
+          "height": 15.0,
+          "kind": "orthographic"
+        },
+        "target": [
+          0.0,
+          2.700000047683716,
+          0.0
+        ]
+      },
+      "captures": {
+        "direct_a": {
+          "image": "artifacts/multi-emitter/absorption-native/pose-02-direct-a.png",
+          "sha256": "27e80ac54685ad1642b18ba239fd7a6da707d1e91df4785ed678bd3b0f009434",
+          "tick": 3180,
+          "camera": {
+            "id": "dual-wide",
+            "position": [
+              -7.281152725219727,
+              4.0290069580078125,
+              5.290067195892334
+            ],
+            "projection": {
+              "height": 15.0,
+              "kind": "orthographic"
+            },
+            "target": [
+              0.0,
+              2.700000047683716,
+              0.0
+            ]
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "cache_enabled": false,
+          "cache_builds": 2,
+          "cache_bytes": 0
+        },
+        "cached": {
+          "image": "artifacts/multi-emitter/absorption-native/pose-02-cached.png",
+          "sha256": "27e80ac54685ad1642b18ba239fd7a6da707d1e91df4785ed678bd3b0f009434",
+          "tick": 3180,
+          "camera": {
+            "id": "dual-wide",
+            "position": [
+              -7.281152725219727,
+              4.0290069580078125,
+              5.290067195892334
+            ],
+            "projection": {
+              "height": 15.0,
+              "kind": "orthographic"
+            },
+            "target": [
+              0.0,
+              2.700000047683716,
+              0.0
+            ]
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "cache_enabled": true,
+          "cache_builds": 3,
+          "cache_bytes": 4096
+        },
+        "direct_b": {
+          "image": "artifacts/multi-emitter/absorption-native/pose-02-direct-b.png",
+          "sha256": "27e80ac54685ad1642b18ba239fd7a6da707d1e91df4785ed678bd3b0f009434",
+          "tick": 3180,
+          "camera": {
+            "id": "dual-wide",
+            "position": [
+              -7.281152725219727,
+              4.0290069580078125,
+              5.290067195892334
+            ],
+            "projection": {
+              "height": 15.0,
+              "kind": "orthographic"
+            },
+            "target": [
+              0.0,
+              2.700000047683716,
+              0.0
+            ]
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "cache_enabled": false,
+          "cache_builds": 3,
+          "cache_bytes": 0
+        }
+      },
+      "direct_repeat_identical": true,
+      "camera_metadata_matches": true,
+      "cache_mode_correct": true,
+      "residency_correct": true,
+      "direct_vs_cache": {
+        "changed_pixel_count": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "route_time_seconds": 72.0,
+      "tick": 4620,
+      "camera_pose": {
+        "id": "dual-wide",
+        "position": [
+          -7.281152725219727,
+          2.9709932804107666,
+          -5.290067195892334
+        ],
+        "projection": {
+          "height": 15.0,
+          "kind": "orthographic"
+        },
+        "target": [
+          0.0,
+          2.700000047683716,
+          0.0
+        ]
+      },
+      "captures": {
+        "direct_a": {
+          "image": "artifacts/multi-emitter/absorption-native/pose-03-direct-a.png",
+          "sha256": "a8c23d8d8285e95a9f4ce1db5461e900e4ee83dee4184d88643b80e00de50488",
+          "tick": 4620,
+          "camera": {
+            "id": "dual-wide",
+            "position": [
+              -7.281152725219727,
+              2.9709932804107666,
+              -5.290067195892334
+            ],
+            "projection": {
+              "height": 15.0,
+              "kind": "orthographic"
+            },
+            "target": [
+              0.0,
+              2.700000047683716,
+              0.0
+            ]
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "cache_enabled": false,
+          "cache_builds": 3,
+          "cache_bytes": 0
+        },
+        "cached": {
+          "image": "artifacts/multi-emitter/absorption-native/pose-03-cached.png",
+          "sha256": "a8c23d8d8285e95a9f4ce1db5461e900e4ee83dee4184d88643b80e00de50488",
+          "tick": 4620,
+          "camera": {
+            "id": "dual-wide",
+            "position": [
+              -7.281152725219727,
+              2.9709932804107666,
+              -5.290067195892334
+            ],
+            "projection": {
+              "height": 15.0,
+              "kind": "orthographic"
+            },
+            "target": [
+              0.0,
+              2.700000047683716,
+              0.0
+            ]
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "cache_enabled": true,
+          "cache_builds": 4,
+          "cache_bytes": 4096
+        },
+        "direct_b": {
+          "image": "artifacts/multi-emitter/absorption-native/pose-03-direct-b.png",
+          "sha256": "a8c23d8d8285e95a9f4ce1db5461e900e4ee83dee4184d88643b80e00de50488",
+          "tick": 4620,
+          "camera": {
+            "id": "dual-wide",
+            "position": [
+              -7.281152725219727,
+              2.9709932804107666,
+              -5.290067195892334
+            ],
+            "projection": {
+              "height": 15.0,
+              "kind": "orthographic"
+            },
+            "target": [
+              0.0,
+              2.700000047683716,
+              0.0
+            ]
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "cache_enabled": false,
+          "cache_builds": 4,
+          "cache_bytes": 0
+        }
+      },
+      "direct_repeat_identical": true,
+      "camera_metadata_matches": true,
+      "cache_mode_correct": true,
+      "residency_correct": true,
+      "direct_vs_cache": {
+        "changed_pixel_count": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "route_time_seconds": 96.0,
+      "tick": 6060,
+      "camera_pose": {
+        "id": "dual-wide",
+        "position": [
+          2.7811529636383057,
+          2.6440491676330566,
+          -8.559508323669434
+        ],
+        "projection": {
+          "height": 15.0,
+          "kind": "orthographic"
+        },
+        "target": [
+          0.0,
+          2.700000047683716,
+          0.0
+        ]
+      },
+      "captures": {
+        "direct_a": {
+          "image": "artifacts/multi-emitter/absorption-native/pose-04-direct-a.png",
+          "sha256": "27a63520174ef58940e15c1d3cc5c8d1086ac097fae85cc14da5691fc794aa9d",
+          "tick": 6060,
+          "camera": {
+            "id": "dual-wide",
+            "position": [
+              2.7811529636383057,
+              2.6440491676330566,
+              -8.559508323669434
+            ],
+            "projection": {
+              "height": 15.0,
+              "kind": "orthographic"
+            },
+            "target": [
+              0.0,
+              2.700000047683716,
+              0.0
+            ]
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "cache_enabled": false,
+          "cache_builds": 4,
+          "cache_bytes": 0
+        },
+        "cached": {
+          "image": "artifacts/multi-emitter/absorption-native/pose-04-cached.png",
+          "sha256": "27a63520174ef58940e15c1d3cc5c8d1086ac097fae85cc14da5691fc794aa9d",
+          "tick": 6060,
+          "camera": {
+            "id": "dual-wide",
+            "position": [
+              2.7811529636383057,
+              2.6440491676330566,
+              -8.559508323669434
+            ],
+            "projection": {
+              "height": 15.0,
+              "kind": "orthographic"
+            },
+            "target": [
+              0.0,
+              2.700000047683716,
+              0.0
+            ]
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "cache_enabled": true,
+          "cache_builds": 5,
+          "cache_bytes": 4096
+        },
+        "direct_b": {
+          "image": "artifacts/multi-emitter/absorption-native/pose-04-direct-b.png",
+          "sha256": "27a63520174ef58940e15c1d3cc5c8d1086ac097fae85cc14da5691fc794aa9d",
+          "tick": 6060,
+          "camera": {
+            "id": "dual-wide",
+            "position": [
+              2.7811529636383057,
+              2.6440491676330566,
+              -8.559508323669434
+            ],
+            "projection": {
+              "height": 15.0,
+              "kind": "orthographic"
+            },
+            "target": [
+              0.0,
+              2.700000047683716,
+              0.0
+            ]
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "cache_enabled": false,
+          "cache_builds": 5,
+          "cache_bytes": 0
+        }
+      },
+      "direct_repeat_identical": true,
+      "camera_metadata_matches": true,
+      "cache_mode_correct": true,
+      "residency_correct": true,
+      "direct_vs_cache": {
+        "changed_pixel_count": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    {
+      "index": 5,
+      "route_time_seconds": 119.95,
+      "tick": 7497,
+      "camera_pose": {
+        "id": "dual-wide",
+        "position": [
+          8.987044068674248,
+          3.4982167690992356,
+          -0.017832309007644653
+        ],
+        "projection": {
+          "height": 15.0,
+          "kind": "orthographic"
+        },
+        "target": [
+          0.0,
+          2.700000047683716,
+          0.0
+        ]
+      },
+      "captures": {
+        "direct_a": {
+          "image": "artifacts/multi-emitter/absorption-native/pose-05-direct-a.png",
+          "sha256": "3f3a56133e7365cab73477a34d53c9bb268b4c6be55d9534865afffb6d8580df",
+          "tick": 7497,
+          "camera": {
+            "id": "dual-wide",
+            "position": [
+              8.987044334411621,
+              3.4982168674468994,
+              -0.017832309007644653
+            ],
+            "projection": {
+              "height": 15.0,
+              "kind": "orthographic"
+            },
+            "target": [
+              0.0,
+              2.700000047683716,
+              0.0
+            ]
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "cache_enabled": false,
+          "cache_builds": 5,
+          "cache_bytes": 0
+        },
+        "cached": {
+          "image": "artifacts/multi-emitter/absorption-native/pose-05-cached.png",
+          "sha256": "3f3a56133e7365cab73477a34d53c9bb268b4c6be55d9534865afffb6d8580df",
+          "tick": 7497,
+          "camera": {
+            "id": "dual-wide",
+            "position": [
+              8.987044334411621,
+              3.4982168674468994,
+              -0.017832309007644653
+            ],
+            "projection": {
+              "height": 15.0,
+              "kind": "orthographic"
+            },
+            "target": [
+              0.0,
+              2.700000047683716,
+              0.0
+            ]
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "cache_enabled": true,
+          "cache_builds": 6,
+          "cache_bytes": 4096
+        },
+        "direct_b": {
+          "image": "artifacts/multi-emitter/absorption-native/pose-05-direct-b.png",
+          "sha256": "3f3a56133e7365cab73477a34d53c9bb268b4c6be55d9534865afffb6d8580df",
+          "tick": 7497,
+          "camera": {
+            "id": "dual-wide",
+            "position": [
+              8.987044334411621,
+              3.4982168674468994,
+              -0.017832309007644653
+            ],
+            "projection": {
+              "height": 15.0,
+              "kind": "orthographic"
+            },
+            "target": [
+              0.0,
+              2.700000047683716,
+              0.0
+            ]
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "cache_enabled": false,
+          "cache_builds": 6,
+          "cache_bytes": 0
+        }
+      },
+      "direct_repeat_identical": true,
+      "camera_metadata_matches": true,
+      "cache_mode_correct": true,
+      "residency_correct": true,
+      "direct_vs_cache": {
+        "changed_pixel_count": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      }
+    }
+  ],
+  "checks": {
+    "direct_repeats_identical": true,
+    "camera_metadata_matches": true,
+    "cache_mode_toggled_correctly": true,
+    "cache_residency_matches_model": true,
+    "all_native_direct_cache_captures_exact": true
+  },
+  "result": "passed",
+  "limitations": [
+    "Six fixed-tick native-window poses in one M1 Max/Metal session; no continuous native playback or performance acceptance.",
+    "DX12 and other-adapter cache creation, output and timing remain unverified.",
+    "The cache remains disabled by default because sustained route measurements show no total-render win."
+  ]
+}

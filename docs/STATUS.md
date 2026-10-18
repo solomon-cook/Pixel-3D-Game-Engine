@@ -460,9 +460,13 @@ contact sheet shows close sampled agreement with differences around the smoke.
 A full 120-second moving-camera maximum-budget route now compares direct and 8³
 cache over 2,400 frame pairs. Camera poses, effect counts and images match every
 frame; temporal-change error is also zero for this workload. Contact-sheet review
-shows matching smoke and fire through the orbit. This is offscreen M1 Max/Metal;
-native playback, sustained performance and portability remain open. See [moving-route
-report](measurements-multi-emitter-absorption-moving-route.json) and [runner](../scripts/two_emitter_absorption_moving_route_study.py).
+shows matching smoke and fire through the orbit. This is offscreen M1 Max/Metal. A native-window session toggles the cache
+at six fixed orbit poses; direct/cache/direct captures match pixel-for-pixel, with
+verified cache toggles and residency. Continuous native playback, sustained cache
+performance and portability remain open. See [native report](measurements-multi-emitter-absorption-native.json)
+and [native runner](../scripts/two_emitter_absorption_native_study.py), plus
+[moving-route report](measurements-multi-emitter-absorption-moving-route.json) and
+[runner](../scripts/two_emitter_absorption_moving_route_study.py).
 See [temporal report](measurements-multi-emitter-absorption-temporal.json)
 and [runner](../scripts/two_emitter_absorption_temporal_study.py). The 16³
 comparison reports mean RGB error 0.014/255 (p95 0.019/255), mean temporal-change
