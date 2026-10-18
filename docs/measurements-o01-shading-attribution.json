@@ -1,0 +1,379 @@
+{
+  "absorption_cache_probe": {
+    "medium_cache16": {
+      "cpu_encode": -0.10674899999999998,
+      "frame_work": -0.06204199999999993,
+      "gpu_render": 0.036751999999999896,
+      "gpu_stages.atmosphere_fire": -0.07095800000000008
+    },
+    "medium_cache8": {
+      "cpu_encode": -0.13458400000000015,
+      "frame_work": -0.06625000000000014,
+      "gpu_render": 0.03183300000000022,
+      "gpu_stages.atmosphere_fire": -0.05795899999999987
+    },
+    "screen-filling_cache16": {
+      "cpu_encode": 0.011750000000000038,
+      "frame_work": -0.10425099999999965,
+      "gpu_render": 0.02612599999999965,
+      "gpu_stages.atmosphere_fire": -0.10054100000000021
+    },
+    "screen-filling_cache8": {
+      "cpu_encode": 0.0063749999999999085,
+      "frame_work": -0.14995899999999907,
+      "gpu_render": 0.024915999999999716,
+      "gpu_stages.atmosphere_fire": -0.08700000000000019
+    },
+    "small_cache16": {
+      "cpu_encode": -0.11500099999999991,
+      "frame_work": -0.04962499999999981,
+      "gpu_render": 0.04425100000000004,
+      "gpu_stages.atmosphere_fire": -0.07741799999999999
+    },
+    "small_cache8": {
+      "cpu_encode": -0.09895800000000005,
+      "frame_work": -0.048500999999999905,
+      "gpu_render": 0.02637500000000026,
+      "gpu_stages.atmosphere_fire": -0.07487400000000011
+    }
+  },
+  "baseline_stage_costs": {
+    "clearing": {
+      "gpu_stages": {
+        "atmosphere_fire": {
+          "median_ms": 2.4230419999999997,
+          "p95_ms": 2.96825,
+          "samples_per_run": [
+            7200,
+            7200,
+            7200
+          ]
+        },
+        "opaque_geometry": {
+          "median_ms": 1.7059579999999999,
+          "p95_ms": 2.12775,
+          "samples_per_run": [
+            7200,
+            7200,
+            7200
+          ]
+        },
+        "optical_resolve": {
+          "median_ms": null,
+          "p95_ms": null,
+          "samples_per_run": [
+            0,
+            0,
+            0
+          ]
+        },
+        "post": {
+          "median_ms": 2.528834,
+          "p95_ms": 3.307083,
+          "samples_per_run": [
+            7200,
+            7200,
+            7200
+          ]
+        },
+        "smoke_compute": {
+          "median_ms": 0.020583,
+          "p95_ms": 0.02225,
+          "samples_per_run": [
+            7200,
+            7200,
+            7200
+          ]
+        }
+      },
+      "known_gpu_allocation_bytes": 29806088,
+      "workload_counts": {
+        "authored_lights": 2,
+        "draw_calls_per_frame": 10,
+        "effect_draw_calls_per_frame": 1,
+        "emitters": 1,
+        "fire_primitives_last_frame": 81,
+        "materials": 11,
+        "objects": 276,
+        "opaque_geometry_draw_calls_per_frame": 1,
+        "optical_draw_calls_per_frame": 0,
+        "particle_lights_last_frame": 12,
+        "post_draw_calls_per_frame": 1,
+        "shadow_draw_calls_per_frame": 7,
+        "vertices": 175662
+      }
+    },
+    "heavy": {
+      "gpu_stages": {
+        "atmosphere_fire": {
+          "median_ms": 3.129708,
+          "p95_ms": 3.827333,
+          "samples_per_run": [
+            7200,
+            7200,
+            7200
+          ]
+        },
+        "opaque_geometry": {
+          "median_ms": 2.4012089999999997,
+          "p95_ms": 3.021375,
+          "samples_per_run": [
+            7200,
+            7200,
+            7200
+          ]
+        },
+        "optical_resolve": {
+          "median_ms": null,
+          "p95_ms": null,
+          "samples_per_run": [
+            0,
+            0,
+            0
+          ]
+        },
+        "post": {
+          "median_ms": 3.2497499999999997,
+          "p95_ms": 4.256082999999999,
+          "samples_per_run": [
+            7200,
+            7200,
+            7200
+          ]
+        },
+        "smoke_compute": {
+          "median_ms": 0.0205,
+          "p95_ms": 0.022209,
+          "samples_per_run": [
+            7200,
+            7200,
+            7200
+          ]
+        }
+      },
+      "known_gpu_allocation_bytes": 29806088,
+      "workload_counts": {
+        "authored_lights": 9,
+        "draw_calls_per_frame": 10,
+        "effect_draw_calls_per_frame": 1,
+        "emitters": 1,
+        "fire_primitives_last_frame": 81,
+        "materials": 11,
+        "objects": 276,
+        "opaque_geometry_draw_calls_per_frame": 1,
+        "optical_draw_calls_per_frame": 0,
+        "particle_lights_last_frame": 12,
+        "post_draw_calls_per_frame": 1,
+        "shadow_draw_calls_per_frame": 7,
+        "vertices": 175662
+      }
+    },
+    "materials": {
+      "gpu_stages": {
+        "atmosphere_fire": {
+          "median_ms": 1.593,
+          "p95_ms": 1.837875,
+          "samples_per_run": [
+            7200,
+            7200,
+            7200
+          ]
+        },
+        "opaque_geometry": {
+          "median_ms": 1.062833,
+          "p95_ms": 1.2711249999999998,
+          "samples_per_run": [
+            7200,
+            7200,
+            7200
+          ]
+        },
+        "optical_resolve": {
+          "median_ms": 2.6462079999999997,
+          "p95_ms": 3.662709,
+          "samples_per_run": [
+            7200,
+            7200,
+            7200
+          ]
+        },
+        "post": {
+          "median_ms": 2.752083,
+          "p95_ms": 3.8354169999999996,
+          "samples_per_run": [
+            7200,
+            7200,
+            7200
+          ]
+        },
+        "smoke_compute": {
+          "median_ms": 0.020583,
+          "p95_ms": 0.022334,
+          "samples_per_run": [
+            7200,
+            7200,
+            7200
+          ]
+        }
+      },
+      "known_gpu_allocation_bytes": 20370208,
+      "workload_counts": {
+        "authored_lights": 4,
+        "draw_calls_per_frame": 11,
+        "effect_draw_calls_per_frame": 1,
+        "emitters": 1,
+        "fire_primitives_last_frame": 40,
+        "materials": 12,
+        "objects": 37,
+        "opaque_geometry_draw_calls_per_frame": 1,
+        "optical_draw_calls_per_frame": 1,
+        "particle_lights_last_frame": 10,
+        "post_draw_calls_per_frame": 1,
+        "shadow_draw_calls_per_frame": 7,
+        "vertices": 18396
+      }
+    }
+  },
+  "conclusion": {
+    "dominant_measured_stages": "Atmosphere/fire and post are both multi-millisecond in the O01 workloads; the heavy atmosphere/fire stage is 3.130 ms median. Smoke compute is about 0.0205 ms median, approximately 150x smaller than the heavy atmosphere/fire stage.",
+    "no_shader_rewrite": "No shader algorithm rewrite or new default is supported by this attribution record.",
+    "solver_decision": "Do not pursue active-region smoke solver work on current evidence. Prioritize shading-path operation attribution; the absorption cache lowers atmosphere/fire stage medians by about 0.058\u20130.101 ms but raises whole GPU-render medians by 0.025\u20130.044 ms across the tested sizes.",
+    "what_proxies_show": "Tile membership counters plus independent tile-list toggles show that candidate evaluation is a material part of several stages; projected detail modestly reduces atmosphere/fire work; opaque-light reuse primarily improves optical resolve and leaves atmosphere/fire nearly unchanged."
+  },
+  "date": "2026-10-18",
+  "host": "Apple M1 Max, IntegratedGpu, Metal",
+  "limitations": [
+    "This report joins independent experiments, not one factorial attribution run; results indicate category sensitivity rather than causal additivity.",
+    "The renderer reports tile memberships, primitive counts and pass timings, but has no operation-level GPU counters for the listed unmeasured operations.",
+    "Single M1 Max/Metal offscreen evidence; native-window, Windows/DX12 and other-adapter behavior remain unverified."
+  ],
+  "method": "Synthesis of existing M1 Max/Metal O01 stage profiles with independent O03 tile-list, O04 projected-detail, O05 absorption-cache and O06 optical-reuse paired probes. Stage deltas are separate overlapping GPU intervals and must not be summed as additive costs.",
+  "optical_reuse_probe": {
+    "material_atelier": {
+      "frame_work": -0.05054200000000009,
+      "gpu_render": -0.16933500000000024,
+      "gpu_stages.atmosphere_fire": 0.004709000000000074,
+      "gpu_stages.optical_resolve": -0.16587399999999985
+    },
+    "mixed_smoke_material": {
+      "frame_work": -0.2320839999999995,
+      "gpu_render": -0.0807500000000001,
+      "gpu_stages.atmosphere_fire": 0.0015000000000000568,
+      "gpu_stages.optical_resolve": -0.0755410000000003
+    }
+  },
+  "projected_detail_probe": {
+    "fire_primitives_full_median": 81,
+    "fire_primitives_rendered_median": 71,
+    "note": "Reduced segments are selected after deterministic full FireFrame sampling; this changes rendered primitive work, not full CPU simulation sampling.",
+    "paired_atmosphere_fire_delta_ms": -0.033958,
+    "paired_frame_work_delta_ms": -0.011709,
+    "paired_gpu_render_delta_ms": -0.065166
+  },
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "source_reports": [
+    "measurements-o01.json",
+    "measurements-o03.json",
+    "measurements-o04.json",
+    "measurements-o05-size-study.json",
+    "measurements-o06-sustained.json"
+  ],
+  "tile_list_candidate_probe": {
+    "clearing": {
+      "candidate_memberships_over_600_sampled_frames": {
+        "fire_primitives": 234036,
+        "particle_lights": 433259,
+        "point_lights": 552000,
+        "smoke_lobes": 802434
+      },
+      "max_candidates_per_tile": {
+        "fire_primitives": 53,
+        "particle_lights": 12,
+        "point_lights": 1,
+        "smoke_lobes": 18
+      },
+      "overflow_tiles": {
+        "fire_primitives": 0,
+        "particle_lights": 0,
+        "point_lights": 0,
+        "smoke_lobes": 0
+      },
+      "paired_frame_work_delta_ms": -2.2018329999999997,
+      "paired_gpu_render_delta_ms": -0.4399160000000002,
+      "paired_stage_deltas_ms": {
+        "gpu_stages.atmosphere_fire": -1.023167,
+        "gpu_stages.opaque_geometry": -0.5802910000000001,
+        "gpu_stages.post": -1.026251,
+        "gpu_stages.tile_list_build": 0.6028749999999999
+      }
+    },
+    "heavy": {
+      "candidate_memberships_over_600_sampled_frames": {
+        "fire_primitives": 234036,
+        "particle_lights": 433259,
+        "point_lights": 4416000,
+        "smoke_lobes": 802434
+      },
+      "max_candidates_per_tile": {
+        "fire_primitives": 53,
+        "particle_lights": 12,
+        "point_lights": 8,
+        "smoke_lobes": 18
+      },
+      "overflow_tiles": {
+        "fire_primitives": 0,
+        "particle_lights": 0,
+        "point_lights": 0,
+        "smoke_lobes": 0
+      },
+      "paired_frame_work_delta_ms": -0.9908740000000007,
+      "paired_gpu_render_delta_ms": -0.4857910000000003,
+      "paired_stage_deltas_ms": {
+        "gpu_stages.atmosphere_fire": -1.0396670000000001,
+        "gpu_stages.opaque_geometry": -0.6307499999999999,
+        "gpu_stages.post": -1.0564179999999999,
+        "gpu_stages.tile_list_build": 0.61475
+      }
+    },
+    "materials": {
+      "candidate_memberships_over_600_sampled_frames": {
+        "fire_primitives": 87298,
+        "particle_lights": 128406,
+        "point_lights": 1656000,
+        "smoke_lobes": 554419
+      },
+      "max_candidates_per_tile": {
+        "fire_primitives": 34,
+        "particle_lights": 10,
+        "point_lights": 3,
+        "smoke_lobes": 18
+      },
+      "overflow_tiles": {
+        "fire_primitives": 0,
+        "particle_lights": 0,
+        "point_lights": 0,
+        "smoke_lobes": 0
+      },
+      "paired_frame_work_delta_ms": -1.0222509999999998,
+      "paired_gpu_render_delta_ms": -0.5058740000000004,
+      "paired_stage_deltas_ms": {
+        "gpu_stages.atmosphere_fire": -0.4825839999999999,
+        "gpu_stages.opaque_geometry": -0.15524899999999997,
+        "gpu_stages.post": -0.8805000000000001,
+        "gpu_stages.tile_list_build": 0.39508299999999996
+      }
+    }
+  },
+  "unmeasured_operations": [
+    "Actual per-pixel fire primitive intersection tests after bounds rejects.",
+    "Actual smoke-lobe parent and child intersection tests after tile candidate selection.",
+    "Executed smoke density and absorption texture samples after early ray termination and UV bounds rejects.",
+    "Shadow-comparison texture sample counts by sun, primary point light and shading category.",
+    "Per-pixel optical reflection/refraction interactions and screen-space ray samples."
+  ],
+  "workstream": "O01 atmosphere/fire shader attribution probes"
+}

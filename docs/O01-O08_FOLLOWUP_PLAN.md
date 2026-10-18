@@ -228,6 +228,21 @@ an exhaustive fallback.
 
 ### 9. Profile atmosphere/fire shading before solver work
 
+**Partial: measured on M1 Max/Metal.** The evidence synthesis in
+[measurements-o01-shading-attribution.json](measurements-o01-shading-attribution.json)
+combines O01 stage timings with O03 tile memberships, O04 retained fire primitives,
+O05 absorption-cache changes and O06 optical-resolve changes. O01's heavy scene
+measures 3.130 ms atmosphere/fire and 0.0205 ms smoke compute; the O05 cache lowers
+atmosphere/fire by 0.058–0.101 ms but increases total GPU-render time by 0.025–0.044
+ms. This rules out active-region solver work as the next step. O03/O04/O06 probes
+show sensitivity to candidate work, retained primitives and optical reuse, but do
+not isolate exact per-pixel operation costs.
+
+Still open: GPU counters for primitive intersection tests, smoke-lobe tests,
+executed density/absorption samples, shadow comparisons and optical ray samples.
+The current report preserves these as explicit measurement gaps; it does not claim
+that their individual costs have been measured.
+
 Use O01 stage data to split the multi-millisecond atmosphere/fire work by candidate
 category and representative coverage. O01 shows smoke advection near 0.02 ms on the
 measured M1 Max scene, so do not pursue active-region solver work without new data.

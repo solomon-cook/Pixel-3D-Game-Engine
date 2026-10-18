@@ -34,7 +34,8 @@ Detailed steps, dependencies and acceptance criteria live in
 ## Later scaling research
 
 - [ ] Execute the remaining O01–O08 correctness, sustained-motion,
-  optical-combination, dynamic shadow-scaling and cross-adapter gates in
+  optical-combination, dynamic shadow-scaling, operation-counter and
+  cross-adapter gates in
   [O01-O08_FOLLOWUP_PLAN.md](docs/O01-O08_FOLLOWUP_PLAN.md) before promoting
   opt-in approximations or expanding the emitter cap.
 
