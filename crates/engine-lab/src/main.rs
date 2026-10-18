@@ -121,6 +121,21 @@ enum Command {
     BenchmarkNative {
         #[command(flatten)]
         options: Options,
+        /// Disable conservative per-camera and per-shadow-frustum object culling.
+        #[arg(long)]
+        disable_object_culling: bool,
+        /// Issue one draw per visible object instead of grouping compatible instances.
+        #[arg(long)]
+        disable_instancing: bool,
+        /// Move a scene object around the primary fire light during the route.
+        #[arg(long)]
+        moving_caster: Option<String>,
+        /// Orbit radius in world units for --moving-caster.
+        #[arg(long, default_value_t = 5.0)]
+        caster_orbit_radius: f32,
+        /// Orbit period in seconds for --moving-caster.
+        #[arg(long, default_value_t = 20.0)]
+        caster_orbit_period: f32,
         #[arg(long, default_value = "clearing-orbit")]
         route: String,
         #[arg(long, default_value_t = 120.)]
@@ -147,10 +162,10 @@ struct BenchmarkSettings {
     shading_counter_sampling: bool,
 }
 #[derive(Clone, Copy)]
-struct CasterMotion<'a> {
-    object_id: Option<&'a str>,
-    radius: f32,
-    period: f32,
+pub(crate) struct CasterMotion<'a> {
+    pub(crate) object_id: Option<&'a str>,
+    pub(crate) radius: f32,
+    pub(crate) period: f32,
 }
 #[derive(Clone, Copy)]
 struct BenchmarkRoute<'a> {
@@ -282,11 +297,29 @@ fn start() -> Result<()> {
         )?,
         Command::BenchmarkNative {
             options,
+            disable_object_culling,
+            disable_instancing,
+            moving_caster,
+            caster_orbit_radius,
+            caster_orbit_period,
             route,
             duration,
             warmup,
             output,
-        } => window::benchmark_native(options, &route, duration, warmup, output)?,
+        } => window::benchmark_native(
+            options,
+            window::NativeBenchmarkSettings {
+                route,
+                duration,
+                warmup,
+                output,
+                object_culling_enabled: !disable_object_culling,
+                instancing_enabled: !disable_instancing,
+                moving_caster,
+                caster_orbit_radius,
+                caster_orbit_period,
+            },
+        )?,
         Command::Serve { options } => {
             use std::io::{BufRead, Write};
             let mut session = headless(&options)?;
@@ -397,7 +430,7 @@ fn headless_with_timing(options: &Options, enable_timestamps: bool) -> Result<Se
     Ok(session)
 }
 
-fn update_benchmark_caster(
+pub(crate) fn update_benchmark_caster(
     session: &mut Session,
     caster: Option<&(String, f32)>,
     frame: u32,

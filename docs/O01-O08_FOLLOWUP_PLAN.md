@@ -306,6 +306,14 @@ whole-frame result is not monotonic and turns slower at 2,208 objects. Keep the
 current path; these data do not justify indirect drawing or occlusion culling.
 Native-window, non-Metal, and continuous-motion image review remain open.
 
+`benchmark-native` now exposes the same culling, instancing and moving-caster
+controls and records per-frame caster positions and shadow-cache changes alongside
+presentation timings. A native Metal smoke route verifies the baked path and orbit
+at a fixed five-unit radius. The full four-tier native matrix runner is available
+at [geometry_scale_native_study.py](../scripts/geometry_scale_native_study.py);
+its sustained comparisons have not yet run, so native-window performance remains
+an open gate.
+
 1. Generate deterministic scenes at increasing object counts and mesh reuse rates,
    starting from the current 276-object clearing scene and increasing by measured
    steps. Include offscreen casters, mixed materials and shared versus unique meshes.

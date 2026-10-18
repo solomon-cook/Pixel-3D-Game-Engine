@@ -484,8 +484,10 @@ with 0.739 ms median CPU culling. A matching moving-caster four-tier matrix now
 records shadow-pass timing and invalidation counters. Culling lowers the GPU
 shadow-map stage by 0.022–0.309 ms versus instancing-only, but the complete-frame
 result is mixed and is slower at 2,208 objects. The gain does not justify adding
-indirect or occlusion drawing. Native-window, continuous-motion visual review and
-non-Metal acceptance remain open. See
+indirect or occlusion drawing. Native culling/instancing/moving-caster controls
+and a resumable four-tier matrix runner are implemented, but sustained native
+window comparisons, continuous-motion visual review and non-Metal acceptance
+remain open. See
 [static measurements](measurements-o07-scale-study.json) and
 [moving-caster measurements](measurements-o07-moving-caster.json).
 

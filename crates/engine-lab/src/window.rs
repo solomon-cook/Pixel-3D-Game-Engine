@@ -1,4 +1,4 @@
-use crate::{prepare, Options};
+use crate::{prepare, CasterMotion, Options};
 use anyhow::{Context, Result};
 use glam::Vec3;
 use pixel_engine::{
@@ -61,12 +61,30 @@ struct NativeBenchmarkConfig {
     duration: f64,
     warmup: f64,
     output: std::path::PathBuf,
+    object_culling_enabled: bool,
+    instancing_enabled: bool,
+    moving_caster: Option<String>,
+    caster_orbit_radius: f32,
+    caster_orbit_period: f32,
     launch_started: Instant,
+}
+pub struct NativeBenchmarkSettings {
+    pub route: String,
+    pub duration: f32,
+    pub warmup: f32,
+    pub output: std::path::PathBuf,
+    pub object_culling_enabled: bool,
+    pub instancing_enabled: bool,
+    pub moving_caster: Option<String>,
+    pub caster_orbit_radius: f32,
+    pub caster_orbit_period: f32,
 }
 struct NativeBenchmark {
     config: NativeBenchmarkConfig,
     route: Route,
     base_camera: Camera,
+    moving_caster: Option<(String, f32)>,
+    orbit_center_xz: [f32; 2],
     started: Instant,
     setup_seconds: f64,
     samples: Vec<Value>,
@@ -222,29 +240,32 @@ pub fn run(options: Options, agent: bool, paused: bool) -> Result<()> {
     run_inner(options, agent, paused, None)
 }
 
-pub fn benchmark_native(
-    options: Options,
-    route: &str,
-    duration: f32,
-    warmup: f32,
-    output: std::path::PathBuf,
-) -> Result<()> {
-    if !duration.is_finite()
-        || !(0.1..=600.).contains(&duration)
-        || !warmup.is_finite()
-        || !(0.0..=120.).contains(&warmup)
+pub fn benchmark_native(options: Options, settings: NativeBenchmarkSettings) -> Result<()> {
+    if !settings.duration.is_finite()
+        || !(0.1..=600.).contains(&settings.duration)
+        || !settings.warmup.is_finite()
+        || !(0.0..=120.).contains(&settings.warmup)
+        || !settings.caster_orbit_radius.is_finite()
+        || settings.caster_orbit_radius <= 0.
+        || !settings.caster_orbit_period.is_finite()
+        || settings.caster_orbit_period <= 0.
     {
-        anyhow::bail!("duration: expected 0.1..600 seconds; warmup: expected 0..120 seconds");
+        anyhow::bail!("duration: expected 0.1..600 seconds; warmup: expected 0..120 seconds; caster radius and period must be positive finite values");
     }
     run_inner(
         options,
         false,
         false,
         Some(NativeBenchmarkConfig {
-            route: route.to_owned(),
-            duration: duration as f64,
-            warmup: warmup as f64,
-            output,
+            route: settings.route,
+            duration: settings.duration as f64,
+            warmup: settings.warmup as f64,
+            output: settings.output,
+            object_culling_enabled: settings.object_culling_enabled,
+            instancing_enabled: settings.instancing_enabled,
+            moving_caster: settings.moving_caster,
+            caster_orbit_radius: settings.caster_orbit_radius,
+            caster_orbit_period: settings.caster_orbit_period,
             launch_started: Instant::now(),
         }),
     )
@@ -357,6 +378,9 @@ impl App {
         session.execute("set_camera", json!({"id":self.options.camera}))?;
         diagnostics::log("ready", session.renderer.capabilities());
         let benchmark = if let Some(config) = self.benchmark.take() {
+            session
+                .renderer
+                .set_geometry_rendering(config.object_culling_enabled, config.instancing_enabled);
             let route = session
                 .scene
                 .routes
@@ -364,11 +388,43 @@ impl App {
                 .find(|route| route.id == config.route)
                 .cloned()
                 .ok_or_else(|| anyhow::anyhow!("route '{}' is unknown", config.route))?;
+            let moving_caster = config
+                .moving_caster
+                .as_ref()
+                .map(|id| {
+                    session
+                        .scene
+                        .objects
+                        .iter()
+                        .find(|object| object.id == *id)
+                        .map(|object| (id.clone(), object.position[1]))
+                        .with_context(|| format!("moving caster '{id}': unknown object ID"))
+                })
+                .transpose()?;
+            let orbit_center_xz = session
+                .scene
+                .emitters
+                .first()
+                .map(|emitter| [emitter.position[0], emitter.position[2]])
+                .unwrap_or([0., 0.]);
+            crate::update_benchmark_caster(
+                &mut session,
+                moving_caster.as_ref(),
+                0,
+                CasterMotion {
+                    object_id: config.moving_caster.as_deref(),
+                    radius: config.caster_orbit_radius,
+                    period: config.caster_orbit_period,
+                },
+                orbit_center_xz,
+            )?;
             let setup_seconds = config.launch_started.elapsed().as_secs_f64();
             Some(NativeBenchmark {
                 config,
                 route,
                 base_camera: session.camera.clone(),
+                moving_caster,
+                orbit_center_xz,
                 started: Instant::now(),
                 setup_seconds,
                 samples: Vec::new(),
@@ -647,6 +703,21 @@ impl Native {
         if !self.session.paused {
             self.accumulator += dt;
             while self.accumulator >= 1. / 60. {
+                if let Some(benchmark) = &self.benchmark {
+                    let route_frame = self.session.tick as u32;
+                    let motion = CasterMotion {
+                        object_id: benchmark.config.moving_caster.as_deref(),
+                        radius: benchmark.config.caster_orbit_radius,
+                        period: benchmark.config.caster_orbit_period,
+                    };
+                    crate::update_benchmark_caster(
+                        &mut self.session,
+                        benchmark.moving_caster.as_ref(),
+                        route_frame,
+                        motion,
+                        benchmark.orbit_center_xz,
+                    )?;
+                }
                 self.session.step(1);
                 self.accumulator -= 1. / 60.;
             }
@@ -805,6 +876,12 @@ impl Native {
                     "cpu_present_submit_ms":metrics.cpu_present_submit_ms,
                     "gpu_timing_frame":metrics.gpu_timing_frame,
                     "gpu_smoke_tick":metrics.gpu_smoke_tick,
+                    "moving_caster_position":benchmark.moving_caster.as_ref().and_then(|(id, _)| self.session.scene.objects.iter().find(|object| object.id == *id).map(|object| object.position)),
+                    "shadow_cache_hit":metrics.shadow_cache_hit,
+                    "shadow_redrawn":metrics.shadow_redrawn,
+                    "shadow_maps_redrawn":metrics.shadow_maps_redrawn,
+                    "shadow_dirty_faces":metrics.shadow_dirty_faces,
+                    "shadow_dirty_reason":metrics.shadow_dirty_reason,
                     "fire_primitives":metrics.fire_primitives,
                     "particle_lights":metrics.particle_lights
                 }));
@@ -981,6 +1058,24 @@ fn native_benchmark_report(
         .map(|sample| sample.readback_latency_ms)
         .collect::<Vec<_>>();
     let capabilities = session.renderer.capabilities();
+    let mut shadow_dirty_reasons = std::collections::BTreeMap::<String, u64>::new();
+    for reason in benchmark
+        .samples
+        .iter()
+        .filter_map(|sample| sample["shadow_dirty_reason"].as_str())
+    {
+        *shadow_dirty_reasons.entry(reason.to_owned()).or_default() += 1;
+    }
+    let shadow_redrawn_frames = benchmark
+        .samples
+        .iter()
+        .filter(|sample| sample["shadow_redrawn"].as_bool() == Some(true))
+        .count();
+    let shadow_redrawn_passes = benchmark
+        .samples
+        .iter()
+        .filter_map(|sample| sample["shadow_maps_redrawn"].as_u64())
+        .sum::<u64>();
     json!({
         "version":1,
         "mode":"native_vsync_route",
@@ -993,6 +1088,9 @@ fn native_benchmark_report(
         "frames_per_second":if actual_seconds > 0. {benchmark.samples.len() as f64 / actual_seconds} else {0.},
         "present_mode":format!("{:?}", present_mode),
         "vsync":present_mode == wgpu::PresentMode::AutoVsync || present_mode == wgpu::PresentMode::Fifo,
+        "geometry_rendering":{"culling":benchmark.config.object_culling_enabled,"instancing":benchmark.config.instancing_enabled},
+        "moving_caster":benchmark.moving_caster.as_ref().map(|(id, _)| json!({"object":id,"radius":benchmark.config.caster_orbit_radius,"period_seconds":benchmark.config.caster_orbit_period,"orbit_center_xz":benchmark.orbit_center_xz,"sample_hz":60})),
+        "shadow_cache":{"frames_with_redraw":shadow_redrawn_frames,"redrawn_shadow_passes":shadow_redrawn_passes,"dirty_reasons":shadow_dirty_reasons},
         "scene":session.scene,
         "seed":session.seed,
         "capabilities":capabilities,

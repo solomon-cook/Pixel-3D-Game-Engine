@@ -479,6 +479,17 @@ limitations are in [static scale evidence](measurements-o07-scale-study.json) an
 [moving-caster evidence](measurements-o07-moving-caster.json). Native-window,
 continuous-motion image review and non-Metal validation remain open.
 
+The native benchmark now accepts culling/instancing modes and a moving caster,
+and reports per-frame caster positions, shadow invalidation/redraws, GPU render
+stages and presentation timings. A 3-second baked Metal smoke route recorded 353
+frames at 117.8 FPS; all sampled caster positions were 5 world units from the
+fire-light center, and 177 frames redrew shadow maps. This validates the native
+instrumentation only. A one-pair, one-tier short study also exercised all three
+geometry comparisons and the runner's resume path; it is not sustained acceptance.
+The full native matrix is available through
+[`geometry_scale_native_study.py`](../scripts/geometry_scale_native_study.py) and
+has not yet run.
+
 Implemented: reusable engine/library separation, native Metal/DX12 selection,
 versioned/validated JSON scenes, static GLB/PNG assets, fixed-step smoke grid,
 seeded fire/embers, directional/point shadows, HDR pixel rendering, integer
