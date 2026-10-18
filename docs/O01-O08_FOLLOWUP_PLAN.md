@@ -304,6 +304,14 @@ disabled-by-default experiments. No-copy now also has three alternating native
 Platform, continuous-temporal and broader-pass acceptance stays open as
 summarized in that record.
 
+The RG16 fallback now has a diagnostic `--force-rg16-fallback` path that exercises
+RGBA16F effect-target and smoke-volume creation/rendering on a capable adapter.
+Two fixed-tick M1 Max/Metal scenes match the native RG16 images byte-for-byte;
+the fallback uses 2,101,248 more known bytes at 640×360. This strengthens local
+fallback evidence but leaves physical unsupported-adapter and DX12 acceptance
+open. See [fallback report](measurements-o08-rg16-fallback.json) and
+[runner](../scripts/rg16_fallback_study.py).
+
 Break the umbrella O08 item into decisions for lazy optical allocation, RG16 targets,
 compact HDR, normal/depth reuse and no-copy overlay. For each, record supported
 adapters, fallback behavior, memory delta, temporal and route image evidence, GPU
@@ -313,7 +321,9 @@ physical device residency.
 
 **Exit gate:** every candidate has an independent disposition and verification
 scope. The O08 umbrella stays open while any promoted/default candidate lacks the
-required physical fallback or target-backend validation.
+required physical fallback or target-backend validation. Forced fallback on the
+M1 Max validates resource/pipeline creation and fixed-tick output; it does not
+substitute for an adapter that lacks RG16 capabilities.
 
 ## Wave 4 — Scale scene structure and identify the next GPU bottleneck
 

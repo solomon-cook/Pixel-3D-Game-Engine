@@ -194,10 +194,15 @@ supports render attachment plus texture binding; otherwise it falls back to
 Rgba16Float. At 640×360 this saves 921,600 known bytes. Smoke ping-pong volumes
 select Rg16Float only with the adapter-specific format feature and required
 storage/sample support, falling back to Rgba16Float; they save 1,179,648 bytes.
-Pure capability-selection tests now cover the required usages/features and the
-Rgba16Float fallback path. They validate the branch logic only; unsupported-
-format texture creation, shader pipelines and rendered output still need a
-physical adapter without these capabilities.
+Pure capability-selection tests cover the required usages/features and the
+Rgba16Float fallback path. The diagnostic `--force-rg16-fallback` option also
+forces that branch on a capable adapter. On M1 Max/Metal, fallback texture and
+pipeline creation succeeded and two fixed-tick scenes matched the native RG16
+images byte-for-byte; known allocation rises by 2,101,248 bytes at 640×360.
+This exercises fallback rendering but does not replace physical validation on an
+adapter without these capabilities or Windows/DX12 checks. See
+[fallback evidence](measurements-o08-rg16-fallback.json) and
+[reproducible runner](../scripts/rg16_fallback_study.py).
 The live allocation estimate also includes the tile debug uniform (16 bytes)
 and timestamp resolve/readback buffers (864 bytes when timing is enabled); the
 opaque query-set storage remains excluded. Tile-stat buffers/readbacks were

@@ -347,12 +347,14 @@ impl App {
         let instance = render::instance();
         let surface = instance.create_surface(window.clone())?;
         let (scene, path, shaders) = prepare(&self.options)?;
-        let renderer = pollster::block_on(render::Renderer::new(
+        let renderer = pollster::block_on(render::Renderer::new_with_timing_and_rg16_fallback(
             &instance,
             Some(&surface),
             &scene,
             path.parent().unwrap(),
             shaders,
+            true,
+            self.options.force_rg16_fallback,
         ))?;
         let size = window.inner_size();
         let mut config = surface

@@ -204,6 +204,9 @@ pub struct Options {
     /// Use an experimental optical overlay path to skip the HDR snapshot copy.
     #[arg(long)]
     pub optical_no_copy: bool,
+    /// Force the RGBA16F effect-target fallback to validate it on capable adapters.
+    #[arg(long)]
+    pub force_rg16_fallback: bool,
     #[arg(long)]
     pub shaders: Option<PathBuf>,
 }
@@ -427,13 +430,14 @@ pub fn headless(options: &Options) -> Result<Session> {
 fn headless_with_timing(options: &Options, enable_timestamps: bool) -> Result<Session> {
     let (scene, path, shaders) = prepare(options)?;
     let instance = render::instance();
-    let renderer = pollster::block_on(render::Renderer::new_with_timing(
+    let renderer = pollster::block_on(render::Renderer::new_with_timing_and_rg16_fallback(
         &instance,
         None,
         &scene,
         path.parent().unwrap_or(Path::new(".")),
         shaders,
         enable_timestamps,
+        options.force_rg16_fallback,
     ))?;
     let mut session = Session::new(scene, path, renderer, options.seed);
     session.execute("set_camera", json!({"id":options.camera}))?;

@@ -1,0 +1,89 @@
+{
+  "version": 1,
+  "date": "2026-10-18",
+  "purpose": "Render the RGBA16F effect-depth and smoke-volume fallback on an adapter that normally selects Rg16Float.",
+  "adapter": {
+    "name": "Apple M1 Max",
+    "backend": "Metal",
+    "fallback_kind": "forced capability-selection fallback; not evidence from hardware lacking Rg16Float support"
+  },
+  "binary_sha256": "3e5050590b26b1d09fcbc9620307f484e669a54dbdb61cbae426d320a9249225",
+  "cases": [
+    {
+      "scene": "assets/scenes/profiling-heavy.json",
+      "scene_sha256": "f736a0779a868d11c22d761b46a0920eb1b154db6241088c9d09a9fa1ca8a05b",
+      "camera": "fire-study",
+      "adapter": "Apple M1 Max",
+      "backend": "Metal",
+      "seed": 42,
+      "tick": 120,
+      "resolution": [
+        640,
+        360
+      ],
+      "baseline": {
+        "image": "artifacts/o08/rg16-fallback/profiling-heavy-native-rg16.png",
+        "effect_depth_format": "Rg16Float",
+        "smoke_volume_format": "Rg16Float",
+        "known_gpu_allocation_bytes": 22951216
+      },
+      "fallback": {
+        "image": "artifacts/o08/rg16-fallback/profiling-heavy-forced-rgba16.png",
+        "forced": true,
+        "effect_depth_format": "Rgba16Float",
+        "smoke_volume_format": "Rgba16Float",
+        "known_gpu_allocation_bytes": 25052464
+      },
+      "allocation_delta_bytes": 2101248,
+      "image_comparison": {
+        "pixel_identical": true,
+        "changed_pixels": 0,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
+      }
+    },
+    {
+      "scene": "assets/scenes/materials.json",
+      "scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
+      "camera": "hero",
+      "adapter": "Apple M1 Max",
+      "backend": "Metal",
+      "seed": 42,
+      "tick": 120,
+      "resolution": [
+        640,
+        360
+      ],
+      "baseline": {
+        "image": "artifacts/o08/rg16-fallback/materials-native-rg16.png",
+        "effect_depth_format": "Rg16Float",
+        "smoke_volume_format": "Rg16Float",
+        "known_gpu_allocation_bytes": 17025032
+      },
+      "fallback": {
+        "image": "artifacts/o08/rg16-fallback/materials-forced-rgba16.png",
+        "forced": true,
+        "effect_depth_format": "Rgba16Float",
+        "smoke_volume_format": "Rgba16Float",
+        "known_gpu_allocation_bytes": 19126280
+      },
+      "allocation_delta_bytes": 2101248,
+      "image_comparison": {
+        "pixel_identical": true,
+        "changed_pixels": 0,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
+      }
+    }
+  ],
+  "all_pixel_identical": true,
+  "limitations": [
+    "Both captures use the same Apple M1 Max/Metal adapter; the fallback is selected through a diagnostic CLI override.",
+    "This exercises fallback resource and shader creation but does not replace physical validation on an adapter without the Rg16Float capabilities.",
+    "Fixed-tick images do not establish temporal or performance parity."
+  ]
+}

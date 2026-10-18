@@ -813,7 +813,16 @@ impl Renderer {
         base: &Path,
         shader_directory: PathBuf,
     ) -> Result<Self> {
-        Self::new_with_timing(instance, surface, scene, base, shader_directory, true).await
+        Self::new_with_timing_and_rg16_fallback(
+            instance,
+            surface,
+            scene,
+            base,
+            shader_directory,
+            true,
+            false,
+        )
+        .await
     }
 
     pub async fn new_with_timing(
@@ -823,6 +832,27 @@ impl Renderer {
         base: &Path,
         shader_directory: PathBuf,
         enable_timestamps: bool,
+    ) -> Result<Self> {
+        Self::new_with_timing_and_rg16_fallback(
+            instance,
+            surface,
+            scene,
+            base,
+            shader_directory,
+            enable_timestamps,
+            false,
+        )
+        .await
+    }
+
+    pub async fn new_with_timing_and_rg16_fallback(
+        instance: &wgpu::Instance,
+        surface: Option<&wgpu::Surface<'_>>,
+        scene: &Scene,
+        base: &Path,
+        shader_directory: PathBuf,
+        enable_timestamps: bool,
+        force_rg16_fallback: bool,
     ) -> Result<Self> {
         let adapter = instance
             .request_adapter(&wgpu::RequestAdapterOptions {
@@ -868,7 +898,14 @@ impl Renderer {
                 )
         };
         let optical_no_copy_enabled = scene.render.optical_no_copy && optical_no_copy_supported;
-        let rg16_features = adapter.get_texture_format_features(wgpu::TextureFormat::Rg16Float);
+        let rg16_features = if force_rg16_fallback {
+            wgpu::TextureFormatFeatures {
+                allowed_usages: wgpu::TextureUsages::empty(),
+                flags: wgpu::TextureFormatFeatureFlags::empty(),
+            }
+        } else {
+            adapter.get_texture_format_features(wgpu::TextureFormat::Rg16Float)
+        };
         let effect_depth_format = select_effect_depth_format(rg16_features);
         let adapter_format_feature = wgpu::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES;
         let adapter_format_feature_available = adapter.features().contains(adapter_format_feature);
@@ -1976,6 +2013,7 @@ impl Renderer {
             "estimate_kind":"known resource buffer/texture sizes; excludes driver alignment, transient capture/surface buffers, pipelines, bind groups and opaque timestamp query-set storage",
             "render_targets_bytes":render_targets_bytes,
             "effect_depth_format":format!("{effect_depth_format:?}"),
+            "rg16_fallback_forced":force_rg16_fallback,
             "effect_depth_bytes":pixel_count*effect_depth_bytes_per_pixel,
             "hdr_color_format":format!("{hdr_color_format:?}"),
             "hdr_color_requested_compact":scene.render.compact_hdr,
