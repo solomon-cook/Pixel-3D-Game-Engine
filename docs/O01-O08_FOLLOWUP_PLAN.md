@@ -78,8 +78,12 @@ when casters actually move or change shadow participation?
    boundary crossings and reset, shader reload, light transform, light range and
    paused-edit events. Report dirty faces/reasons, redraw maps, CPU/GPU shadow time
    and residency.
-3. Include unknown/missing-bound fallback. Verify that it redraws conservatively
-   rather than trusting an incomplete revision key.
+3. **Complete in synthetic unit coverage:** missing bounds among otherwise known
+   old/new caster bounds and invalid shadow frusta force all seven maps dirty.
+   The live diagnostic reason now reports `unknown_caster_bounds` or
+   `unknown_shadow_material_bounds` when conservative fallback is used. Validated
+   scene assets currently cannot produce unknown mesh bounds, so this fallback
+   cannot be induced through the live scene protocol; keep that limit visible.
 
 **Exit gate:** captures match forced redraw at all checkpoints, every relevant edit
 invalidates the required maps, and stable segments show cache reuse. Report the

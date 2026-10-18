@@ -538,8 +538,13 @@ byte-identical cached/forced captures. Masks were respectively 2, 1, 6, 6, 7 and
 `directional_light_projection_changed`, `point_light_projection_changed`,
 `point_light_range_changed`, `shader_reload` and `reset`. See
 [measurements-o02-invalidation.json](measurements-o02-invalidation.json). These
-paused checkpoints do not measure continuous invalidation cost; unknown bounds,
-native-window and non-Metal behavior remain open.
+paused checkpoints do not measure continuous invalidation cost. Synthetic unit
+coverage now checks mixed known/missing old/new caster bounds and invalid shadow
+frusta; each case forces all seven maps dirty. The live diagnostic reason reports
+`unknown_caster_bounds` or `unknown_shadow_material_bounds` for those fallbacks.
+Current validated scene assets always produce bounds, so the live protocol cannot
+induce an unknown-bound case without a new asset type or test hook. Native-window
+and non-Metal behavior remain open.
 
 ## O02 continuous moving-caster cost (18 October)
 

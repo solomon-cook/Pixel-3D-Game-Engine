@@ -357,8 +357,10 @@ and per-pose masks, dirty reasons and CPU shadow-encoding samples are recorded i
 [measurements-o02-moving-caster.json](measurements-o02-moving-caster.json); rerun
 with `python3 scripts/shadow_caster_study.py`. This checks discrete paused edits,
 not the planned 120-second continuous-motion timing route. The mover is outside
-the selected camera view, unknown-bound fallback was not induced, and native-window
-and Windows/DX12 behavior remain unverified.
+the selected camera view, and native-window and Windows/DX12 behavior remain
+unverified. Synthetic unit checks now prove that mixed missing bounds and invalid
+shadow frusta dirty all seven maps; the diagnostic reason identifies conservative
+fallback. Validated scene assets do not currently produce a live unknown-bound case.
 
 Final `python3 scripts/verify.py --gpu` completed successfully on Apple M1 Max
 with Metal (`verified: true`, `gpu: true`, `native: false`). Workspace formatting,

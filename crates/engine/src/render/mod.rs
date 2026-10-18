@@ -368,6 +368,16 @@ fn shadow_face_mask_for_bounds(
     dirty
 }
 
+fn shadow_bounds_require_full_fallback(
+    bounds: &[Option<assets::Bounds3>],
+    matrices: &[Mat4; 7],
+) -> bool {
+    bounds.iter().any(Option::is_none)
+        || matrices
+            .iter()
+            .any(|matrix| Frustum::from_view_projection(*matrix).is_none())
+}
+
 fn only_object_transforms_changed(previous: &ShadowCacheKey, next: &ShadowCacheKey) -> bool {
     if previous.casters.len() != next.casters.len() {
         return false;
@@ -3604,8 +3614,11 @@ impl Renderer {
                             .filter(|(id, _, _)| changed_ids.contains(&id.as_str()))
                             .flat_map(|(_, old, new)| [old.clone(), new.clone()])
                             .collect::<Vec<_>>();
-                        let transform_faces =
-                            shadow_face_mask_for_bounds(&bounds, &shadow_matrices(scene));
+                        let matrices = shadow_matrices(scene);
+                        let transform_faces = shadow_face_mask_for_bounds(&bounds, &matrices);
+                        if shadow_bounds_require_full_fallback(&bounds, &matrices) {
+                            reported_reason = "unknown_caster_bounds";
+                        }
                         for (dirty, transform_dirty) in dirty_faces.iter_mut().zip(transform_faces)
                         {
                             *dirty |= transform_dirty;
@@ -3656,8 +3669,11 @@ impl Renderer {
                         dirty_faces = [true; 7];
                         reported_reason = "unknown_shadow_material_bounds";
                     } else {
-                        let material_faces =
-                            shadow_face_mask_for_bounds(&bounds, &shadow_matrices(scene));
+                        let matrices = shadow_matrices(scene);
+                        let material_faces = shadow_face_mask_for_bounds(&bounds, &matrices);
+                        if shadow_bounds_require_full_fallback(&bounds, &matrices) {
+                            reported_reason = "unknown_shadow_material_bounds";
+                        }
                         for (dirty, material_dirty) in dirty_faces.iter_mut().zip(material_faces) {
                             *dirty |= material_dirty;
                         }
@@ -4609,9 +4625,26 @@ mod shadow_cache_tests {
             min: [2.8, -0.2, -0.2],
             max: [3.2, 0.2, 0.2],
         };
-        let dirty = shadow_face_mask_for_bounds(&[Some(positive_x)], &matrices);
+        let dirty = shadow_face_mask_for_bounds(&[Some(positive_x.clone())], &matrices);
         assert_eq!(dirty, [false, true, false, false, false, false, false]);
         assert_eq!(shadow_face_mask_for_bounds(&[None], &matrices), [true; 7]);
+        assert_eq!(
+            shadow_face_mask_for_bounds(&[Some(positive_x.clone()), None], &matrices),
+            [true; 7]
+        );
+        assert!(shadow_bounds_require_full_fallback(
+            &[Some(positive_x.clone()), None],
+            &matrices
+        ));
+        let invalid_matrices = [Mat4::ZERO; 7];
+        assert_eq!(
+            shadow_face_mask_for_bounds(&[Some(positive_x.clone())], &invalid_matrices),
+            [true; 7]
+        );
+        assert!(shadow_bounds_require_full_fallback(
+            &[Some(positive_x)],
+            &invalid_matrices
+        ));
     }
 
     fn scene() -> Scene {
