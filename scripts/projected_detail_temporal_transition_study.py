@@ -121,12 +121,31 @@ def main() -> int:
         assert [f["tick"] for f in base_frames] == [f["tick"] for f in lod_frames]
         assert [f["camera"] for f in base_frames] == [f["camera"] for f in lod_frames]
 
+        state_keys = ("fire_primitives_full", "embers", "particle_lights")
+        state_parity = all(
+            tuple(frame["metrics"][key] for key in state_keys) ==
+            tuple(candidate["metrics"][key] for key in state_keys)
+            for frame, candidate in zip(base_meta, lod_meta)
+        )
+        assert state_parity, f"{profile}: LOD changed full simulation state or emitted-light counts"
+
         events = source["profiles"][profile]["transitions"]
         transition_indexes = {event["frame"] for event in events}
         for event in events:
             index = event["frame"]
             assert lod_meta[index]["metrics"]["fire_lod_level"] == event["to"], (profile, event)
             assert lod_meta[index - 1]["metrics"]["fire_lod_level"] == event["from"], (profile, event)
+        observed_transitions = [
+            {"frame": index, "from": lod_meta[index - 1]["metrics"]["fire_lod_level"],
+             "to": lod_meta[index]["metrics"]["fire_lod_level"]}
+            for index in range(1, len(lod_meta))
+            if lod_meta[index - 1]["metrics"]["fire_lod_level"] != lod_meta[index]["metrics"]["fire_lod_level"]
+        ]
+        expected_transitions = [
+            {"frame": event["frame"], "from": event["from"], "to": event["to"]}
+            for event in events
+        ]
+        assert observed_transitions == expected_transitions, (profile, observed_transitions, expected_transitions)
         # Exclude two neighboring steps on either side from the comparison set.
         transition_window_indexes = {
             index + offset for index in transition_indexes for offset in (-2, -1, 0, 1, 2)
@@ -140,6 +159,9 @@ def main() -> int:
             "lod_sequence_sha256": sha256(ROOT / f"artifacts/o04/continuous-motion/{lod_name}/sequence.json"),
             "frame_count": len(base_frames),
             "fps": base_sequence["fps"],
+            "full_fire_geometry_embers_and_particle_lights_match_every_sample": state_parity,
+            "observed_transitions_match_source_report": observed_transitions == expected_transitions,
+            "observed_transitions": observed_transitions,
             "transitions_zero_based_frame_index": events,
             "transition_window_indexes_zero_based": sorted(transition_window_indexes),
             "flame_difference_bbox": bbox,

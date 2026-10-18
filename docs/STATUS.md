@@ -40,7 +40,8 @@ in [measurements-o04-sustained-profiles.json](measurements-o04-sustained-profile
 The paired deterministic sequences have also been compared frame-to-frame around
 every LOD transition (±2 samples): temporal-change-image mean RGB MAE is
 0.0047/0.0073/0.0048 per 255 for campfire/quiet/bonfire. This is sampled numeric
-evidence only; continuous playback acceptance remains open. See
+evidence only; full fire-geometry, ember and particle-light count parity also
+holds at every sample. Continuous playback acceptance remains open. See
 [transition report](measurements-o04-transition-temporal.json) and
 [runner](../scripts/projected_detail_temporal_transition_study.py).
 The native Mac was locked during this turn, so the generated motion files still

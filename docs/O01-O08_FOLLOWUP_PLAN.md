@@ -142,7 +142,10 @@ acceptance remain open. See
    error within ±2 samples of every LOD transition. Mean RGB MAE is
    0.0047/0.0073/0.0048 per 255 for campfire/quiet/bonfire; nearest-rank p95 is
    0.0118/0.0123/0.0121. This quantifies sampled transition differences but does
-   not establish continuous playback acceptance at 20/12 fps. See
+   not establish continuous playback acceptance at 20/12 fps. The runner also
+   verifies full fire geometry, ember and particle-light count parity at every
+   sampled frame and checks the observed tier transitions against the source
+   motion report. See
    [transition report](measurements-o04-transition-temporal.json) and
    [runner](../scripts/projected_detail_temporal_transition_study.py).
 4. **Complete on M1 Max/Metal:** add three alternating 120-second offscreen

@@ -10,6 +10,50 @@
       "lod_sequence_sha256": "d030c0b8b8abbf2925b78ca51da96348b7e528b42c48a2a763b72340f2502696",
       "frame_count": 400,
       "fps": 20.0,
+      "full_fire_geometry_embers_and_particle_lights_match_every_sample": true,
+      "observed_transitions_match_source_report": true,
+      "observed_transitions": [
+        {
+          "frame": 39,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "frame": 86,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "frame": 130,
+          "from": 2,
+          "to": 1
+        },
+        {
+          "frame": 172,
+          "from": 1,
+          "to": 0
+        },
+        {
+          "frame": 239,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "frame": 286,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "frame": 330,
+          "from": 2,
+          "to": 1
+        },
+        {
+          "frame": 372,
+          "from": 1,
+          "to": 0
+        }
+      ],
       "transitions_zero_based_frame_index": [
         {
           "frame": 39,
@@ -194,6 +238,20 @@
       "lod_sequence_sha256": "8090751a706d61c78b93a754f99167842b61051be685dabe5079335e06546727",
       "frame_count": 120,
       "fps": 12.0,
+      "full_fire_geometry_embers_and_particle_lights_match_every_sample": true,
+      "observed_transitions_match_source_report": true,
+      "observed_transitions": [
+        {
+          "frame": 29,
+          "from": 1,
+          "to": 2
+        },
+        {
+          "frame": 98,
+          "from": 2,
+          "to": 1
+        }
+      ],
       "transitions_zero_based_frame_index": [
         {
           "frame": 29,
@@ -312,6 +370,20 @@
       "lod_sequence_sha256": "d93dd9f54b1d3b82d723f670e8e4144259461841399f42ffc4b591b318abe882",
       "frame_count": 120,
       "fps": 12.0,
+      "full_fire_geometry_embers_and_particle_lights_match_every_sample": true,
+      "observed_transitions_match_source_report": true,
+      "observed_transitions": [
+        {
+          "frame": 52,
+          "from": 0,
+          "to": 1
+        },
+        {
+          "frame": 78,
+          "from": 1,
+          "to": 0
+        }
+      ],
       "transitions_zero_based_frame_index": [
         {
           "frame": 52,
@@ -432,6 +504,6 @@
   ],
   "all_checks_passed": true,
   "runner": "scripts/projected_detail_temporal_transition_study.py",
-  "runner_sha256": "b3b0b40430dadaa70474592736bb877919883a7206a3ae6e3758a9d44952dd09",
+  "runner_sha256": "7b50d9dfb99553c8202a7a32202fc0e83d3a1a6c61df1082f181d4e1c66edd39",
   "report_path": "docs/measurements-o04-transition-temporal.json"
 }
