@@ -527,6 +527,7 @@ DX12 and other-adapter acceptance remain open. See [native report](measurements-
 [review-scene sustained report](measurements-multi-emitter-review-tile-sustained.json),
 [scene](../assets/scenes/two-emitter-overflow-stress.json) and
 [runner](../scripts/two_emitter_overflow_study.py).
+Transactional shader rollback now has dual-source fixed-tick coverage: deliberately invalid fire and volume WGSL modules fail validation in an isolated shader copy, while both failed reloads preserve the baseline PNG and avoid shadow redraw. Restoring the modules reloads successfully, keeps the same PNG, and redraws all 13 shadow maps. This is headless M1 Max/Metal evidence; native and other-adapter behavior remain open. See [report](measurements-multi-emitter-shader-rollback.json) and [runner](../scripts/two_emitter_shader_reload_rollback_study.py).
 
 `python3 scripts/verify.py --gpu` passed on this host: formatting, Clippy,
 40 workspace tests, scene validation and material/fire GPU checks. The verifier

@@ -276,4 +276,11 @@ host did not register minimize, so that path remains unverified. See
 playback, broader workload scaling, cross-adapter correctness and target-hardware
 support remain unverified. Gate 4's reset/replay, paused-edit and shader-reload
 checks have focused dual-source shadow invalidation evidence, while broader
-resource recreation and device-loss behavior remain open.
+resource recreation and device-loss behavior remain open. A new dual-source shader
+rollback study appends WGSL syntax errors to the fire and volume modules in an
+isolated shader directory. At seed 42/tick 120, each failed reload retains the
+baseline image and reuses all shadow maps; restoring the modules reloads successfully,
+keeps the image identical and redraws all 13 maps for the successful reload. This
+closes fixed-tick headless Metal rollback coverage for these modules, not native or
+cross-adapter behavior. See [rollback report](measurements-multi-emitter-shader-rollback.json)
+and [runner](../scripts/two_emitter_shader_reload_rollback_study.py).

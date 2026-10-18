@@ -676,9 +676,16 @@ playback, broader resource recreation stress, DX12 and another-adapter
 acceptance remain open. A dual-emitter native surface resize/restore study
 preserves the fixed-tick image and renderer inventory; minimize was not observed
 by the host. See [lifecycle report](measurements-multi-emitter-native-lifecycle.json)
-and [runner](../scripts/two_emitter_native_lifecycle_study.py). Fixed-tick native tiled/exhaustive output matches across
-six cameras, source isolation and reversed emitter order. Keep the cap at two
-until the remaining correctness, memory and performance budgets pass.
+and [runner](../scripts/two_emitter_native_lifecycle_study.py). A dual-source
+transactional reload study now appends WGSL syntax errors to the fire and volume
+modules in an isolated shader directory. At seed 42/tick 120, both failed reloads
+preserve the baseline image and cached shadows; after restoring the shaders, a
+successful reload produces the same image and redraws all 13 shadow maps. The
+fixed-tick headless Metal rollback gate passes for these modules; broader shader,
+native-window and cross-adapter coverage remains open. See [rollback report](measurements-multi-emitter-shader-rollback.json) and [runner](../scripts/two_emitter_shader_reload_rollback_study.py). Fixed-tick native
+tiled/exhaustive output matches across six cameras, source isolation and reversed
+emitter order. Keep the cap at two until the remaining correctness, memory and
+performance budgets pass.
 
 **Maximum-budget ink-smoke parity: corrected and verified on M1 Max/Metal.** The
 reproducible route initially differed from exhaustive output in 9,616 of 230,400
