@@ -120,6 +120,9 @@ pub struct ShadingCounters {
     pub optical_reflection_steps: u32,
     pub optical_reflection_refinement_steps: u32,
     pub optical_transmission_interactions: u32,
+    pub soft_volume_pixel_invocations: u32,
+    pub inked_smoke_pixel_invocations: u32,
+    pub volume_pixel_invocations: u32,
 }
 
 impl FrameMetrics {

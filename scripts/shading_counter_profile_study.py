@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import subprocess
+import tempfile
 from pathlib import Path
 
 from PIL import Image, ImageChops, ImageStat
@@ -11,6 +12,7 @@ from PIL import Image, ImageChops, ImageStat
 
 PROFILES = ("effect-campfire", "effect-quiet", "effect-bonfire")
 CAMERAS = ("hero", "smoke-close", "fire-study", "orthographic")
+STYLES = ("ink", "volume")
 def pixel_hash(path: Path) -> str:
     with Image.open(path) as image:
         pixels = image.convert("RGBA").tobytes()
@@ -51,67 +53,89 @@ def main() -> None:
     args.scene = args.scene.resolve()
     args.output.mkdir(parents=True, exist_ok=True)
     captures = []
-    for profile in PROFILES:
-        for camera in CAMERAS:
-            variants = {}
-            paths = {}
-            for label, diagnostic in (("normal", False), ("diagnostic", True)):
-                image = args.output / f"{profile}-{camera}-{label}.png"
-                paths[label] = image
-                command = [str(args.binary), "capture", "--scene", str(args.scene), "--camera", camera,
-                           "--seed", str(args.seed), "--tick", str(args.tick), "--resolution", "640x360",
-                           "--scale", "1", "--effect-profile", profile, "--output", str(image)]
-                if diagnostic:
-                    command.append("--shading-counters")
-                subprocess.run(command, check=True, stdout=subprocess.DEVNULL)
-                metadata = json.loads(image.with_suffix(".json").read_text())
-                variants[label] = {
-                    "image": str(image),
-                    "pixel_sha256": pixel_hash(image),
-                    "backend": metadata["capabilities"]["backend"],
-                    "adapter": metadata["capabilities"]["name"],
-                    "resolution": metadata["capabilities"]["resolution"],
-                }
-                if diagnostic:
-                    counters = metadata["metrics"].get("shading_counters")
-                    if not counters:
-                        raise RuntimeError(f"missing shading counters: {profile}/{camera}")
-                    variants["counters"] = counters
-                    variants["diagnostic_scratch_bytes"] = metadata["capabilities"]["resource_inventory"][
-                        "shading_diagnostic_targets_bytes"
-                    ]
-            difference = pixel_difference(paths["normal"], paths["diagnostic"])
-            captures.append({
-                "profile": profile,
-                "camera": camera,
-                "scene": str(args.scene),
-                "seed": args.seed,
-                "tick": args.tick,
-                "normal": variants["normal"],
-                "diagnostic": variants["diagnostic"],
-                "pixel_identical": variants["normal"]["pixel_sha256"] == variants["diagnostic"]["pixel_sha256"],
-                "pixel_difference": difference,
-                "counters": variants["counters"],
-                "diagnostic_scratch_bytes": variants["diagnostic_scratch_bytes"],
-            })
+    with tempfile.TemporaryDirectory(prefix="pixel-engine-counter-scenes-") as temporary:
+        temporary = Path(temporary)
+        for style in STYLES:
+            scene_data = json.loads(args.scene.read_text())
+            for emitter in scene_data["emitters"]:
+                emitter["style"] = style
+            scene_path = temporary / f"profiling-heavy-{style}.json"
+            scene_path.write_text(json.dumps(scene_data))
+            scene_hash = hashlib.sha256(scene_path.read_bytes()).hexdigest()
+            for profile in PROFILES:
+                for camera in CAMERAS:
+                    variants = {}
+                    paths = {}
+                    for label, diagnostic in (("normal", False), ("diagnostic", True)):
+                        image = args.output / f"{style}-{profile}-{camera}-{label}.png"
+                        paths[label] = image
+                        command = [str(args.binary), "capture", "--scene", str(scene_path), "--camera", camera,
+                                   "--seed", str(args.seed), "--tick", str(args.tick), "--resolution", "640x360",
+                                   "--scale", "1", "--effect-profile", profile, "--output", str(image)]
+                        if diagnostic:
+                            command.append("--shading-counters")
+                        subprocess.run(command, check=True, stdout=subprocess.DEVNULL)
+                        metadata = json.loads(image.with_suffix(".json").read_text())
+                        variants[label] = {
+                            "image": str(image),
+                            "pixel_sha256": pixel_hash(image),
+                            "backend": metadata["capabilities"]["backend"],
+                            "adapter": metadata["capabilities"]["name"],
+                            "resolution": metadata["capabilities"]["resolution"],
+                        }
+                        if diagnostic:
+                            counters = metadata["metrics"].get("shading_counters")
+                            if not counters:
+                                raise RuntimeError(f"missing shading counters: {style}/{profile}/{camera}")
+                            variants["counters"] = counters
+                            variants["diagnostic_scratch_bytes"] = metadata["capabilities"]["resource_inventory"][
+                                "shading_diagnostic_targets_bytes"
+                            ]
+                    difference = pixel_difference(paths["normal"], paths["diagnostic"])
+                    captures.append({
+                        "style": style,
+                        "profile": profile,
+                        "camera": camera,
+                        "scene": str(args.scene),
+                        "scene_variant_sha256": scene_hash,
+                        "seed": args.seed,
+                        "tick": args.tick,
+                        "normal": variants["normal"],
+                        "diagnostic": variants["diagnostic"],
+                        "pixel_identical": variants["normal"]["pixel_sha256"] == variants["diagnostic"]["pixel_sha256"],
+                        "pixel_difference": difference,
+                        "counters": variants["counters"],
+                        "counts_per_output_pixel": {
+                            name: count / (640 * 360)
+                            for name, count in variants["counters"].items()
+                        },
+                        "volume_path_partition_valid": (
+                            variants["counters"]["volume_pixel_invocations"]
+                            == variants["counters"]["soft_volume_pixel_invocations"]
+                            + variants["counters"]["inked_smoke_pixel_invocations"]
+                        ),
+                        "diagnostic_scratch_bytes": variants["diagnostic_scratch_bytes"],
+                    })
     report = {
         "version": 1,
-        "purpose": "Expand O01 counter coverage across three fire profiles and four named views; counts are not timings.",
+        "purpose": "Expand O01 counter coverage across inked and soft volume styles, three fire profiles and four named views; counts are not timings.",
         "scene": str(args.scene),
         "seed": args.seed,
         "tick": args.tick,
         "resolution": [640, 360],
         "profiles": list(PROFILES),
+        "styles": list(STYLES),
         "cameras": list(CAMERAS),
         "binary_sha256": file_hash(args.binary),
         "runner_sha256": file_hash(Path(__file__).resolve()),
         "captures": captures,
         "all_pixel_identical": all(row["pixel_identical"] for row in captures),
-        "scope": "Fixed-tick diagnostic counts, not timing. Normal rendering produces the image; instrumented world, volume and optical draws then write to lazily allocated scratch targets while reading the normal depth and scene inputs. No continuous-motion claim.",
+        "scope": "Fixed-tick diagnostic counts, not timing. Counts per output pixel normalize workload coverage and are not per-operation costs. Normal rendering produces the image; instrumented world, volume and optical draws then write to lazily allocated scratch targets while reading the normal depth and scene inputs. No continuous-motion claim.",
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({"report": str(args.report), "captures": len(captures),
+                      "path_partition_valid": all(row["volume_path_partition_valid"] for row in captures),
                       "all_pixel_identical": report["all_pixel_identical"]}))
 
 

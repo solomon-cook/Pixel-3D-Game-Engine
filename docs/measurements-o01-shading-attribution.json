@@ -243,9 +243,10 @@
   "date": "2026-10-18",
   "host": "Apple M1 Max, IntegratedGpu, Metal",
   "limitations": [
-    "This report joins independent experiments, not one factorial attribution run; results indicate category sensitivity rather than causal additivity.",
-    "The renderer reports tile memberships, primitive counts and pass timings, but has no operation-level GPU counters for the listed unmeasured operations.",
-    "Single M1 Max/Metal offscreen evidence; native-window, Windows/DX12 and other-adapter behavior remain unverified."
+    "The synthesis combines independent experiments, not one factorial attribution run; stage deltas indicate sensitivity rather than causal additivity.",
+    "Atomic operation counters are aggregate counts, not per-pixel distributions or elapsed GPU costs; they do not report bandwidth, cache misses or divergence.",
+    "Soft-volume style has fixed-tick counter coverage but no matched uninstrumented sustained route timing yet.",
+    "Single M1 Max/Metal evidence; native-window, Windows/DX12 and other-adapter behavior remain unverified."
   ],
   "method": "Synthesis of existing M1 Max/Metal O01 stage profiles with independent O03 tile-list, O04 projected-detail, O05 absorption-cache and O06 optical-reuse paired probes. Stage deltas are separate overlapping GPU intervals and must not be summed as additive costs.",
   "optical_reuse_probe": {
@@ -280,7 +281,8 @@
     "measurements-o03.json",
     "measurements-o04.json",
     "measurements-o05-size-study.json",
-    "measurements-o06-sustained.json"
+    "measurements-o06-sustained.json",
+    "measurements-o01-counter-paths.json"
   ],
   "tile_list_candidate_probe": {
     "clearing": {
@@ -369,11 +371,63 @@
     }
   },
   "unmeasured_operations": [
-    "Actual per-pixel fire primitive intersection tests after bounds rejects.",
-    "Actual smoke-lobe parent and child intersection tests after tile candidate selection.",
-    "Executed smoke density and absorption texture samples after early ray termination and UV bounds rejects.",
-    "Shadow-comparison texture sample counts by sun, primary point light and shading category.",
-    "Per-pixel optical reflection/refraction interactions and screen-space ray samples."
+    "Elapsed GPU cost attributable to individual fire, smoke-density and absorption operations.",
+    "Per-pixel distribution, divergence and early-termination histograms for the aggregate operation counts.",
+    "Memory bandwidth, cache hit rates and texture-fetch stalls by shading category.",
+    "Shadow-comparison texture samples split by sun, primary point light and shading category.",
+    "Per-pixel distribution of optical reflection, transmission and screen-space ray samples."
   ],
-  "workstream": "O01 atmosphere/fire shader attribution probes"
+  "workstream": "O01 atmosphere/fire shader attribution probes",
+  "counter_path_probe": {
+    "source_report": "measurements-o01-counter-paths.json",
+    "captures": 24,
+    "styles": [
+      "ink",
+      "volume"
+    ],
+    "profiles": [
+      "effect-campfire",
+      "effect-quiet",
+      "effect-bonfire"
+    ],
+    "cameras": [
+      "hero",
+      "smoke-close",
+      "fire-study",
+      "orthographic"
+    ],
+    "pixel_identical_all_pairs": true,
+    "volume_path_partition_valid_all_pairs": true,
+    "representative": {
+      "ink": {
+        "profile": "effect-bonfire",
+        "camera": "fire-study",
+        "tick": 120,
+        "seed": 42,
+        "volume_pixels": 230400,
+        "soft_volume_pixels": 0,
+        "inked_smoke_pixels": 230400,
+        "fire_ellipsoid_tests": 804599,
+        "smoke_density_samples": 451096,
+        "direct_absorption_samples": 372216,
+        "density_samples_per_output_pixel": 1.9578819444444444,
+        "scope": "Fixed-tick operation counts, not timings; one representative profile/view."
+      },
+      "volume": {
+        "profile": "effect-bonfire",
+        "camera": "fire-study",
+        "tick": 120,
+        "seed": 42,
+        "volume_pixels": 230400,
+        "soft_volume_pixels": 230400,
+        "inked_smoke_pixels": 0,
+        "fire_ellipsoid_tests": 838608,
+        "smoke_density_samples": 181010226,
+        "direct_absorption_samples": 115967532,
+        "density_samples_per_output_pixel": 785.6346614583333,
+        "scope": "Fixed-tick operation counts, not timings; one representative profile/view."
+      }
+    },
+    "interpretation": "Soft-volume performs far more density and absorption texture reads in this fixed-tick case. This does not establish stage cost; instrumented counts are not timing and an uninstrumented sustained soft-volume route remains needed."
+  }
 }

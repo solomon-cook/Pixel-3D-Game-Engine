@@ -344,6 +344,20 @@ sampled image parity for those views, not continuous playback, native-window or
 cross-adapter validation. See the [expanded fire report](measurements-o01-counter-profile-scope.json)
 and [optical report](measurements-o01-optical-counter-coverage.json).
 
+## O01 atmosphere path invocation counters (18 October)
+
+The shading diagnostic buffer now records total volume-pass fragment invocations
+and splits them by soft-volume versus inked-smoke style. Three profiles, four
+cameras and both styles produce 24 normal/diagnostic pairs with exact pixel
+parity. At the bonfire/fire-study fixed tick, the soft-volume case records
+181,010,226 density samples and 115,967,532 direct-absorption samples, compared
+with 451,096 and 372,216 for inked smoke. Both render 230,400 volume fragments.
+The counter report normalizes counts by output pixels, but neither those values
+nor the raw counts are timings. Keep shader changes evidence-gated until a matched
+uninstrumented sustained soft-volume route records atmosphere/fire and full-frame
+cost. See [path counter report](measurements-o01-counter-paths.json) and its
+[reproducible runner](../scripts/shading_counter_profile_study.py).
+
 
 ## Shared geometry and conservative visibility (16 October)
 

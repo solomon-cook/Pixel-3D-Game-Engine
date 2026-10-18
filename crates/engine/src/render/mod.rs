@@ -222,6 +222,7 @@ const FIRE_TILE_CAPACITY: u32 = 64;
 const SMOKE_TILE_CAPACITY: u32 = 36;
 const POINT_TILE_CAPACITY: u32 = 8;
 const PARTICLE_TILE_CAPACITY: u32 = 12;
+const SHADING_DIAGNOSTIC_COUNTER_COUNT: usize = 25;
 
 pub struct Renderer {
     pub device: wgpu::Device,
@@ -1052,7 +1053,7 @@ impl Renderer {
         );
         let shading_diagnostic_buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("opt-in shading diagnostic counters"),
-            size: 22 * 4,
+            size: SHADING_DIAGNOSTIC_COUNTER_COUNT as u64 * 4,
             usage: wgpu::BufferUsages::STORAGE
                 | wgpu::BufferUsages::COPY_SRC
                 | wgpu::BufferUsages::COPY_DST,
@@ -2076,7 +2077,7 @@ impl Renderer {
             + std::mem::size_of::<FireFrameStorage>() as u64
             + 72 * 16 * 2
             + 7 * 64
-            + 22 * std::mem::size_of::<u32>() as u64
+            + SHADING_DIAGNOSTIC_COUNTER_COUNT as u64 * std::mem::size_of::<u32>() as u64
             + SMOKE_CONFIG_STRIDE * SIMULATION_BATCH_CAPACITY as u64 * scene.emitters.len() as u64;
         let format_support = [
             wgpu::TextureFormat::Rgba16Float,
@@ -2145,7 +2146,7 @@ impl Renderer {
             "tile_stats_buffer_bytes":tile_stats_buffer_bytes,
             "tile_config_bytes":tile_config_bytes,
             "tile_stats_readback_bytes":tile_stats_readback_bytes,
-            "shading_diagnostic_counter_bytes":22 * std::mem::size_of::<u32>() as u64,
+            "shading_diagnostic_counter_bytes":SHADING_DIAGNOSTIC_COUNTER_COUNT as u64 * std::mem::size_of::<u32>() as u64,
             "shading_diagnostic_targets_bytes":0,
             "shading_diagnostic_targets_reservation_bytes":shading_diagnostic_scratch_bytes,
             "gpu_timestamp_staging_bytes":timing_staging_bytes,
@@ -2470,7 +2471,7 @@ impl Renderer {
                     .replace("@group(2) @binding(9)", "@group(2) @binding(4)")
             ),
         );
-        let diagnostic_preamble = "@group(0) @binding(2) var<storage, read_write> shading_diag: array<atomic<u32>,22>; fn diag_add(i:u32) { atomicAdd(&shading_diag[i],1u); }";
+        let diagnostic_preamble = format!("@group(0) @binding(2) var<storage, read_write> shading_diag: array<atomic<u32>,{SHADING_DIAGNOSTIC_COUNTER_COUNT}>; fn diag_add(i:u32) {{ atomicAdd(&shading_diag[i],1u); }}");
         let diagnostic_world = inject_counter_hooks(
             world,
             &[
@@ -2505,6 +2506,7 @@ impl Renderer {
         let diagnostic_volume = inject_counter_hooks(
             volume_source,
             &[
+                ("let tile=tile_index(pixel.xy);", "diag_add(24u); if g.experiments.w>0.5 {diag_add(23u);} else {diag_add(22u);} let tile=tile_index(pixel.xy);"),
                 ("if candidate>=smoke_candidate_count {break;}", "if candidate>=smoke_candidate_count {break;} diag_add(3u);"),
                 ("if along+bound<0. || along-bound>distance || length(origin+direction*max(along,0.)-parent)>bound {continue;}", "diag_add(4u); if along+bound<0. || along-bound>distance || length(origin+direction*max(along,0.)-parent)>bound {continue;}"),
                 ("if bubble>child_count {break;}", "if bubble>child_count {break;} diag_add(5u);"),
@@ -3273,12 +3275,18 @@ impl Renderer {
     pub fn read_shading_counters(&mut self) -> Result<crate::diagnostics::ShadingCounters> {
         let read = self.device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("shading counter sample readback"),
-            size: 22 * 4,
+            size: SHADING_DIAGNOSTIC_COUNTER_COUNT as u64 * 4,
             usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
             mapped_at_creation: false,
         });
         let mut encoder = self.device.create_command_encoder(&Default::default());
-        encoder.copy_buffer_to_buffer(&self.shading_diagnostic_buffer, 0, &read, 0, 22 * 4);
+        encoder.copy_buffer_to_buffer(
+            &self.shading_diagnostic_buffer,
+            0,
+            &read,
+            0,
+            SHADING_DIAGNOSTIC_COUNTER_COUNT as u64 * 4,
+        );
         self.queue.submit([encoder.finish()]);
         let (send, receive) = mpsc::channel();
         read.slice(..)
@@ -3312,6 +3320,9 @@ impl Renderer {
             optical_reflection_steps: c(19),
             optical_reflection_refinement_steps: c(20),
             optical_transmission_interactions: c(21),
+            soft_volume_pixel_invocations: c(22),
+            inked_smoke_pixel_invocations: c(23),
+            volume_pixel_invocations: c(24),
         };
         self.metrics.shading_counters = Some(counters.clone());
         drop(bytes);
@@ -4289,8 +4300,11 @@ impl Renderer {
     pub fn render(&mut self, scene: &Scene, camera: &Camera, tick: u64, seed: u32) {
         self.poll_timing(false);
         if self.shading_diagnostics_enabled {
-            self.queue
-                .write_buffer(&self.shading_diagnostic_buffer, 0, &[0; 22 * 4]);
+            self.queue.write_buffer(
+                &self.shading_diagnostic_buffer,
+                0,
+                &[0; SHADING_DIAGNOSTIC_COUNTER_COUNT * 4],
+            );
             self.metrics.shading_counters = None;
         }
         self.ensure_absorption_cache(scene.render.experiments.smoke_absorption_cache);

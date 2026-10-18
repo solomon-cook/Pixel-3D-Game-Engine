@@ -1314,6 +1314,7 @@ fn draw_inspector(ctx: &egui::Context, session: &Session, commands: &mut Vec<(&s
             if let Some(counters) = &session.renderer.metrics.shading_counters {
                 ui.monospace(format!("Fire candidates: {} · tests: {}", counters.fire_primitive_candidates, counters.fire_ellipsoid_tests));
                 ui.monospace(format!("Smoke candidates: {} · density samples: {}", counters.smoke_lobe_candidates, counters.smoke_density_samples));
+                ui.monospace(format!("Volume pixels: {} · soft/inked: {}/{}", counters.volume_pixel_invocations, counters.soft_volume_pixel_invocations, counters.inked_smoke_pixel_invocations));
                 ui.monospace(format!("Absorption direct/cache: {}/{}", counters.direct_absorption_samples, counters.cached_absorption_samples));
                 ui.monospace(format!("Shadow sun/fire: {}/{}", counters.sun_shadow_lookups, counters.fire_shadow_lookups));
                 ui.monospace(format!("World lights point/particle: {}/{}", counters.world_point_light_candidates, counters.world_particle_light_candidates));

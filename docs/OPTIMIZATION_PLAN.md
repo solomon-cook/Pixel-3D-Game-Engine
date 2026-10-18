@@ -128,6 +128,16 @@ zero skipped render samples and zero late samples. See the
 [slot-saturation report](measurements-o01-query-slot-saturation.json); the raw
 benchmark output remains under ignored `artifacts/o01/`.
 
+The shading diagnostic path now adds volume-fragment invocation counts split
+between soft-volume and inked-smoke styles. Fixed-tick coverage across three fire
+profiles, four views and both styles preserves all 24 images exactly. At 640×360,
+the bonfire/fire-study soft-volume case counts 181,010,226 density samples versus
+451,096 in inked smoke. These instrumented counts identify a workload difference
+but do not measure time; a matched uninstrumented sustained soft-volume route is
+required before attributing GPU cost. See
+[path counter evidence](measurements-o01-counter-paths.json) and its
+[runner](../scripts/shading_counter_profile_study.py).
+
 ## O02 — Cache static shadow maps
 
 **Purpose:** avoid redrawing unchanged shadows while retaining live fire flicker.

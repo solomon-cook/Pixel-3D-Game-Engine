@@ -609,6 +609,20 @@ its [capture runner](../scripts/shading_counter_profile_study.py), plus the
 [optical route report](measurements-o01-optical-counter-route.json) and
 [reproducible runner](../scripts/shading_counter_optical_route.py).
 
+**Atmosphere path attribution (18 October 2026):** the companion counter set now
+also reports total volume fragments and partitions them into the soft-volume and
+inked-smoke paths. The expanded runner captures both scene styles, all three fire
+profiles and all four cameras. All 24 normal/diagnostic pairs are byte-identical;
+the path partition equals 230,400 fragments in every 640×360 capture. At the
+bonfire/fire-study checkpoint, inked smoke records 451,096 density samples and
+372,216 direct-absorption samples, while the soft-volume style records 181,010,226
+and 115,967,532 respectively. These counts expose workload scale, not elapsed
+cost. Existing O01 route timings cover the inked heavy scene; a matched sustained
+uninstrumented timing run for the soft-volume style is still required before
+choosing a shader rewrite. See
+[path report](measurements-o01-counter-paths.json) and the updated
+[counter runner](../scripts/shading_counter_profile_study.py).
+
 Use O01 stage data to split the multi-millisecond atmosphere/fire work by candidate
 category and representative coverage. O01 shows smoke advection near 0.02 ms on the
 measured M1 Max scene, so do not pursue active-region solver work without new data.
@@ -617,9 +631,11 @@ not measure per-operation cost. Use O03 lists and O04 detail as independent swit
 to identify which operations dominate. Keep fixed pixel density and capture matched
 views.
 
-**Exit gate:** name a measured dominant operation and its scaling variable before
-proposing a shader or algorithm rewrite. Any follow-up must include its per-stage
-cost, full-frame cost, quality evidence and fallback.
+**Exit gate:** path-specific operation counts and representative fixed-tick image
+parity are now recorded. Name a measured dominant operation and its scaling
+variable before proposing a shader or algorithm rewrite. Soft-volume style still
+needs uninstrumented per-stage/full-frame timing; any follow-up must include
+quality evidence and a selectable fallback.
 
 ## Wave 5 — Bounded multi-emitter implementation
 
