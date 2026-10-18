@@ -1,6 +1,6 @@
 use crate::{
     assets::{self, Vertex},
-    diagnostics::FrameMetrics,
+    diagnostics::{FrameMetrics, TILE_CATEGORY_ORDER},
     effects,
     effects::{
         FireFrame, FireFrameStorage, FireKey, FirePresentation, MAX_FIRE_PRIMITIVES,
@@ -5112,6 +5112,7 @@ impl Renderer {
                 "tile_count": self.tile_count,
                 "tile_size": TILE_SIZE,
                 "list_bytes": self.resource_inventory["tile_list_bytes"],
+                "category_order": TILE_CATEGORY_ORDER,
                 "capacities": {
                     "fire_primitives": FIRE_TILE_CAPACITY,
                     "smoke_lobes_per_source": SMOKE_TILE_CAPACITY,

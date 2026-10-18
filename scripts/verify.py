@@ -59,6 +59,8 @@ def main():
                 assert "error" in request("set_camera", id="missing")
                 assert "result" in request("step", ticks=120)
                 batched_metrics = request("get_metrics")["result"]["frame"]
+                tile_category_order = request("get_metrics")["result"]["capabilities"]["tile_lists"]["category_order"]
+                assert tile_category_order == ["fire_primitives", "smoke_lobes", "point_lights", "particle_lights"]
                 assert batched_metrics["cpu_steps_this_frame"] == 120
                 assert batched_metrics["cpu_simulation_submissions_this_frame"] == 20
                 first = request("capture_frame", path=str(temp / "first.png"), scale=1)

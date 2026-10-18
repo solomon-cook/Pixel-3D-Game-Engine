@@ -260,8 +260,11 @@ not natural-overflow acceptance or a promotion decision. Full values, hashes and
 limits are in [measurements-o03-overflow.json](measurements-o03-overflow.json);
 raw reports and captures are under ignored `artifacts/o03/`.
 
-The maximum-budget two-emitter study now names every tile category and records
-candidate memberships, capacities, occupancy and overflow. At tick 300, the
+Capabilities now publishes `tile_lists.category_order`, mapping the per-frame
+candidate, overflow and occupancy arrays to their category names; benchmark and
+stress-study reports consume that shared order. The maximum-budget two-emitter
+study records every tile category's capacity, candidate memberships, occupancy
+and overflow. At tick 300, the
 stress-close view naturally overflows fire tiles while smoke, point-light and
 particle-light tiles remain within their configured capacities. Those three
 candidate domains are capped at or below their list capacity by the validated

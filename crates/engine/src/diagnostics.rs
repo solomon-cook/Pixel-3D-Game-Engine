@@ -1,6 +1,14 @@
 use serde::Serialize;
 use std::collections::BTreeMap;
 
+/// Index order shared by per-category tile membership, overflow and occupancy arrays.
+pub const TILE_CATEGORY_ORDER: [&str; 4] = [
+    "fire_primitives",
+    "smoke_lobes",
+    "point_lights",
+    "particle_lights",
+];
+
 #[derive(Default, Clone, Serialize)]
 pub struct FrameMetrics {
     /// Counts are populated only by an explicitly requested diagnostic capture.

@@ -852,12 +852,7 @@ fn benchmark(
         }
     }
     let measured_tile_count = tile_stat_frames * u64::from(session.renderer.metrics.tile_count);
-    let tile_categories = [
-        "fire_primitives",
-        "smoke_lobes",
-        "point_lights",
-        "particle_lights",
-    ];
+    let tile_categories = diagnostics::TILE_CATEGORY_ORDER;
     let tile_overflow_by_category = tile_categories
         .iter()
         .enumerate()
