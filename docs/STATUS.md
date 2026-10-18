@@ -462,8 +462,12 @@ cache over 2,400 frame pairs. Camera poses, effect counts and images match every
 frame; temporal-change error is also zero for this workload. Contact-sheet review
 shows matching smoke and fire through the orbit. This is offscreen M1 Max/Metal. A native-window session toggles the cache
 at six fixed orbit poses; direct/cache/direct captures match pixel-for-pixel, with
-verified cache toggles and residency. Continuous native playback, sustained cache
-performance and portability remain open. See [native report](measurements-multi-emitter-absorption-native.json)
+verified cache toggles and residency. Continuous native playback and portability remain open. Three alternating
+120-second native pairs show +0.263 median FPS, +0.083 ms CPU frame work and
+-0.092 ms atmosphere/fire GPU time; surface acquisition varies, so there is no
+robust whole-window win. Keep the cache disabled by default. See [native sustained
+report](measurements-multi-emitter-absorption-native-sustained.json) and [runner]
+(../scripts/two_emitter_absorption_native_sustained_study.py), plus [native report](measurements-multi-emitter-absorption-native.json)
 and [native runner](../scripts/two_emitter_absorption_native_study.py), plus
 [moving-route report](measurements-multi-emitter-absorption-moving-route.json) and
 [runner](../scripts/two_emitter_absorption_moving_route_study.py).

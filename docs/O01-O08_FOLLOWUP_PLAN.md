@@ -586,8 +586,13 @@ and temporal deltas are byte-identical, with matching camera poses, cache mode,
 8³ residency and effect counts throughout. The contact sheet was inspected. A separate native-window session toggles
 direct/cache/direct at six route keyframes; repeated direct images are deterministic,
 cache mode/residency are correct, and every native pair matches pixel-for-pixel.
-These captures do not establish continuous native playback or a timing win; cache
-build cost still exceeds measured stage savings. See [native report](measurements-multi-emitter-absorption-native.json)
+These captures do not establish continuous native playback or a timing win. Three
+alternating 120-second native pairs show +0.263 median FPS, +0.083 ms CPU native
+frame work, and -0.092 ms atmosphere/fire GPU time; surface-acquisition variance
+keeps this from establishing a robust whole-window win. Offscreen total-render
+measurements also remain slower with caching. See [native sustained report](measurements-multi-emitter-absorption-native-sustained.json)
+and [runner](../scripts/two_emitter_absorption_native_sustained_study.py), plus
+[native capture report](measurements-multi-emitter-absorption-native.json)
 and [runner](../scripts/two_emitter_absorption_native_study.py), plus [moving-route
 report](measurements-multi-emitter-absorption-moving-route.json) and [runner](../scripts/two_emitter_absorption_moving_route_study.py). See
 [8³ temporal report](measurements-multi-emitter-absorption-temporal.json),

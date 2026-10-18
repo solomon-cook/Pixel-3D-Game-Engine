@@ -368,8 +368,14 @@ offscreen M1 Max/Metal scene, not continuous native playback or performance
 acceptance; the cache remains off by default because sustained total-render
 timings did not improve. A native-window session now toggles direct/cache/direct
 at six fixed orbit poses; every pair matches pixel-for-pixel and the 8³ residency
-is present only while enabled. Continuous native playback, cache timing and
-portability remain open. See [moving-route report](measurements-multi-emitter-absorption-moving-route.json)
+is present only while enabled. Continuous native playback and portability remain
+open. Three alternating 120-second native-window pairs now show +0.263 median
+FPS, +0.083 ms CPU native
+frame work and -0.092 ms atmosphere/fire GPU time; surface-acquisition deltas are
+mixed, so this does not establish a robust whole-window win. Keep the cache off by
+default. See [native sustained report](measurements-multi-emitter-absorption-native-sustained.json)
+and [runner](../scripts/two_emitter_absorption_native_sustained_study.py), plus
+[moving-route report](measurements-multi-emitter-absorption-moving-route.json)
 and [runner](../scripts/two_emitter_absorption_moving_route_study.py), plus the
 [native report](measurements-multi-emitter-absorption-native.json) and
 [native runner](../scripts/two_emitter_absorption_native_study.py).
