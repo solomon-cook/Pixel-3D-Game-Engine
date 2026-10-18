@@ -479,8 +479,9 @@ source-local ping-pong volumes, uniforms and per-source dispatches in stable-ID
 order. The soft atmosphere/optical integral now binds a second source volume and
 samples its independent domain; a fixed-tick source-zero capture remains
 byte-identical. Scene validation still requires one emitter, so no dual-source
-GPU image exists. Inked smoke, source-specific lighting/cache work, shadows,
-live scene acceptance and visual review remain incomplete; the post heat pass now
+GPU image exists. Inked smoke and a source-local absorption-cache channel are
+implemented, but source-specific opaque lighting, shadows, live scene acceptance
+and visual review remain incomplete; the post heat pass now
 has a source-local secondary temperature path. See
 [heat evidence](measurements-multi-emitter-heat.json).
 Source-local inked smoke is implemented with 36 puff candidates per source,
@@ -489,6 +490,11 @@ single-source parity pass on M1 Max/Metal; the expanded tile index buffer uses
 603,520 bytes at 640×360. No dual-source scene is accepted yet, so visual and
 performance review remains open; see
 [inked smoke evidence](measurements-multi-emitter-ink.json).
+The second-source cache stores optical depth in the green channel of the existing
+3D cache texture, over the emitter's source-local domain. It adds no cache
+allocation and preserves the source-zero hero capture hash; the second-source
+branch remains unverified because scene validation still permits one emitter.
+See [absorption evidence](measurements-multi-emitter-absorption.json).
 `Renderer::update_globals` now has a keyed two-source sampling
 and upload branch with independent projected-detail tiers, but scene validation
 still prevents live access and no two-source GPU capture exists. The existing

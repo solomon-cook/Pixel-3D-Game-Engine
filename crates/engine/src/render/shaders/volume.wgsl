@@ -300,21 +300,40 @@ fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,
 
 // Shared smoke absorption along the path to any local point light.
 fn smoke_light_transmittance(surface:vec3<f32>,normal:vec3<f32>,light:vec3<f32>,steps:u32,cached:bool)->f32 {
-    if g.effect_settings.z<=0. {return 1.;}
+    let secondary_source_light=fire.source_origins[1].w>0.5 && distance(light,fire.source_origins[1].xyz)<0.001;
+    let secondary_cache=cached && secondary_source_light;
+    let shadow_strength=select(g.effect_settings.z,fire.presentations[1].controls.z,secondary_source_light);
+    if shadow_strength<=0. {return 1.;}
     let surface_uv=(surface-g.volume_min.xyz)/(g.volume_max.xyz-g.volume_min.xyz);
-    if cached && g.presentation.w>0.5 && all(surface_uv>=vec3(0.)) && all(surface_uv<=vec3(1.)) {
-        let optical_depth=textureSampleLevel(smoke_absorption,volume_sampler,surface_uv,0.).x;
-        return exp(-optical_depth*g.effect_settings.z*2.);
+    if cached && g.presentation.w>0.5 {
+        if secondary_cache {
+            let source=fire.source_origins[1].xyz;
+            let source_min=source+vec3(-3.,-0.6,-3.);
+            let source_uv=(surface-source_min)/vec3(6.,8.,6.);
+            if all(source_uv>=vec3(0.)) && all(source_uv<=vec3(1.)) {
+                let optical_depth=textureSampleLevel(smoke_absorption,volume_sampler,source_uv,0.).y;
+                return exp(-optical_depth*shadow_strength*2.);
+            }
+        } else if all(surface_uv>=vec3(0.)) && all(surface_uv<=vec3(1.)) {
+            let optical_depth=textureSampleLevel(smoke_absorption,volume_sampler,surface_uv,0.).x;
+            return exp(-optical_depth*shadow_strength*2.);
+        }
     }
     let origin=surface+normal*0.035;let delta=light-origin;let full_distance=length(delta);
     let distance=max(full_distance-0.25,0.);let direction=delta/max(full_distance,0.001);
     let ds=distance/f32(steps);var optical_depth=0.;
     for(var i=0u;i<6u;i++) {if i>=steps {break;}
         let p=origin+direction*((f32(i)+0.5)*ds);
-        let uv=(p-g.volume_min.xyz)/(g.volume_max.xyz-g.volume_min.xyz);
-        if all(uv>=vec3(0.)) && all(uv<=vec3(1.)) {optical_depth+=textureSampleLevel(smoke,volume_sampler,uv,0.).x*ds;}
+        if secondary_source_light {
+            let source_min=fire.source_origins[1].xyz+vec3(-3.,-0.6,-3.);
+            let uv=(p-source_min)/vec3(6.,8.,6.);
+            if all(uv>=vec3(0.)) && all(uv<=vec3(1.)) {optical_depth+=textureSampleLevel(secondary_smoke,volume_sampler,uv,0.).x*ds;}
+        } else {
+            let uv=(p-g.volume_min.xyz)/(g.volume_max.xyz-g.volume_min.xyz);
+            if all(uv>=vec3(0.)) && all(uv<=vec3(1.)) {optical_depth+=textureSampleLevel(smoke,volume_sampler,uv,0.).x*ds;}
+        }
     }
-    return exp(-optical_depth*g.effect_settings.z*2.);
+    return exp(-optical_depth*shadow_strength*2.);
 }
 fn smoke_local_lights(p:vec3<f32>,normal:vec3<f32>,steps:u32,tile:u32)->vec3<f32> {
     let tile_header=tile_headers[tile];
@@ -335,7 +354,8 @@ fn smoke_local_lights(p:vec3<f32>,normal:vec3<f32>,steps:u32,tile:u32)->vec3<f32
         let light=g.point_lights[index];let direction=normalize(light.position_range.xyz-p+vec3(0.00001));
         let form=floor(clamp(dot(normal,direction)*0.5+0.5,0.,1.)*3.+0.5)/3.;
         let shape=select(0.22+form*0.78,1.,dot(normal,normal)<0.1);
-        var shadow=smoke_light_transmittance(p,normal,light.position_range.xyz,steps,index==0u);
+        let secondary_source_light=fire.source_origins[1].w>0.5 && distance(light.position_range.xyz,fire.source_origins[1].xyz)<0.001;
+        var shadow=smoke_light_transmittance(p,normal,light.position_range.xyz,steps,index==0u||secondary_source_light);
         if index==0u {shadow*=fire_visibility(p);}
         radiance+=light.color_power.xyz*light.color_power.w*point_falloff(p,light)*shadow*shape;
     }

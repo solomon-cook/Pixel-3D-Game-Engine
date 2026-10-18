@@ -97,7 +97,7 @@
     "The cache pass adds GPU work and total GPU render medians were slightly slower in these runs; no speedup claim.",
     "One fixed still at one camera/tick does not quantify temporal error or establish moving-ember/light quality.",
     "Windows DX12 and other GPU backends remain unverified.",
-    "Cache currently handles only the primary authored fire light; particle lights and fallback points use direct sampling.",
+    "Live measurements in this report cover source zero. The green-channel source-one cache path is implemented but has no dual-emitter validation yet; particle lights and other authored lights continue to use direct sampling.",
     "Longer motion, rapid density/light edit, paused-edit, native-window, Windows DX12 and other GPU acceptance remain open."
   ],
   "disabled_path_followup": {

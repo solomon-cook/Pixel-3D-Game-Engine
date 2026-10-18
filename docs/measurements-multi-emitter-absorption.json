@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-18",
+  "scope": "Source-local absorption-cache channel implementation and single-source regression evidence",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal",
+    "device_type": "IntegratedGpu",
+    "native_window_verified": false,
+    "windows_dx12_verified": false
+  },
+  "implementation": {
+    "cache_format": "RGBA16Float 3D texture; red stores source-zero optical depth and green stores source-one optical depth",
+    "source_zero_domain": "Existing renderer volume bounds; existing primary authored fire-light path",
+    "source_one_domain": "Emitter origin plus [-3,-0.6,-3] to [3,7.4,3]; light position uses the required colocated primary fire light",
+    "source_one_density": "Source-one smoke volume",
+    "source_one_shadow_strength": "Source-one presentation settings",
+    "fallback": "Other lights and samples outside each source cache domain use direct integration",
+    "additional_cache_allocation_bytes": 0,
+    "secondary_source_live_scene_available": false
+  },
+  "single_source_capture": {
+    "scene": "assets/scenes/profiling-heavy.json",
+    "seed": 42,
+    "camera": "hero",
+    "tick": 120,
+    "resolution": [640, 360],
+    "scale": 1,
+    "cache_enabled": true,
+    "cache_resource_bytes": 4096,
+    "rgba_sha256": "8c6080e1d3b47aa27f161b1325ff666ba30b63b9b90cd58f21f6ebce921543d2",
+    "baseline_cache_disabled_rgba_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48",
+    "scope_limit": "This is the existing one-emitter approximate-cache comparison; it does not exercise the green channel."
+  },
+  "single_source_baseline": {
+    "rgba_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48",
+    "matches_pre_change_source_zero_capture": true
+  },
+  "validation": {
+    "command": "python3 scripts/verify.py --gpu",
+    "result": "passed",
+    "unit_tests": 37,
+    "material_gpu_verified": true,
+    "pixel_fire_gpu_verified": true,
+    "native": false
+  },
+  "acceptance_gaps": [
+    "The scene validator accepts one emitter, so the source-one cache branch has not been exercised in a dual-source frame.",
+    "No source-one image-quality, temporal-error, or performance measurements exist.",
+    "Shadow maps remain primary-source only; Windows/DX12 and other-adapter acceptance remain open."
+  ]
+}

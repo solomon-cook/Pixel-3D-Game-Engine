@@ -357,6 +357,13 @@ matches its five-entry layout; a fresh off/on/off protocol capture completed wit
 lifetime, not image parity or multi-emitter cache support; see
 [runtime-toggle evidence](measurements-o05.json).
 This does not improve a moving route where each simulation step dirties the cache.
+The bounded multi-emitter extension reuses the same RGBA16Float cache: source
+zero remains in red, and green stores source one's optical depth over its local
+domain for its colocated primary fire light. It adds no cache allocation and
+retains direct integration for other lights and out-of-domain points. The source-
+zero fixed-tick hash is unchanged, but the green channel has no dual-emitter
+visual or performance validation because the scene contract still accepts one
+emitter. See [multi-emitter cache evidence](measurements-multi-emitter-absorption.json).
 The matching 8³ temporal study recorded mean frame RGB MAE 0.285/255, p95
 0.426/255, maximum channel difference 39/255 and mean temporal-change magnitude
 error 0.183/255, with exact tick/effect-count parity. The 16³ cache is closer to

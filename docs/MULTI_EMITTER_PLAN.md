@@ -8,8 +8,9 @@ into a testable two-source runtime without changing the single-source baseline.
 
 ## Current boundary
 
-- Scene validation requires exactly one emitter. `shadow_matrices` and the
-  absorption cache still use one source. Per-emitter
+- Scene validation requires exactly one emitter. `shadow_matrices` still use
+  one source. The absorption cache has a secondary local-domain channel, but the
+  scene contract prevents live dual-source review. Per-emitter
   smoke simulation is implemented; the soft atmosphere/optical secondary-source
   branch is prepared but unreachable while validation remains single-source.
 - `FireFrame` owns one 256-primitive pool and at most 12 derived particle lights.
@@ -60,10 +61,10 @@ into a testable two-source runtime without changing the single-source baseline.
   source-config uniform per emitter, sorts those slots by stable ID, and dispatches
   one advection pass per source. Bounds, buoyancy, dissipation, density and thermal
   settings are source-local; reset clears every allocated source volume. Scene
-  validation still allows one emitter. The soft atmosphere/optical shader has
-  secondary-volume sampling and heat now have source-local paths; inked smoke
-  has a source-local puff path, while absorption-cache shading still uses source zero. There is no two-source GPU capture or performance result
-  yet. The current single-source RGBA capture
+  validation still allows one emitter. The soft atmosphere/optical shader and
+  post heat have secondary-volume paths; inked smoke has a source-local puff
+  path; and the absorption cache now has a source-local channel. There is no
+  two-source GPU capture or performance result yet. The current single-source RGBA capture
   remains pixel-identical, with the 80-byte source config reflected in the known
   fixed-buffer inventory; see [smoke compute evidence](measurements-multi-emitter-smoke-compute.json).
 - The soft atmosphere integral now binds and samples a second source-local smoke
@@ -73,8 +74,8 @@ into a testable two-source runtime without changing the single-source baseline.
   post heat pass now carries each source's heat output/cooling/lift and can sample
   the second temperature volume using its source-local shape/distortion settings.
   Source-count guards leave the one-emitter paths unchanged. Source-specific
-  lighting and cache construction remain incomplete; validation still prevents a
-  live two-source GPU capture.
+  opaque lighting remains incomplete; validation still prevents a live two-source
+  GPU capture, so the new source-one cache channel remains unverified.
   The fixed-tick `profiling-heavy.json` hero capture remains pixel-identical at
   640×360 (SHA-256 `9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48`).
   See [atmosphere evidence](measurements-multi-emitter-atmosphere.json).
@@ -88,9 +89,18 @@ into a testable two-source runtime without changing the single-source baseline.
   On M1 Max/Metal at 640×360, tile indices use 603,520 bytes, up 132,480 bytes
   from one-source capacity; total known allocation is 22,951,216 bytes for the
   multi-source inventory. Validation still allows one emitter, so there is no
-  dual-source visual or performance result. Cache construction and shadows are
-  still primary-source only. See
+  dual-source visual or performance result. The source-one cache channel is now
+  implemented but unverified; shadow maps remain primary-source only. See
   [inked smoke evidence](measurements-multi-emitter-ink.json).
+- The O05 absorption cache retains source zero in the red channel and builds a
+  second light-transmittance field in the green channel over source one's local
+  domain. Its colocated primary fire light selects that field; other lights and
+  out-of-domain samples retain direct integration. The cache remains one 3D
+  texture, so its memory cost does not increase. The source-zero fixed-tick RGBA
+  hash remains unchanged and the Metal verifier passes. The second-source branch
+  has no live-scene visual/performance review because validation still accepts
+  one emitter. See
+  [source-local absorption evidence](measurements-multi-emitter-absorption.json).
 - One 48×64×48 Rg16Float density/temperature pair occupies 1,179,648 bytes.
   One point-light cubemap set occupies 1,572,864 bytes. The 8 authored point
   lights and 12 derived particle lights are global renderer budgets.
