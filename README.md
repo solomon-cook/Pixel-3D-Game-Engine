@@ -27,7 +27,9 @@ fallbacks. Other memory layout work remains proposed. Measurements are recorded 
 [docs/measurements-o06.json](docs/measurements-o06.json) and
 [docs/measurements-o06-camera-stress.json](docs/measurements-o06-camera-stress.json),
 [docs/measurements-o06-native-reuse.json](docs/measurements-o06-native-reuse.json),
-[docs/measurements-o07-culling.json](docs/measurements-o07-culling.json) and
+[docs/measurements-o07-culling.json](docs/measurements-o07-culling.json),
+[docs/measurements-o07-scale-study.json](docs/measurements-o07-scale-study.json),
+[docs/measurements-o07-moving-caster.json](docs/measurements-o07-moving-caster.json) and
 [docs/measurements-o08.json](docs/measurements-o08.json),
 [docs/measurements-o08-native-no-copy.json](docs/measurements-o08-native-no-copy.json).
 

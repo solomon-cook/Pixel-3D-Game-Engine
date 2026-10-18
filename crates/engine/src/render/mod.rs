@@ -2734,7 +2734,7 @@ impl Renderer {
                     &wgpu::util::BufferInitDescriptor {
                         label: Some("world-baked comparison geometry"),
                         contents: bytemuck::cast_slice(&self.unshared_vertices),
-                        usage: wgpu::BufferUsages::VERTEX,
+                        usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
                     },
                 ));
                 let bytes =

@@ -278,18 +278,33 @@ prototype indirect drawing or occlusion culling from these results. Full per-run
 medians, p95s, GPU stages, visibility, allocations, provenance and captures are in
 [measurements-o07-scale-study.json](measurements-o07-scale-study.json).
 
-The route kept casters and lights static so shadow maps remained cached; steady
-shadow-map GPU timing is therefore unavailable in those paired runs. A moving
-caster route is still required to measure shadow-submission scaling. Native-window
-and non-Metal adapter validation also remain open.
+The static route kept casters and lights still, so shadow-map GPU timing was not
+available after cache warm-up. The moving-caster route is now **complete offscreen
+on M1 Max/Metal**: all four tiers and all three path comparisons used three
+alternating 120-second pairs, ten seconds of warm-up, seed 42 and 640×360. The
+`rock-0` caster follows the same deterministic 5-unit, 20-second orbit in both
+variants. Each of the 72 runs records 7,200 caster-change invalidations, 7,200
+frames with shadow redraw, and the same 15,840 shadow-pass redraws. The baked
+reference initially failed because its transform-updated vertex buffer lacked
+`COPY_DST`; that usage is fixed, GPU verification passed, and a 300-frame baked
+moving-caster route completed.
 
-The scene-scale runner now accepts `--moving-caster <scene-object-id>` and passes
-the same deterministic 5-unit, 20-second orbit to both variants. Its report and
-benchmark directories use separate moving-caster names, preserving the static
-baseline evidence. A 60-frame Metal smoke run confirmed the orbit and per-frame
-shadow dirty/redraw counters; it is instrumentation validation, not sustained
-scale evidence. Run the full three-pair 120-second tier matrix before drawing
-performance conclusions.
+The scene-scale runner accepts `--moving-caster <scene-object-id>` and uses
+separate report and benchmark directories to preserve static baseline evidence.
+Full sustained results, per-run shadow cache counters, timing, scene hashes and
+comparison provenance are in
+[measurements-o07-moving-caster.json](measurements-o07-moving-caster.json).
+
+With culling enabled versus instancing-only, paired median frame-work / GPU-render
+deltas were −0.025/−0.048 ms at 276 objects, −0.361/−0.172 ms at 552,
+−0.804/−0.550 ms at 1,104, and +0.202/−0.096 ms at 2,208. The paired GPU
+shadow-map stage fell by 0.022, 0.102, 0.215 and 0.309 ms respectively. Relative
+to baked rendering, culling+instancing changed frame work by approximately 0,
+−0.144, −0.483 and +0.193 ms, and GPU render by +0.001, −0.076, −0.356 and
+−0.255 ms. Thus culling saves shadow-stage work as scene size grows, but the
+whole-frame result is not monotonic and turns slower at 2,208 objects. Keep the
+current path; these data do not justify indirect drawing or occlusion culling.
+Native-window, non-Metal, and continuous-motion image review remain open.
 
 1. Generate deterministic scenes at increasing object counts and mesh reuse rates,
    starting from the current 276-object clearing scene and increasing by measured

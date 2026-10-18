@@ -1,13 +1,13 @@
 # Pixel renderer optimisation plans
 
 16 October 2026. O01 profiling instrumentation, O02 whole-map shadow reuse, O03
-single-emitter tile lists and the first O07 object bounds/draw-range foundation
-are implemented. O08's first resource inventory is recorded; its layout/pass
-changes remain proposed. O04 has an opt-in projected fire-segment experiment;
-its default-promotion and visual/platform acceptance gates remain open. O05 and
-O06 have opt-in prototypes and first measurements. O07
-culling/instancing remain renderer work; these plans extend the current
-renderer and do not replace the smoke/fire art direction.
+single-emitter tile lists and O07 object bounds, shared meshes, culling, instancing
+and live transforms are implemented and measured on M1 Max/Metal. O08's first
+resource inventory is recorded; its layout/pass changes remain proposed. O04 has
+an opt-in projected fire-segment experiment; its default-promotion and
+visual/platform acceptance gates remain open. O05 and O06 have opt-in prototypes
+and first measurements. Platform and broader visual acceptance remains open; these
+plans extend the current renderer and do not replace the smoke/fire art direction.
 [TODO.md](../TODO.md) tracks execution. Runtime and acceptance evidence remain in
 [STATUS.md](STATUS.md).
 The ordered follow-up gates for O01–O08 are in
@@ -480,10 +480,14 @@ cache refinement.
 paths using three paired 120-second routes each. Direct baked-to-culled+instanced
 whole-frame work deltas ranged from −0.025 to −0.116 ms; the 2,208-object tier
 reduced visible camera objects from 2,208 to 868 and batches from 2,208 to 377,
-with 0.739 ms median CPU culling. The gain does not justify adding indirect or
-occlusion drawing. Lights and casters were static, so shadow GPU timing was
-unavailable after cache warm-up; dynamic shadow scaling and non-Metal acceptance
-remain open. See [measurements-o07-scale-study.json](measurements-o07-scale-study.json).
+with 0.739 ms median CPU culling. A matching moving-caster four-tier matrix now
+records shadow-pass timing and invalidation counters. Culling lowers the GPU
+shadow-map stage by 0.022–0.309 ms versus instancing-only, but the complete-frame
+result is mixed and is slower at 2,208 objects. The gain does not justify adding
+indirect or occlusion drawing. Native-window, continuous-motion visual review and
+non-Metal acceptance remain open. See
+[static measurements](measurements-o07-scale-study.json) and
+[moving-caster measurements](measurements-o07-moving-caster.json).
 
 ## O08 — Reduce memory traffic and unnecessary GPU work
 

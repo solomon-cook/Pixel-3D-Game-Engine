@@ -168,6 +168,9 @@ def compare_paths(binary: Path, scene: Path, output: Path, tier: str, moving_cas
                     },
                     "gpu_stages": run_report["gpu_stages"],
                     "geometry_rendering": run_report["geometry_rendering"],
+                    "shadow_cache": run_report["shadow_cache"],
+                    "moving_caster": run_report.get("moving_caster"),
+                    "provenance": run_report["provenance"],
                     "workload_counts": run_report["workload_counts"],
                     "gpu_timing_coverage": run_report["timing_coverage"],
                 })

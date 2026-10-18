@@ -404,7 +404,7 @@ fallback. Validated scene assets do not currently produce a live unknown-bound c
 
 Final `python3 scripts/verify.py --gpu` completed successfully on Apple M1 Max
 with Metal (`verified: true`, `gpu: true`, `native: false`). Workspace formatting,
-clippy, 32 unit tests, scene validation and material/fire GPU checks passed. Native
+clippy, 34 unit tests, scene validation and material/fire GPU checks passed. Native
 window lifecycle and Windows DX12 rendering remain unverified.
 
 ## O07 object bounds, culling and shared meshes
@@ -464,11 +464,20 @@ fell by 0.031, 0.116, 0.053 and 0.025 ms. The reductions are small and not
 monotonic. At 2,208 objects, culling reduced camera-visible objects from 2,208
 to 868 and draw batches from 2,208 to 377, while median CPU culling cost was
 0.739 ms. Keep the existing path; these results do not justify indirect drawing
-or occlusion culling. The route left lights and casters static, so the shadow maps
-stayed cached and paired shadow-map GPU timing was unavailable. Dynamic caster
-scaling, native-window rendering and non-Metal adapters remain open. Full per-run
-medians, p95s, GPU stages, counts, capture hashes and limitations are in
-[measurements-o07-scale-study.json](measurements-o07-scale-study.json).
+or occlusion culling. The static route left lights and casters unchanged, so paired
+shadow-map GPU timing was unavailable after cache warm-up. A matching moving-caster
+four-tier study now covers baked, instancing-only and culling+instancing with three
+alternating 120-second pairs per comparison. Across all 72 runs, the same 5-unit,
+20-second rock orbit caused caster-change invalidation on every measured frame and
+15,840 shadow-pass redraws per run. Comparing culling+instancing with
+instancing-only, median GPU shadow-stage deltas were −0.022/−0.102/−0.215/−0.309 ms
+at 276/552/1,104/2,208 objects; whole-frame deltas were −0.025/−0.361/−0.804/+0.202
+ms. The 2,208-object GPU render stage improved by 0.096 ms while whole-frame work
+increased by 0.202 ms. Keep the current path; no more complex draw submission is
+justified. Full run summaries, paired deltas, shadow counters, scene hashes and
+limitations are in [static scale evidence](measurements-o07-scale-study.json) and
+[moving-caster evidence](measurements-o07-moving-caster.json). Native-window,
+continuous-motion image review and non-Metal validation remain open.
 
 Implemented: reusable engine/library separation, native Metal/DX12 selection,
 versioned/validated JSON scenes, static GLB/PNG assets, fixed-step smoke grid,
