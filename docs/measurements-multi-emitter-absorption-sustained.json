@@ -1,0 +1,2089 @@
+{
+  "date": "2026-10-18",
+  "workstream": "Dual-emitter absorption-cache sustained comparison",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "source_scene": "assets/scenes/two-emitter-review.json",
+  "source_scene_sha256": "9ca7aee40dac7a9cde4010f6f90c2623e441c8e0c9a1f19ff2a9c570c1082892",
+  "binary_sha256": "f49bdfcd6d867a7baca3572b46a586c2bbf14b979f9f6cdd12f8e141cc8980bc",
+  "study_script_sha256": "cb142f6f8805589a276b607d92175ac38436843371e33e0e9a7bd1e6b9c458dd",
+  "source_ids": [
+    "campfire",
+    "watchfire"
+  ],
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "camera": "dual-wide",
+  "route": "clearing-orbit",
+  "pairs_per_cache_resolution": 3,
+  "duration_seconds_per_run": 120.0,
+  "warmup_seconds_per_run": 10.0,
+  "mode": "serial",
+  "cache_resolutions": {
+    "8": {
+      "scene_sha256": {
+        "direct": "f8161568794dd5a9be5dd39fa9644f7d4cb1a042e693b5fe6cf49923fd14b06c",
+        "cached": "ff72f34cedec3c9edb187ba862cccfe3b5af7f5777692882c43367ff4f39a08e"
+      },
+      "comparison_sha256": "6a78e6dca1f0b8062f44e8aa987aa8bedf5a038d65015ae226b87848832d642d",
+      "comparison": {
+        "frame_work": {
+          "baseline_run_medians_ms": [
+            5.532541999999999,
+            5.505792,
+            5.938124999999999
+          ],
+          "candidate_run_medians_ms": [
+            5.539,
+            5.532959,
+            6.2427079999999995
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.006458000000000297,
+            0.027167000000000385,
+            0.30458300000000005
+          ],
+          "paired_delta_median_ms": 0.027167000000000385,
+          "paired_delta_p95_ms": 0.30458300000000005,
+          "baseline_median_of_run_medians_ms": 5.532541999999999,
+          "candidate_median_of_run_medians_ms": 5.539
+        },
+        "cpu_encode": {
+          "baseline_run_medians_ms": [
+            0.744167,
+            0.7320420000000001,
+            0.7686249999999999
+          ],
+          "candidate_run_medians_ms": [
+            0.754166,
+            0.759375,
+            0.7992509999999999
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.00999899999999998,
+            0.02733299999999994,
+            0.030626000000000042
+          ],
+          "paired_delta_median_ms": 0.02733299999999994,
+          "paired_delta_p95_ms": 0.030626000000000042,
+          "baseline_median_of_run_medians_ms": 0.744167,
+          "candidate_median_of_run_medians_ms": 0.759375
+        },
+        "cpu_tile_list_encode": {
+          "baseline_run_medians_ms": [
+            0.07291700000000001,
+            0.071709,
+            0.076542
+          ],
+          "candidate_run_medians_ms": [
+            0.07004200000000001,
+            0.07087500000000001,
+            0.07325000000000001
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.0028750000000000026,
+            -0.0008339999999999875,
+            -0.0032919999999999894
+          ],
+          "paired_delta_median_ms": -0.0028750000000000026,
+          "paired_delta_p95_ms": -0.0008339999999999875,
+          "baseline_median_of_run_medians_ms": 0.07291700000000001,
+          "candidate_median_of_run_medians_ms": 0.07087500000000001
+        },
+        "cpu_shadow_encode": {
+          "baseline_run_medians_ms": [
+            8.3e-05,
+            8.4e-05,
+            8.3e-05
+          ],
+          "candidate_run_medians_ms": [
+            8.3e-05,
+            8.3e-05,
+            8.3e-05
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.0,
+            -9.999999999999972e-07,
+            0.0
+          ],
+          "paired_delta_median_ms": 0.0,
+          "paired_delta_p95_ms": 0.0,
+          "baseline_median_of_run_medians_ms": 8.3e-05,
+          "candidate_median_of_run_medians_ms": 8.3e-05
+        },
+        "cpu_upload": {
+          "baseline_run_medians_ms": [
+            0.31216700000000003,
+            0.309291,
+            0.327167
+          ],
+          "candidate_run_medians_ms": [
+            0.305583,
+            0.30679,
+            0.322917
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.006584000000000034,
+            -0.0025009999999999755,
+            -0.004249999999999976
+          ],
+          "paired_delta_median_ms": -0.004249999999999976,
+          "paired_delta_p95_ms": -0.0025009999999999755,
+          "baseline_median_of_run_medians_ms": 0.31216700000000003,
+          "candidate_median_of_run_medians_ms": 0.30679
+        },
+        "simulation_cpu": {
+          "baseline_run_medians_ms": [
+            0.464458,
+            0.456791,
+            0.479792
+          ],
+          "candidate_run_medians_ms": [
+            0.45466700000000004,
+            0.456125,
+            0.477125
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.009790999999999939,
+            -0.0006659999999999999,
+            -0.002666999999999975
+          ],
+          "paired_delta_median_ms": -0.002666999999999975,
+          "paired_delta_p95_ms": -0.0006659999999999999,
+          "baseline_median_of_run_medians_ms": 0.464458,
+          "candidate_median_of_run_medians_ms": 0.456125
+        },
+        "simulation_encode_cpu": {
+          "baseline_run_medians_ms": [
+            0.416917,
+            0.41254199999999996,
+            0.430208
+          ],
+          "candidate_run_medians_ms": [
+            0.409,
+            0.410208,
+            0.427501
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.007917000000000007,
+            -0.0023339999999999472,
+            -0.0027069999999999594
+          ],
+          "paired_delta_median_ms": -0.0027069999999999594,
+          "paired_delta_p95_ms": -0.0023339999999999472,
+          "baseline_median_of_run_medians_ms": 0.416917,
+          "candidate_median_of_run_medians_ms": 0.410208
+        },
+        "queue_submit_cpu": {
+          "baseline_run_medians_ms": [
+            0.137626,
+            0.135042,
+            0.147959
+          ],
+          "candidate_run_medians_ms": [
+            0.141875,
+            0.140792,
+            0.150875
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.004249000000000003,
+            0.005750000000000005,
+            0.002916000000000002
+          ],
+          "paired_delta_median_ms": 0.004249000000000003,
+          "paired_delta_p95_ms": 0.005750000000000005,
+          "baseline_median_of_run_medians_ms": 0.137626,
+          "candidate_median_of_run_medians_ms": 0.141875
+        },
+        "gpu_render": {
+          "baseline_run_medians_ms": [
+            3.9592919999999996,
+            3.960667,
+            3.955959
+          ],
+          "candidate_run_medians_ms": [
+            4.018375,
+            4.021709,
+            4.028417
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.05908300000000022,
+            0.061042000000000485,
+            0.07245800000000013
+          ],
+          "paired_delta_median_ms": 0.061042000000000485,
+          "paired_delta_p95_ms": 0.07245800000000013,
+          "baseline_median_of_run_medians_ms": 3.9592919999999996,
+          "candidate_median_of_run_medians_ms": 4.021709
+        },
+        "gpu_stages.atmosphere_fire": {
+          "baseline_run_medians_ms": [
+            2.5140409999999997,
+            2.5187079999999997,
+            2.51
+          ],
+          "candidate_run_medians_ms": [
+            2.436791,
+            2.441375,
+            2.413542
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.07724999999999982,
+            -0.07733299999999987,
+            -0.09645799999999971
+          ],
+          "paired_delta_median_ms": -0.07733299999999987,
+          "paired_delta_p95_ms": -0.07724999999999982,
+          "baseline_median_of_run_medians_ms": 2.5140409999999997,
+          "candidate_median_of_run_medians_ms": 2.436791
+        },
+        "gpu_stages.opaque_geometry": {
+          "baseline_run_medians_ms": [
+            1.988084,
+            1.980208,
+            1.9740829999999998
+          ],
+          "candidate_run_medians_ms": [
+            1.9157499999999998,
+            1.9224169999999998,
+            1.906458
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.07233400000000012,
+            -0.05779100000000015,
+            -0.06762499999999982
+          ],
+          "paired_delta_median_ms": -0.06762499999999982,
+          "paired_delta_p95_ms": -0.05779100000000015,
+          "baseline_median_of_run_medians_ms": 1.980208,
+          "candidate_median_of_run_medians_ms": 1.9157499999999998
+        },
+        "gpu_stages.optical_resolve": {
+          "baseline_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "candidate_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "paired_candidate_minus_baseline_ms": [],
+          "paired_delta_median_ms": null,
+          "paired_delta_p95_ms": null,
+          "baseline_median_of_run_medians_ms": null,
+          "candidate_median_of_run_medians_ms": null
+        },
+        "gpu_stages.post": {
+          "baseline_run_medians_ms": [
+            2.591625,
+            2.591334,
+            2.585209
+          ],
+          "candidate_run_medians_ms": [
+            2.512666,
+            2.516958,
+            2.491167
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.07895900000000022,
+            -0.074376,
+            -0.09404199999999996
+          ],
+          "paired_delta_median_ms": -0.07895900000000022,
+          "paired_delta_p95_ms": -0.074376,
+          "baseline_median_of_run_medians_ms": 2.591334,
+          "candidate_median_of_run_medians_ms": 2.512666
+        },
+        "gpu_stages.shadow_maps": {
+          "baseline_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "candidate_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "paired_candidate_minus_baseline_ms": [],
+          "paired_delta_median_ms": null,
+          "paired_delta_p95_ms": null,
+          "baseline_median_of_run_medians_ms": null,
+          "candidate_median_of_run_medians_ms": null
+        },
+        "gpu_stages.smoke_absorption_cache": {
+          "baseline_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "candidate_run_medians_ms": [
+            0.034249999999999996,
+            0.034166999999999996,
+            0.035625
+          ],
+          "paired_candidate_minus_baseline_ms": [],
+          "paired_delta_median_ms": null,
+          "paired_delta_p95_ms": null,
+          "baseline_median_of_run_medians_ms": null,
+          "candidate_median_of_run_medians_ms": 0.034249999999999996
+        },
+        "gpu_stages.smoke_compute": {
+          "baseline_run_medians_ms": [
+            0.030833,
+            0.03075,
+            0.030708
+          ],
+          "candidate_run_medians_ms": [
+            0.030708,
+            0.03075,
+            0.030709
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.0001250000000000001,
+            0.0,
+            1.000000000001e-06
+          ],
+          "paired_delta_median_ms": 0.0,
+          "paired_delta_p95_ms": 1.000000000001e-06,
+          "baseline_median_of_run_medians_ms": 0.03075,
+          "candidate_median_of_run_medians_ms": 0.030709
+        },
+        "gpu_stages.tile_list_build": {
+          "baseline_run_medians_ms": [
+            1.1478329999999999,
+            1.148167,
+            1.149042
+          ],
+          "candidate_run_medians_ms": [
+            1.1508749999999999,
+            1.1504999999999999,
+            1.151333
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.003041999999999989,
+            0.0023329999999999185,
+            0.002291000000000043
+          ],
+          "paired_delta_median_ms": 0.0023329999999999185,
+          "paired_delta_p95_ms": 0.003041999999999989,
+          "baseline_median_of_run_medians_ms": 1.148167,
+          "candidate_median_of_run_medians_ms": 1.1508749999999999
+        }
+      },
+      "runs": {
+        "1": {
+          "baseline": {
+            "report": "pair-01-baseline.engine.json",
+            "sha256": "243d479911f4f3c81fcb3913531a9567fb6f2b12f4637e8799f0cf509d4c40ab",
+            "cache_bytes": 0,
+            "frame_work": {
+              "median_ms": 5.532541999999999,
+              "p95_ms": 9.699417,
+              "samples": 7200
+            },
+            "gpu_render": {
+              "median_ms": 3.9592919999999996,
+              "p95_ms": 4.799041,
+              "samples": 7200
+            },
+            "gpu_stages": {
+              "atmosphere_fire": {
+                "median_ms": 2.5140409999999997,
+                "p95_ms": 2.937042,
+                "samples": 7200
+              },
+              "opaque_geometry": {
+                "median_ms": 1.988084,
+                "p95_ms": 2.2875419999999997,
+                "samples": 7200
+              },
+              "optical_resolve": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "post": {
+                "median_ms": 2.591625,
+                "p95_ms": 3.2776669999999997,
+                "samples": 7200
+              },
+              "shadow_maps": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "smoke_absorption_cache": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "smoke_compute": {
+                "median_ms": 0.030833,
+                "p95_ms": 0.034041,
+                "samples": 7200
+              },
+              "tile_list_build": {
+                "median_ms": 1.1478329999999999,
+                "p95_ms": 1.231333,
+                "samples": 7200
+              }
+            },
+            "smoke_absorption_cache": {
+              "cpu_build_ms": {
+                "median_ms": 0.0,
+                "p95_ms": 0.0,
+                "samples": 7200
+              },
+              "enabled": false,
+              "gpu_build": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "note": "Caches only primary authored fire-light smoke optical depth. Other authored/particle lights and out-of-volume points use direct sampling. Cache rebuilds every rendered frame so paused density/light edits are current.",
+              "texture_dimensions": [
+                8,
+                8,
+                8
+              ]
+            },
+            "cpu_encode": {
+              "median_ms": 0.744167,
+              "p95_ms": 2.0772500000000003,
+              "samples": 7200
+            },
+            "workload_counts": {
+              "authored_lights": 3,
+              "draw_calls_per_frame": 45.0,
+              "effect_draw_calls_per_frame": 1,
+              "emitters": 2,
+              "fire_primitives_last_frame": 162,
+              "materials": 11,
+              "objects": 276,
+              "opaque_geometry_draw_calls_per_frame": 43.0,
+              "optical_draw_calls_per_frame": 0,
+              "particle_lights_last_frame": 12,
+              "post_draw_calls_per_frame": 1,
+              "shadow_draw_calls_per_frame": 0.0,
+              "shadow_draw_calls_when_redrawn": 0.0,
+              "shared_mesh_count": 68,
+              "unshared_vertex_count": 175662,
+              "vertices": 143454
+            },
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          },
+          "candidate": {
+            "report": "pair-01-candidate.engine.json",
+            "sha256": "dc6d3b672134eb9f5ed77f9e541a760e4a94fb40eb9cfd9673ca145060a9c990",
+            "cache_bytes": 4096,
+            "frame_work": {
+              "median_ms": 5.539,
+              "p95_ms": 9.500625000000001,
+              "samples": 7200
+            },
+            "gpu_render": {
+              "median_ms": 4.018375,
+              "p95_ms": 5.051709,
+              "samples": 7200
+            },
+            "gpu_stages": {
+              "atmosphere_fire": {
+                "median_ms": 2.436791,
+                "p95_ms": 2.904292,
+                "samples": 7200
+              },
+              "opaque_geometry": {
+                "median_ms": 1.9157499999999998,
+                "p95_ms": 2.258709,
+                "samples": 7200
+              },
+              "optical_resolve": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "post": {
+                "median_ms": 2.512666,
+                "p95_ms": 3.4597499999999997,
+                "samples": 7200
+              },
+              "shadow_maps": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "smoke_absorption_cache": {
+                "median_ms": 0.034249999999999996,
+                "p95_ms": 0.7802089999999999,
+                "samples": 7200
+              },
+              "smoke_compute": {
+                "median_ms": 0.030708,
+                "p95_ms": 0.033209,
+                "samples": 7200
+              },
+              "tile_list_build": {
+                "median_ms": 1.1508749999999999,
+                "p95_ms": 1.23675,
+                "samples": 7200
+              }
+            },
+            "smoke_absorption_cache": {
+              "cpu_build_ms": {
+                "median_ms": 0.044625,
+                "p95_ms": 0.12999999999999998,
+                "samples": 7200
+              },
+              "enabled": true,
+              "gpu_build": {
+                "median_ms": 0.034249999999999996,
+                "p95_ms": 0.7802089999999999,
+                "samples": 7200
+              },
+              "note": "Caches only primary authored fire-light smoke optical depth. Other authored/particle lights and out-of-volume points use direct sampling. Cache rebuilds every rendered frame so paused density/light edits are current.",
+              "texture_dimensions": [
+                8,
+                8,
+                8
+              ]
+            },
+            "cpu_encode": {
+              "median_ms": 0.754166,
+              "p95_ms": 1.9461240000000002,
+              "samples": 7200
+            },
+            "workload_counts": {
+              "authored_lights": 3,
+              "draw_calls_per_frame": 45.0,
+              "effect_draw_calls_per_frame": 1,
+              "emitters": 2,
+              "fire_primitives_last_frame": 162,
+              "materials": 11,
+              "objects": 276,
+              "opaque_geometry_draw_calls_per_frame": 43.0,
+              "optical_draw_calls_per_frame": 0,
+              "particle_lights_last_frame": 12,
+              "post_draw_calls_per_frame": 1,
+              "shadow_draw_calls_per_frame": 0.0,
+              "shadow_draw_calls_when_redrawn": 0.0,
+              "shared_mesh_count": 68,
+              "unshared_vertex_count": 175662,
+              "vertices": 143454
+            },
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          }
+        },
+        "2": {
+          "baseline": {
+            "report": "pair-02-baseline.engine.json",
+            "sha256": "a9f015f657fbc92a40950ad3d39b3c1b406aaa7fd3185f9d513b4ea13b45fa07",
+            "cache_bytes": 0,
+            "frame_work": {
+              "median_ms": 5.505792,
+              "p95_ms": 9.518916,
+              "samples": 7200
+            },
+            "gpu_render": {
+              "median_ms": 3.960667,
+              "p95_ms": 4.8883339999999995,
+              "samples": 7200
+            },
+            "gpu_stages": {
+              "atmosphere_fire": {
+                "median_ms": 2.5187079999999997,
+                "p95_ms": 2.9451669999999996,
+                "samples": 7200
+              },
+              "opaque_geometry": {
+                "median_ms": 1.980208,
+                "p95_ms": 2.284125,
+                "samples": 7200
+              },
+              "optical_resolve": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "post": {
+                "median_ms": 2.591334,
+                "p95_ms": 3.4237919999999997,
+                "samples": 7200
+              },
+              "shadow_maps": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "smoke_absorption_cache": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "smoke_compute": {
+                "median_ms": 0.03075,
+                "p95_ms": 0.035541,
+                "samples": 7200
+              },
+              "tile_list_build": {
+                "median_ms": 1.148167,
+                "p95_ms": 1.234583,
+                "samples": 7200
+              }
+            },
+            "smoke_absorption_cache": {
+              "cpu_build_ms": {
+                "median_ms": 0.0,
+                "p95_ms": 0.0,
+                "samples": 7200
+              },
+              "enabled": false,
+              "gpu_build": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "note": "Caches only primary authored fire-light smoke optical depth. Other authored/particle lights and out-of-volume points use direct sampling. Cache rebuilds every rendered frame so paused density/light edits are current.",
+              "texture_dimensions": [
+                8,
+                8,
+                8
+              ]
+            },
+            "cpu_encode": {
+              "median_ms": 0.7320420000000001,
+              "p95_ms": 2.057374,
+              "samples": 7200
+            },
+            "workload_counts": {
+              "authored_lights": 3,
+              "draw_calls_per_frame": 45.0,
+              "effect_draw_calls_per_frame": 1,
+              "emitters": 2,
+              "fire_primitives_last_frame": 162,
+              "materials": 11,
+              "objects": 276,
+              "opaque_geometry_draw_calls_per_frame": 43.0,
+              "optical_draw_calls_per_frame": 0,
+              "particle_lights_last_frame": 12,
+              "post_draw_calls_per_frame": 1,
+              "shadow_draw_calls_per_frame": 0.0,
+              "shadow_draw_calls_when_redrawn": 0.0,
+              "shared_mesh_count": 68,
+              "unshared_vertex_count": 175662,
+              "vertices": 143454
+            },
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          },
+          "candidate": {
+            "report": "pair-02-candidate.engine.json",
+            "sha256": "9f80ba4aa1570884f5f5d9b93ab8180cdd1888144124c27b47b2c0f11f2ccd77",
+            "cache_bytes": 4096,
+            "frame_work": {
+              "median_ms": 5.532959,
+              "p95_ms": 9.397,
+              "samples": 7200
+            },
+            "gpu_render": {
+              "median_ms": 4.021709,
+              "p95_ms": 5.085541999999999,
+              "samples": 7200
+            },
+            "gpu_stages": {
+              "atmosphere_fire": {
+                "median_ms": 2.441375,
+                "p95_ms": 2.944166,
+                "samples": 7200
+              },
+              "opaque_geometry": {
+                "median_ms": 1.9224169999999998,
+                "p95_ms": 2.2766669999999998,
+                "samples": 7200
+              },
+              "optical_resolve": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "post": {
+                "median_ms": 2.516958,
+                "p95_ms": 3.511916,
+                "samples": 7200
+              },
+              "shadow_maps": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "smoke_absorption_cache": {
+                "median_ms": 0.034166999999999996,
+                "p95_ms": 0.784542,
+                "samples": 7200
+              },
+              "smoke_compute": {
+                "median_ms": 0.03075,
+                "p95_ms": 0.034375,
+                "samples": 7200
+              },
+              "tile_list_build": {
+                "median_ms": 1.1504999999999999,
+                "p95_ms": 1.261375,
+                "samples": 7200
+              }
+            },
+            "smoke_absorption_cache": {
+              "cpu_build_ms": {
+                "median_ms": 0.0445,
+                "p95_ms": 0.12895800000000002,
+                "samples": 7200
+              },
+              "enabled": true,
+              "gpu_build": {
+                "median_ms": 0.034166999999999996,
+                "p95_ms": 0.784542,
+                "samples": 7200
+              },
+              "note": "Caches only primary authored fire-light smoke optical depth. Other authored/particle lights and out-of-volume points use direct sampling. Cache rebuilds every rendered frame so paused density/light edits are current.",
+              "texture_dimensions": [
+                8,
+                8,
+                8
+              ]
+            },
+            "cpu_encode": {
+              "median_ms": 0.759375,
+              "p95_ms": 1.8787489999999998,
+              "samples": 7200
+            },
+            "workload_counts": {
+              "authored_lights": 3,
+              "draw_calls_per_frame": 45.0,
+              "effect_draw_calls_per_frame": 1,
+              "emitters": 2,
+              "fire_primitives_last_frame": 162,
+              "materials": 11,
+              "objects": 276,
+              "opaque_geometry_draw_calls_per_frame": 43.0,
+              "optical_draw_calls_per_frame": 0,
+              "particle_lights_last_frame": 12,
+              "post_draw_calls_per_frame": 1,
+              "shadow_draw_calls_per_frame": 0.0,
+              "shadow_draw_calls_when_redrawn": 0.0,
+              "shared_mesh_count": 68,
+              "unshared_vertex_count": 175662,
+              "vertices": 143454
+            },
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          }
+        },
+        "3": {
+          "baseline": {
+            "report": "pair-03-baseline.engine.json",
+            "sha256": "605685e46d5a5cbd13c35f3758698f3a07952a755129f098caa29a6de715d1f7",
+            "cache_bytes": 0,
+            "frame_work": {
+              "median_ms": 5.938124999999999,
+              "p95_ms": 10.360833,
+              "samples": 7200
+            },
+            "gpu_render": {
+              "median_ms": 3.955959,
+              "p95_ms": 4.971458,
+              "samples": 7200
+            },
+            "gpu_stages": {
+              "atmosphere_fire": {
+                "median_ms": 2.51,
+                "p95_ms": 2.954709,
+                "samples": 7200
+              },
+              "opaque_geometry": {
+                "median_ms": 1.9740829999999998,
+                "p95_ms": 2.2987919999999997,
+                "samples": 7200
+              },
+              "optical_resolve": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "post": {
+                "median_ms": 2.585209,
+                "p95_ms": 3.462167,
+                "samples": 7200
+              },
+              "shadow_maps": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "smoke_absorption_cache": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "smoke_compute": {
+                "median_ms": 0.030708,
+                "p95_ms": 0.034917,
+                "samples": 7200
+              },
+              "tile_list_build": {
+                "median_ms": 1.149042,
+                "p95_ms": 1.262542,
+                "samples": 7200
+              }
+            },
+            "smoke_absorption_cache": {
+              "cpu_build_ms": {
+                "median_ms": 0.0,
+                "p95_ms": 0.0,
+                "samples": 7200
+              },
+              "enabled": false,
+              "gpu_build": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "note": "Caches only primary authored fire-light smoke optical depth. Other authored/particle lights and out-of-volume points use direct sampling. Cache rebuilds every rendered frame so paused density/light edits are current.",
+              "texture_dimensions": [
+                8,
+                8,
+                8
+              ]
+            },
+            "cpu_encode": {
+              "median_ms": 0.7686249999999999,
+              "p95_ms": 2.0395,
+              "samples": 7200
+            },
+            "workload_counts": {
+              "authored_lights": 3,
+              "draw_calls_per_frame": 45.0,
+              "effect_draw_calls_per_frame": 1,
+              "emitters": 2,
+              "fire_primitives_last_frame": 162,
+              "materials": 11,
+              "objects": 276,
+              "opaque_geometry_draw_calls_per_frame": 43.0,
+              "optical_draw_calls_per_frame": 0,
+              "particle_lights_last_frame": 12,
+              "post_draw_calls_per_frame": 1,
+              "shadow_draw_calls_per_frame": 0.0,
+              "shadow_draw_calls_when_redrawn": 0.0,
+              "shared_mesh_count": 68,
+              "unshared_vertex_count": 175662,
+              "vertices": 143454
+            },
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          },
+          "candidate": {
+            "report": "pair-03-candidate.engine.json",
+            "sha256": "bc46430139fa547a3bbebb9fa22fd9f2e40fe9960133ede2f6b2038091bd0b97",
+            "cache_bytes": 4096,
+            "frame_work": {
+              "median_ms": 6.2427079999999995,
+              "p95_ms": 10.683459,
+              "samples": 7200
+            },
+            "gpu_render": {
+              "median_ms": 4.028417,
+              "p95_ms": 5.115167,
+              "samples": 7200
+            },
+            "gpu_stages": {
+              "atmosphere_fire": {
+                "median_ms": 2.413542,
+                "p95_ms": 2.9244999999999997,
+                "samples": 7200
+              },
+              "opaque_geometry": {
+                "median_ms": 1.906458,
+                "p95_ms": 2.2642919999999997,
+                "samples": 7200
+              },
+              "optical_resolve": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "post": {
+                "median_ms": 2.491167,
+                "p95_ms": 3.444333,
+                "samples": 7200
+              },
+              "shadow_maps": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "smoke_absorption_cache": {
+                "median_ms": 0.035625,
+                "p95_ms": 0.8037909999999999,
+                "samples": 7200
+              },
+              "smoke_compute": {
+                "median_ms": 0.030709,
+                "p95_ms": 0.033625,
+                "samples": 7200
+              },
+              "tile_list_build": {
+                "median_ms": 1.151333,
+                "p95_ms": 1.249542,
+                "samples": 7200
+              }
+            },
+            "smoke_absorption_cache": {
+              "cpu_build_ms": {
+                "median_ms": 0.046667,
+                "p95_ms": 0.138792,
+                "samples": 7200
+              },
+              "enabled": true,
+              "gpu_build": {
+                "median_ms": 0.035625,
+                "p95_ms": 0.8037909999999999,
+                "samples": 7200
+              },
+              "note": "Caches only primary authored fire-light smoke optical depth. Other authored/particle lights and out-of-volume points use direct sampling. Cache rebuilds every rendered frame so paused density/light edits are current.",
+              "texture_dimensions": [
+                8,
+                8,
+                8
+              ]
+            },
+            "cpu_encode": {
+              "median_ms": 0.7992509999999999,
+              "p95_ms": 2.145584,
+              "samples": 7200
+            },
+            "workload_counts": {
+              "authored_lights": 3,
+              "draw_calls_per_frame": 45.0,
+              "effect_draw_calls_per_frame": 1,
+              "emitters": 2,
+              "fire_primitives_last_frame": 162,
+              "materials": 11,
+              "objects": 276,
+              "opaque_geometry_draw_calls_per_frame": 43.0,
+              "optical_draw_calls_per_frame": 0,
+              "particle_lights_last_frame": 12,
+              "post_draw_calls_per_frame": 1,
+              "shadow_draw_calls_per_frame": 0.0,
+              "shadow_draw_calls_when_redrawn": 0.0,
+              "shared_mesh_count": 68,
+              "unshared_vertex_count": 175662,
+              "vertices": 143454
+            },
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          }
+        }
+      }
+    },
+    "16": {
+      "scene_sha256": {
+        "direct": "d556bb98f5d5d60749f6cb8a0214e25cf23b3b3fac969ee071a48d5e76baaa10",
+        "cached": "3468c7599b93b754bd7fbf96e035c321ad841cda7582c8084de249dbf1c6bd3e"
+      },
+      "comparison_sha256": "7f121a0eb0d6a80a626aa3324929448ba80085581aecff83a45284b549252acb",
+      "comparison": {
+        "frame_work": {
+          "baseline_run_medians_ms": [
+            6.301875,
+            6.251042,
+            6.27575
+          ],
+          "candidate_run_medians_ms": [
+            6.283333000000001,
+            6.270041,
+            6.3093330000000005
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.01854199999999917,
+            0.018998999999999988,
+            0.03358300000000014
+          ],
+          "paired_delta_median_ms": 0.018998999999999988,
+          "paired_delta_p95_ms": 0.03358300000000014,
+          "baseline_median_of_run_medians_ms": 6.27575,
+          "candidate_median_of_run_medians_ms": 6.283333000000001
+        },
+        "cpu_encode": {
+          "baseline_run_medians_ms": [
+            0.8071670000000001,
+            0.787333,
+            0.797083
+          ],
+          "candidate_run_medians_ms": [
+            0.826542,
+            0.825167,
+            0.8277499999999999
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.01937499999999992,
+            0.037834000000000034,
+            0.03066699999999989
+          ],
+          "paired_delta_median_ms": 0.03066699999999989,
+          "paired_delta_p95_ms": 0.037834000000000034,
+          "baseline_median_of_run_medians_ms": 0.797083,
+          "candidate_median_of_run_medians_ms": 0.826542
+        },
+        "cpu_tile_list_encode": {
+          "baseline_run_medians_ms": [
+            0.079208,
+            0.076875,
+            0.077875
+          ],
+          "candidate_run_medians_ms": [
+            0.07525,
+            0.07475,
+            0.075291
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.003958000000000003,
+            -0.002125000000000002,
+            -0.002584000000000003
+          ],
+          "paired_delta_median_ms": -0.002584000000000003,
+          "paired_delta_p95_ms": -0.002125000000000002,
+          "baseline_median_of_run_medians_ms": 0.077875,
+          "candidate_median_of_run_medians_ms": 0.07525
+        },
+        "cpu_shadow_encode": {
+          "baseline_run_medians_ms": [
+            8.4e-05,
+            8.3e-05,
+            8.3e-05
+          ],
+          "candidate_run_medians_ms": [
+            8.3e-05,
+            8.3e-05,
+            8.3e-05
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -9.999999999999972e-07,
+            0.0,
+            0.0
+          ],
+          "paired_delta_median_ms": 0.0,
+          "paired_delta_p95_ms": 0.0,
+          "baseline_median_of_run_medians_ms": 8.3e-05,
+          "candidate_median_of_run_medians_ms": 8.3e-05
+        },
+        "cpu_upload": {
+          "baseline_run_medians_ms": [
+            0.337959,
+            0.333291,
+            0.33346000000000003
+          ],
+          "candidate_run_medians_ms": [
+            0.324958,
+            0.326292,
+            0.327542
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.013000999999999985,
+            -0.0069989999999999775,
+            -0.005918000000000034
+          ],
+          "paired_delta_median_ms": -0.0069989999999999775,
+          "paired_delta_p95_ms": -0.005918000000000034,
+          "baseline_median_of_run_medians_ms": 0.33346000000000003,
+          "candidate_median_of_run_medians_ms": 0.326292
+        },
+        "simulation_cpu": {
+          "baseline_run_medians_ms": [
+            0.497667,
+            0.49145799999999995,
+            0.49025
+          ],
+          "candidate_run_medians_ms": [
+            0.482125,
+            0.480791,
+            0.483166
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.015542,
+            -0.010666999999999927,
+            -0.007084000000000035
+          ],
+          "paired_delta_median_ms": -0.010666999999999927,
+          "paired_delta_p95_ms": -0.007084000000000035,
+          "baseline_median_of_run_medians_ms": 0.49145799999999995,
+          "candidate_median_of_run_medians_ms": 0.482125
+        },
+        "simulation_encode_cpu": {
+          "baseline_run_medians_ms": [
+            0.445,
+            0.440166,
+            0.43958299999999995
+          ],
+          "candidate_run_medians_ms": [
+            0.431417,
+            0.43162599999999995,
+            0.43274999999999997
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.013583000000000012,
+            -0.008540000000000048,
+            -0.006832999999999978
+          ],
+          "paired_delta_median_ms": -0.008540000000000048,
+          "paired_delta_p95_ms": -0.006832999999999978,
+          "baseline_median_of_run_medians_ms": 0.440166,
+          "candidate_median_of_run_medians_ms": 0.43162599999999995
+        },
+        "queue_submit_cpu": {
+          "baseline_run_medians_ms": [
+            0.153918,
+            0.150751,
+            0.15050000000000002
+          ],
+          "candidate_run_medians_ms": [
+            0.15904100000000002,
+            0.159126,
+            0.155666
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.005123000000000016,
+            0.008374999999999994,
+            0.005165999999999976
+          ],
+          "paired_delta_median_ms": 0.005165999999999976,
+          "paired_delta_p95_ms": 0.008374999999999994,
+          "baseline_median_of_run_medians_ms": 0.150751,
+          "candidate_median_of_run_medians_ms": 0.15904100000000002
+        },
+        "gpu_render": {
+          "baseline_run_medians_ms": [
+            3.9487089999999996,
+            3.947,
+            3.9512509999999996
+          ],
+          "candidate_run_medians_ms": [
+            4.029376,
+            4.0377909999999995,
+            4.027540999999999
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.08066700000000049,
+            0.0907909999999994,
+            0.07628999999999975
+          ],
+          "paired_delta_median_ms": 0.08066700000000049,
+          "paired_delta_p95_ms": 0.0907909999999994,
+          "baseline_median_of_run_medians_ms": 3.9487089999999996,
+          "candidate_median_of_run_medians_ms": 4.029376
+        },
+        "gpu_stages.atmosphere_fire": {
+          "baseline_run_medians_ms": [
+            2.495292,
+            2.497458,
+            2.504292
+          ],
+          "candidate_run_medians_ms": [
+            2.402625,
+            2.395667,
+            2.409792
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.09266700000000005,
+            -0.10179099999999996,
+            -0.09450000000000003
+          ],
+          "paired_delta_median_ms": -0.09450000000000003,
+          "paired_delta_p95_ms": -0.09266700000000005,
+          "baseline_median_of_run_medians_ms": 2.497458,
+          "candidate_median_of_run_medians_ms": 2.402625
+        },
+        "gpu_stages.opaque_geometry": {
+          "baseline_run_medians_ms": [
+            1.965625,
+            1.968875,
+            1.973709
+          ],
+          "candidate_run_medians_ms": [
+            1.89225,
+            1.8888749999999999,
+            1.8941249999999998
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.07337499999999997,
+            -0.08000000000000007,
+            -0.0795840000000001
+          ],
+          "paired_delta_median_ms": -0.0795840000000001,
+          "paired_delta_p95_ms": -0.07337499999999997,
+          "baseline_median_of_run_medians_ms": 1.968875,
+          "candidate_median_of_run_medians_ms": 1.89225
+        },
+        "gpu_stages.optical_resolve": {
+          "baseline_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "candidate_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "paired_candidate_minus_baseline_ms": [],
+          "paired_delta_median_ms": null,
+          "paired_delta_p95_ms": null,
+          "baseline_median_of_run_medians_ms": null,
+          "candidate_median_of_run_medians_ms": null
+        },
+        "gpu_stages.post": {
+          "baseline_run_medians_ms": [
+            2.576791,
+            2.5745419999999997,
+            2.580625
+          ],
+          "candidate_run_medians_ms": [
+            2.485125,
+            2.4797919999999998,
+            2.4895
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.09166600000000003,
+            -0.09474999999999989,
+            -0.0911249999999999
+          ],
+          "paired_delta_median_ms": -0.09166600000000003,
+          "paired_delta_p95_ms": -0.0911249999999999,
+          "baseline_median_of_run_medians_ms": 2.576791,
+          "candidate_median_of_run_medians_ms": 2.485125
+        },
+        "gpu_stages.shadow_maps": {
+          "baseline_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "candidate_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "paired_candidate_minus_baseline_ms": [],
+          "paired_delta_median_ms": null,
+          "paired_delta_p95_ms": null,
+          "baseline_median_of_run_medians_ms": null,
+          "candidate_median_of_run_medians_ms": null
+        },
+        "gpu_stages.smoke_absorption_cache": {
+          "baseline_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "candidate_run_medians_ms": [
+            0.043709,
+            0.044459,
+            0.043875
+          ],
+          "paired_candidate_minus_baseline_ms": [],
+          "paired_delta_median_ms": null,
+          "paired_delta_p95_ms": null,
+          "baseline_median_of_run_medians_ms": null,
+          "candidate_median_of_run_medians_ms": 0.043875
+        },
+        "gpu_stages.smoke_compute": {
+          "baseline_run_medians_ms": [
+            0.030875,
+            0.030875,
+            0.03075
+          ],
+          "candidate_run_medians_ms": [
+            0.030875,
+            0.03075,
+            0.030834
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.0,
+            -0.0001250000000000001,
+            8.400000000000074e-05
+          ],
+          "paired_delta_median_ms": 0.0,
+          "paired_delta_p95_ms": 8.400000000000074e-05,
+          "baseline_median_of_run_medians_ms": 0.030875,
+          "candidate_median_of_run_medians_ms": 0.030834
+        },
+        "gpu_stages.tile_list_build": {
+          "baseline_run_medians_ms": [
+            1.149375,
+            1.149333,
+            1.1494579999999999
+          ],
+          "candidate_run_medians_ms": [
+            1.1524159999999999,
+            1.1532499999999999,
+            1.152375
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.0030409999999998494,
+            0.003916999999999948,
+            0.0029170000000000584
+          ],
+          "paired_delta_median_ms": 0.0030409999999998494,
+          "paired_delta_p95_ms": 0.003916999999999948,
+          "baseline_median_of_run_medians_ms": 1.149375,
+          "candidate_median_of_run_medians_ms": 1.1524159999999999
+        }
+      },
+      "runs": {
+        "1": {
+          "baseline": {
+            "report": "pair-01-baseline.engine.json",
+            "sha256": "f8bafbf9f65fb23a06f817612c2f68055b4d04317d111331eb949dc247ef976a",
+            "cache_bytes": 0,
+            "frame_work": {
+              "median_ms": 6.301875,
+              "p95_ms": 10.800125000000001,
+              "samples": 7200
+            },
+            "gpu_render": {
+              "median_ms": 3.9487089999999996,
+              "p95_ms": 4.7805,
+              "samples": 7200
+            },
+            "gpu_stages": {
+              "atmosphere_fire": {
+                "median_ms": 2.495292,
+                "p95_ms": 2.9339999999999997,
+                "samples": 7200
+              },
+              "opaque_geometry": {
+                "median_ms": 1.965625,
+                "p95_ms": 2.285167,
+                "samples": 7200
+              },
+              "optical_resolve": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "post": {
+                "median_ms": 2.576791,
+                "p95_ms": 3.176125,
+                "samples": 7200
+              },
+              "shadow_maps": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "smoke_absorption_cache": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "smoke_compute": {
+                "median_ms": 0.030875,
+                "p95_ms": 0.035708,
+                "samples": 7200
+              },
+              "tile_list_build": {
+                "median_ms": 1.149375,
+                "p95_ms": 1.238916,
+                "samples": 7200
+              }
+            },
+            "smoke_absorption_cache": {
+              "cpu_build_ms": {
+                "median_ms": 0.0,
+                "p95_ms": 0.0,
+                "samples": 7200
+              },
+              "enabled": false,
+              "gpu_build": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "note": "Caches only primary authored fire-light smoke optical depth. Other authored/particle lights and out-of-volume points use direct sampling. Cache rebuilds every rendered frame so paused density/light edits are current.",
+              "texture_dimensions": [
+                16,
+                16,
+                16
+              ]
+            },
+            "cpu_encode": {
+              "median_ms": 0.8071670000000001,
+              "p95_ms": 2.302,
+              "samples": 7200
+            },
+            "workload_counts": {
+              "authored_lights": 3,
+              "draw_calls_per_frame": 45.0,
+              "effect_draw_calls_per_frame": 1,
+              "emitters": 2,
+              "fire_primitives_last_frame": 162,
+              "materials": 11,
+              "objects": 276,
+              "opaque_geometry_draw_calls_per_frame": 43.0,
+              "optical_draw_calls_per_frame": 0,
+              "particle_lights_last_frame": 12,
+              "post_draw_calls_per_frame": 1,
+              "shadow_draw_calls_per_frame": 0.0,
+              "shadow_draw_calls_when_redrawn": 0.0,
+              "shared_mesh_count": 68,
+              "unshared_vertex_count": 175662,
+              "vertices": 143454
+            },
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          },
+          "candidate": {
+            "report": "pair-01-candidate.engine.json",
+            "sha256": "215bd3fa1678760ccdc66270ea652dc458fbec04f1e970edf91078ba6ee69ba2",
+            "cache_bytes": 32768,
+            "frame_work": {
+              "median_ms": 6.283333000000001,
+              "p95_ms": 10.470041,
+              "samples": 7200
+            },
+            "gpu_render": {
+              "median_ms": 4.029376,
+              "p95_ms": 5.138333,
+              "samples": 7200
+            },
+            "gpu_stages": {
+              "atmosphere_fire": {
+                "median_ms": 2.402625,
+                "p95_ms": 2.946542,
+                "samples": 7200
+              },
+              "opaque_geometry": {
+                "median_ms": 1.89225,
+                "p95_ms": 2.268458,
+                "samples": 7200
+              },
+              "optical_resolve": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "post": {
+                "median_ms": 2.485125,
+                "p95_ms": 3.396,
+                "samples": 7200
+              },
+              "shadow_maps": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "smoke_absorption_cache": {
+                "median_ms": 0.043709,
+                "p95_ms": 0.9286249999999999,
+                "samples": 7200
+              },
+              "smoke_compute": {
+                "median_ms": 0.030875,
+                "p95_ms": 0.0345,
+                "samples": 7200
+              },
+              "tile_list_build": {
+                "median_ms": 1.1524159999999999,
+                "p95_ms": 1.26475,
+                "samples": 7200
+              }
+            },
+            "smoke_absorption_cache": {
+              "cpu_build_ms": {
+                "median_ms": 0.048417,
+                "p95_ms": 0.148042,
+                "samples": 7200
+              },
+              "enabled": true,
+              "gpu_build": {
+                "median_ms": 0.043709,
+                "p95_ms": 0.9286249999999999,
+                "samples": 7200
+              },
+              "note": "Caches only primary authored fire-light smoke optical depth. Other authored/particle lights and out-of-volume points use direct sampling. Cache rebuilds every rendered frame so paused density/light edits are current.",
+              "texture_dimensions": [
+                16,
+                16,
+                16
+              ]
+            },
+            "cpu_encode": {
+              "median_ms": 0.826542,
+              "p95_ms": 2.332501,
+              "samples": 7200
+            },
+            "workload_counts": {
+              "authored_lights": 3,
+              "draw_calls_per_frame": 45.0,
+              "effect_draw_calls_per_frame": 1,
+              "emitters": 2,
+              "fire_primitives_last_frame": 162,
+              "materials": 11,
+              "objects": 276,
+              "opaque_geometry_draw_calls_per_frame": 43.0,
+              "optical_draw_calls_per_frame": 0,
+              "particle_lights_last_frame": 12,
+              "post_draw_calls_per_frame": 1,
+              "shadow_draw_calls_per_frame": 0.0,
+              "shadow_draw_calls_when_redrawn": 0.0,
+              "shared_mesh_count": 68,
+              "unshared_vertex_count": 175662,
+              "vertices": 143454
+            },
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          }
+        },
+        "2": {
+          "baseline": {
+            "report": "pair-02-baseline.engine.json",
+            "sha256": "52c3fdd15862d5ddac5226b3cfedcc7b74e4b25ae742b9ecf9751f0f5b3fc49c",
+            "cache_bytes": 0,
+            "frame_work": {
+              "median_ms": 6.251042,
+              "p95_ms": 10.646292,
+              "samples": 7200
+            },
+            "gpu_render": {
+              "median_ms": 3.947,
+              "p95_ms": 4.933084,
+              "samples": 7200
+            },
+            "gpu_stages": {
+              "atmosphere_fire": {
+                "median_ms": 2.497458,
+                "p95_ms": 2.930542,
+                "samples": 7200
+              },
+              "opaque_geometry": {
+                "median_ms": 1.968875,
+                "p95_ms": 2.28475,
+                "samples": 7200
+              },
+              "optical_resolve": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "post": {
+                "median_ms": 2.5745419999999997,
+                "p95_ms": 3.4206659999999998,
+                "samples": 7200
+              },
+              "shadow_maps": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "smoke_absorption_cache": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "smoke_compute": {
+                "median_ms": 0.030875,
+                "p95_ms": 0.034417,
+                "samples": 7200
+              },
+              "tile_list_build": {
+                "median_ms": 1.149333,
+                "p95_ms": 1.253125,
+                "samples": 7200
+              }
+            },
+            "smoke_absorption_cache": {
+              "cpu_build_ms": {
+                "median_ms": 0.0,
+                "p95_ms": 0.0,
+                "samples": 7200
+              },
+              "enabled": false,
+              "gpu_build": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "note": "Caches only primary authored fire-light smoke optical depth. Other authored/particle lights and out-of-volume points use direct sampling. Cache rebuilds every rendered frame so paused density/light edits are current.",
+              "texture_dimensions": [
+                16,
+                16,
+                16
+              ]
+            },
+            "cpu_encode": {
+              "median_ms": 0.787333,
+              "p95_ms": 2.148792,
+              "samples": 7200
+            },
+            "workload_counts": {
+              "authored_lights": 3,
+              "draw_calls_per_frame": 45.0,
+              "effect_draw_calls_per_frame": 1,
+              "emitters": 2,
+              "fire_primitives_last_frame": 162,
+              "materials": 11,
+              "objects": 276,
+              "opaque_geometry_draw_calls_per_frame": 43.0,
+              "optical_draw_calls_per_frame": 0,
+              "particle_lights_last_frame": 12,
+              "post_draw_calls_per_frame": 1,
+              "shadow_draw_calls_per_frame": 0.0,
+              "shadow_draw_calls_when_redrawn": 0.0,
+              "shared_mesh_count": 68,
+              "unshared_vertex_count": 175662,
+              "vertices": 143454
+            },
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          },
+          "candidate": {
+            "report": "pair-02-candidate.engine.json",
+            "sha256": "214931bfc1ade15402138a7cc6cfd566631611b3f51108080820c51356fe46a3",
+            "cache_bytes": 32768,
+            "frame_work": {
+              "median_ms": 6.270041,
+              "p95_ms": 10.856792,
+              "samples": 7200
+            },
+            "gpu_render": {
+              "median_ms": 4.0377909999999995,
+              "p95_ms": 5.141541999999999,
+              "samples": 7200
+            },
+            "gpu_stages": {
+              "atmosphere_fire": {
+                "median_ms": 2.395667,
+                "p95_ms": 2.913458,
+                "samples": 7200
+              },
+              "opaque_geometry": {
+                "median_ms": 1.8888749999999999,
+                "p95_ms": 2.2642919999999997,
+                "samples": 7200
+              },
+              "optical_resolve": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "post": {
+                "median_ms": 2.4797919999999998,
+                "p95_ms": 3.3736669999999997,
+                "samples": 7200
+              },
+              "shadow_maps": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "smoke_absorption_cache": {
+                "median_ms": 0.044459,
+                "p95_ms": 0.9369999999999999,
+                "samples": 7200
+              },
+              "smoke_compute": {
+                "median_ms": 0.03075,
+                "p95_ms": 0.034708,
+                "samples": 7200
+              },
+              "tile_list_build": {
+                "median_ms": 1.1532499999999999,
+                "p95_ms": 1.2654159999999999,
+                "samples": 7200
+              }
+            },
+            "smoke_absorption_cache": {
+              "cpu_build_ms": {
+                "median_ms": 0.047625,
+                "p95_ms": 0.155,
+                "samples": 7200
+              },
+              "enabled": true,
+              "gpu_build": {
+                "median_ms": 0.044459,
+                "p95_ms": 0.9369999999999999,
+                "samples": 7200
+              },
+              "note": "Caches only primary authored fire-light smoke optical depth. Other authored/particle lights and out-of-volume points use direct sampling. Cache rebuilds every rendered frame so paused density/light edits are current.",
+              "texture_dimensions": [
+                16,
+                16,
+                16
+              ]
+            },
+            "cpu_encode": {
+              "median_ms": 0.825167,
+              "p95_ms": 2.300126,
+              "samples": 7200
+            },
+            "workload_counts": {
+              "authored_lights": 3,
+              "draw_calls_per_frame": 45.0,
+              "effect_draw_calls_per_frame": 1,
+              "emitters": 2,
+              "fire_primitives_last_frame": 162,
+              "materials": 11,
+              "objects": 276,
+              "opaque_geometry_draw_calls_per_frame": 43.0,
+              "optical_draw_calls_per_frame": 0,
+              "particle_lights_last_frame": 12,
+              "post_draw_calls_per_frame": 1,
+              "shadow_draw_calls_per_frame": 0.0,
+              "shadow_draw_calls_when_redrawn": 0.0,
+              "shared_mesh_count": 68,
+              "unshared_vertex_count": 175662,
+              "vertices": 143454
+            },
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          }
+        },
+        "3": {
+          "baseline": {
+            "report": "pair-03-baseline.engine.json",
+            "sha256": "1410ffbddfac2d72ae368d1c66cb6ec795bbdcf6e1923605fd8b5c0b8e338e1b",
+            "cache_bytes": 0,
+            "frame_work": {
+              "median_ms": 6.27575,
+              "p95_ms": 10.888625000000001,
+              "samples": 7200
+            },
+            "gpu_render": {
+              "median_ms": 3.9512509999999996,
+              "p95_ms": 4.939541999999999,
+              "samples": 7200
+            },
+            "gpu_stages": {
+              "atmosphere_fire": {
+                "median_ms": 2.504292,
+                "p95_ms": 2.952708,
+                "samples": 7200
+              },
+              "opaque_geometry": {
+                "median_ms": 1.973709,
+                "p95_ms": 2.288542,
+                "samples": 7200
+              },
+              "optical_resolve": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "post": {
+                "median_ms": 2.580625,
+                "p95_ms": 3.443875,
+                "samples": 7200
+              },
+              "shadow_maps": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "smoke_absorption_cache": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "smoke_compute": {
+                "median_ms": 0.03075,
+                "p95_ms": 0.03525,
+                "samples": 7200
+              },
+              "tile_list_build": {
+                "median_ms": 1.1494579999999999,
+                "p95_ms": 1.244209,
+                "samples": 7200
+              }
+            },
+            "smoke_absorption_cache": {
+              "cpu_build_ms": {
+                "median_ms": 0.0,
+                "p95_ms": 0.0,
+                "samples": 7200
+              },
+              "enabled": false,
+              "gpu_build": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "note": "Caches only primary authored fire-light smoke optical depth. Other authored/particle lights and out-of-volume points use direct sampling. Cache rebuilds every rendered frame so paused density/light edits are current.",
+              "texture_dimensions": [
+                16,
+                16,
+                16
+              ]
+            },
+            "cpu_encode": {
+              "median_ms": 0.797083,
+              "p95_ms": 2.249708,
+              "samples": 7200
+            },
+            "workload_counts": {
+              "authored_lights": 3,
+              "draw_calls_per_frame": 45.0,
+              "effect_draw_calls_per_frame": 1,
+              "emitters": 2,
+              "fire_primitives_last_frame": 162,
+              "materials": 11,
+              "objects": 276,
+              "opaque_geometry_draw_calls_per_frame": 43.0,
+              "optical_draw_calls_per_frame": 0,
+              "particle_lights_last_frame": 12,
+              "post_draw_calls_per_frame": 1,
+              "shadow_draw_calls_per_frame": 0.0,
+              "shadow_draw_calls_when_redrawn": 0.0,
+              "shared_mesh_count": 68,
+              "unshared_vertex_count": 175662,
+              "vertices": 143454
+            },
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          },
+          "candidate": {
+            "report": "pair-03-candidate.engine.json",
+            "sha256": "62d8af7d05a42e81cd0db540a22b0fbda2ab63e0337f570ee29631fbfe237d6a",
+            "cache_bytes": 32768,
+            "frame_work": {
+              "median_ms": 6.3093330000000005,
+              "p95_ms": 10.645959,
+              "samples": 7200
+            },
+            "gpu_render": {
+              "median_ms": 4.027540999999999,
+              "p95_ms": 5.139126,
+              "samples": 7200
+            },
+            "gpu_stages": {
+              "atmosphere_fire": {
+                "median_ms": 2.409792,
+                "p95_ms": 2.9168749999999997,
+                "samples": 7200
+              },
+              "opaque_geometry": {
+                "median_ms": 1.8941249999999998,
+                "p95_ms": 2.266958,
+                "samples": 7200
+              },
+              "optical_resolve": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "post": {
+                "median_ms": 2.4895,
+                "p95_ms": 3.41625,
+                "samples": 7200
+              },
+              "shadow_maps": {
+                "median_ms": null,
+                "p95_ms": null,
+                "samples": 0
+              },
+              "smoke_absorption_cache": {
+                "median_ms": 0.043875,
+                "p95_ms": 0.9189579999999999,
+                "samples": 7200
+              },
+              "smoke_compute": {
+                "median_ms": 0.030834,
+                "p95_ms": 0.033042,
+                "samples": 7200
+              },
+              "tile_list_build": {
+                "median_ms": 1.152375,
+                "p95_ms": 1.2854999999999999,
+                "samples": 7200
+              }
+            },
+            "smoke_absorption_cache": {
+              "cpu_build_ms": {
+                "median_ms": 0.047209,
+                "p95_ms": 0.142208,
+                "samples": 7200
+              },
+              "enabled": true,
+              "gpu_build": {
+                "median_ms": 0.043875,
+                "p95_ms": 0.9189579999999999,
+                "samples": 7200
+              },
+              "note": "Caches only primary authored fire-light smoke optical depth. Other authored/particle lights and out-of-volume points use direct sampling. Cache rebuilds every rendered frame so paused density/light edits are current.",
+              "texture_dimensions": [
+                16,
+                16,
+                16
+              ]
+            },
+            "cpu_encode": {
+              "median_ms": 0.8277499999999999,
+              "p95_ms": 2.2629170000000003,
+              "samples": 7200
+            },
+            "workload_counts": {
+              "authored_lights": 3,
+              "draw_calls_per_frame": 45.0,
+              "effect_draw_calls_per_frame": 1,
+              "emitters": 2,
+              "fire_primitives_last_frame": 162,
+              "materials": 11,
+              "objects": 276,
+              "opaque_geometry_draw_calls_per_frame": 43.0,
+              "optical_draw_calls_per_frame": 0,
+              "particle_lights_last_frame": 12,
+              "post_draw_calls_per_frame": 1,
+              "shadow_draw_calls_per_frame": 0.0,
+              "shadow_draw_calls_when_redrawn": 0.0,
+              "shared_mesh_count": 68,
+              "unshared_vertex_count": 175662,
+              "vertices": 143454
+            },
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          }
+        }
+      }
+    }
+  },
+  "scene_hashes": {
+    "8": {
+      "direct": "f8161568794dd5a9be5dd39fa9644f7d4cb1a042e693b5fe6cf49923fd14b06c",
+      "cached": "ff72f34cedec3c9edb187ba862cccfe3b5af7f5777692882c43367ff4f39a08e"
+    },
+    "16": {
+      "direct": "d556bb98f5d5d60749f6cb8a0214e25cf23b3b3fac969ee071a48d5e76baaa10",
+      "cached": "3468c7599b93b754bd7fbf96e035c321ad841cda7582c8084de249dbf1c6bd3e"
+    }
+  },
+  "limitations": [
+    "Offscreen Apple M1 Max/Metal only; no native-window, Windows/DX12, or other-adapter result.",
+    "The comparison measures this route and workload only; it is not a cache promotion decision.",
+    "GPU stage intervals may overlap; compare the full-frame metric separately and do not sum stages."
+  ]
+}

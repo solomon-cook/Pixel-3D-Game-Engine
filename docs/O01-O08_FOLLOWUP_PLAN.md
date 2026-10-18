@@ -553,6 +553,14 @@ continuous playback or performance acceptance. See
 [8³ temporal report](measurements-multi-emitter-absorption-temporal.json),
 [16³ temporal report](measurements-multi-emitter-absorption-temporal-cache16.json)
 and [reproducible runner](../scripts/two_emitter_absorption_temporal_study.py).
+Three alternating 120-second pairs per cache size now measure the two-emitter
+route. Median candidate-minus-direct GPU-render deltas are +0.061/+0.081 ms for
+8³/16³, with paired frame-work deltas of +0.027/+0.019 ms; this route shows no
+total-render benefit. Cache build GPU medians are 0.034/0.044 ms and CPU medians
+are 0.045/0.048 ms per frame, with 4,096/32,768 resident bytes. See
+[sustained report](measurements-multi-emitter-absorption-sustained.json) and
+[runner](../scripts/two_emitter_absorption_sustained_study.py). Keep the cache
+opt-in; playback, native-window and cross-adapter review remain open.
 Opaque `heat_response` materials now sample the second emitter's local
 temperature volume as well. The source-zero Metal capture is byte-identical and
 the verifier passes. The dual-source scene is available for focused source-one

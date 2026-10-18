@@ -440,6 +440,13 @@ comparison reports mean RGB error 0.014/255 (p95 0.019/255), mean temporal-chang
 error 0.015/255 and maximum channel difference 17/255; effect counts also match
 at every frame. See [16³ temporal report](measurements-multi-emitter-absorption-temporal-cache16.json).
 
+Three alternating 120-second pairs per cache size now measure dual-source cost.
+Candidate-minus-direct paired medians were +0.027/+0.019 ms frame work and
++0.061/+0.081 ms GPU render for 8³/16³; cache build cost was 0.034/0.044 ms
+GPU and 0.045/0.048 ms CPU per frame. No total-render win was measured. Cache
+allocation is 4,096/32,768 bytes. See [sustained report](measurements-multi-emitter-absorption-sustained.json)
+and [runner](../scripts/two_emitter_absorption_sustained_study.py).
+
 The maximum-budget close-camera route exposed two indexing errors in the expanded
 smoke tile buffer: the primary list used a 36-entry tile stride instead of the
 72-entry reserved stride, and the secondary reader omitted its 36-entry segment

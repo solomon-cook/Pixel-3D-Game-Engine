@@ -5,9 +5,10 @@ emitters with explicit, unique primary-light IDs. Stable-ID sampling, per-source
 compute, shading, heat, light and shadow paths are exercised by fixed-tick
 Metal reviews. Maximum-budget correctness and a three-pair sustained offscreen
 route are recorded; fixed-camera temporal evidence covers both 8³ and 16³
-absorption-cache variants, while continuous playback, performance, native-window
-and portability gates remain open. The single-source baseline remains selectable
-and pixel-identical.
+absorption-cache variants. A three-pair, 120-second-per-run comparison on the
+dual-emitter review scene shows no total-render gain for either cache size;
+continuous playback, native-window and portability gates remain open. The
+single-source baseline remains selectable and pixel-identical.
 
 The opt-in 8³ source-local absorption cache also has a matched 120-frame, 20 fps
 temporal comparison using the fixed dual-wide camera. Effect counts match at all
@@ -18,6 +19,15 @@ temporal-change error, also with per-frame effect-count parity. See [8³ report]
 [16³ report](measurements-multi-emitter-absorption-temporal-cache16.json) and
 [runner](../scripts/two_emitter_absorption_temporal_study.py).
 
+The sustained dual-source comparison used three alternating 120-second pairs
+per cache size. Candidate-minus-direct paired median frame-work deltas were
++0.027/+0.019 ms for 8³/16³; GPU-render deltas were +0.061/+0.081 ms. The
+paired p95 deltas were +0.305/+0.034 ms for frame work and +0.072/+0.091 ms
+for GPU render. Cache build medians were 0.034/0.044 ms GPU and 0.045/0.048 ms
+CPU per frame; residency was 4,096/32,768 bytes. Keep both modes opt-in and do
+not claim a performance benefit from this route. See [sustained report](measurements-multi-emitter-absorption-sustained.json)
+and [runner](../scripts/two_emitter_absorption_sustained_study.py).
+
 ## Current boundary
 
 - Scene validation accepts one or two emitters and requires explicit unique
@@ -26,7 +36,8 @@ temporal-change error, also with per-frame effect-count parity. See [8³ report]
   geometry shadow paths are connected. The new review scene exercises these
   paths on M1 Max/Metal. Cache-enabled fixed-tick review is complete. Maximum-
   budget tiled/exhaustive parity and sustained offscreen performance are recorded;
-  cache temporal quality, other-scene performance and adapter gates remain open.
+  temporal samples cover both cache sizes, while continuous playback, other-scene
+  performance and adapter gates remain open.
 - Each `FireFrame` owns a 256-primitive pool; up to 12 derived particle lights
   are shared globally. O03 tile construction now includes both sources, and
   overflow falls back to exhaustive evaluation. Maximum-budget parity, forced

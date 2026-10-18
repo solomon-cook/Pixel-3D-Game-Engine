@@ -38,10 +38,18 @@ Detailed steps, dependencies and acceptance criteria live in
 ## Later scaling research
 
 - [ ] Execute the remaining O01–O08 correctness, sustained-motion,
-  optical-combination, dynamic shadow-scaling, operation-counter and
+  optical-combination, operation-counter and
   cross-adapter gates in
   [O01-O08_FOLLOWUP_PLAN.md](docs/O01-O08_FOLLOWUP_PLAN.md) before promoting
   opt-in approximations or expanding the emitter cap.
+
+  O07 static and moving-caster scene-scale evidence is recorded in
+  [measurements-o07-scale-study.json](docs/measurements-o07-scale-study.json),
+  [moving-caster report](docs/measurements-o07-moving-caster.json) and
+  [native report](docs/measurements-o07-native-scale-study.json). No adaptive
+  shadow-map-resolution policy is specified in the plan; this wording does not
+  authorize an automatic quality change. Continuous-motion visual and
+  cross-adapter gates remain open.
 
   O01 operation counters cover world, volume and optical paths. Companion
   diagnostic draws into lazily allocated scratch targets preserve the normal image;
