@@ -209,6 +209,7 @@ pub struct Renderer {
     fire_storage: FireFrameStorage,
     fire_key: Option<FireKey>,
     multi_fire_keys: Vec<(String, FireKey)>,
+    multi_fire_tiers: Vec<(String, u8)>,
     fire_frame: FireFrame,
     fire_lod_tier: u8,
     fire_render_segments: u32,
@@ -1899,6 +1900,7 @@ impl Renderer {
             fire_storage: FireFrameStorage::zeroed(),
             fire_key: None,
             multi_fire_keys: Vec::new(),
+            multi_fire_tiers: Vec::new(),
             fire_frame: FireFrame::zeroed(),
             fire_lod_tier: 0,
             fire_render_segments: 0,
@@ -2983,6 +2985,30 @@ impl Renderer {
         let primary_source_slot = multi_source_keys
             .iter()
             .position(|(id, _)| id == &emitter.id);
+        let multi_source_tiers = multi_source_keys
+            .iter()
+            .map(|(id, source_key)| {
+                let height = effects::projected_fire_height_px(
+                    camera,
+                    self.resolution,
+                    source_key.source,
+                    &source_key.profile,
+                );
+                let previous_tier = self
+                    .multi_fire_tiers
+                    .iter()
+                    .find(|(previous_id, _)| previous_id == id)
+                    .map_or(0, |(_, previous_tier)| *previous_tier);
+                (
+                    id.clone(),
+                    effects::advance_projected_detail_tier(
+                        previous_tier,
+                        height,
+                        scene.render.experiments.projected_detail_lod,
+                    ),
+                )
+            })
+            .collect::<Vec<_>>();
         let fire_changed = self.fire_key.as_ref() != Some(&key);
         if fire_changed {
             self.fire_key = Some(key.clone());
@@ -3028,10 +3054,28 @@ impl Renderer {
             }
             self.fire_render_segments = rendered_segments;
         }
-        if multi_emitter && multi_source_keys != self.multi_fire_keys {
+        if multi_emitter
+            && (multi_source_keys != self.multi_fire_keys
+                || multi_source_tiers != self.multi_fire_tiers)
+        {
             let update_started = Instant::now();
-            let storage = FireFrameStorage::sample_emitters(&multi_source_keys)
+            let mut storage = FireFrameStorage::sample_emitters(&multi_source_keys)
                 .expect("validated scene has at most two uniquely identified emitters");
+            let full_primitive_count = storage.sources.iter().map(|frame| frame.counts[0]).sum();
+            for (slot, (id, key)) in multi_source_keys.iter().enumerate() {
+                let mut render_key = key.clone();
+                render_key.seed = effects::stable_emitter_seed(render_key.seed, id);
+                let tier = multi_source_tiers
+                    .iter()
+                    .find(|(tier_id, _)| tier_id == id)
+                    .map_or(0, |(_, tier)| *tier);
+                let segments = effects::projected_detail_segments(key.profile.fire.segments, tier);
+                storage.sources[slot] = effects::render_frame_with_detail(
+                    &render_key,
+                    &storage.sources[slot],
+                    segments,
+                );
+            }
             self.metrics.effect_update_cpu_ms = update_started.elapsed().as_secs_f64() * 1000.;
             self.metrics.effect_events_dropped = storage
                 .sources
@@ -3043,7 +3087,7 @@ impl Renderer {
             self.metrics.branch_segments_dropped = storage.sources[0].lighting[2];
             self.metrics.fire_primitives = storage.sources.iter().map(|f| f.counts[0]).sum();
             self.metrics.fire_primitives_rendered = self.metrics.fire_primitives;
-            self.metrics.fire_primitives_full = self.metrics.fire_primitives;
+            self.metrics.fire_primitives_full = full_primitive_count;
             self.metrics.flame_fragments = storage.sources.iter().map(|f| f.counts[2]).sum();
             self.metrics.embers = storage.sources.iter().map(|f| f.counts[3]).sum();
             let upload_started = Instant::now();
@@ -3052,6 +3096,7 @@ impl Renderer {
                 .write_buffer(&self.fire_buffer, 0, bytemuck::bytes_of(&self.fire_storage));
             self.metrics.cpu_upload_ms += upload_started.elapsed().as_secs_f64() * 1000.;
             self.multi_fire_keys = multi_source_keys;
+            self.multi_fire_tiers = multi_source_tiers;
         }
         self.fire_lod_tier = tier;
         self.metrics.projected_detail_cpu_ms = detail_started.elapsed().as_secs_f64() * 1000.;
@@ -3061,11 +3106,7 @@ impl Renderer {
         self.metrics.fire_segments_full = profile.fire.segments;
         self.metrics.fire_segments_rendered = rendered_segments;
         self.metrics.fire_primitives_full = if multi_emitter {
-            self.fire_storage
-                .sources
-                .iter()
-                .map(|frame| frame.counts[0])
-                .sum()
+            self.metrics.fire_primitives_full
         } else {
             self.fire_frame.counts[0]
         };

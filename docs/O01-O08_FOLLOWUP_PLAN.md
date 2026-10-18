@@ -467,8 +467,10 @@ lights into the shared twelve-light budget. Tests cover reorder invariance,
 legacy sampler parity and selected-light/drop accounting. Dual-source smoke
 simulation, shadows, live scene acceptance and visual review remain
 unimplemented. `Renderer::update_globals` now has a keyed two-source sampling
-and upload branch, but scene validation still prevents live access and no
-two-source GPU capture exists. See the
+and upload branch with independent projected-detail tiers, but scene validation
+still prevents live access and no two-source GPU capture exists. The existing
+single-source profiling-heavy fixed-tick RGBA hash remains identical on M1
+Max/Metal. See the
 [storage ABI](measurements-multi-emitter-storage-abi.json) and
 [fire consumer](measurements-multi-emitter-fire-consumer.json) and
 [storage packing](measurements-multi-emitter-storage-packing.json) comparisons,
