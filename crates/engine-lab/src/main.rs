@@ -121,6 +121,9 @@ enum Command {
     BenchmarkNative {
         #[command(flatten)]
         options: Options,
+        /// Use exhaustive effect/light candidate evaluation instead of tile lists.
+        #[arg(long)]
+        disable_tile_lists: bool,
         /// Disable conservative per-camera and per-shadow-frustum object culling.
         #[arg(long)]
         disable_object_culling: bool,
@@ -297,6 +300,7 @@ fn start() -> Result<()> {
         )?,
         Command::BenchmarkNative {
             options,
+            disable_tile_lists,
             disable_object_culling,
             disable_instancing,
             moving_caster,
@@ -313,6 +317,7 @@ fn start() -> Result<()> {
                 duration,
                 warmup,
                 output,
+                tile_lists_enabled: !disable_tile_lists,
                 object_culling_enabled: !disable_object_culling,
                 instancing_enabled: !disable_instancing,
                 moving_caster,

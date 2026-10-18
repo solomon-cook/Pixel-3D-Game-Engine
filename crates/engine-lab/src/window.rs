@@ -61,6 +61,7 @@ struct NativeBenchmarkConfig {
     duration: f64,
     warmup: f64,
     output: std::path::PathBuf,
+    tile_lists_enabled: bool,
     object_culling_enabled: bool,
     instancing_enabled: bool,
     moving_caster: Option<String>,
@@ -73,6 +74,7 @@ pub struct NativeBenchmarkSettings {
     pub duration: f32,
     pub warmup: f32,
     pub output: std::path::PathBuf,
+    pub tile_lists_enabled: bool,
     pub object_culling_enabled: bool,
     pub instancing_enabled: bool,
     pub moving_caster: Option<String>,
@@ -261,6 +263,7 @@ pub fn benchmark_native(options: Options, settings: NativeBenchmarkSettings) -> 
             duration: settings.duration as f64,
             warmup: settings.warmup as f64,
             output: settings.output,
+            tile_lists_enabled: settings.tile_lists_enabled,
             object_culling_enabled: settings.object_culling_enabled,
             instancing_enabled: settings.instancing_enabled,
             moving_caster: settings.moving_caster,
@@ -378,6 +381,9 @@ impl App {
         session.execute("set_camera", json!({"id":self.options.camera}))?;
         diagnostics::log("ready", session.renderer.capabilities());
         let benchmark = if let Some(config) = self.benchmark.take() {
+            session
+                .renderer
+                .set_tile_lists(config.tile_lists_enabled, false);
             session
                 .renderer
                 .set_geometry_rendering(config.object_culling_enabled, config.instancing_enabled);
@@ -1088,6 +1094,7 @@ fn native_benchmark_report(
         "frames_per_second":if actual_seconds > 0. {benchmark.samples.len() as f64 / actual_seconds} else {0.},
         "present_mode":format!("{:?}", present_mode),
         "vsync":present_mode == wgpu::PresentMode::AutoVsync || present_mode == wgpu::PresentMode::Fifo,
+        "tile_lists_enabled":benchmark.config.tile_lists_enabled,
         "geometry_rendering":{"culling":benchmark.config.object_culling_enabled,"instancing":benchmark.config.instancing_enabled},
         "moving_caster":benchmark.moving_caster.as_ref().map(|(id, _)| json!({"object":id,"radius":benchmark.config.caster_orbit_radius,"period_seconds":benchmark.config.caster_orbit_period,"orbit_center_xz":benchmark.orbit_center_xz,"sample_hz":60})),
         "shadow_cache":{"frames_with_redraw":shadow_redrawn_frames,"redrawn_shadow_passes":shadow_redrawn_passes,"dirty_reasons":shadow_dirty_reasons},

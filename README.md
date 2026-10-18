@@ -19,6 +19,7 @@ fallbacks. Other memory layout work remains proposed. Measurements are recorded 
 [docs/measurements-o02-visible-caster.json](docs/measurements-o02-visible-caster.json),
 [docs/measurements-o02-visible-caster-native.json](docs/measurements-o02-visible-caster-native.json),
 [docs/measurements-o03.json](docs/measurements-o03.json),
+[docs/measurements-o03-native-tile-lists.json](docs/measurements-o03-native-tile-lists.json),
 [docs/measurements-o04.json](docs/measurements-o04.json) and
 [docs/measurements-o05.json](docs/measurements-o05.json),
 [docs/measurements-o05-temporal.json](docs/measurements-o05-temporal.json),

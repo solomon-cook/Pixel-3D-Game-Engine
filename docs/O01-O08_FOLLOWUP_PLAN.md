@@ -59,6 +59,14 @@ crowding, and does another tile size improve the total cost?
    exhaustive option and existing ordering until image parity and fallback
    behavior pass on each backend.
 
+The native-window gate now has three alternating 120-second tiled/exhaustive
+pairs after ten-second warm-ups on M1 Max/Metal. Tiling lowers the median GPU
+atmosphere/fire stage by 1.187–1.216 ms per pair, while native FPS and full-frame
+CPU deltas are small and mixed. This is a stage-level saving, not a whole-window
+frame-win claim. Keep the 16×16 tile size and exhaustive overflow path. See
+[native tile-list evidence](measurements-o03-native-tile-lists.json) and the
+reproducible [native study runner](../scripts/tile_lists_native_study.py).
+
 **Exit gate:** no dropped effects or lights; exact same-backend capture parity,
 including natural overflow; stable membership after camera/state edits; and a net
 whole-frame benefit on representative workloads. If no alternative size beats the

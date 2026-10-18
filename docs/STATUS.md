@@ -285,8 +285,17 @@ This diagnostic route provides no whole-frame speedup evidence. A three-pair
 120-second 8×8 versus 16×16 comparison then reduced fire overflow from 1.95% to
 1.36%, but used 1.37 MB more known allocation and showed only a 0.037 ms median
 full-frame work improvement with inconsistent p95; retain 16×16. Same-tick
-fixed-camera captures matched byte-for-byte. Continuous motion review,
-native-window and other-adapter validation remain open. Results are in
+fixed-camera captures matched byte-for-byte. Continuous motion review and
+other-adapter validation remain open. A native-window comparison ran three
+alternating 120-second pairs after 10-second warm-ups. Exhaustive minus tiled
+GPU atmosphere/fire medians were +1.216/+1.187/+1.196 ms (tiled is faster);
+native FPS deltas were -0.133/-0.306/+0.049 FPS and native CPU-frame deltas were
+-0.120/+0.066/+0.012 ms. The stage saving is repeatable, but whole-window
+measures are small and mixed, so this does not establish an overall frame win.
+Keep 16×16 tiles and the exhaustive fallback. Full per-run timing, source hashes
+and the runner are in [measurements-o03-native-tile-lists.json](measurements-o03-native-tile-lists.json)
+and [tile_lists_native_study.py](../scripts/tile_lists_native_study.py). Other-adapter
+validation remains open. Results are in
 [measurements-o03-overflow.json](measurements-o03-overflow.json) and
 [measurements-o03-stress-route.json](measurements-o03-stress-route.json) and
 [measurements-o03-tile-size-sustained.json](measurements-o03-tile-size-sustained.json);
