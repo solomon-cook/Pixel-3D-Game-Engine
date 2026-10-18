@@ -189,8 +189,17 @@ off and close the experiment with that result.
    open; see [measurements-o06-camera-stress.json](measurements-o06-camera-stress.json).
 3. **Complete offscreen:** report optical resolve, full GPU render, CPU frame work
    and image error separately. All six pairs show lower total GPU render time on
-   this host; native-window and other-adapter results are still required before
-   promotion. See [measurements-o06-sustained.json](measurements-o06-sustained.json).
+   this host. **Native-window measurement and same-session image check complete
+   on M1 Max/Metal:** three alternating 120-second mixed-route pairs were measured
+   after adding a depth-match fallback. It reduces same-session behind-view image
+   differences from 17 to 13 pixels, but maximum channel error remains 83/29/4.
+   On this guarded version, median optical-resolve time is 0.024 ms slower and
+   median paired FPS delta is -0.117 fps. Same-session direct captures repeat
+   exactly; mixed-close and glass-near match direct/reuse. Native whole-window
+   gain is not established. Other-adapter, continuous visual and broader optical
+   camera acceptance remain open. See
+   [measurements-o06-native-reuse.json](measurements-o06-native-reuse.json) and
+   [measurements-o06-sustained.json](measurements-o06-sustained.json).
 
 **Exit gate:** sustained total-render gain larger than run variance, acceptable
 images in reflection/transmission stress views and no stale live-edit output.

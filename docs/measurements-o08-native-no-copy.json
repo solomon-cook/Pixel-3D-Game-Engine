@@ -1,6 +1,7 @@
 {
   "version": 1,
-  "study": "native-window optical no-copy vs snapshot copy",
+  "study": "native-window optical no-copy",
+  "comparison": "no-copy",
   "route": "mixed-smoke-material-orbit",
   "camera": "mixed-close",
   "seed": 42,
@@ -12,7 +13,7 @@
   "warmup_seconds": 10,
   "binary": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/release/engine-lab",
   "binary_sha256": "a9564f944f0dbadf9a45257c89892c4298ab2e8402d2ad676f51804f15a9e770",
-  "source_revision": "e86896a2daaac8f905ae3303d4eb333644713177",
+  "source_revision": "44df8ca68ef521f6e7e5ef5886cc9f6809354ef0",
   "shader_sha256": {
     "crates/engine/src/render/shaders/absorption.wgsl": "402ea6ab3a444e2047de08e9097fc73aa13cc0420b084287552db62d26ec7957",
     "crates/engine/src/render/shaders/common.wgsl": "4294fdd0f6a9ca6989bc9ba5847d0f29cc54ed5e03179670dbe3df348cad559b",
@@ -425,6 +426,7 @@
       }
     }
   ],
+  "native_capture_parity": null,
   "runs": [
     {
       "run": 1,

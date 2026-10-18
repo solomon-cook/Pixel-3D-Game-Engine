@@ -80,10 +80,21 @@ smoke/fire/material scene reduced GPU-render medians by 0.169 ms and 0.081 ms,
 respectively; optical-resolve medians fell by 0.166 ms and 0.076 ms. CPU frame-work
 medians also improved in these six runs. Matched hero, metal, glass, mixed-ordering
 and near-glass captures were inspected; a live opaque material edit had no stale
-output. Keep this feature disabled by default pending continuous motion review,
-camera-inside/near-plane cases, native-window measurements and other GPU
-qualification. See [measurements-o06.json](measurements-o06.json) and the full
-[sustained study](measurements-o06-sustained.json).
+output. A native-window mixed-route comparison now has three alternating
+120-second pairs after adding a depth-match fallback at optical silhouette edges:
+reuse median optical-resolve time is 0.024 ms slower and FPS is slightly lower
+(median delta -0.117 fps). The guard reduced changed pixels in the behind-smoke
+view from 17 to 13 of 230,400, but the maximum channel error remains 83/255.
+Direct repeat captures are exact; mixed-close and glass-near match exactly. Keep
+this feature disabled by default pending an acceptable behind-smoke image, native
+whole-window gain, continuous motion review, broader camera/pass cases and other-GPU
+qualification. See
+[measurements-o06.json](measurements-o06.json), the full
+[sustained study](measurements-o06-sustained.json), and
+[native-window comparison](measurements-o06-native-reuse.json). Native run traces
+and side-by-side captures are retained locally under
+`artifacts/o06/native-lighting-reuse/`; image hashes and per-pixel errors are in
+the report.
 
 O01 profiling implementation now includes bounded asynchronous timestamps for
 smoke compute, shadows, opaque geometry, atmosphere/fire, optical resolve and post;
