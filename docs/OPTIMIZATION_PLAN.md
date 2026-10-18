@@ -549,6 +549,20 @@ now counted. See `current_resource_inventory_refresh` in the measurement report.
 O08 layout/pass experiments and the later sparse-smoke gate
 remain open.
 
+**O06×O08 factorial (18 October):** the eight combinations of direct/reused
+opaque lighting, copy/no-copy optical output and RGBA16F/packed HDR were captured
+on a high-dynamic mixed smoke/fire/reflector/glass workload; each of seven
+non-baseline variants also ran three paired 120-second routes. On M1 Max/Metal,
+reuse reduced GPU render by 0.078–0.108 ms in RGBA16F and 0.081–0.107 ms in packed
+HDR. Direct no-copy reduced GPU render by 0.026 ms and 0.013 ms, respectively;
+direct packed-HDR/copy alone was within run spread. The no-copy captures matched
+copy byte-for-byte. RGBA16F no-copy kept known allocation flat while replacing a
+1.84 MB snapshot with an equally sized output. Packed HDR saved 1.84 MB compared
+with RGBA16F, with measurable high-output image differences; packed-HDR no-copy
+adds a 0.23 MB mask over packed-HDR copy. Keep all options independent and
+experimental until temporal, broader workload and adapter fallback checks pass.
+See [measurements-o06-o08-factorial.json](measurements-o06-o08-factorial.json).
+
 An opt-in `Rg11b10Ufloat` HDR color-target trial is available with
 `--compact-hdr` (or `render.compact_hdr` in scene JSON). It halves bytes for the
 primary HDR target and its optical snapshot when the adapter exposes the required

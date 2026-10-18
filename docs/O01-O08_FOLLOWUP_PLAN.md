@@ -142,7 +142,11 @@ images in reflection/transmission stress views and no stale live-edit output.
 
 ### 6. O06 × O08 factorial comparison
 
-Run a controlled matrix on the same scene, route, adapter and build:
+**Complete on M1 Max/Metal:** run the full matrix on one high-dynamic mixed
+fire/smoke/reflector/glass scene and orbit. Each of the seven non-baseline
+variants has three alternating 120-second pairs against direct lighting,
+RGBA16F, snapshot/copy. The adapter supports packed HDR. Results, captures and
+resource inventory are in [measurements-o06-o08-factorial.json](measurements-o06-o08-factorial.json).
 
 | Lighting path | Optical path |
 |---|---|
@@ -154,7 +158,12 @@ Run a controlled matrix on the same scene, route, adapter and build:
 Repeat for default HDR and compact HDR where supported. Keep transmissive shading
 on the direct path. Report known allocation, modeled logical traffic, measured GPU
 stages, whole-frame work and image differences separately. Add high-dynamic-range
-fire/smoke cases to probe compact-HDR error, not only existing material stills.
+fire/smoke captures probe compact-HDR error alongside the timing route. No-copy
+produced byte-identical fixed-tick output to copy for both HDR formats. Compact
+HDR lowered known allocation by 1.84 MB; packed-HDR no-copy adds a 0.23 MB mask.
+In this high-output scene, compact-HDR mean RGB error was 0.21–0.72/255 per
+camera/channel, with a 28/255 maximum. The contact sheet remained visually close,
+but temporal error and additional workloads remain open.
 
 **Exit gate:** select a combination only when it improves a declared target (memory,
 traffic or runtime) without violating image/temporal tolerances. Logical byte savings

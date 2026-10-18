@@ -598,3 +598,21 @@ These offscreen results extend the earlier short profile but do not settle
 continuous motion, camera-inside/near-plane behavior, native-window output or
 other adapters. Keep the path opt-in pending those checks. Full captures and paired
 stage data: [measurements-o06-sustained.json](measurements-o06-sustained.json).
+
+## O06 × O08 factorial (18 October)
+
+A controlled 2×2×2 matrix combined direct/reused opaque lighting, copy/no-copy
+optical output and RGBA16F/packed HDR on a mixed high-dynamic fire/smoke/reflector/
+glass orbit. Seven variants each had three alternating 120-second pairs against
+the direct/copy/RGBA16F baseline. Reuse reduced total GPU render by 0.078–0.108 ms
+in RGBA16F and 0.081–0.107 ms in packed HDR. Direct no-copy reduced GPU render by
+0.026 ms and 0.013 ms, respectively; direct packed-HDR/copy was within run spread.
+No-copy captures matched copy byte-for-byte for both HDR formats.
+
+RGBA16F no-copy replaces the snapshot with an equally sized output and keeps known
+allocation flat while avoiding the copy traffic. Packed HDR saves 1.84 MB known
+allocation against the RGBA16F baseline but has higher per-pixel quantization error
+in this high-output case. Packed-HDR no-copy adds a 0.23 MB mask over packed-HDR
+copy. This is Metal offscreen evidence only; temporal, native-window and additional
+adapter checks remain open. Full paired timing and capture data:
+[measurements-o06-o08-factorial.json](measurements-o06-o08-factorial.json).

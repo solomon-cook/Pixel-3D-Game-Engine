@@ -599,3 +599,14 @@ The current Mac and Windows x64 GNU development bundles build successfully.
 The Mac window captured the new pixel/heat treatment, and the self-contained Mac
 bundle produced the identical fixed-tick image from outside the checkout. Windows
 DX12 visual acceptance and the existing native minimization gate remain open.
+
+The O06×O08 factorial used a high-dynamic mixed fire/smoke/reflector/glass orbit.
+Reused opaque lighting reduced GPU render by 0.078 ms with RGBA16F copy and
+0.108 ms with RGBA16F no-copy. Direct lighting plus no-copy reduced GPU time by
+0.026 ms in RGBA16F and 0.013 ms in packed HDR; packed-HDR copy alone was within
+run spread. No-copy captures were byte-identical to copy for both HDR formats.
+Packed HDR saved 1.84 MB known allocation, but its high-output fixed-tick images
+differed from RGBA16F by 0.21–0.72 mean RGB levels and up to 28 levels in a
+channel. Packed-HDR no-copy adds a 0.23 MB mask. Keep these options independent
+and opt-in; native, DX12, temporal and broader content gates remain open. See
+[measurements-o06-o08-factorial.json](measurements-o06-o08-factorial.json).
