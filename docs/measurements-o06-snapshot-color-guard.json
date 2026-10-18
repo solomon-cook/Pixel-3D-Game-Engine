@@ -1,0 +1,152 @@
+{
+  "version": 1,
+  "date": "2026-10-18",
+  "workstream": "O06 opaque surface reuse snapshot-color guard study",
+  "adapter": {
+    "name": "Apple M1 Max",
+    "backend": "Metal"
+  },
+  "generated_mixed_scene": "artifacts/o06/snapshot-color-guard/mixed-scene.json",
+  "generated_mixed_scene_sha256": "7975020e1dbb4f69737cb96f1f120a83d0fcc7efcb57dcef9238b9b99a148ee3",
+  "optical_shader_sha256": "2a946bc823df1a588046155d2d66c78aca8d33f246aa73e25c9a2aef8b5453ad",
+  "binary_sha256": "3e5050590b26b1d09fcbc9620307f484e669a54dbdb61cbae426d320a9249225",
+  "runner_sha256": "83933827e84cf73d1b42f6ba462f07e4ee1dc7d908e49b480433a674479835cd",
+  "seed": 42,
+  "tick": 300,
+  "resolution": [
+    640,
+    360
+  ],
+  "comparison": "Direct versus reused opaque lighting at matching fixed ticks; each variant additionally requires the sampled HDR snapshot RGB maximum to exceed the listed threshold.",
+  "cases": [
+    {
+      "minimum_snapshot_rgb_component": 0.001,
+      "cameras": [
+        {
+          "camera": "mixed-from-behind",
+          "reference_capture": "artifacts/o06/snapshot-color-guard/direct-mixed-from-behind.png",
+          "capture": "artifacts/o06/snapshot-color-guard/bright-0.001-mixed-from-behind.png",
+          "shader_sha256": "572c07f429d20890d9b8529e0fcb99eaa33b3c89fe1e6a56f8078b5fc1cbaf82",
+          "image_comparison": {
+            "changed_pixels": 11,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0002980324074074074,
+            "max_channel_error": 52
+          }
+        },
+        {
+          "camera": "mixed-close",
+          "reference_capture": "artifacts/o06/snapshot-color-guard/direct-mixed-close.png",
+          "capture": "artifacts/o06/snapshot-color-guard/bright-0.001-mixed-close.png",
+          "shader_sha256": "572c07f429d20890d9b8529e0fcb99eaa33b3c89fe1e6a56f8078b5fc1cbaf82",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0
+          }
+        },
+        {
+          "camera": "glass-near",
+          "reference_capture": "artifacts/o06/snapshot-color-guard/direct-glass-near.png",
+          "capture": "artifacts/o06/snapshot-color-guard/bright-0.001-glass-near.png",
+          "shader_sha256": "572c07f429d20890d9b8529e0fcb99eaa33b3c89fe1e6a56f8078b5fc1cbaf82",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0
+          }
+        }
+      ]
+    },
+    {
+      "minimum_snapshot_rgb_component": 0.01,
+      "cameras": [
+        {
+          "camera": "mixed-from-behind",
+          "reference_capture": "artifacts/o06/snapshot-color-guard/direct-mixed-from-behind.png",
+          "capture": "artifacts/o06/snapshot-color-guard/bright-0.01-mixed-from-behind.png",
+          "shader_sha256": "e3dd4c4c5e1b2f75a7ae642a3ac620558d70a326ec10f6614e48a256e5e51492",
+          "image_comparison": {
+            "changed_pixels": 10,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.00029658564814814814,
+            "max_channel_error": 52
+          }
+        },
+        {
+          "camera": "mixed-close",
+          "reference_capture": "artifacts/o06/snapshot-color-guard/direct-mixed-close.png",
+          "capture": "artifacts/o06/snapshot-color-guard/bright-0.01-mixed-close.png",
+          "shader_sha256": "e3dd4c4c5e1b2f75a7ae642a3ac620558d70a326ec10f6614e48a256e5e51492",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0
+          }
+        },
+        {
+          "camera": "glass-near",
+          "reference_capture": "artifacts/o06/snapshot-color-guard/direct-glass-near.png",
+          "capture": "artifacts/o06/snapshot-color-guard/bright-0.01-glass-near.png",
+          "shader_sha256": "e3dd4c4c5e1b2f75a7ae642a3ac620558d70a326ec10f6614e48a256e5e51492",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0
+          }
+        }
+      ]
+    },
+    {
+      "minimum_snapshot_rgb_component": 0.05,
+      "cameras": [
+        {
+          "camera": "mixed-from-behind",
+          "reference_capture": "artifacts/o06/snapshot-color-guard/direct-mixed-from-behind.png",
+          "capture": "artifacts/o06/snapshot-color-guard/bright-0.05-mixed-from-behind.png",
+          "shader_sha256": "bb9385f26b7a907c4329ae2446231a3761b41edf2e86114e0457e4a0326d17b2",
+          "image_comparison": {
+            "changed_pixels": 8,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0002936921296296297,
+            "max_channel_error": 52
+          }
+        },
+        {
+          "camera": "mixed-close",
+          "reference_capture": "artifacts/o06/snapshot-color-guard/direct-mixed-close.png",
+          "capture": "artifacts/o06/snapshot-color-guard/bright-0.05-mixed-close.png",
+          "shader_sha256": "bb9385f26b7a907c4329ae2446231a3761b41edf2e86114e0457e4a0326d17b2",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0
+          }
+        },
+        {
+          "camera": "glass-near",
+          "reference_capture": "artifacts/o06/snapshot-color-guard/direct-glass-near.png",
+          "capture": "artifacts/o06/snapshot-color-guard/bright-0.05-glass-near.png",
+          "shader_sha256": "bb9385f26b7a907c4329ae2446231a3761b41edf2e86114e0457e4a0326d17b2",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0
+          }
+        }
+      ]
+    }
+  ],
+  "interpretation": "The color guard reduces changed pixels in the behind-smoke view from 12 to 8 at threshold 0.05, but maximum channel error remains 52/255. The other two cameras remain exact. This is an image-only experiment and does not establish improved visual acceptability or timing.",
+  "limitations": [
+    "Offscreen M1 Max/Metal only.",
+    "Three fixed cameras do not establish continuous visual quality.",
+    "No timing conclusion is drawn from capture metadata."
+  ]
+}

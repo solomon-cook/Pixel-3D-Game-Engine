@@ -127,6 +127,14 @@ precision instead of widening the alpha condition. See
 [depth-guard report](measurements-o06-depth-guard.json) and
 [reproducible sweep](../scripts/optical_depth_guard_study.py).
 
+A targeted HDR snapshot-color gate was also measured at thresholds 0.001, 0.01
+and 0.05. The strongest threshold reduced the behind-view difference from 12 to
+8 pixels, but left the maximum channel error at 52/255; mixed-close and glass-near
+remained exact. This does not fix the outlier and has no timing evidence, so it
+is not part of the renderer. See
+[snapshot-color report](measurements-o06-snapshot-color-guard.json) and
+[runner](../scripts/optical_snapshot_color_guard_study.py).
+
 O01 profiling implementation now includes bounded asynchronous timestamps for
 smoke compute, shadows, opaque geometry, atmosphere/fire, optical resolve and post;
 serial latency and buffered throughput reports; a native vsynced route report;

@@ -239,6 +239,13 @@ off and close the experiment with that result.
    and investigate snapshot precision; see
    [measurements-o06-depth-guard.json](measurements-o06-depth-guard.json) and
    [the sweep runner](../scripts/optical_depth_guard_study.py).
+   A follow-up HDR snapshot-color guard at thresholds 0.001, 0.01 and 0.05
+   reduced behind-view changed pixels from 12 to 8 at the strongest threshold,
+   but the 52/255 maximum channel error remained. The other two views stayed
+   exact, and no timing or continuous-image acceptance was measured. This guard
+   does not resolve the outlier and is not adopted; keep the measured depth guard
+   unchanged. See [snapshot-color report](measurements-o06-snapshot-color-guard.json)
+   and [reproducible runner](../scripts/optical_snapshot_color_guard_study.py).
 
 **Exit gate:** sustained total-render gain larger than run variance, acceptable
 images in reflection/transmission stress views and no stale live-edit output.
