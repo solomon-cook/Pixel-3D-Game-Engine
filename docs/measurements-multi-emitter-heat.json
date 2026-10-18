@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "purpose": "Record per-source thermal presentation data and secondary temperature-field sampling in post heat refraction while preserving the single-emitter image.",
+  "date": "2026-10-18",
+  "host": {
+    "adapter": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "implementation": {
+    "fire_presentation_controls": ["intensity", "heat_output", "cooling_rate", "lift"],
+    "secondary_temperature_volume_binding": true,
+    "source_local_heat_domain": "emitter origin + [-3,-0.6,-3] to [3,7.4,3]",
+    "secondary_heat_uses_source_shape_and_distortion_settings": true,
+    "source_count_guard": "FireFrame source slot 1 primitive count > 0",
+    "scene_emitter_limit": 1
+  },
+  "single_source_baseline": {
+    "scene": "assets/scenes/profiling-heavy.json",
+    "camera": "hero",
+    "seed": 42,
+    "tick": 120,
+    "resolution": [640, 360],
+    "pixel_rgba_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48",
+    "comparison": "pixel-identical to the established single-source capture"
+  },
+  "verification": {
+    "command": "python3 scripts/verify.py --gpu",
+    "result": "passed",
+    "workspace_tests": "37 passed",
+    "gpu": "M1 Max/Metal",
+    "native_window": false
+  },
+  "limitations": [
+    "Scene validation permits one emitter, so secondary heat sampling is not exercised by a live scene.",
+    "Inked smoke, absorption-cache construction, shadows and dual-source visual/performance review remain incomplete.",
+    "Windows/DX12 and other adapters remain unverified."
+  ]
+}

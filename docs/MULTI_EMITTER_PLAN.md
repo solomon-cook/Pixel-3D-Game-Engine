@@ -70,12 +70,16 @@ into a testable two-source runtime without changing the single-source baseline.
   volume in its fixed world-space domain. Camera-to-flame absorption includes that
   field, and the optical material pass shares the same integral. Stable-ID slot
   zero now owns the legacy global domain when multiple sources are prepared. The
-  source-count guard leaves the one-emitter integral unchanged. Inked smoke,
-  heat/refraction, source-specific lighting and cache construction remain
+  post heat pass now carries each source's heat output/cooling/lift and can sample
+  the second temperature volume using its source-local shape/distortion settings.
+  Source-count guards leave the one-emitter paths unchanged. Inked smoke,
+  source-specific lighting and cache construction remain
   incomplete; validation still prevents a live two-source GPU capture.
   The fixed-tick `profiling-heavy.json` hero capture remains pixel-identical at
   640×360 (SHA-256 `9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48`).
   See [atmosphere evidence](measurements-multi-emitter-atmosphere.json).
+  The fixed-tick heat-path parity check is in
+  [heat evidence](measurements-multi-emitter-heat.json).
 - One 48×64×48 Rg16Float density/temperature pair occupies 1,179,648 bytes.
   One point-light cubemap set occupies 1,572,864 bytes. The 8 authored point
   lights and 12 derived particle lights are global renderer budgets.

@@ -479,8 +479,10 @@ source-local ping-pong volumes, uniforms and per-source dispatches in stable-ID
 order. The soft atmosphere/optical integral now binds a second source volume and
 samples its independent domain; a fixed-tick source-zero capture remains
 byte-identical. Scene validation still requires one emitter, so no dual-source
-GPU image exists. Inked smoke, heat, source-specific lighting/cache work, shadows,
-live scene acceptance and visual review remain incomplete.
+GPU image exists. Inked smoke, source-specific lighting/cache work, shadows,
+live scene acceptance and visual review remain incomplete; the post heat pass now
+has a source-local secondary temperature path. See
+[heat evidence](measurements-multi-emitter-heat.json).
 `Renderer::update_globals` now has a keyed two-source sampling
 and upload branch with independent projected-detail tiers, but scene validation
 still prevents live access and no two-source GPU capture exists. The existing
@@ -491,7 +493,8 @@ Max/Metal. See the
 [storage packing](measurements-multi-emitter-storage-packing.json) comparisons,
 plus [per-source origin](measurements-multi-emitter-source-origins.json),
 [presentation evidence](measurements-multi-emitter-presentation.json) and
-[atmosphere evidence](measurements-multi-emitter-atmosphere.json).
+[atmosphere evidence](measurements-multi-emitter-atmosphere.json) and
+[heat evidence](measurements-multi-emitter-heat.json).
 
 **Exit gate:** all source ownership, deterministic replay, overflow, reset/edit and
 resource-recreation checks pass on Metal; then run the same evidence on DX12 and

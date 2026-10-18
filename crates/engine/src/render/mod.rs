@@ -1661,6 +1661,14 @@ impl Renderer {
                         wgpu::TextureSampleType::Float { filterable: true },
                     ),
                 ),
+                binding(
+                    7,
+                    wgpu::ShaderStages::FRAGMENT,
+                    sampled(
+                        wgpu::TextureViewDimension::D3,
+                        wgpu::TextureSampleType::Float { filterable: true },
+                    ),
+                ),
             ],
         });
         let post_groups = std::array::from_fn(|i| {
@@ -1675,6 +1683,7 @@ impl Renderer {
                     wgpu::BindingResource::Sampler(&linear),
                     wgpu::BindingResource::TextureView(&hdr),
                     wgpu::BindingResource::TextureView(&effect_depth),
+                    wgpu::BindingResource::TextureView(&secondary_smoke_views[i]),
                 ],
             )
         });
@@ -2121,6 +2130,15 @@ impl Renderer {
             let smoke_views = self.smoke_textures[0]
                 .each_ref()
                 .map(|texture| texture.create_view(&Default::default()));
+            let secondary_smoke_views = self
+                .smoke_textures
+                .get(1)
+                .map(|source| {
+                    source
+                        .each_ref()
+                        .map(|texture| texture.create_view(&Default::default()))
+                })
+                .unwrap_or_else(|| smoke_views.clone());
             self.optical_post_groups = Some(std::array::from_fn(|i| {
                 group(
                     &self.device,
@@ -2133,6 +2151,7 @@ impl Renderer {
                         wgpu::BindingResource::Sampler(&self.optical_sampler),
                         wgpu::BindingResource::TextureView(&color_view),
                         wgpu::BindingResource::TextureView(coverage_view),
+                        wgpu::BindingResource::TextureView(&secondary_smoke_views[i]),
                     ],
                 )
             }));

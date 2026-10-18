@@ -304,7 +304,12 @@ impl FirePresentation {
                 profile.fire.heat_distortion,
                 profile.fire.heat_distortion_height,
             ],
-            controls: [intensity.max(0.), 0., 0., 0.],
+            controls: [
+                intensity.max(0.),
+                profile.thermal.heat_output,
+                profile.thermal.cooling_rate,
+                profile.thermal.lift,
+            ],
         }
     }
 }
