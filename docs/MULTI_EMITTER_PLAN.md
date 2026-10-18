@@ -283,4 +283,4 @@ baseline image and reuses all shadow maps; restoring the modules reloads success
 keeps the image identical and redraws all 13 maps for the successful reload. This
 closes fixed-tick headless Metal rollback coverage for these modules, not native or
 cross-adapter behavior. See [rollback report](measurements-multi-emitter-shader-rollback.json)
-and [runner](../scripts/two_emitter_shader_reload_rollback_study.py).
+and [runner](../scripts/two_emitter_shader_reload_rollback_study.py). A companion native-window run repeats both invalid-module failures and the successful restored reload at the same fixed tick; each capture remains pixel-identical to the baseline. Native per-frame shadow invalidation metrics are intentionally omitted because rendering may occur between requests. See [native rollback report](measurements-multi-emitter-shader-rollback-native.json).

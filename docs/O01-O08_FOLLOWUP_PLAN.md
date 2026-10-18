@@ -681,8 +681,13 @@ transactional reload study now appends WGSL syntax errors to the fire and volume
 modules in an isolated shader directory. At seed 42/tick 120, both failed reloads
 preserve the baseline image and cached shadows; after restoring the shaders, a
 successful reload produces the same image and redraws all 13 shadow maps. The
-fixed-tick headless Metal rollback gate passes for these modules; broader shader,
-native-window and cross-adapter coverage remains open. See [rollback report](measurements-multi-emitter-shader-rollback.json) and [runner](../scripts/two_emitter_shader_reload_rollback_study.py). Fixed-tick native
+fixed-tick headless Metal rollback gate passes for these modules. A companion
+native-window run repeats both failed validation attempts and successful restored
+reload; all images match the original fixed-tick capture. Per-frame shadow masks
+are not attributed to the native reload request because rendering can occur
+between requests. Cross-adapter shader coverage remains open. See the [headless
+rollback report](measurements-multi-emitter-shader-rollback.json), [native rollback
+report](measurements-multi-emitter-shader-rollback-native.json) and [runner](../scripts/two_emitter_shader_reload_rollback_study.py). Fixed-tick native
 tiled/exhaustive output matches across six cameras, source isolation and reversed
 emitter order. Keep the cap at two until the remaining correctness, memory and
 performance budgets pass.

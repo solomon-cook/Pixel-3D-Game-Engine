@@ -29,6 +29,7 @@ def main() -> int:
     parser.add_argument("--tick", type=int, default=120)
     parser.add_argument("--output", type=Path, default=ROOT / "artifacts/multi-emitter/shader-rollback")
     parser.add_argument("--report", type=Path, default=ROOT / "docs/measurements-multi-emitter-shader-rollback.json")
+    parser.add_argument("--native", action="store_true", help="run the same fixed-tick sequence through the native window Session")
     args = parser.parse_args()
     binary, scene = args.binary.resolve(), args.scene.resolve()
     if not binary.is_file():
@@ -38,10 +39,13 @@ def main() -> int:
     isolated_shaders = Path(tempfile.mkdtemp(prefix="pixel-engine-shader-rollback-"))
     shutil.rmtree(isolated_shaders)
     shutil.copytree(SHADERS, isolated_shaders)
+    command = ([str(binary), "run", "--agent-stdio", "--paused"] if args.native
+               else [str(binary), "serve"])
+    command += ["--scene", str(scene), "--camera", args.camera,
+                "--seed", str(args.seed), "--shaders", str(isolated_shaders)]
     process = subprocess.Popen(
-        [str(binary), "serve", "--scene", str(scene), "--camera", args.camera,
-         "--seed", str(args.seed), "--shaders", str(isolated_shaders)],
-        cwd=ROOT, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        command, cwd=ROOT, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE, text=True,
     )
     request_id = 0
 
@@ -100,7 +104,11 @@ def main() -> int:
         if "error" in success:
             raise RuntimeError(f"restored shader set failed to reload: {success}")
         after_success = capture("after-successful-reload")
-        if process.stdin is not None:
+        if args.native:
+            closed = request("shutdown")
+            if "error" in closed:
+                raise RuntimeError(f"native shutdown failed: {closed}")
+        elif process.stdin is not None:
             process.stdin.close()
         process.wait(timeout=60)
     finally:
@@ -112,7 +120,8 @@ def main() -> int:
     report = {
         "version": 1,
         "study": "O02 two-emitter transactional shader reload rollback",
-        "host": {"device": baseline["device"], "backend": baseline["backend"], "native_window": False},
+        "host": {"device": baseline["device"], "backend": baseline["backend"], "native_window": args.native},
+        "session_mode": "native run --agent-stdio" if args.native else "headless serve",
         "scene": str(scene.relative_to(ROOT)) if scene.is_relative_to(ROOT) else str(scene),
         "scene_sha256": sha256(scene), "binary_sha256": sha256(binary),
         "renderer_source_sha256": sha256(ROOT / "crates/engine/src/render/mod.rs"),
@@ -126,10 +135,13 @@ def main() -> int:
         "successful_reload_image_matches_baseline": after_success["png_sha256"] == baseline["png_sha256"],
         "all_failed_reload_captures_match_baseline": all(item["image_matches_baseline"] for item in failures),
         "all_failures_reached_shader_validation": all(item["failure_reached_shader_validation"] for item in failures),
-        "failed_reloads_preserve_shadow_cache": all(item["capture"]["shadow_maps_redrawn"] == 0 and item["capture"]["shadow_dirty_reason"] == "unchanged" for item in failures),
-        "successful_reload_invalidates_all_shadow_maps": after_success["shadow_maps_redrawn"] == 13 and after_success["shadow_dirty_reason"] == "shader_reload",
-        "limitations": ["Headless M1 Max/Metal fixed-tick evidence; no native-window timing or other-adapter validation.",
-                        "Tests WGSL syntax failures for fire and volume pipelines; other shader-module failures rely on the shared transactional pipeline-set loader and existing verifier coverage."],
+        "failed_reloads_preserve_shadow_cache": (None if args.native else all(item["capture"]["shadow_maps_redrawn"] == 0 and item["capture"]["shadow_dirty_reason"] == "unchanged" for item in failures)),
+        "successful_reload_invalidates_all_shadow_maps": (None if args.native else after_success["shadow_maps_redrawn"] == 13 and after_success["shadow_dirty_reason"] == "shader_reload"),
+        "limitations": (["Fixed-tick native-window captures do not establish continuous playback or native performance.",
+                         "M1 Max/Metal only; other-adapter behavior remains unverified.",
+                         "Window frames may render between requests, so per-frame shadow invalidation metrics cannot be attributed to the reload command in this native run.",
+                         "Tests WGSL syntax failures for fire and volume modules; other shader-module failures rely on the shared transactional pipeline-set loader and existing verifier coverage."] if args.native else ["Headless M1 Max/Metal fixed-tick evidence; no native-window timing or other-adapter validation.",
+                         "Tests WGSL syntax failures for fire and volume modules; other shader-module failures rely on the shared transactional pipeline-set loader and existing verifier coverage."]),
     }
     report["all_checks_passed"] = (baseline["tick"] == args.tick and
                                    all(item["capture"]["tick"] == args.tick for item in failures) and
@@ -137,8 +149,8 @@ def main() -> int:
                                    report["successful_reload_image_matches_baseline"] and
                                    report["all_failed_reload_captures_match_baseline"] and
                                    report["all_failures_reached_shader_validation"] and
-                                   report["failed_reloads_preserve_shadow_cache"] and
-                                   report["successful_reload_invalidates_all_shadow_maps"])
+                                   (args.native or (report["failed_reloads_preserve_shadow_cache"] and
+                                                    report["successful_reload_invalidates_all_shadow_maps"])))
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({"report": str(report_path), "all_checks_passed": report["all_checks_passed"],
