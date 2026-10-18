@@ -25,46 +25,56 @@
         "serial"
       ],
       "batched_minus_serial": {
-        "frames_per_second": -0.16617316616270728,
-        "cpu_native_frame_ms": -0.15704099999999954,
-        "cpu_simulation_submit_ms": -0.01883299999999999,
-        "gpu_smoke_compute_ms": -4.100000000000284e-05,
-        "gpu_atmosphere_fire_ms": 0.018124999999999947
+        "frames_per_second": 0.21224749920543218,
+        "cpu_native_frame_ms": -0.13174899999999923,
+        "cpu_simulation_submit_ms": 0.016541,
+        "gpu_smoke_compute_ms": 0.00020799999999999985,
+        "gpu_atmosphere_fire_ms": 0.012165999999999677
+      },
+      "simulation_submissions": {
+        "serial": 7193,
+        "batched": 3257,
+        "reduction_fraction": 0.5471986653691089
       },
       "batched": {
         "report": "pair-01-batched.json",
-        "sha256": "6b6edbbef1d09a995bb180a7b19fd410b148e15cefc65b8d8b5f98d8dac1eeaa",
-        "frames_per_second": 43.08417145510617,
+        "sha256": "b2067c580446564acec69dbf6c8d53cab37f5b14c3cd7274f7cdfd0dff2796e2",
+        "frames_per_second": 43.47481365038351,
         "cpu_native_frame": {
-          "median_ms": 8.589834,
-          "p95_ms": 70.456667,
-          "samples": 5170
+          "median_ms": 8.639542,
+          "p95_ms": 70.28125,
+          "samples": 5216
         },
         "cpu_simulation_submit": {
-          "median_ms": 0.210292,
-          "p95_ms": 4.532041999999999,
-          "samples": 5170
+          "median_ms": 0.261833,
+          "p95_ms": 3.630958,
+          "samples": 5216
+        },
+        "simulation_accounting": {
+          "batching_enabled": true,
+          "fixed_ticks": 7195,
+          "queue_submissions": 3257
         },
         "gpu_stages": {
           "atmosphere_fire": {
-            "median_ms": 2.633625,
-            "p95_ms": 3.4177079999999997,
-            "samples": 5170
+            "median_ms": 2.6069579999999997,
+            "p95_ms": 3.1305829999999997,
+            "samples": 5216
           },
           "native_inspector": {
-            "median_ms": 0.22616699999999998,
-            "p95_ms": 1.899584,
-            "samples": 5168
+            "median_ms": 0.16566699999999998,
+            "p95_ms": 1.9495,
+            "samples": 5212
           },
           "native_presenter": {
-            "median_ms": 0.205125,
-            "p95_ms": 2.5495,
-            "samples": 5168
+            "median_ms": 0.132125,
+            "p95_ms": 2.511542,
+            "samples": 5212
           },
           "opaque_geometry": {
-            "median_ms": 2.215834,
-            "p95_ms": 2.875458,
-            "samples": 5170
+            "median_ms": 2.191666,
+            "p95_ms": 2.68425,
+            "samples": 5216
           },
           "optical_resolve": {
             "median_ms": null,
@@ -72,9 +82,9 @@
             "samples": 0
           },
           "post": {
-            "median_ms": 2.7541249999999997,
-            "p95_ms": 3.798167,
-            "samples": 5170
+            "median_ms": 2.7163329999999997,
+            "p95_ms": 3.2762499999999997,
+            "samples": 5216
           },
           "shadow_maps": {
             "median_ms": null,
@@ -82,60 +92,65 @@
             "samples": 0
           },
           "smoke_compute": {
-            "median_ms": 0.017792,
-            "p95_ms": 0.020584,
-            "samples": 7199
+            "median_ms": 0.017958,
+            "p95_ms": 0.021833,
+            "samples": 7185
           }
         },
         "timing_coverage": {
           "counter_scope": "skipped and late counters are cumulative for the native session, including warm-up",
           "gpu_presentation_ui_reason": null,
           "gpu_timestamps_supported": true,
-          "late_render_samples": 1506,
-          "native_presentation_ui_samples": 5168,
-          "rendered_frames": 5170,
-          "skipped_compute_samples": 1,
-          "skipped_native_presentation_ui_samples": 2,
+          "late_render_samples": 1433,
+          "native_presentation_ui_samples": 5212,
+          "rendered_frames": 5216,
+          "skipped_compute_samples": 10,
+          "skipped_native_presentation_ui_samples": 4,
           "skipped_render_samples": 0,
-          "smoke_compute_samples": 7199,
-          "timed_render_frames": 5170
+          "smoke_compute_samples": 7185,
+          "timed_render_frames": 5216
         },
-        "actual_measured_seconds": 119.997665625
+        "actual_measured_seconds": 119.977512542
       },
       "serial": {
         "report": "pair-01-serial.json",
-        "sha256": "f2174fc18b53ee9ba84a84f3242680c6c25d0e7e4001e9fe0668f62a54f63158",
-        "frames_per_second": 43.25034462126888,
+        "sha256": "3590aee340900d18ca83175b83e88d7f3dd9bf2b222eeb155e00b9b595bef888",
+        "frames_per_second": 43.26256615117808,
         "cpu_native_frame": {
-          "median_ms": 8.746875,
-          "p95_ms": 70.101167,
-          "samples": 5190
+          "median_ms": 8.771291,
+          "p95_ms": 70.226666,
+          "samples": 5189
         },
         "cpu_simulation_submit": {
-          "median_ms": 0.229125,
-          "p95_ms": 5.340001,
-          "samples": 5190
+          "median_ms": 0.24529199999999998,
+          "p95_ms": 5.203875,
+          "samples": 5189
+        },
+        "simulation_accounting": {
+          "batching_enabled": false,
+          "fixed_ticks": 7193,
+          "queue_submissions": 7193
         },
         "gpu_stages": {
           "atmosphere_fire": {
-            "median_ms": 2.6155,
-            "p95_ms": 3.1578749999999998,
-            "samples": 5190
+            "median_ms": 2.594792,
+            "p95_ms": 3.193375,
+            "samples": 5189
           },
           "native_inspector": {
-            "median_ms": 0.173875,
-            "p95_ms": 1.90275,
-            "samples": 5189
+            "median_ms": 0.172458,
+            "p95_ms": 1.91425,
+            "samples": 5187
           },
           "native_presenter": {
-            "median_ms": 0.148667,
-            "p95_ms": 2.544208,
-            "samples": 5189
+            "median_ms": 0.135375,
+            "p95_ms": 2.517083,
+            "samples": 5187
           },
           "opaque_geometry": {
-            "median_ms": 2.1978329999999997,
-            "p95_ms": 2.721209,
-            "samples": 5190
+            "median_ms": 2.187208,
+            "p95_ms": 2.7445,
+            "samples": 5189
           },
           "optical_resolve": {
             "median_ms": null,
@@ -143,9 +158,9 @@
             "samples": 0
           },
           "post": {
-            "median_ms": 2.721666,
-            "p95_ms": 3.299334,
-            "samples": 5190
+            "median_ms": 2.703459,
+            "p95_ms": 3.3376669999999997,
+            "samples": 5189
           },
           "shadow_maps": {
             "median_ms": null,
@@ -153,25 +168,25 @@
             "samples": 0
           },
           "smoke_compute": {
-            "median_ms": 0.017833,
-            "p95_ms": 0.019625,
-            "samples": 7195
+            "median_ms": 0.01775,
+            "p95_ms": 0.020167,
+            "samples": 7192
           }
         },
         "timing_coverage": {
           "counter_scope": "skipped and late counters are cumulative for the native session, including warm-up",
           "gpu_presentation_ui_reason": null,
           "gpu_timestamps_supported": true,
-          "late_render_samples": 1429,
-          "native_presentation_ui_samples": 5189,
-          "rendered_frames": 5190,
-          "skipped_compute_samples": 4,
-          "skipped_native_presentation_ui_samples": 1,
+          "late_render_samples": 1466,
+          "native_presentation_ui_samples": 5187,
+          "rendered_frames": 5189,
+          "skipped_compute_samples": 1,
+          "skipped_native_presentation_ui_samples": 2,
           "skipped_render_samples": 0,
-          "smoke_compute_samples": 7195,
-          "timed_render_frames": 5190
+          "smoke_compute_samples": 7192,
+          "timed_render_frames": 5189
         },
-        "actual_measured_seconds": 119.999043833
+        "actual_measured_seconds": 119.94202983400001
       }
     },
     {
@@ -181,46 +196,56 @@
         "batched"
       ],
       "batched_minus_serial": {
-        "frames_per_second": 0.11372338272601468,
-        "cpu_native_frame_ms": -0.05891699999999922,
-        "cpu_simulation_submit_ms": -0.015501000000000015,
-        "gpu_smoke_compute_ms": 4.200000000000037e-05,
-        "gpu_atmosphere_fire_ms": 0.01300100000000004
+        "frames_per_second": 0.1555238546702924,
+        "cpu_native_frame_ms": -0.05245800000000145,
+        "cpu_simulation_submit_ms": -0.04575000000000001,
+        "gpu_smoke_compute_ms": -4.200000000000037e-05,
+        "gpu_atmosphere_fire_ms": -0.016957999999999807
+      },
+      "simulation_submissions": {
+        "serial": 7189,
+        "batched": 3218,
+        "reduction_fraction": 0.5523716789539574
       },
       "serial": {
         "report": "pair-02-serial.json",
-        "sha256": "5fffed93787fb9e370e05418ce38726b0e76d4779da7b90c9e494a5a3c5ca034",
-        "frames_per_second": 43.09887820042686,
+        "sha256": "0c5b7a998896f6719eb30aa2f61903a7bc52bd866e16f9d8ebff86d0261a0fb3",
+        "frames_per_second": 43.32059825208535,
         "cpu_native_frame": {
-          "median_ms": 8.697583999999999,
-          "p95_ms": 70.310625,
-          "samples": 5169
+          "median_ms": 8.659458,
+          "p95_ms": 70.320917,
+          "samples": 5197
         },
         "cpu_simulation_submit": {
-          "median_ms": 0.223167,
-          "p95_ms": 5.236747999999999,
-          "samples": 5169
+          "median_ms": 0.234625,
+          "p95_ms": 4.965708000000001,
+          "samples": 5197
+        },
+        "simulation_accounting": {
+          "batching_enabled": false,
+          "fixed_ticks": 7189,
+          "queue_submissions": 7189
         },
         "gpu_stages": {
           "atmosphere_fire": {
-            "median_ms": 2.6157909999999998,
-            "p95_ms": 3.2505409999999997,
-            "samples": 5167
+            "median_ms": 2.6247499999999997,
+            "p95_ms": 3.162,
+            "samples": 5196
           },
           "native_inspector": {
-            "median_ms": 0.181167,
-            "p95_ms": 1.8863329999999998,
-            "samples": 5163
+            "median_ms": 0.173542,
+            "p95_ms": 1.949125,
+            "samples": 5194
           },
           "native_presenter": {
-            "median_ms": 0.187209,
-            "p95_ms": 2.48825,
-            "samples": 5163
+            "median_ms": 0.172375,
+            "p95_ms": 2.5455829999999997,
+            "samples": 5194
           },
           "opaque_geometry": {
-            "median_ms": 2.2045,
-            "p95_ms": 2.78,
-            "samples": 5167
+            "median_ms": 2.210417,
+            "p95_ms": 2.725292,
+            "samples": 5196
           },
           "optical_resolve": {
             "median_ms": null,
@@ -228,9 +253,9 @@
             "samples": 0
           },
           "post": {
-            "median_ms": 2.726708,
-            "p95_ms": 3.461041,
-            "samples": 5167
+            "median_ms": 2.735709,
+            "p95_ms": 3.2911249999999996,
+            "samples": 5196
           },
           "shadow_maps": {
             "median_ms": null,
@@ -238,60 +263,65 @@
             "samples": 0
           },
           "smoke_compute": {
-            "median_ms": 0.017791,
-            "p95_ms": 0.019916,
-            "samples": 7190
+            "median_ms": 0.017917,
+            "p95_ms": 0.020167,
+            "samples": 7187
           }
         },
         "timing_coverage": {
           "counter_scope": "skipped and late counters are cumulative for the native session, including warm-up",
           "gpu_presentation_ui_reason": null,
           "gpu_timestamps_supported": true,
-          "late_render_samples": 1495,
-          "native_presentation_ui_samples": 5163,
-          "rendered_frames": 5169,
+          "late_render_samples": 1435,
+          "native_presentation_ui_samples": 5194,
+          "rendered_frames": 5197,
           "skipped_compute_samples": 2,
-          "skipped_native_presentation_ui_samples": 6,
-          "skipped_render_samples": 2,
-          "smoke_compute_samples": 7190,
-          "timed_render_frames": 5167
+          "skipped_native_presentation_ui_samples": 3,
+          "skipped_render_samples": 1,
+          "smoke_compute_samples": 7187,
+          "timed_render_frames": 5196
         },
-        "actual_measured_seconds": 119.93351604099999
+        "actual_measured_seconds": 119.96602562499999
       },
       "batched": {
         "report": "pair-02-batched.json",
-        "sha256": "1a7a2877bb35d3a6a45cb4221f86a858a220252bdad7ccf3747138bcb59f20b7",
-        "frames_per_second": 43.212601583152875,
+        "sha256": "f54d95cd67f50c221864ee6c321fae01087455267ef63bc2ef992be3c6d21b9c",
+        "frames_per_second": 43.47612210675564,
         "cpu_native_frame": {
-          "median_ms": 8.638667,
-          "p95_ms": 70.195542,
-          "samples": 5185
+          "median_ms": 8.607,
+          "p95_ms": 70.303916,
+          "samples": 5217
         },
         "cpu_simulation_submit": {
-          "median_ms": 0.207666,
-          "p95_ms": 5.316376,
-          "samples": 5185
+          "median_ms": 0.188875,
+          "p95_ms": 3.4875420000000004,
+          "samples": 5217
+        },
+        "simulation_accounting": {
+          "batching_enabled": true,
+          "fixed_ticks": 7197,
+          "queue_submissions": 3218
         },
         "gpu_stages": {
           "atmosphere_fire": {
-            "median_ms": 2.628792,
-            "p95_ms": 3.218292,
-            "samples": 5183
+            "median_ms": 2.607792,
+            "p95_ms": 3.1540839999999997,
+            "samples": 5217
           },
           "native_inspector": {
-            "median_ms": 0.189375,
-            "p95_ms": 1.910583,
-            "samples": 5183
+            "median_ms": 0.17625,
+            "p95_ms": 1.9045839999999998,
+            "samples": 5215
           },
           "native_presenter": {
-            "median_ms": 0.186583,
-            "p95_ms": 2.5238329999999998,
-            "samples": 5183
+            "median_ms": 0.172333,
+            "p95_ms": 2.435708,
+            "samples": 5215
           },
           "opaque_geometry": {
-            "median_ms": 2.208333,
-            "p95_ms": 2.752125,
-            "samples": 5183
+            "median_ms": 2.19825,
+            "p95_ms": 2.7145829999999997,
+            "samples": 5217
           },
           "optical_resolve": {
             "median_ms": null,
@@ -299,9 +329,9 @@
             "samples": 0
           },
           "post": {
-            "median_ms": 2.7399579999999997,
-            "p95_ms": 3.700833,
-            "samples": 5183
+            "median_ms": 2.717625,
+            "p95_ms": 3.301458,
+            "samples": 5217
           },
           "shadow_maps": {
             "median_ms": null,
@@ -309,25 +339,25 @@
             "samples": 0
           },
           "smoke_compute": {
-            "median_ms": 0.017833,
-            "p95_ms": 0.019791,
-            "samples": 7196
+            "median_ms": 0.017875,
+            "p95_ms": 0.019375,
+            "samples": 7194
           }
         },
         "timing_coverage": {
           "counter_scope": "skipped and late counters are cumulative for the native session, including warm-up",
           "gpu_presentation_ui_reason": null,
           "gpu_timestamps_supported": true,
-          "late_render_samples": 1483,
-          "native_presentation_ui_samples": 5183,
-          "rendered_frames": 5185,
-          "skipped_compute_samples": 2,
+          "late_render_samples": 1453,
+          "native_presentation_ui_samples": 5215,
+          "rendered_frames": 5217,
+          "skipped_compute_samples": 3,
           "skipped_native_presentation_ui_samples": 2,
-          "skipped_render_samples": 2,
-          "smoke_compute_samples": 7196,
-          "timed_render_frames": 5183
+          "skipped_render_samples": 0,
+          "smoke_compute_samples": 7194,
+          "timed_render_frames": 5217
         },
-        "actual_measured_seconds": 119.98814720799999
+        "actual_measured_seconds": 119.99690283300001
       }
     },
     {
@@ -337,46 +367,56 @@
         "serial"
       ],
       "batched_minus_serial": {
-        "frames_per_second": 0.1413845056116685,
-        "cpu_native_frame_ms": -0.046041999999999916,
-        "cpu_simulation_submit_ms": -0.049457999999999974,
-        "gpu_smoke_compute_ms": 8.299999999999974e-05,
-        "gpu_atmosphere_fire_ms": 0.02616700000000005
+        "frames_per_second": 1.3469765658478892,
+        "cpu_native_frame_ms": -0.09425000000000061,
+        "cpu_simulation_submit_ms": -0.06254200000000001,
+        "gpu_smoke_compute_ms": 0.0001250000000000001,
+        "gpu_atmosphere_fire_ms": 0.014499999999999957
+      },
+      "simulation_submissions": {
+        "serial": 7197,
+        "batched": 3270,
+        "reduction_fraction": 0.5456440183409754
       },
       "batched": {
         "report": "pair-03-batched.json",
-        "sha256": "469be84b53d838fce3903b1b65d507e97be794c75820d0d5ccff7162f43cd3d0",
-        "frames_per_second": 43.226399875072694,
+        "sha256": "b8125378b7de39112f77a13a61e9d505b81e4250aa7d128b0e8b9e72326aa823",
+        "frames_per_second": 44.43362326231218,
         "cpu_native_frame": {
-          "median_ms": 8.62725,
-          "p95_ms": 70.485208,
-          "samples": 5187
+          "median_ms": 8.568,
+          "p95_ms": 70.16024999999999,
+          "samples": 5330
         },
         "cpu_simulation_submit": {
-          "median_ms": 0.243584,
-          "p95_ms": 5.084292,
-          "samples": 5187
+          "median_ms": 0.175375,
+          "p95_ms": 3.5466249999999997,
+          "samples": 5330
+        },
+        "simulation_accounting": {
+          "batching_enabled": true,
+          "fixed_ticks": 7192,
+          "queue_submissions": 3270
         },
         "gpu_stages": {
           "atmosphere_fire": {
-            "median_ms": 2.6149999999999998,
-            "p95_ms": 3.211166,
-            "samples": 5187
+            "median_ms": 2.626125,
+            "p95_ms": 3.249875,
+            "samples": 5329
           },
           "native_inspector": {
-            "median_ms": 0.175667,
-            "p95_ms": 1.9346249999999998,
-            "samples": 5184
+            "median_ms": 0.1885,
+            "p95_ms": 1.91325,
+            "samples": 5328
           },
           "native_presenter": {
-            "median_ms": 0.13483299999999998,
-            "p95_ms": 2.534666,
-            "samples": 5184
+            "median_ms": 0.179916,
+            "p95_ms": 2.461417,
+            "samples": 5328
           },
           "opaque_geometry": {
-            "median_ms": 2.197375,
-            "p95_ms": 2.7600409999999997,
-            "samples": 5187
+            "median_ms": 2.204208,
+            "p95_ms": 2.7592499999999998,
+            "samples": 5329
           },
           "optical_resolve": {
             "median_ms": null,
@@ -384,9 +424,9 @@
             "samples": 0
           },
           "post": {
-            "median_ms": 2.7261249999999997,
-            "p95_ms": 3.456542,
-            "samples": 5187
+            "median_ms": 2.74125,
+            "p95_ms": 3.737959,
+            "samples": 5329
           },
           "shadow_maps": {
             "median_ms": null,
@@ -394,60 +434,65 @@
             "samples": 0
           },
           "smoke_compute": {
-            "median_ms": 0.017958,
-            "p95_ms": 0.019708,
-            "samples": 7185
+            "median_ms": 0.018,
+            "p95_ms": 0.019583,
+            "samples": 7181
           }
         },
         "timing_coverage": {
           "counter_scope": "skipped and late counters are cumulative for the native session, including warm-up",
           "gpu_presentation_ui_reason": null,
           "gpu_timestamps_supported": true,
-          "late_render_samples": 1484,
-          "native_presentation_ui_samples": 5184,
-          "rendered_frames": 5187,
-          "skipped_compute_samples": 12,
-          "skipped_native_presentation_ui_samples": 3,
-          "skipped_render_samples": 0,
-          "smoke_compute_samples": 7185,
-          "timed_render_frames": 5187
+          "late_render_samples": 1493,
+          "native_presentation_ui_samples": 5328,
+          "rendered_frames": 5330,
+          "skipped_compute_samples": 11,
+          "skipped_native_presentation_ui_samples": 2,
+          "skipped_render_samples": 1,
+          "smoke_compute_samples": 7181,
+          "timed_render_frames": 5329
         },
-        "actual_measured_seconds": 119.99611383300001
+        "actual_measured_seconds": 119.95420604200001
       },
       "serial": {
         "report": "pair-03-serial.json",
-        "sha256": "c531ccbd5e93660049474d3b7b6aa5d6055c56cf07eaf54912abd4282f2e46a2",
-        "frames_per_second": 43.085015369461026,
+        "sha256": "db8f2e89a23ded4d03664250732eba5af5c19349409ae46d0e81bd7cbb079ee0",
+        "frames_per_second": 43.08664669646429,
         "cpu_native_frame": {
-          "median_ms": 8.673292,
-          "p95_ms": 70.53049999999999,
+          "median_ms": 8.66225,
+          "p95_ms": 70.548792,
           "samples": 5170
         },
         "cpu_simulation_submit": {
-          "median_ms": 0.29304199999999997,
-          "p95_ms": 5.199083,
+          "median_ms": 0.23791700000000002,
+          "p95_ms": 5.454459,
           "samples": 5170
+        },
+        "simulation_accounting": {
+          "batching_enabled": false,
+          "fixed_ticks": 7197,
+          "queue_submissions": 7197
         },
         "gpu_stages": {
           "atmosphere_fire": {
-            "median_ms": 2.5888329999999997,
-            "p95_ms": 3.1377919999999997,
-            "samples": 5170
+            "median_ms": 2.611625,
+            "p95_ms": 3.155084,
+            "samples": 5169
           },
           "native_inspector": {
-            "median_ms": 0.169959,
-            "p95_ms": 1.918833,
+            "median_ms": 0.17225,
+            "p95_ms": 1.9525409999999999,
             "samples": 5168
           },
           "native_presenter": {
-            "median_ms": 0.131333,
-            "p95_ms": 2.517209,
+            "median_ms": 0.13516699999999998,
+            "p95_ms": 2.5629169999999997,
             "samples": 5168
           },
           "opaque_geometry": {
-            "median_ms": 2.178667,
-            "p95_ms": 2.703375,
-            "samples": 5170
+            "median_ms": 2.195875,
+            "p95_ms": 2.727375,
+            "samples": 5169
           },
           "optical_resolve": {
             "median_ms": null,
@@ -455,9 +500,9 @@
             "samples": 0
           },
           "post": {
-            "median_ms": 2.706417,
-            "p95_ms": 3.3122499999999997,
-            "samples": 5170
+            "median_ms": 2.7200409999999997,
+            "p95_ms": 3.310625,
+            "samples": 5169
           },
           "shadow_maps": {
             "median_ms": null,
@@ -466,43 +511,43 @@
           },
           "smoke_compute": {
             "median_ms": 0.017875,
-            "p95_ms": 0.019625,
-            "samples": 7197
+            "p95_ms": 0.020084,
+            "samples": 7195
           }
         },
         "timing_coverage": {
           "counter_scope": "skipped and late counters are cumulative for the native session, including warm-up",
           "gpu_presentation_ui_reason": null,
           "gpu_timestamps_supported": true,
-          "late_render_samples": 1419,
+          "late_render_samples": 1423,
           "native_presentation_ui_samples": 5168,
           "rendered_frames": 5170,
-          "skipped_compute_samples": 1,
+          "skipped_compute_samples": 2,
           "skipped_native_presentation_ui_samples": 2,
-          "skipped_render_samples": 0,
-          "smoke_compute_samples": 7197,
-          "timed_render_frames": 5170
+          "skipped_render_samples": 1,
+          "smoke_compute_samples": 7195,
+          "timed_render_frames": 5169
         },
-        "actual_measured_seconds": 119.995315208
+        "actual_measured_seconds": 119.99077199999999
       }
     }
   ],
   "paired_median_batched_minus_serial": {
-    "frames_per_second": 0.11372338272601468,
-    "cpu_native_frame_ms": -0.05891699999999922,
-    "cpu_simulation_submit_ms": -0.01883299999999999,
-    "gpu_smoke_compute_ms": 4.200000000000037e-05,
-    "gpu_atmosphere_fire_ms": 0.018124999999999947
+    "frames_per_second": 0.21224749920543218,
+    "cpu_native_frame_ms": -0.09425000000000061,
+    "cpu_simulation_submit_ms": -0.04575000000000001,
+    "gpu_smoke_compute_ms": 0.0001250000000000001,
+    "gpu_atmosphere_fire_ms": 0.012165999999999677
   },
-  "git_revision": "b937392cf1ed183d3318aada78b153cca5978c92",
-  "source_worktree_dirty": false,
-  "binary_sha256": "4c8c635231f59d3b111530e28da7714db0fa0b36aee7475f1721b8dae01714fd",
+  "git_revision": "a4cab7e4f278549c1ba0eb563103180338119225",
+  "source_worktree_dirty": true,
+  "binary_sha256": "813fc6613bcc26fc5cb0883472172cbda11b76a7bd9c942dd3377f169299724c",
   "source_sha256": {
     "crates/engine-lab/src/main.rs": "d79fabde68117b95e31b8aebf92f39c1e57356df4c4a8141beddb4459f125243",
-    "crates/engine-lab/src/window.rs": "dde1966d5445031b1c68743e2b18486ccb082156df7d5fe10822ce564fa2d31a",
+    "crates/engine-lab/src/window.rs": "f960080b27f4506b2e74c44bdb359a40101b17153f415c5a6059807ea80cf01f",
     "crates/engine/src/session.rs": "67d865e38663050fe65beaefa5987e6d54df8292a47736e061265b2736dfeeaa",
     "crates/engine/src/render/mod.rs": "88bcb7a6730fc9ce8db7937a127d620e99c3ffd0fb407b07db0113688c173acd",
-    "scripts/simulation_batch_native_study.py": "81c516bee13b1848aa475d26d8755c08518451de8e4de577645bd298a85568f9"
+    "scripts/simulation_batch_native_study.py": "ce36975029d9700f6088b442310bc7904085c2a20add498a73a0b0b33fed2863"
   },
   "limitations": [
     "This report covers one M1 Max/Metal native window, scene, route and display configuration.",

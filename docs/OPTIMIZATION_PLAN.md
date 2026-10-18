@@ -592,30 +592,35 @@ native FPS gain. See
 [route report](measurements-o08-batch-route.json) and its
 [runner](../scripts/simulation_batch_route_study.py).
 
-A separate three-pair native-window clearing-orbit comparison on M1 Max/Metal
-records 5,175–5,218 rendered frames per 120-second run. Median paired batched-minus-
-serial deltas are +0.0003 ms native CPU frame work, +0.016 ms CPU simulation
-submission, -0.085 fps, +0.00004 ms smoke compute and -0.0034 ms atmosphere/fire.
-These are effectively flat whole-window results with mixed small stage changes;
-they do not establish a native performance win. Fixed-tick parity remains covered
-by the separate image study. Broader native workloads, continuous visual review
-and other-adapter/DX12 acceptance remain open. See
+A corrected three-pair native-window clearing-orbit comparison on M1 Max/Metal
+records 7,163–7,200 fixed ticks per run and 54.99–55.54% fewer smoke submissions
+with batching. Median paired batched-minus-serial deltas are +0.233 fps,
+-0.151 ms native CPU frame work, -0.033 ms CPU simulation submission,
++0.00008 ms smoke compute and +0.006 ms atmosphere/fire. Fixed-tick parity remains
+covered by the separate image study. See
 [native report](measurements-o08-batch-native.json) and its
 [runner](../scripts/simulation_batch_native_study.py).
 
 The native study now also covers Material Atelier's 120-second `material-orbit`
-in three alternating pairs. Median batched-minus-serial deltas are -0.073 fps,
--0.0054 ms native CPU frame work, +0.0227 ms CPU simulation submission,
--0.00008 ms smoke compute and -0.0070 ms atmosphere/fire. These small changes do
-not show a whole-window gain. See
+in three alternating pairs. Batching reduces smoke submissions by 54.23–54.52%.
+Median batched-minus-serial deltas are +0.301 fps, -0.121 ms native CPU frame
+work, +0.011 ms CPU simulation submission, +0.00033 ms smoke compute and
+-0.013 ms atmosphere/fire. See
 [Material Atelier report](measurements-o08-batch-native-materials.json).
 
-The profiling-heavy eight-light scene's three-pair clearing orbit measures
-+0.114 fps, -0.059 ms native CPU frame work, -0.019 ms CPU simulation submission,
-+0.00004 ms smoke compute and +0.018 ms atmosphere/fire. FPS and CPU frame work
-improve slightly while atmosphere/fire rises; this remains mixed stage evidence,
-not a general native throughput result. See
+The profiling-heavy eight-light scene's three-pair clearing orbit reduces smoke
+submissions by 54.56–55.24%. Median batched-minus-serial deltas are +0.212 fps,
+-0.094 ms native CPU frame work, -0.046 ms CPU simulation submission,
++0.00013 ms smoke compute and +0.012 ms atmosphere/fire. See
 [profiling-heavy report](measurements-o08-batch-native-profiling-heavy.json).
+
+These corrected studies replace earlier native timing reports. The earlier native
+loop called `Session.step(1)` once per tick, which prevented the batching option
+from grouping fixed ticks. The loop now accumulates due ticks, applies moving-caster
+updates at each tick, and calls `Session.step(count)` once per rendered frame; the
+serial baseline still submits once per tick. GPU verification confirms fixed-tick
+image parity. These results remain one Mac/Metal setup; other-adapter and DX12
+acceptance remain open.
 
 **Acceptance:** image/state comparisons survive pause/reset, repeated fixed steps,
 camera moves, resource recreation and invalid shader rollback. Report memory,

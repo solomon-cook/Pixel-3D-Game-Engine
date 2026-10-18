@@ -383,27 +383,22 @@ evidence but leaves physical unsupported-adapter and DX12 acceptance open. See
 [offscreen runner](../scripts/rg16_fallback_study.py) and
 [native runner](../scripts/verify_native_rg16_fallback.py).
 
-**Fixed-step submission batching, native timing measured on two routes:** a
-three-pair 120-second clearing-orbit comparison on M1 Max/Metal measured
-5,175–5,218 frames per run. Median batched-minus-serial changes were +0.0003 ms native CPU
-frame work, +0.016 ms CPU simulation submission, -0.085 fps, +0.00004 ms smoke
-compute and -0.0034 ms atmosphere/fire. The whole-window result is effectively
-flat; small GPU changes are mixed. Fixed-tick image parity is recorded separately
-in `measurements-o08-batch-parity.json`. This does not establish performance or
-visual acceptance for other scenes, continuous human review, DX12 or other
-adapters. See [native report](measurements-o08-batch-native.json) and
+**Fixed-step submission batching, native timing measured on three routes:**
+corrected three-pair 120-second M1 Max/Metal studies confirm 54.2–55.5% fewer
+simulation submissions. Clearing, Material Atelier and profiling-heavy median
+batched-minus-serial FPS deltas are +0.233/+0.301/+0.212; CPU frame-work deltas
+are -0.151/-0.121/-0.094 ms. GPU stages shift slightly in mixed directions.
+Fixed-tick image parity is recorded separately in
+`measurements-o08-batch-parity.json`. These results do not establish DX12 or other-
+adapter acceptance. See [clearing](measurements-o08-batch-native.json),
+[Material Atelier](measurements-o08-batch-native-materials.json),
+[profiling-heavy](measurements-o08-batch-native-profiling-heavy.json) reports and
 [runner](../scripts/simulation_batch_native_study.py).
 
-The same three-pair protocol now covers Material Atelier's `material-orbit`.
-Median batched-minus-serial changes are -0.073 fps and -0.0054 ms native CPU
-frame work, with small GPU-stage reductions and +0.023 ms CPU simulation
-submission; whole-window performance remains effectively unchanged. Evidence is
-in [the native Material Atelier report](measurements-o08-batch-native-materials.json).
-
-The three-pair profiling-heavy eight-light clearing orbit measures +0.114 fps
-and -0.059 ms native CPU frame work, while atmosphere/fire GPU time increases
-0.018 ms. This is another workload-specific tradeoff; do not promote batching
-from native timing alone. See [the native profiling-heavy report](measurements-o08-batch-native-profiling-heavy.json).
+These corrected studies replace earlier native results: the native loop used to
+call `Session.step(1)` per tick and never invoked the batching path. It now groups
+all fixed ticks accumulated for a rendered frame and still applies caster motion
+at each tick. The serial mode remains the reference path.
 
 Break the umbrella O08 item into decisions for lazy optical allocation, RG16 targets,
 compact HDR, normal/depth reuse and no-copy overlay. For each, record supported

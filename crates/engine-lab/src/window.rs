@@ -715,11 +715,12 @@ impl Native {
                 .route
                 .camera_at(route_time, &benchmark.base_camera);
         }
+        let mut fixed_steps = 0u32;
         if !self.session.paused {
             self.accumulator += dt;
             while self.accumulator >= 1. / 60. {
                 if let Some(benchmark) = &self.benchmark {
-                    let route_frame = self.session.tick as u32;
+                    let route_frame = (self.session.tick as u32).wrapping_add(fixed_steps);
                     let motion = CasterMotion {
                         object_id: benchmark.config.moving_caster.as_deref(),
                         radius: benchmark.config.caster_orbit_radius,
@@ -733,8 +734,11 @@ impl Native {
                         benchmark.orbit_center_xz,
                     )?;
                 }
-                self.session.step(1);
+                fixed_steps += 1;
                 self.accumulator -= 1. / 60.;
+            }
+            if fixed_steps > 0 {
+                self.session.step(fixed_steps);
             }
         } else {
             self.accumulator = 0.;
@@ -881,6 +885,7 @@ impl Native {
                     "cpu_native_frame_ms":metrics.cpu_native_frame_ms,
                     "cpu_simulation_submit_ms":metrics.cpu_simulation_submit_ms,
                     "cpu_simulation_encode_ms":metrics.cpu_simulation_encode_ms,
+                    "simulation_submissions":metrics.cpu_simulation_submissions_this_frame,
                     "cpu_queue_submit_ms":metrics.cpu_queue_submit_ms,
                     "cpu_steps":metrics.cpu_steps_this_frame,
                     "cpu_renderer_encode_ms":metrics.cpu_encode_ms,
@@ -1091,6 +1096,16 @@ fn native_benchmark_report(
         .iter()
         .filter_map(|sample| sample["shadow_maps_redrawn"].as_u64())
         .sum::<u64>();
+    let measured_simulation_ticks = benchmark
+        .samples
+        .iter()
+        .filter_map(|sample| sample["cpu_steps"].as_u64())
+        .sum::<u64>();
+    let measured_simulation_submissions = benchmark
+        .samples
+        .iter()
+        .filter_map(|sample| sample["simulation_submissions"].as_u64())
+        .sum::<u64>();
     json!({
         "version":1,
         "mode":"native_vsync_route",
@@ -1099,6 +1114,11 @@ fn native_benchmark_report(
         "route_seconds":benchmark.config.duration,
         "warmup_seconds":benchmark.config.warmup,
         "simulation_batching_enabled":session.simulation_batching_enabled,
+        "simulation_accounting":{
+            "fixed_ticks":measured_simulation_ticks,
+            "queue_submissions":measured_simulation_submissions,
+            "batching_enabled":session.simulation_batching_enabled
+        },
         "setup_seconds":benchmark.setup_seconds,
         "actual_measured_seconds":actual_seconds,
         "frames_per_second":if actual_seconds > 0. {benchmark.samples.len() as f64 / actual_seconds} else {0.},

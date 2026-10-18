@@ -31,12 +31,15 @@ median CPU queue submission falls 0.20–0.23 ms per sample. Median frame work
 improves by 0.17–0.24 ms on three workloads but regresses by 0.26 ms on Material
 Atelier. GPU-render median changes are neutral or slower on three workloads and
 frame-work p95 is mixed. The serial path remains selectable with
-`set_simulation_batching` or `--disable-simulation-batching`. Three-pair native
-studies cover clearing, Material Atelier and the profiling-heavy eight-light
-scene. Batched-minus-serial median FPS deltas are -0.085/-0.073/+0.114 and CPU
-frame-work deltas are +0.0003/-0.0054/-0.059 ms, with mixed GPU-stage changes.
-The results are workload-dependent and do not establish a general native gain.
-Other-adapter acceptance remains open.
+`set_simulation_batching` or `--disable-simulation-batching`. Corrected three-pair
+native studies cover clearing, Material Atelier and profiling-heavy. They confirm
+54.2–55.5% fewer smoke submissions. Batched-minus-serial median FPS deltas are
++0.233/+0.301/+0.212 and CPU frame-work deltas are -0.151/-0.121/-0.094 ms;
+GPU-stage changes are small and mixed. These are M1 Max/Metal native results;
+other-adapter acceptance remains open. The earlier native measurements were
+replaced because the native loop then submitted one tick at a time, bypassing
+batching. The corrected loop groups due fixed ticks while retaining the serial
+baseline.
 See [parity report](measurements-o08-batch-parity.json),
 [burst report](measurements-o08-batch-submit-cost.json),
 [route report](measurements-o08-batch-route.json),

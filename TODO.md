@@ -41,12 +41,13 @@ Detailed steps, dependencies and acceptance criteria live in
   not establish moving-route or native-frame gains. A matched 120-second 10 Hz
   route comparison shows lower median CPU submission cost across four workloads,
   but Material Atelier frame work regresses and GPU/p95 results are mixed. The
-  serial baseline remains selectable through Session and CLI controls. Three-pair
-  native clearing, Material Atelier and profiling-heavy comparisons show mixed
-  median FPS deltas (-0.085/-0.073/+0.114) and CPU frame-work changes
-  (+0.0003/-0.0054/-0.059 ms), with GPU stages moving in both directions. The
-  results do not establish a general native performance win. Other-adapter gates
-  remain open. See
+  serial baseline remains selectable through Session and CLI controls. Corrected
+  three-pair native clearing, Material Atelier and profiling-heavy comparisons
+  confirm 54.2–55.5% fewer submissions and median FPS gains of +0.212 to +0.301,
+  with 0.094–0.151 ms lower CPU frame work. Small GPU-stage changes are mixed.
+  Earlier native reports were replaced because the native loop previously called
+  `Session.step(1)` for every tick, bypassing batching. Other-adapter gates remain
+  open. See
   [batch parity](docs/measurements-o08-batch-parity.json),
   [burst cost](docs/measurements-o08-batch-submit-cost.json),
   [route study](docs/measurements-o08-batch-route.json),

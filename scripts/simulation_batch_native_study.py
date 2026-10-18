@@ -78,6 +78,15 @@ def main() -> None:
             run = json.loads(path.read_text())
             if run.get("simulation_batching_enabled") != (variant == "batched"):
                 raise RuntimeError(f"{variant} report has incorrect simulation batching mode")
+            accounting = run.get("simulation_accounting", {})
+            if accounting.get("batching_enabled") != (variant == "batched"):
+                raise RuntimeError(f"{variant} report has incorrect simulation accounting mode")
+            if accounting.get("queue_submissions", 0) <= 0 or accounting.get("fixed_ticks", 0) <= 0:
+                raise RuntimeError(f"{variant} report has no simulation tick/submission accounting")
+            if variant == "serial" and accounting["queue_submissions"] != accounting["fixed_ticks"]:
+                raise RuntimeError("serial baseline must submit once per fixed tick")
+            if variant == "batched" and accounting["queue_submissions"] > accounting["fixed_ticks"]:
+                raise RuntimeError("batched simulation submitted more times than fixed ticks")
             if not run.get("timing_coverage", {}).get("gpu_timestamps_supported"):
                 raise RuntimeError("native adapter did not provide GPU timestamp coverage")
             if run.get("timing_coverage", {}).get("rendered_frames", 0) <= 0:
@@ -89,6 +98,8 @@ def main() -> None:
             runs[variant] = run
 
         serial, batched = runs["serial"], runs["batched"]
+        serial_submissions = serial["simulation_accounting"]["queue_submissions"]
+        batched_submissions = batched["simulation_accounting"]["queue_submissions"]
         deltas = {
             "frames_per_second": delta(serial, batched, "frames_per_second"),
             "cpu_native_frame_ms": delta(serial, batched, "cpu_native_frame"),
@@ -100,7 +111,16 @@ def main() -> None:
                 serial.get("gpu_stages", {}), batched.get("gpu_stages", {}), "atmosphere_fire"
             ),
         }
-        pair_record = {"pair": pair, "order": order, "batched_minus_serial": deltas}
+        pair_record = {
+            "pair": pair,
+            "order": order,
+            "batched_minus_serial": deltas,
+            "simulation_submissions": {
+                "serial": serial_submissions,
+                "batched": batched_submissions,
+                "reduction_fraction": 1. - batched_submissions / serial_submissions,
+            },
+        }
         for variant, run in runs.items():
             name = f"pair-{pair:02d}-{variant}.json"
             pair_record[variant] = {
@@ -109,6 +129,7 @@ def main() -> None:
                 "frames_per_second": run.get("frames_per_second"),
                 "cpu_native_frame": run.get("cpu_native_frame"),
                 "cpu_simulation_submit": run.get("cpu_simulation_submit"),
+                "simulation_accounting": run.get("simulation_accounting"),
                 "gpu_stages": run.get("gpu_stages"),
                 "timing_coverage": run.get("timing_coverage"),
                 "actual_measured_seconds": run.get("actual_measured_seconds"),
