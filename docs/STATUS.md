@@ -249,9 +249,14 @@ heavy plume/eight-light workload and Material Atelier. Their mean frame errors
 were 0.341/0.384/0.372 per 255; temporal-change-magnitude errors were
 0.190/0.212/0.043 per 255, with maximum channel errors 31/27/10. Sampled frames
 look close, but continuous human playback acceptance remains open. Keep the format
-experimental; native-window, physical fallback and DX12 checks remain open. See
+experimental. Three alternating 120-second native-window pairs on the mixed route
+measured FPS deltas +1.512/-0.769/+0.151 (median +0.151 fps), a median native
+CPU-frame delta of -0.306 ms and near-zero mixed GPU-stage deltas. This does not
+establish a reliable whole-window speedup. Native visual playback, physical
+fallback and DX12 checks remain open. See
 [single-route evidence](measurements-o08-compact-hdr-temporal.json) and
-[multi-workload evidence](measurements-o08-compact-hdr-workloads.json).
+[multi-workload evidence](measurements-o08-compact-hdr-workloads.json), plus the
+[native-window report](measurements-o08-compact-hdr-native.json).
 
 The experimental `--optical-no-copy` overlay path keeps the source HDR immutable,
 draws optical results to a separate color target plus R8Unorm coverage mask, and

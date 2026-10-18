@@ -266,8 +266,13 @@ frames at 20 fps on the same high-dynamic mixed route. Mean per-frame RGB error
 is 0.342/255 (p95 frame mean 0.373/255, maximum channel error 29/255); mean
 temporal-change-magnitude error is 0.418/255 (p95 frame mean 0.455/255, maximum
 channel error 29/255). This adds one route, not a perceptual acceptance threshold.
-Native-window and human playback review, other workloads and fallback/DX12
-validation remain open. Additional 120-frame, 20 fps comparisons now cover
+Human playback review and fallback/DX12 validation remain open. Three alternating
+120-second native-window pairs now cover the high-dynamic mixed route. Candidate
+minus baseline FPS deltas were +1.512/-0.769/+0.151 fps (median +0.151); native
+CPU-frame median delta was -0.306 ms and GPU-stage deltas were small and mixed.
+This does not establish a whole-window performance gain. See
+[native compact-HDR evidence](measurements-o08-compact-hdr-native.json).
+Additional 120-frame, 20 fps comparisons now cover
 clearing, the heavy plume/eight-light workload, and Material Atelier. Mean frame
 errors are 0.341/0.384/0.372 per 255; mean temporal-change-magnitude errors are
 0.190/0.212/0.043 per 255, with maximum channel errors of 31/27/10. A sampled

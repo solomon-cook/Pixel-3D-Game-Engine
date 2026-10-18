@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 COMPARISONS = {
     "no-copy": ("direct_copy_rgba16", "direct_no_copy_rgba16"),
     "lighting-reuse": ("direct_copy_rgba16", "reuse_copy_rgba16"),
+    "compact-hdr": ("direct_copy_rgba16", "direct_copy_rg11b10"),
 }
 
 
@@ -44,7 +45,12 @@ def run() -> None:
         parser.error("--pairs must be between 1 and 3")
     baseline_name, candidate_name = COMPARISONS[args.comparison]
     if args.output is None:
-        args.output = ROOT / ("artifacts/o08/native-no-copy" if args.comparison == "no-copy" else "artifacts/o06/native-lighting-reuse")
+        default_outputs = {
+            "no-copy": "artifacts/o08/native-no-copy",
+            "lighting-reuse": "artifacts/o06/native-lighting-reuse",
+            "compact-hdr": "artifacts/o08/native-compact-hdr",
+        }
+        args.output = ROOT / default_outputs[args.comparison]
     args.output.mkdir(parents=True, exist_ok=True)
     scene_dir = args.output / "scenes"
     run_dir = args.output / "runs"
@@ -179,7 +185,7 @@ def run() -> None:
 
     summary = {
         "version": 1,
-        "study": f"native-window optical {args.comparison}",
+        "study": f"native-window renderer {args.comparison}",
         "comparison": args.comparison,
         "route": ROUTE,
         "camera": "mixed-close",
