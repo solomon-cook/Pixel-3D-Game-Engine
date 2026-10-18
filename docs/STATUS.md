@@ -364,8 +364,15 @@ edit remained unallocated while offscreen, then allocated one 1,843,200-byte HDR
 when the camera switched to the edited geometry. Turning the camera away again reported
 zero optical batches and no optical-resolve timestamp while retaining the snapshot. The
 metal-close seed-42 tick-300 image remained byte-identical to the saved reference. This
-is frustum visibility, not full occlusion detection, and has only been exercised on
-M1 Max/Metal.
+is frustum visibility, not full occlusion detection. A paused native-window Session
+now repeats the lifecycle at tick 0: offscreen edit stays at 0 snapshot bytes and
+has no optical-resolve timestamp; first visibility creates one 1,843,200-byte
+snapshot across nine optical batches; turning away skips resolve but retains the
+allocation; returning to hero does not allocate again. Repeated away and hero
+captures are byte-identical. Native lifecycle is verified on M1 Max/Metal only;
+other-adapter and DX12 behavior remain open. See
+[native report](measurements-o08-lazy-optical-native.json) and
+[runner](../scripts/lazy_optical_native_study.py).
 
 The O08 simulation-config upload cleanup now skips the redundant render-time
 write while preserving the per-tick compute config. Three alternating 120-second

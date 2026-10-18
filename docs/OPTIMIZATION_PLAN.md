@@ -818,6 +818,14 @@ The 17 October current-renderer inventory refresh reports 22,809,480 known bytes
 for clearing before optical activation and 16,883,296 bytes for Material Atelier
 with its visible HDR snapshot; timestamp staging and the tile debug uniform are
 now counted. See `current_resource_inventory_refresh` in the measurement report.
+The native Session lifecycle is also verified on M1 Max/Metal: an offscreen
+reflectivity edit keeps snapshot residency at zero and emits no optical-resolve
+timestamp; first visibility allocates exactly one 1,843,200-byte snapshot and
+renders nine optical batches. Turning away skips resolve while retaining the
+allocation, and revisiting does not reallocate; repeated paused captures match
+byte-for-byte. This closes native lifecycle behavior on this adapter only. See
+[native lifecycle report](measurements-o08-lazy-optical-native.json) and
+[runner](../scripts/lazy_optical_native_study.py).
 O08 layout/pass experiments and the later sparse-smoke gate
 remain open.
 

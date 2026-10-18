@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "workstream": "O08 native lazy optical HDR snapshot lifecycle",
+  "host": {
+    "adapter": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": true,
+    "window": {
+      "fullscreen": false,
+      "minimized": false,
+      "physical_size": [
+        2560,
+        1600
+      ],
+      "scale_factor": 2.0
+    }
+  },
+  "scene": "assets/scenes/materials.json",
+  "scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
+  "generated_scene": "artifacts/o08/lazy-optical-native/materials-away.json",
+  "generated_scene_sha256": "95ff33093a47f19fc0fe639eaaedf4c562d41998228e89fc1e47467e6c3b693f",
+  "binary_sha256": "0c27f6b10921935fc71f65d5226a74367b4be400a20887b08d4f8083eed15b7b",
+  "render_source_sha256": "c95d5026b9266b1725f308411b6db6663b909345e999369a505b9123cb873f6b",
+  "session_source_sha256": "4fddb2f0046c105d94d69522ce2542ddd5297cf833ce76e3c6bc479501b3f83b",
+  "seed": 42,
+  "resolution": [
+    640,
+    360
+  ],
+  "edit": {
+    "path": "materials.chalk.reflectivity",
+    "value": 0.3
+  },
+  "captures": {
+    "edited_offscreen": {
+      "camera": "away",
+      "tick": 0,
+      "image": "artifacts/o08/lazy-optical-native/edited_offscreen.png",
+      "image_sha256": "d5621f255b59aab0c3584ea24272b9c8df1177c798a18c76381fb6887689ffdc",
+      "snapshot_bytes": 0,
+      "known_gpu_allocation_bytes": 15193796,
+      "optical_draw_batches": 0,
+      "optical_resolve_timed": false
+    },
+    "first_visible": {
+      "camera": "hero",
+      "tick": 0,
+      "image": "artifacts/o08/lazy-optical-native/first_visible.png",
+      "image_sha256": "5763a99b6249d36b9f3aeca049a9a6a3ff61f8490546575931abce7fbe658784",
+      "snapshot_bytes": 1843200,
+      "known_gpu_allocation_bytes": 17036996,
+      "optical_draw_batches": 9,
+      "optical_resolve_timed": true
+    },
+    "turned_away": {
+      "camera": "away",
+      "tick": 0,
+      "image": "artifacts/o08/lazy-optical-native/turned_away.png",
+      "image_sha256": "d5621f255b59aab0c3584ea24272b9c8df1177c798a18c76381fb6887689ffdc",
+      "snapshot_bytes": 1843200,
+      "known_gpu_allocation_bytes": 17036996,
+      "optical_draw_batches": 0,
+      "optical_resolve_timed": false
+    },
+    "visible_again": {
+      "camera": "hero",
+      "tick": 0,
+      "image": "artifacts/o08/lazy-optical-native/visible_again.png",
+      "image_sha256": "5763a99b6249d36b9f3aeca049a9a6a3ff61f8490546575931abce7fbe658784",
+      "snapshot_bytes": 1843200,
+      "known_gpu_allocation_bytes": 17036996,
+      "optical_draw_batches": 9,
+      "optical_resolve_timed": true
+    }
+  },
+  "checks": {
+    "offscreen_edit_keeps_snapshot_unallocated": true,
+    "offscreen_states_skip_optical_timestamp": true,
+    "first_visible_batch_allocates_once": true,
+    "first_visible_frame_includes_resolve_timestamp": true,
+    "turning_away_skips_optical_batch_but_retains_snapshot": true,
+    "revisiting_visible_geometry_does_not_duplicate_allocation": true,
+    "allocation_increase_is_one_snapshot": true,
+    "repeated_paused_camera_captures_are_identical": true
+  },
+  "limitations": [
+    "One paused native-window Session on Apple M1 Max/Metal; this checks Session/resource lifecycle, not continuous timing.",
+    "This is camera-frustum visibility, not occlusion detection; DX12 and other adapters remain unqualified."
+  ],
+  "all_checks_passed": true
+}

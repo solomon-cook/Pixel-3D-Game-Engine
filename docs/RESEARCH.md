@@ -484,6 +484,16 @@ baselines. This confirms the path on one Metal adapter only; no timing benefit i
 claimed. The full live-allocation report, format selection and limits are in
 [measurements-o08.json](measurements-o08.json).
 
+A paused native Session on M1 Max/Metal now repeats the lazy-allocation lifecycle:
+a live chalk-reflectivity edit while facing away leaves snapshot residency at zero
+and has no optical-resolve timestamp. The first hero view creates one 1,843,200-byte
+snapshot for nine optical batches; turning away skips resolve while retaining the
+allocation, and returning does not allocate again. Repeated paused away/hero
+captures are byte-identical. This is native lifecycle evidence for one adapter,
+not DX12 or other-adapter qualification. See
+[native report](measurements-o08-lazy-optical-native.json) and its
+[runner](../scripts/lazy_optical_native_study.py).
+
 The smoke density/temperature ping-pong pair also uses Rg16Float when the adapter
 exposes `TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES` and filterable sampled/write-only
 storage support; otherwise it retains Rgba16Float. The selected path requests that

@@ -464,6 +464,17 @@ disabled-by-default experiments. No-copy now also has three alternating native
 Platform, continuous-temporal and broader-pass acceptance stays open as
 summarized in that record.
 
+**Lazy snapshot native lifecycle complete on M1 Max/Metal:** a paused shared
+Session edits an optical material while the camera faces away, then captures
+away/visible/away/visible. Snapshot residency stays at zero until nine optical
+batches become camera-visible, rises by exactly 1,843,200 bytes once, and remains
+resident without further allocation after turning away and returning. Optical
+resolve timestamps are absent in the away views and present in the visible views;
+the repeated paused captures match byte-for-byte. DX12 and other-adapter resource
+lifecycle remain open. See
+[native report](measurements-o08-lazy-optical-native.json) and
+[runner](../scripts/lazy_optical_native_study.py).
+
 The RG16 fallback now has a diagnostic `--force-rg16-fallback` path that exercises
 RGBA16F effect-target and smoke-volume creation/rendering on a capable adapter.
 Two fixed-tick M1 Max/Metal scenes and all 120 sampled frames across a moving
