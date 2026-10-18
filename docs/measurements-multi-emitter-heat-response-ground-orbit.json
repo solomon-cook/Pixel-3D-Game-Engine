@@ -1,0 +1,194 @@
+{
+  "version": 1,
+  "date": "2026-10-18",
+  "study": "O05 source-one opaque heat-response full moving-route comparison",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "scene": "assets/scenes/two-emitter-review.json",
+  "scene_sha256": "9ca7aee40dac7a9cde4010f6f90c2623e441c8e0c9a1f19ff2a9c570c1082892",
+  "runtime_camera": {
+    "id": "heat-ground-study",
+    "position": [
+      -3.0,
+      1.7,
+      2.8
+    ],
+    "target": [
+      -3.0,
+      0.3,
+      0.0
+    ],
+    "projection": {
+      "kind": "perspective",
+      "fov_degrees": 48.0
+    }
+  },
+  "runtime_route": {
+    "id": "watchfire-ground-orbit",
+    "duration_seconds": 120.0,
+    "keyframes": [
+      {
+        "time": 0.0,
+        "position": [
+          -3.0,
+          1.7,
+          2.8
+        ],
+        "target": [
+          -3.0,
+          0.3,
+          0.0
+        ]
+      },
+      {
+        "time": 30.0,
+        "position": [
+          -0.2,
+          1.7,
+          0.0
+        ],
+        "target": [
+          -3.0,
+          0.3,
+          0.0
+        ]
+      },
+      {
+        "time": 60.0,
+        "position": [
+          -3.0,
+          1.7,
+          -2.8
+        ],
+        "target": [
+          -3.0,
+          0.3,
+          0.0
+        ]
+      },
+      {
+        "time": 90.0,
+        "position": [
+          -5.8,
+          1.7,
+          0.0
+        ],
+        "target": [
+          -3.0,
+          0.3,
+          0.0
+        ]
+      },
+      {
+        "time": 120.0,
+        "position": [
+          -3.0,
+          1.7,
+          2.8
+        ],
+        "target": [
+          -3.0,
+          0.3,
+          0.0
+        ]
+      }
+    ]
+  },
+  "runtime_route_sha256": "b0f9234e8a992eae9efdd34cab5429edc9b263c5a7db3850a7729f34624bd974",
+  "runtime_scene_sha256": {
+    "heat-off": "9a4e035767dad22df22262577c5e5ee864f0e6785f6c7b6b748bb33cd2981ad7",
+    "heat-on": "356b482a080565b255b9c399ecd8b7e4873698947d96b64218d5c9f86ac353f0"
+  },
+  "binary_sha256": "cceaa3c520243f31b3a2febe7c0ee778fe1039f9735c48e69452d042458de157",
+  "study_script_sha256": "538a3903cc90f7da2f8af51fc394083bf80cb3085a5d6de0ffc72539b76e0f14",
+  "capture_script_sha256": "a2120471d7cc238776997875b8549aedd2ffd34312dd452d77c4ae9208e9ff34",
+  "source_revision": "5f2e7371a40814eb3834c90810abd2b2ed85258b",
+  "emitters": {
+    "enabled": [
+      "watchfire"
+    ],
+    "disabled": [
+      "campfire"
+    ]
+  },
+  "material": "earth",
+  "heat_response": {
+    "off": 0.0,
+    "on": 0.8
+  },
+  "seed": 42,
+  "camera": "heat-ground-study",
+  "route": "watchfire-ground-orbit",
+  "camera_mode": "focused-watchfire",
+  "route_duration_seconds": 119.95,
+  "frames_per_variant": 2400,
+  "fps": 20.0,
+  "start_tick": 300,
+  "end_tick": 7497,
+  "resolution": [
+    640,
+    360
+  ],
+  "checks": {
+    "same_ticks": true,
+    "same_camera_poses": true,
+    "fire_and_light_counts_match": true,
+    "source_isolation_configured": true
+  },
+  "heat_on_vs_off": {
+    "frame_mae_mean": 0.7704964891975299,
+    "frame_mae_p95": 0.9811197916666666,
+    "max_channel_error": 121,
+    "changed_pixels_mean": 9331.12,
+    "changed_pixels_max": 13065
+  },
+  "temporal_change_difference": {
+    "mae_mean": 0.04351191130949632,
+    "mae_p95": 0.06834780092592592,
+    "max_channel_error": 121
+  },
+  "contact_sheet": "docs/measurements-multi-emitter-heat-response-ground-orbit-contact.png",
+  "contact_sheet_sha256": "a76a11b6c9d9976028136b8f4b84170c399350495468101a714b8ad363a37760",
+  "sample_indices": [
+    0,
+    599,
+    1199,
+    1799,
+    2399
+  ],
+  "segments": [
+    {
+      "route_start_seconds": 0.0,
+      "start_tick": 300,
+      "frames": 600,
+      "sequence": "artifacts/multi-emitter/heat-response-ground-orbit/heat-off/segment-00/sequence.json"
+    },
+    {
+      "route_start_seconds": 30.0,
+      "start_tick": 2100,
+      "frames": 600,
+      "sequence": "artifacts/multi-emitter/heat-response-ground-orbit/heat-off/segment-01/sequence.json"
+    },
+    {
+      "route_start_seconds": 60.0,
+      "start_tick": 3900,
+      "frames": 600,
+      "sequence": "artifacts/multi-emitter/heat-response-ground-orbit/heat-off/segment-02/sequence.json"
+    },
+    {
+      "route_start_seconds": 90.0,
+      "start_tick": 5700,
+      "frames": 600,
+      "sequence": "artifacts/multi-emitter/heat-response-ground-orbit/heat-off/segment-03/sequence.json"
+    }
+  ],
+  "limitations": [
+    "Offscreen M1 Max/Metal route evidence only; no whole-frame performance conclusion, native playback or other-adapter acceptance.",
+    "Heat-response output indicates a designed gameplay cue and is not a calibrated temperature visualization.",
+    "Temporal image metrics compare heat-on and heat-off motion; they do not replace continuous playback review."
+  ],
+  "all_parity_checks_passed": true
+}

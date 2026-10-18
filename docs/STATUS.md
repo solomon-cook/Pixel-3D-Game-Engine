@@ -443,12 +443,12 @@ A full 120-second source-one heat-off/on `dual-wide` comparison samples 2,400
 frames at 20 fps. Ticks, camera poses, fire counts and particle-light counts
 match. Mean full-frame A/B MAE is 0.0084/255 (88 changed pixels on average), and
 temporal-change difference MAE is 0.00087/255; the cue is sparse in this wide
-route. The contact sheet was inspected, but continuous human playback and ground-
-focused moving-camera readability remain open. No performance conclusion is
-claimed. See [temporal report](measurements-multi-emitter-heat-response-temporal.json),
-[contact sheet](measurements-multi-emitter-heat-response-temporal-contact.png) and
-[runner](../scripts/two_emitter_heat_response_temporal_study.py), plus the
-fixed-tick [`two_emitter_heat_response_study.py`](../scripts/two_emitter_heat_response_study.py)
+route. In the focused watchfire orbit, mean A/B MAE is 0.7705/255 over 2,400
+frames, with 9,331 changed pixels on average; temporal-change difference MAE is
+0.0435/255. The inspected contact sheet shows the heat ring at each of five
+sampled checkpoints. Human continuous playback, native viewing and performance
+review remain open; no speedup is claimed. See the [focused-route report](measurements-multi-emitter-heat-response-ground-orbit.json), [contact sheet](measurements-multi-emitter-heat-response-ground-orbit-contact.png), [wide-route report](measurements-multi-emitter-heat-response-temporal.json) and [runner](../scripts/two_emitter_heat_response_temporal_study.py), plus the fixed-tick
+[`two_emitter_heat_response_study.py`](../scripts/two_emitter_heat_response_study.py)
 and [opaque heat evidence](measurements-multi-emitter-opaque-heat.json). The
 dual-source scene inventory reports 25,889,280 known bytes at
 640×360; this is not a paired single-source delta. See [implementation plan](MULTI_EMITTER_PLAN.md),

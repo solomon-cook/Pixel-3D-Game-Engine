@@ -170,13 +170,17 @@ and [runner](../scripts/two_emitter_absorption_sustained_study.py).
   comparison now samples 2,400 frames at 20 fps with matching ticks, camera poses,
   fire counts and particle-light counts. Mean heat-on/off frame MAE is 0.0084/255
   over the whole frame (mean 88 changed pixels); the cue is sparse in this wide
-  route. Temporal-change difference MAE is 0.00087/255. The contact sheet was
-  inspected, but this does not replace continuous human playback or qualify cue
-  readability in a ground-focused moving camera. No performance conclusion is
-  drawn. See [still A/B evidence](measurements-multi-emitter-opaque-heat.json),
-  [temporal report](measurements-multi-emitter-heat-response-temporal.json),
-  [inspected contact sheet](measurements-multi-emitter-heat-response-temporal-contact.png)
-  and [reproducible runner](../scripts/two_emitter_heat_response_temporal_study.py).
+  route. Temporal-change difference MAE is 0.00087/255. A second 120-second
+  heat-off/on orbit keeps the watchfire and ground centered from a low moving
+  camera. Across 2,400 frames, mean full-frame A/B MAE is 0.7705/255 (9,331
+  changed pixels on average), and temporal-change difference MAE is 0.0435/255.
+  The inspected contact sheet shows the ground ring at all five sampled route
+  checkpoints. Human continuous playback, native viewing and performance review
+  remain open. See the [focused-route report](measurements-multi-emitter-heat-response-ground-orbit.json),
+  [contact sheet](measurements-multi-emitter-heat-response-ground-orbit-contact.png),
+  [wide-route report](measurements-multi-emitter-heat-response-temporal.json),
+  [still A/B evidence](measurements-multi-emitter-opaque-heat.json) and
+  [reproducible runner](../scripts/two_emitter_heat_response_temporal_study.py).
 - Each source primary light now owns six cube-array shadow faces in stable emitter
   ID order. Shadow matrices, caster culling, dirty-face invalidation and opaque,
   optical and volumetric light selection use the matching source layer. The
