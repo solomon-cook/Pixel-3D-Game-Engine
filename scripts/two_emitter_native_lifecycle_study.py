@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import select
 import subprocess
+import time
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SCENE = ROOT / "assets/scenes/two-emitter-review.json"
@@ -36,6 +37,17 @@ def capture(session: Session, path: Path) -> dict:
     inventory = meta.get("capabilities", {}).get("resource_inventory", {})
     return {"image": str(image.relative_to(ROOT)) if image.is_relative_to(ROOT) else str(image), "sha256": hashlib.sha256(image.read_bytes()).hexdigest(), "tick": meta.get("tick"), "camera": meta.get("camera"), "resolution": meta.get("resolution"), "device": meta.get("capabilities", {}).get("name"), "backend": meta.get("capabilities", {}).get("backend"), "resource_inventory": inventory}
 
+def wait_for_minimized_state(session: Session, expected: bool, timeout: float = 5.0) -> dict:
+    """Wait for the window manager to apply a minimize/restore request."""
+    deadline = time.monotonic() + timeout
+    last_state = None
+    while time.monotonic() < deadline:
+        last_state = session.request("get_window")
+        if last_state["minimized"] is expected:
+            return last_state
+        time.sleep(0.1)
+    return last_state or session.request("get_window")
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--binary", type=Path, default=ROOT / "target/release/engine-lab")
@@ -61,8 +73,9 @@ def main() -> int:
         window_states["restored"] = window_states["resized"]
         stages["restored"] = capture(session, output / "restored.png")
         session.request("set_window", minimized=True)
-        window_states["minimize_request"] = session.request("get_window")
+        window_states["minimize_request"] = wait_for_minimized_state(session, True)
         session.request("set_window", minimized=False)
+        window_states["restored_from_minimize"] = wait_for_minimized_state(session, False)
         scale = initial_window["scale_factor"]
         original_logical_size = [round(v / scale) for v in initial_window["physical_size"]]
         session.request("set_window", size=original_logical_size)
@@ -75,9 +88,50 @@ def main() -> int:
     same_renderer_resources = len({json.dumps(v["resource_inventory"], sort_keys=True) for v in stages.values()}) == 1
     image_repeat = stages["before"]["sha256"] == stages["original_size"]["sha256"]
     window_resize_observed = window_states["resized"]["physical_size"] != initial_window["physical_size"]
-    minimize_request_observed = window_states["minimize_request"]["minimized"]
-    report = {"version": 1, "date": "2026-10-18", "study": "dual-emitter native surface resize and minimize/restore lifecycle", "host": {"device": stages["before"]["device"], "backend": stages["before"]["backend"], "native_window": True, "initial_window": initial_window}, "source_revision": subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True).stdout.strip(), "scene": str(scene.relative_to(ROOT)) if scene.is_relative_to(ROOT) else str(scene), "scene_sha256": hashlib.sha256(scene.read_bytes()).hexdigest(), "binary_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(), "source_ids": sorted(e["id"] for e in data["emitters"]), "seed": args.seed, "window_states": window_states, "stages": stages, "checks": {"native_resize_observed": window_resize_observed, "minimize_request_registered": minimize_request_observed, "same_fixed_tick": stable_tick, "same_camera": stable_camera, "renderer_resource_inventory_stable": same_renderer_resources, "image_restored_after_surface_changes": image_repeat}, "limitations": ["One M1 Max/Metal native window; resize and restore are covered, but the native host did not report minimized=true after the minimize request, so minimize handling is unverified.", "This exercises surface resize, not GPU device loss or full device recreation.", "Windows/DX12 and other-adapter acceptance remain unverified."]}
-    report["all_checks_passed"] = all(value for key, value in report["checks"].items() if key != "minimize_request_registered")
+    minimize_request_observed = window_states["minimize_request"]["minimized"] is True
+    minimize_restore_observed = (minimize_request_observed and
+                                 window_states["restored_from_minimize"]["minimized"] is False)
+    limitations = [
+        "One M1 Max/Metal native window; this does not exercise GPU device loss or full device recreation.",
+        "Windows/DX12 and other-adapter acceptance remain unverified.",
+    ]
+    if not minimize_request_observed:
+        limitations.append(
+            "The window manager did not report minimized=true within five seconds of the minimize request; minimization and restore therefore remain unverified."
+        )
+    report = {
+        "version": 1,
+        "date": "2026-10-18",
+        "study": "dual-emitter native surface resize and minimize/restore lifecycle",
+        "host": {
+            "device": stages["before"]["device"],
+            "backend": stages["before"]["backend"],
+            "native_window": True,
+            "initial_window": initial_window,
+        },
+        "source_revision": subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True
+        ).stdout.strip(),
+        "scene": str(scene.relative_to(ROOT)) if scene.is_relative_to(ROOT) else str(scene),
+        "scene_sha256": hashlib.sha256(scene.read_bytes()).hexdigest(),
+        "binary_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(),
+        "source_ids": sorted(e["id"] for e in data["emitters"]),
+        "seed": args.seed,
+        "window_states": window_states,
+        "minimize_transition_timeout_seconds": 5,
+        "stages": stages,
+        "checks": {
+            "native_resize_observed": window_resize_observed,
+            "minimize_request_registered": minimize_request_observed,
+            "minimize_restore_observed": minimize_restore_observed,
+            "same_fixed_tick": stable_tick,
+            "same_camera": stable_camera,
+            "renderer_resource_inventory_stable": same_renderer_resources,
+            "image_restored_after_surface_changes": image_repeat,
+        },
+        "limitations": limitations,
+    }
+    report["all_checks_passed"] = all(report["checks"].values())
     report_path.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({"report": str(report_path), "checks": report["checks"], "all_checks_passed": report["all_checks_passed"]}, indent=2))
     return 0 if report["all_checks_passed"] else 1

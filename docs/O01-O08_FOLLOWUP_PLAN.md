@@ -674,8 +674,10 @@ image parity; native fixed-tick cache captures match at six poses, and three
 120-second native pairs show no robust whole-window gain. Continuous native
 playback, broader resource recreation stress, DX12 and another-adapter
 acceptance remain open. A dual-emitter native surface resize/restore study
-preserves the fixed-tick image and renderer inventory; minimize was not observed
-by the host. See [lifecycle report](measurements-multi-emitter-native-lifecycle.json)
+preserves the fixed-tick image and renderer inventory. The runner now waits up to
+five seconds for the OS-reported minimize and restore states; macOS still reports
+`minimized: false` after the request, so this gate remains unverified and the
+report correctly fails its full-check flag. See [lifecycle report](measurements-multi-emitter-native-lifecycle.json)
 and [runner](../scripts/two_emitter_native_lifecycle_study.py). A dual-source
 transactional reload study now appends WGSL syntax errors to the fire and volume
 modules in an isolated shader directory. At seed 42/tick 120, both failed reloads
