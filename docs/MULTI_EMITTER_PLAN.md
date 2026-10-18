@@ -46,6 +46,12 @@ into a testable two-source runtime without changing the single-source baseline.
   known bytes, and the fixed-tick capture remains pixel-identical. The live
   renderer still fills slot zero only, so this is not dual-source visual
   acceptance. See [per-source presentation evidence](measurements-multi-emitter-presentation.json).
+- `Renderer::update_globals` now has a keyed multi-source branch that builds
+  `FireKey`s in stable-ID order, packs both frames (including the shared particle
+  lights), and uploads only when source state changes. Current scene validation
+  still requires one emitter, so this upload branch is not reachable from a live
+  scene. It has not been validated with two frames on the GPU; smoke, shadows,
+  and non-flame lighting remain single-source.
 - One 48×64×48 Rg16Float density/temperature pair occupies 1,179,648 bytes.
   One point-light cubemap set occupies 1,572,864 bytes. The 8 authored point
   lights and 12 derived particle lights are global renderer budgets.

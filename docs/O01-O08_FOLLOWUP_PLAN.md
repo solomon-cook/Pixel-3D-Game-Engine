@@ -466,7 +466,9 @@ both source frames and settings in stable-ID order, and merges sampled particle
 lights into the shared twelve-light budget. Tests cover reorder invariance,
 legacy sampler parity and selected-light/drop accounting. Dual-source smoke
 simulation, shadows, live scene acceptance and visual review remain
-unimplemented. See the
+unimplemented. `Renderer::update_globals` now has a keyed two-source sampling
+and upload branch, but scene validation still prevents live access and no
+two-source GPU capture exists. See the
 [storage ABI](measurements-multi-emitter-storage-abi.json) and
 [fire consumer](measurements-multi-emitter-fire-consumer.json) and
 [storage packing](measurements-multi-emitter-storage-packing.json) comparisons,

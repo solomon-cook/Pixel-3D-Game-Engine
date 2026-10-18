@@ -208,6 +208,7 @@ pub struct Renderer {
     fire_buffer: wgpu::Buffer,
     fire_storage: FireFrameStorage,
     fire_key: Option<FireKey>,
+    multi_fire_keys: Vec<(String, FireKey)>,
     fire_frame: FireFrame,
     fire_lod_tier: u8,
     fire_render_segments: u32,
@@ -1897,6 +1898,7 @@ impl Renderer {
             fire_buffer,
             fire_storage: FireFrameStorage::zeroed(),
             fire_key: None,
+            multi_fire_keys: Vec::new(),
             fire_frame: FireFrame::zeroed(),
             fire_lod_tier: 0,
             fire_render_segments: 0,
@@ -2950,16 +2952,49 @@ impl Renderer {
             enabled,
             profile: profile.clone(),
         };
+        let multi_emitter = scene.emitters.len() > 1;
+        let mut multi_source_keys = if multi_emitter {
+            scene
+                .emitters
+                .iter()
+                .map(|source| {
+                    let source_profile = scene
+                        .effects
+                        .iter()
+                        .find(|candidate| candidate.id == source.effect_profile)
+                        .expect("validated emitter profile exists");
+                    (
+                        source.id.clone(),
+                        FireKey {
+                            tick,
+                            seed,
+                            source: source.position,
+                            wind,
+                            enabled: if source.enabled { source.intensity } else { 0. },
+                            profile: source_profile.clone(),
+                        },
+                    )
+                })
+                .collect::<Vec<_>>()
+        } else {
+            Vec::new()
+        };
+        multi_source_keys.sort_by(|left, right| left.0.cmp(&right.0));
+        let primary_source_slot = multi_source_keys
+            .iter()
+            .position(|(id, _)| id == &emitter.id);
         let fire_changed = self.fire_key.as_ref() != Some(&key);
         if fire_changed {
-            let started = Instant::now();
-            self.fire_frame = FireFrame::sample(&key);
             self.fire_key = Some(key.clone());
-            self.metrics.effect_update_cpu_ms = started.elapsed().as_secs_f64() * 1000.;
-            self.metrics.effect_events_dropped = self.fire_frame.bounds_max[3] as u32;
-            self.metrics.particle_lights = self.fire_frame.lighting[0];
-            self.metrics.particle_lights_dropped = self.fire_frame.lighting[1];
-            self.metrics.branch_segments_dropped = self.fire_frame.lighting[2];
+            if !multi_emitter {
+                let started = Instant::now();
+                self.fire_frame = FireFrame::sample(&key);
+                self.metrics.effect_update_cpu_ms = started.elapsed().as_secs_f64() * 1000.;
+                self.metrics.effect_events_dropped = self.fire_frame.bounds_max[3] as u32;
+                self.metrics.particle_lights = self.fire_frame.lighting[0];
+                self.metrics.particle_lights_dropped = self.fire_frame.lighting[1];
+                self.metrics.branch_segments_dropped = self.fire_frame.lighting[2];
+            }
         }
         let detail_started = Instant::now();
         let projected_height =
@@ -2972,20 +3007,51 @@ impl Renderer {
         );
         let rendered_segments = effects::projected_detail_segments(profile.fire.segments, tier);
         if fire_changed || rendered_segments != self.fire_render_segments {
-            let render_frame =
-                effects::render_frame_with_detail(&key, &self.fire_frame, rendered_segments);
+            if !multi_emitter {
+                let render_frame =
+                    effects::render_frame_with_detail(&key, &self.fire_frame, rendered_segments);
+                let upload_started = Instant::now();
+                self.fire_storage.sources[0] = render_frame;
+                self.fire_storage.source_origins[0] = [origin.x, origin.y, origin.z, 0.];
+                self.fire_storage.presentations[0] =
+                    FirePresentation::from_profile(profile, enabled);
+                self.queue.write_buffer(
+                    &self.fire_buffer,
+                    0,
+                    bytemuck::bytes_of(&self.fire_storage),
+                );
+                self.metrics.cpu_upload_ms += upload_started.elapsed().as_secs_f64() * 1000.;
+                self.metrics.fire_primitives = render_frame.counts[0];
+                self.metrics.fire_primitives_rendered = render_frame.counts[0];
+                self.metrics.flame_fragments = render_frame.counts[2];
+                self.metrics.embers = render_frame.counts[3];
+            }
+            self.fire_render_segments = rendered_segments;
+        }
+        if multi_emitter && multi_source_keys != self.multi_fire_keys {
+            let update_started = Instant::now();
+            let storage = FireFrameStorage::sample_emitters(&multi_source_keys)
+                .expect("validated scene has at most two uniquely identified emitters");
+            self.metrics.effect_update_cpu_ms = update_started.elapsed().as_secs_f64() * 1000.;
+            self.metrics.effect_events_dropped = storage
+                .sources
+                .iter()
+                .map(|frame| frame.bounds_max[3] as u32)
+                .sum();
+            self.metrics.particle_lights = storage.sources[0].lighting[0];
+            self.metrics.particle_lights_dropped = storage.sources[0].lighting[1];
+            self.metrics.branch_segments_dropped = storage.sources[0].lighting[2];
+            self.metrics.fire_primitives = storage.sources.iter().map(|f| f.counts[0]).sum();
+            self.metrics.fire_primitives_rendered = self.metrics.fire_primitives;
+            self.metrics.fire_primitives_full = self.metrics.fire_primitives;
+            self.metrics.flame_fragments = storage.sources.iter().map(|f| f.counts[2]).sum();
+            self.metrics.embers = storage.sources.iter().map(|f| f.counts[3]).sum();
             let upload_started = Instant::now();
-            self.fire_storage.sources[0] = render_frame;
-            self.fire_storage.source_origins[0] = [origin.x, origin.y, origin.z, 0.];
-            self.fire_storage.presentations[0] = FirePresentation::from_profile(profile, enabled);
+            self.fire_storage = storage;
             self.queue
                 .write_buffer(&self.fire_buffer, 0, bytemuck::bytes_of(&self.fire_storage));
             self.metrics.cpu_upload_ms += upload_started.elapsed().as_secs_f64() * 1000.;
-            self.fire_render_segments = rendered_segments;
-            self.metrics.fire_primitives = render_frame.counts[0];
-            self.metrics.fire_primitives_rendered = render_frame.counts[0];
-            self.metrics.flame_fragments = render_frame.counts[2];
-            self.metrics.embers = render_frame.counts[3];
+            self.multi_fire_keys = multi_source_keys;
         }
         self.fire_lod_tier = tier;
         self.metrics.projected_detail_cpu_ms = detail_started.elapsed().as_secs_f64() * 1000.;
@@ -2994,8 +3060,22 @@ impl Renderer {
         self.metrics.fire_lod_level = u32::from(tier);
         self.metrics.fire_segments_full = profile.fire.segments;
         self.metrics.fire_segments_rendered = rendered_segments;
-        self.metrics.fire_primitives_full = self.fire_frame.counts[0];
-        let power = self.fire_frame.bounds_min[3];
+        self.metrics.fire_primitives_full = if multi_emitter {
+            self.fire_storage
+                .sources
+                .iter()
+                .map(|frame| frame.counts[0])
+                .sum()
+        } else {
+            self.fire_frame.counts[0]
+        };
+        let power = if multi_emitter {
+            let primary_slot =
+                primary_source_slot.expect("primary emitter is present in the sorted source set");
+            self.fire_storage.sources[primary_slot].bounds_min[3]
+        } else {
+            self.fire_frame.bounds_min[3]
+        };
         let mut point_lights = [PointLightGpu::zeroed(); 8];
         let ordered = std::iter::once(fire).chain(
             scene
