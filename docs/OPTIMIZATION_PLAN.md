@@ -456,6 +456,16 @@ clearing scene. Native-window and Windows DX12 verification remain open. Live tr
 and per-object revisions are now available; O02 per-face invalidation remains the next
 cache refinement.
 
+**Scene-scale follow-up (18 October 2026):** four deterministic tiers from 276 to
+2,208 objects were measured with baked, instancing-only and culling+instancing
+paths using three paired 120-second routes each. Direct baked-to-culled+instanced
+whole-frame work deltas ranged from −0.025 to −0.116 ms; the 2,208-object tier
+reduced visible camera objects from 2,208 to 868 and batches from 2,208 to 377,
+with 0.739 ms median CPU culling. The gain does not justify adding indirect or
+occlusion drawing. Lights and casters were static, so shadow GPU timing was
+unavailable after cache warm-up; dynamic shadow scaling and non-Metal acceptance
+remain open. See [measurements-o07-scale-study.json](measurements-o07-scale-study.json).
+
 ## O08 — Reduce memory traffic and unnecessary GPU work
 
 **Purpose:** optimise the complete pass/data layout for desktop GPUs after costs

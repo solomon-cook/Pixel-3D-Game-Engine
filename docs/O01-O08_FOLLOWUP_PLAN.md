@@ -194,6 +194,24 @@ required physical fallback or target-backend validation.
 
 ### 8. O07 scene-scale study
 
+**Complete on M1 Max/Metal for the measured static-shadow route:** deterministic
+clearing-derived tiers at 276, 552, 1,104 and 2,208 objects were compared using
+baked, instancing-only and culling+instancing paths. All 12 direct/adjacent
+comparisons used three alternating 120-second pairs, ten seconds of warm-up,
+seed 42 and 640×360. The direct baked-to-culled+instanced paired median GPU/frame
+work deltas were −0.009/−0.031, −0.066/−0.116, −0.135/−0.053 and
+−0.151/−0.025 ms by tier. At 2,208 objects, CPU culling reached 0.739 ms median
+while camera-visible objects fell from 2,208 to 868 and draw batches from 2,208
+to 377. Gains are small and not monotonic; keep the existing path, but do not
+prototype indirect drawing or occlusion culling from these results. Full per-run
+medians, p95s, GPU stages, visibility, allocations, provenance and captures are in
+[measurements-o07-scale-study.json](measurements-o07-scale-study.json).
+
+The route kept casters and lights static so shadow maps remained cached; steady
+shadow-map GPU timing is therefore unavailable in those paired runs. A moving
+caster route is still required to measure shadow-submission scaling. Native-window
+and non-Metal adapter validation also remain open.
+
 1. Generate deterministic scenes at increasing object counts and mesh reuse rates,
    starting from the current 276-object clearing scene and increasing by measured
    steps. Include offscreen casters, mixed materials and shared versus unique meshes.

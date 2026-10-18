@@ -2,8 +2,8 @@
 
 The optimization queue tracks implementation separately from platform and visual
 acceptance. O01 profiling, O08's inventory, O02 whole-map reuse, O03 single-emitter
-tile lists and O07's bounds, shared meshes, instancing and culling are implemented with
-M1 Max/Metal evidence.
+tile lists and O07's bounds, shared meshes, instancing, culling and static-shadow
+scene-scale evidence are implemented with M1 Max/Metal evidence.
 Detailed steps, dependencies and acceptance criteria live in
 [the optimisation plans](docs/OPTIMIZATION_PLAN.md). This is the execution index;
 [STATUS.md](docs/STATUS.md) records runtime evidence and outstanding release gates.
@@ -16,7 +16,7 @@ Detailed steps, dependencies and acceptance criteria live in
 ## Then: preserve the image while avoiding work
 
 - [x] [O02: whole-map shadow caching](docs/OPTIMIZATION_PLAN.md#o02--cache-static-shadow-maps) — full sun map and point-light cube reuse with conservative invalidation; M1 Max paired results and gates are in [measurements-o02.json](docs/measurements-o02.json).
-- [x] [O07: stable object bounds, culling, shared meshes, instancing and live transforms](docs/OPTIMIZATION_PLAN.md#o07--object-bounds-culling-and-shared-meshes) — per-camera/light culling, shared geometry and validated live object transforms measured; image, draw, vertex, memory, CPU and transform evidence is in [measurements-o07-culling.json](docs/measurements-o07-culling.json).
+- [x] [O07: stable object bounds, culling, shared meshes, instancing and live transforms](docs/OPTIMIZATION_PLAN.md#o07--object-bounds-culling-and-shared-meshes) — per-camera/light culling, shared geometry and validated live object transforms measured; a four-tier 276–2,208-object study shows small culling+instancing frame-work gains on a static-shadow route. Full per-run evidence is in [measurements-o07-scale-study.json](docs/measurements-o07-scale-study.json), alongside [core O07 evidence](docs/measurements-o07-culling.json). Moving-caster shadow scaling, native-window and non-Metal acceptance remain open.
 - [x] [O03: bounded single-emitter tile lists with overflow fallback](docs/OPTIMIZATION_PLAN.md#o03--tile-lists-for-effects-and-local-lights) — byte-identical perspective, orthographic, close-smoke, glass and natural-overflow captures; three paired route workloads plus preliminary 8×8/fallback evidence in [measurements-o03.json](docs/measurements-o03.json) and [measurements-o03-overflow.json](docs/measurements-o03-overflow.json). Long stress routes, motion, native-window, multi-emitter and DX12 gates remain open.
 - [x] O02: per-face invalidation using O07 live transform revisions and affected-object bounds, with full-map fallback for uncertain state; static, six-pose movement, material/light/reload/reset, and three paired 120-second moving-caster reports are in [measurements-o02.json](docs/measurements-o02.json), [measurements-o02-moving-caster.json](docs/measurements-o02-moving-caster.json), [measurements-o02-invalidation.json](docs/measurements-o02-invalidation.json), and [measurements-o02-moving-route.json](docs/measurements-o02-moving-route.json). A linked fire-light position edit moves its emitter atomically. The live unknown-bound fallback, native-window, image checkpoints during motion, and Windows/DX12 acceptance gates remain open.
 
@@ -33,8 +33,8 @@ Detailed steps, dependencies and acceptance criteria live in
 
 ## Later scaling research
 
-- [ ] Execute the O01–O08 correctness, sustained-motion, optical-combination,
-  scale-scene and cross-adapter gates in
+- [ ] Execute the remaining O01–O08 correctness, sustained-motion,
+  optical-combination, dynamic shadow-scaling and cross-adapter gates in
   [O01-O08_FOLLOWUP_PLAN.md](docs/O01-O08_FOLLOWUP_PLAN.md) before promoting
   opt-in approximations or expanding the emitter cap.
 

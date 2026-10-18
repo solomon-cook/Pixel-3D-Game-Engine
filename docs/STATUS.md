@@ -379,6 +379,21 @@ and its comparison are recorded in [measurements-o02.json](measurements-o02.json
 Full provenance and checksums are in
 [measurements-o07-culling.json](measurements-o07-culling.json).
 
+A deterministic scale study then compared the baked reference, instancing-only
+and culling+instancing at 276, 552, 1,104 and 2,208 objects. Each direct or
+adjacent comparison used three alternating 120-second pairs after a ten-second
+warm-up at the same 640×360 grid and seed. Direct baked-to-culled+instanced paired
+medians reduced GPU render by 0.009, 0.066, 0.135 and 0.151 ms; whole-frame work
+fell by 0.031, 0.116, 0.053 and 0.025 ms. The reductions are small and not
+monotonic. At 2,208 objects, culling reduced camera-visible objects from 2,208
+to 868 and draw batches from 2,208 to 377, while median CPU culling cost was
+0.739 ms. Keep the existing path; these results do not justify indirect drawing
+or occlusion culling. The route left lights and casters static, so the shadow maps
+stayed cached and paired shadow-map GPU timing was unavailable. Dynamic caster
+scaling, native-window rendering and non-Metal adapters remain open. Full per-run
+medians, p95s, GPU stages, counts, capture hashes and limitations are in
+[measurements-o07-scale-study.json](measurements-o07-scale-study.json).
+
 Implemented: reusable engine/library separation, native Metal/DX12 selection,
 versioned/validated JSON scenes, static GLB/PNG assets, fixed-step smoke grid,
 seeded fire/embers, directional/point shadows, HDR pixel rendering, integer

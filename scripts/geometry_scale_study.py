@@ -124,6 +124,7 @@ def compare_paths(binary: Path, scene: Path, output: Path, tier: str) -> dict:
     pairs = [
         ("baked_vs_instancing_only", ["--baseline-disable-object-culling", "--baseline-disable-instancing"], ["--candidate-disable-object-culling"]),
         ("instancing_only_vs_culling_instancing", ["--baseline-disable-object-culling"], []),
+        ("baked_vs_culling_instancing", ["--baseline-disable-object-culling", "--baseline-disable-instancing"], []),
     ]
     for name, baseline_flags, candidate_flags in pairs:
         directory = output / "benchmarks" / tier / name
@@ -145,13 +146,41 @@ def compare_paths(binary: Path, scene: Path, output: Path, tier: str) -> dict:
         command.extend(flag_map[flag] for flag in baseline_flags + candidate_flags)
         subprocess.run(command, cwd=ROOT, check=True)
         report_path = directory / "comparison.json"
+        paired_report = json.loads(report_path.read_text())
+        per_run = []
+        for variant in ("baseline", "candidate"):
+            for run_id in paired_report["runs"][variant]:
+                run_path = directory / f"{run_id}.json"
+                run_report = json.loads(run_path.read_text())
+                per_run.append({
+                    "run_id": run_id,
+                    "variant": variant,
+                    "metrics": {
+                        key: run_report[key]
+                        for key in (
+                            "frame_work", "cpu_encode", "cpu_tile_list_encode",
+                            "cpu_shadow_encode", "cpu_upload", "simulation_cpu",
+                            "simulation_encode_cpu", "queue_submit_cpu", "gpu_render",
+                        )
+                    },
+                    "gpu_stages": run_report["gpu_stages"],
+                    "geometry_rendering": run_report["geometry_rendering"],
+                    "workload_counts": run_report["workload_counts"],
+                    "gpu_timing_coverage": run_report["timing_coverage"],
+                })
         comparisons[name] = {
             "comparison_file": str(report_path.relative_to(ROOT)),
             "comparison_sha256": sha256(report_path),
             "baseline_flags": baseline_flags,
             "candidate_flags": candidate_flags,
-            "paired_deltas": json.loads(report_path.read_text())["comparison"],
+            "paired_deltas": paired_report["comparison"],
+            "per_run": per_run,
         }
+        # Preserve each run's compact summary and the paired report. The raw
+        # per-frame JSON is several GB over the complete scale matrix and is not
+        # needed for the plan's required per-run median/p95 evidence.
+        for raw_report in directory.glob("*.engine.json"):
+            raw_report.unlink()
     return comparisons
 
 
