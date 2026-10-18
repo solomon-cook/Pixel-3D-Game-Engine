@@ -796,7 +796,7 @@ Atelier comparison scene are implemented. See MATERIALS.md for explicit limits.
 
 ## Verification on this host
 
-- Rust formatting, Clippy with warnings denied, 22 unit tests, asset decoding,
+- Rust formatting, Clippy with warnings denied, 40 unit tests, asset decoding,
   schema discovery and scene validation passed.
 - Metal GPU integration passed: deterministic same-device replay, malformed
   commands/invalid edits, capture completion, orthographic rendering, visible
@@ -804,10 +804,11 @@ Atelier comparison scene are implemented. See MATERIALS.md for explicit limits.
   fire shader rollback. Additional checks exercise moving coloured lights and
   the independent fire-breakup controls. Legacy scene defaults and invalid profile references pass
   the unit checks.
-- Native resize, fullscreen, frame capture, command handling and shutdown passed.
-  Automated minimization is unresolved on this macOS host: the OS keeps reporting
-  `minimized: false` after the request. `verify.py --native` correctly fails that
-  gate and saves partial results; do not report full native acceptance.
+- Native resize, fullscreen entry/exit, tick-120 frame capture, command handling
+  and shutdown passed on this run. Automated minimization remains unresolved on
+  this macOS host: the OS reports `minimized: false` after a two-second state poll.
+  `verify.py --native` saves the partial result and correctly fails the minimization
+  gate; do not report full native acceptance.
 - macOS ARM64 and Windows x64 GNU release builds succeeded. Windows PE executable
   was cross-compiled here. Initial repository CI passed on both hosted platforms;
   that result predates this effect-profile update and is not a visual GPU test.
