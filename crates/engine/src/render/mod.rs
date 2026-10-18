@@ -1581,6 +1581,14 @@ impl Renderer {
                         view_dimension: wgpu::TextureViewDimension::D3,
                     },
                 ),
+                binding(
+                    3,
+                    wgpu::ShaderStages::COMPUTE,
+                    sampled(
+                        wgpu::TextureViewDimension::D3,
+                        wgpu::TextureSampleType::Float { filterable: true },
+                    ),
+                ),
             ],
         });
         let absorption_groups = absorption_view.as_ref().map(|absorption_view| {
@@ -1592,6 +1600,7 @@ impl Renderer {
                         wgpu::BindingResource::TextureView(&smoke_views[0][i]),
                         wgpu::BindingResource::Sampler(&linear),
                         wgpu::BindingResource::TextureView(absorption_view),
+                        wgpu::BindingResource::TextureView(&secondary_smoke_views[i]),
                     ],
                 )
             })
