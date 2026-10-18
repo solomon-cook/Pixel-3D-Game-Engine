@@ -70,6 +70,14 @@ The matching 8³ 400-frame route has mean RGB MAE 0.285/255, p95 0.426/255,
 maximum channel difference 39/255 and mean temporal-change magnitude error
 0.183/255, with exact tick/effect-count parity; 16³ remains closer to direct.
 See [measurements-o05-temporal-cache8.json](measurements-o05-temporal-cache8.json).
+An extended ten-second native pause/resume study again keeps both runs at tick
+300 with identical paused images. Resume advanced 600/601 ticks under host
+scheduling, then both were aligned to tick 1020 with matching fire state. At
+that tick, direct versus 16³ cache differs on 12,451/230,400 pixels, with mean
+per-channel absolute error 0.092/0.052/0.049 and maximum 17/11/12. This is a
+small approximation difference after state alignment, not evidence of a stale
+cache; total-render cost still does not justify enabling it. See
+[extended pause/resume evidence](measurements-o05-pause-resume-extended.json).
 Continuous human playback review, Windows/DX12 and other-GPU qualification remain
 open. Both cache sizes passed 13 discrete
 direct/cache checkpoints spanning paused density edits, primary-light changes,

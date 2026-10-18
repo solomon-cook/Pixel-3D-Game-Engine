@@ -13,7 +13,7 @@ import select
 import subprocess
 import time
 
-from absorption_cache_study import ROOT, SOURCE, make_scenes, sha256
+from absorption_cache_study import ROOT, SOURCE, image_error, make_scenes, sha256
 
 
 class Session:
@@ -77,6 +77,7 @@ def run_variant(binary: Path, scene: Path, output: Path, pause_seconds: float, r
             "resume_advanced": wallclock_resume["tick"] > during_pause["tick"],
             "aligned_resume_tick": after_resume["tick"],
             "resume_state": after_resume["state"],
+            "resume_image": after_resume["image"],
             "resume_image_sha256": after_resume["image_sha256"],
         }
     finally:
@@ -90,10 +91,20 @@ def main() -> int:
     parser.add_argument("--pause-seconds", type=float, default=2.0)
     parser.add_argument("--resume-seconds", type=float, default=2.0)
     parser.add_argument("--report", type=Path, default=ROOT / "docs/measurements-o05-pause-resume.json")
+    parser.add_argument("--summarize-existing", action="store_true", help="add image-error metrics to existing capture outputs")
     args = parser.parse_args()
     if not 0.1 <= args.pause_seconds <= 60 or not 0.1 <= args.resume_seconds <= 60:
         parser.error("pause and resume durations must be between 0.1 and 60 seconds")
     binary, output, report_path = args.binary.resolve(), args.output.resolve(), args.report.resolve()
+    if args.summarize_existing:
+        report = json.loads(report_path.read_text())
+        direct = output / "direct" / "aligned-resume-check.png"
+        cache16 = output / "cache16" / "aligned-resume-check.png"
+        report["aligned_resume_image_error"] = image_error(direct, cache16)
+        report["aligned_resume_image_error_scope"] = "Direct and 16-cubed cache captures at the shared aligned fixed tick; this measures approximation error, not cache-state divergence."
+        report_path.write_text(json.dumps(report, indent=2) + "\n")
+        print(json.dumps({"report": str(report_path), "aligned_resume_image_error": report["aligned_resume_image_error"]}))
+        return 0
     if not binary.is_file():
         subprocess.run(["cargo", "build", "--release", "-p", "engine-lab"], cwd=ROOT, check=True)
     scenes = make_scenes(output, json.loads(SOURCE.read_text()))["medium"]
@@ -113,6 +124,8 @@ def main() -> int:
         "direct": direct,
         "cache16": cache16,
         "resume_fire_state_equal_at_matching_tick": direct["resume_state"] == cache16["resume_state"] and direct["aligned_resume_tick"] == cache16["aligned_resume_tick"],
+        "aligned_resume_image_error": image_error(Path(direct["resume_image"]), Path(cache16["resume_image"])),
+        "aligned_resume_image_error_scope": "Direct and 16-cubed cache captures at the shared aligned fixed tick; this measures approximation error, not cache-state divergence.",
         "limitations": [
             "Native run --agent-stdio window on Apple M1 Max/Metal; Windows/DX12 behavior remains unverified.",
             "Wall-clock resume tick totals depend on host scheduling and are not cross-run performance measurements.",

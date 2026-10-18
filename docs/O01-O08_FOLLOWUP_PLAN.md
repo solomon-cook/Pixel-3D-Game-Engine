@@ -187,10 +187,19 @@ remain open. Fewer primitives alone are not a frame-win claim. See
    p95 0.426/255, maximum channel difference 39/255, and mean temporal-change
    magnitude error 0.183/255; exact tick and effect-count parity holds. This is
    larger error than 16³ and has no total-cost benefit claim. Other-adapter
-   acceptance and more resume durations remain open. See
+   acceptance and longer resume-duration evidence remained open. An extended
+   native 10-second pause/resume check now finds direct and 16³ runs remain at
+   tick 300 with identical paused images; they advanced 600 and 601 ticks during
+   the wall-clock resume and were aligned at tick 1020 with matching fire state.
+   At the aligned tick, 12,451/230,400 pixels differ; per-channel mean absolute
+   errors are 0.092/0.052/0.049 and channel maxima 17/11/12. This is the cache's
+   expected approximation error, not stale state; the cache remains off by
+   default because its measured total-render cost did not improve. Human playback
+   review and other-adapter acceptance remain open. See
    [16³ temporal](measurements-o05-temporal.json),
    [8³ temporal](measurements-o05-temporal-cache8.json) and
-   [pause/resume](measurements-o05-pause-resume.json).
+   [two-second pause/resume](measurements-o05-pause-resume.json) plus
+   [extended pause/resume](measurements-o05-pause-resume-extended.json).
 
 **Exit gate:** a workload range where total frame cost improves and motion quality
 passes. If cache maintenance remains more expensive than direct samples, leave it
