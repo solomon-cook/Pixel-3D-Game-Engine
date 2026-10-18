@@ -28,11 +28,20 @@ identities. A deterministic 20 fps, 400-frame orbit crosses both thresholds four
 times; quiet and bonfire profile pairs also cross their applicable bands. Per-frame
 full primitive, ember and particle-light counts match in all three profiles.
 Sampled contact sheets show changes in the flame region, with no obvious loss of
-attachment or glow in those samples. The full motion files could not be played for
-continuous human review, and profile-specific sustained timings are not measured.
-It remains disabled by default pending those gates and portability evidence; see
-[measurements-o04.json](measurements-o04.json) and
-[measurements-o04-motion-review.json](measurements-o04-motion-review.json).
+attachment or glow in those samples. Three alternating 120-second pairs per
+profile now measure campfire, quiet and bonfire under the same 640×360 route.
+Paired GPU-render medians improved by 0.113/0.124/0.052 ms respectively.
+Frame-work deltas were -0.006 ms (mixed pairs) for campfire, -0.826 ms for quiet,
+and +0.014 ms for bonfire. The measured geometry medians moved 81→70 primitives
+for campfire, 55→40 for quiet and 166→165 for bonfire. This identifies a stronger
+quiet-profile range but does not justify changing the disabled-by-default
+setting. Full pairs, GPU stages, run hashes, scene variants and tier counts are
+in [measurements-o04-sustained-profiles.json](measurements-o04-sustained-profiles.json).
+The native Mac was locked during this turn, so the generated motion files still
+need continuous playback review. Native-window and portability evidence also
+remain open; see [measurements-o04.json](measurements-o04.json),
+[measurements-o04-motion-review.json](measurements-o04-motion-review.json) and
+[measurements-o04-sustained-profiles.json](measurements-o04-sustained-profiles.json).
 
 O05 has an opt-in primary fire-light absorption cache at 8³ or 16³. It rebuilds
 after smoke simulation updates or scene/shader/reset changes, and skips repeated

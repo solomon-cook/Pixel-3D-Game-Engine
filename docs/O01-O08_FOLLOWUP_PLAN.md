@@ -128,16 +128,26 @@ acceptance remain open. See
    flame, with no obvious silhouette detachment or lost glow in the samples.
    The full GIF/APNG could not be played for continuous human review in this
    session, so flicker and silhouette crawl acceptance remain open.
-4. Keep the feature opt-in until a continuous visual review passes, the useful
-   range is confirmed across additional fire profiles/sizes, and portability
-   checks pass.
+4. **Complete on M1 Max/Metal:** add three alternating 120-second offscreen
+   pairs each for campfire, quiet and bonfire. Paired GPU-render medians fell by
+   0.113/0.124/0.052 ms. Frame-work was flat for campfire (-0.006 ms median,
+   with mixed pairs), lower for quiet (-0.826 ms), and slightly higher for
+   bonfire (+0.014 ms). Retained primitive medians changed 81→70, 55→40 and
+   166→165. Keep LOD opt-in; the benefit depends on projected profile size.
+   Full reports and run hashes are in
+   [measurements-o04-sustained-profiles.json](measurements-o04-sustained-profiles.json).
+5. Keep the feature opt-in until continuous visual review passes and portability
+   checks pass. The native Mac remained locked during this turn, so continuous
+   playback remains an unverified visual acceptance gate.
 
 **Remaining exit gate:** repeatable transitions and a measured small M1 Max/Metal
 win are documented. Quiet and bonfire profiles now cross their applicable bands;
 per-frame full primitive, ember and particle-light counts match the baseline.
-Continuous playback review, sustained profile-specific timing, native-window
-timing, and Windows/DX12 or other GPU qualification remain open. Fewer primitives
-alone are not a frame-win claim. See [measurements-o04-motion-review.json](measurements-o04-motion-review.json).
+Sustained profile-specific timing is recorded on M1 Max/Metal. Continuous
+playback review, native-window timing, and Windows/DX12 or other GPU qualification
+remain open. Fewer primitives alone are not a frame-win claim. See
+[measurements-o04-motion-review.json](measurements-o04-motion-review.json) and
+[measurements-o04-sustained-profiles.json](measurements-o04-sustained-profiles.json).
 
 ### 4. O05 smoke absorption cache
 

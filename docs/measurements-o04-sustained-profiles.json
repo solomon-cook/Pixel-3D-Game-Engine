@@ -1,0 +1,2200 @@
+{
+  "title": "O04 sustained projected-fire-detail profile comparison",
+  "date": "2026-10-18",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal",
+    "os": "macOS"
+  },
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "camera": "hero",
+  "route": "projected-detail-review-orbit",
+  "duration_seconds_per_run": 120,
+  "warmup_seconds": 10,
+  "pairs": 3,
+  "mode": "serial offscreen, alternating order",
+  "source_scene": "assets/scenes/projected-detail-motion-review.json",
+  "scene_sha256": "cfea9e3579b4f6602c4703bdae1b88887180e2b0fe752711544441547435ab77",
+  "binary_sha256": "858ccf28ad18c850b11c192dd32f3d436a5862b3c9b0ed24d8df8b25c9e6c3ce",
+  "profiles": {
+    "campfire": {
+      "effect_profile": "effect-campfire",
+      "generated_scenes": {
+        "baseline": {
+          "sha256": "f8769ddb0b07db5d6f854f01f5b4141fb83be8ed4d8848849692713330eb951b",
+          "projected_detail_lod": false
+        },
+        "candidate": {
+          "sha256": "f224d54bc0e5b32b543053653961bc1369012c38f12dc7ce3cd043ec1d15c635",
+          "projected_detail_lod": true
+        }
+      },
+      "comparison": {
+        "frame_work": {
+          "baseline_run_medians_ms": [
+            3.420083,
+            3.522,
+            3.602125
+          ],
+          "candidate_run_medians_ms": [
+            3.622,
+            3.516,
+            3.503333
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.2019169999999999,
+            -0.005999999999999783,
+            -0.09879199999999999
+          ],
+          "paired_delta_median_ms": -0.005999999999999783,
+          "paired_delta_p95_ms": 0.2019169999999999,
+          "baseline_median_of_run_medians_ms": 3.522,
+          "candidate_median_of_run_medians_ms": 3.516
+        },
+        "cpu_encode": {
+          "baseline_run_medians_ms": [
+            0.37170800000000004,
+            0.39495800000000003,
+            0.39604199999999995
+          ],
+          "candidate_run_medians_ms": [
+            0.415291,
+            0.397459,
+            0.394583
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.04358299999999998,
+            0.0025009999999999755,
+            -0.0014589999999999326
+          ],
+          "paired_delta_median_ms": 0.0025009999999999755,
+          "paired_delta_p95_ms": 0.04358299999999998,
+          "baseline_median_of_run_medians_ms": 0.39495800000000003,
+          "candidate_median_of_run_medians_ms": 0.397459
+        },
+        "cpu_tile_list_encode": {
+          "baseline_run_medians_ms": [
+            0.055,
+            0.057791999999999996,
+            0.057791
+          ],
+          "candidate_run_medians_ms": [
+            0.059709,
+            0.05775,
+            0.057374999999999995
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.004708999999999998,
+            -4.199999999999343e-05,
+            -0.00041600000000000664
+          ],
+          "paired_delta_median_ms": -4.199999999999343e-05,
+          "paired_delta_p95_ms": 0.004708999999999998,
+          "baseline_median_of_run_medians_ms": 0.057791,
+          "candidate_median_of_run_medians_ms": 0.05775
+        },
+        "cpu_shadow_encode": {
+          "baseline_run_medians_ms": [
+            4.2e-05,
+            4.2e-05,
+            4.2e-05
+          ],
+          "candidate_run_medians_ms": [
+            8.3e-05,
+            8.3e-05,
+            4.2e-05
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            4.1e-05,
+            4.1e-05,
+            0.0
+          ],
+          "paired_delta_median_ms": 4.1e-05,
+          "paired_delta_p95_ms": 4.1e-05,
+          "baseline_median_of_run_medians_ms": 4.2e-05,
+          "candidate_median_of_run_medians_ms": 8.3e-05
+        },
+        "cpu_upload": {
+          "baseline_run_medians_ms": [
+            0.160126,
+            0.183042,
+            0.183874
+          ],
+          "candidate_run_medians_ms": [
+            0.192957,
+            0.183792,
+            0.18220799999999998
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.032831,
+            0.0007500000000000007,
+            -0.0016660000000000286
+          ],
+          "paired_delta_median_ms": 0.0007500000000000007,
+          "paired_delta_p95_ms": 0.032831,
+          "baseline_median_of_run_medians_ms": 0.183042,
+          "candidate_median_of_run_medians_ms": 0.183792
+        },
+        "simulation_cpu": {
+          "baseline_run_medians_ms": [
+            0.199708,
+            0.21795899999999999,
+            0.22029100000000001
+          ],
+          "candidate_run_medians_ms": [
+            0.240125,
+            0.227834,
+            0.224167
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.04041700000000001,
+            0.009875000000000023,
+            0.0038759999999999906
+          ],
+          "paired_delta_median_ms": 0.009875000000000023,
+          "paired_delta_p95_ms": 0.04041700000000001,
+          "baseline_median_of_run_medians_ms": 0.21795899999999999,
+          "candidate_median_of_run_medians_ms": 0.227834
+        },
+        "simulation_encode_cpu": {
+          "baseline_run_medians_ms": [
+            0.170291,
+            0.185042,
+            0.187875
+          ],
+          "candidate_run_medians_ms": [
+            0.206583,
+            0.19583299999999998,
+            0.193166
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.03629199999999999,
+            0.010790999999999967,
+            0.005291000000000018
+          ],
+          "paired_delta_median_ms": 0.010790999999999967,
+          "paired_delta_p95_ms": 0.03629199999999999,
+          "baseline_median_of_run_medians_ms": 0.185042,
+          "candidate_median_of_run_medians_ms": 0.19583299999999998
+        },
+        "queue_submit_cpu": {
+          "baseline_run_medians_ms": [
+            0.090125,
+            0.097542,
+            0.09629200000000002
+          ],
+          "candidate_run_medians_ms": [
+            0.105125,
+            0.10075,
+            0.10045899999999999
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.015,
+            0.0032080000000000025,
+            0.004166999999999976
+          ],
+          "paired_delta_median_ms": 0.004166999999999976,
+          "paired_delta_p95_ms": 0.015,
+          "baseline_median_of_run_medians_ms": 0.09629200000000002,
+          "candidate_median_of_run_medians_ms": 0.10075
+        },
+        "gpu_render": {
+          "baseline_run_medians_ms": [
+            1.9177079999999997,
+            1.914208,
+            1.9152909999999999
+          ],
+          "candidate_run_medians_ms": [
+            1.8003330000000002,
+            1.8033329999999999,
+            1.802333
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.11737499999999956,
+            -0.11087500000000006,
+            -0.11295799999999989
+          ],
+          "paired_delta_median_ms": -0.11295799999999989,
+          "paired_delta_p95_ms": -0.11087500000000006,
+          "baseline_median_of_run_medians_ms": 1.9152909999999999,
+          "candidate_median_of_run_medians_ms": 1.802333
+        },
+        "gpu_stages.atmosphere_fire": {
+          "baseline_run_medians_ms": [
+            1.040208,
+            1.036792,
+            1.0432919999999999
+          ],
+          "candidate_run_medians_ms": [
+            0.969,
+            0.974583,
+            0.973625
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.07120800000000005,
+            -0.06220899999999996,
+            -0.06966699999999992
+          ],
+          "paired_delta_median_ms": -0.06966699999999992,
+          "paired_delta_p95_ms": -0.06220899999999996,
+          "baseline_median_of_run_medians_ms": 1.040208,
+          "candidate_median_of_run_medians_ms": 0.973625
+        },
+        "gpu_stages.opaque_geometry": {
+          "baseline_run_medians_ms": [
+            0.8837079999999999,
+            0.8817499999999999,
+            0.882667
+          ],
+          "candidate_run_medians_ms": [
+            0.8240839999999999,
+            0.826792,
+            0.829167
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.05962400000000001,
+            -0.05495799999999995,
+            -0.05349999999999999
+          ],
+          "paired_delta_median_ms": -0.05495799999999995,
+          "paired_delta_p95_ms": -0.05349999999999999,
+          "baseline_median_of_run_medians_ms": 0.882667,
+          "candidate_median_of_run_medians_ms": 0.826792
+        },
+        "gpu_stages.optical_resolve": {
+          "baseline_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "candidate_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "paired_candidate_minus_baseline_ms": [],
+          "paired_delta_median_ms": null,
+          "paired_delta_p95_ms": null,
+          "baseline_median_of_run_medians_ms": null,
+          "candidate_median_of_run_medians_ms": null
+        },
+        "gpu_stages.post": {
+          "baseline_run_medians_ms": [
+            1.139916,
+            1.135417,
+            1.139916
+          ],
+          "candidate_run_medians_ms": [
+            1.066584,
+            1.0739999999999998,
+            1.0725829999999998
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.07333199999999995,
+            -0.061417000000000055,
+            -0.06733300000000009
+          ],
+          "paired_delta_median_ms": -0.06733300000000009,
+          "paired_delta_p95_ms": -0.061417000000000055,
+          "baseline_median_of_run_medians_ms": 1.139916,
+          "candidate_median_of_run_medians_ms": 1.0725829999999998
+        },
+        "gpu_stages.shadow_maps": {
+          "baseline_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "candidate_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "paired_candidate_minus_baseline_ms": [],
+          "paired_delta_median_ms": null,
+          "paired_delta_p95_ms": null,
+          "baseline_median_of_run_medians_ms": null,
+          "candidate_median_of_run_medians_ms": null
+        },
+        "gpu_stages.smoke_absorption_cache": {
+          "baseline_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "candidate_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "paired_candidate_minus_baseline_ms": [],
+          "paired_delta_median_ms": null,
+          "paired_delta_p95_ms": null,
+          "baseline_median_of_run_medians_ms": null,
+          "candidate_median_of_run_medians_ms": null
+        },
+        "gpu_stages.smoke_compute": {
+          "baseline_run_medians_ms": [
+            0.01775,
+            0.01775,
+            0.017791
+          ],
+          "candidate_run_medians_ms": [
+            0.0175,
+            0.017834,
+            0.01775
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.00024999999999999675,
+            8.400000000000074e-05,
+            -4.100000000000284e-05
+          ],
+          "paired_delta_median_ms": -4.100000000000284e-05,
+          "paired_delta_p95_ms": 8.400000000000074e-05,
+          "baseline_median_of_run_medians_ms": 0.01775,
+          "candidate_median_of_run_medians_ms": 0.01775
+        },
+        "gpu_stages.tile_list_build": {
+          "baseline_run_medians_ms": [
+            0.6189589999999999,
+            0.619084,
+            0.618709
+          ],
+          "candidate_run_medians_ms": [
+            0.566041,
+            0.564958,
+            0.565041
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.05291799999999991,
+            -0.05412600000000001,
+            -0.05366799999999994
+          ],
+          "paired_delta_median_ms": -0.05366799999999994,
+          "paired_delta_p95_ms": -0.05291799999999991,
+          "baseline_median_of_run_medians_ms": 0.6189589999999999,
+          "candidate_median_of_run_medians_ms": 0.565041
+        }
+      },
+      "run_order": [
+        {
+          "pair": 1,
+          "variant": "baseline",
+          "run_id": "pair-01-baseline"
+        },
+        {
+          "pair": 1,
+          "variant": "candidate",
+          "run_id": "pair-01-candidate"
+        },
+        {
+          "pair": 2,
+          "variant": "candidate",
+          "run_id": "pair-02-candidate"
+        },
+        {
+          "pair": 2,
+          "variant": "baseline",
+          "run_id": "pair-02-baseline"
+        },
+        {
+          "pair": 3,
+          "variant": "baseline",
+          "run_id": "pair-03-baseline"
+        },
+        {
+          "pair": 3,
+          "variant": "candidate",
+          "run_id": "pair-03-candidate"
+        }
+      ],
+      "measurement_gaps": [
+        "exact CPU-to-GPU queue latency: wgpu timestamps have no calibrated host-clock mapping; readback completion latency is reported separately",
+        "native presentation and vsync are measured by benchmark-native, not included in this offscreen comparison",
+        "buffered throughput was not measured in this serial comparison"
+      ],
+      "runs": [
+        {
+          "pair": 1,
+          "variant": "baseline",
+          "raw_report": "pair-01-baseline.engine.json",
+          "raw_report_sha256": "9e3a2da01fc2ccabf9cc3fa3b86ff4a0bfbf3af43c5169659304f6f5a31c0118",
+          "frame_work": {
+            "median_ms": 3.420083,
+            "p95_ms": 6.782709,
+            "samples": 7200
+          },
+          "gpu_render": {
+            "median_ms": 1.9177079999999997,
+            "p95_ms": 2.2517069999999997,
+            "samples": 7200
+          },
+          "atmosphere_fire": {
+            "median_ms": 1.040208,
+            "p95_ms": 1.380833,
+            "samples": 7200
+          },
+          "projected_detail": {
+            "cpu_ms": {
+              "median_ms": 0.00020800000000000001,
+              "p95_ms": 0.000375,
+              "samples": 7200
+            },
+            "enabled": false,
+            "note": "Only flame curve segments are reduced. Full deterministic simulation state, bounds and emitted lights are retained; this does not change pixel resolution.",
+            "primitives_full_median": 81.0,
+            "primitives_rendered_median": 81.0,
+            "projected_height_px": {
+              "median": 25.843692779541016,
+              "p95": 46.423221588134766
+            },
+            "segments_full_median": 6.0,
+            "segments_rendered_median": 6.0,
+            "tier_frames": [
+              7200,
+              0,
+              0
+            ]
+          },
+          "timing_coverage": {
+            "gpu_timestamps_supported": true,
+            "gpu_timing_requested": true,
+            "late_samples": 0,
+            "rendered_frames": 7200,
+            "skipped_compute_samples": 0,
+            "skipped_samples": 0,
+            "smoke_compute_samples": 7200,
+            "timed_frames": 7200,
+            "unavailable_reason": null
+          }
+        },
+        {
+          "pair": 1,
+          "variant": "candidate",
+          "raw_report": "pair-01-candidate.engine.json",
+          "raw_report_sha256": "2022a0aeda8b71ce92012ae6f451635da0d2cde331b55d4a868bd47fa9e82144",
+          "frame_work": {
+            "median_ms": 3.622,
+            "p95_ms": 6.868,
+            "samples": 7200
+          },
+          "gpu_render": {
+            "median_ms": 1.8003330000000002,
+            "p95_ms": 2.1374579999999996,
+            "samples": 7200
+          },
+          "atmosphere_fire": {
+            "median_ms": 0.969,
+            "p95_ms": 1.3155,
+            "samples": 7200
+          },
+          "projected_detail": {
+            "cpu_ms": {
+              "median_ms": 0.000209,
+              "p95_ms": 0.000417,
+              "samples": 7200
+            },
+            "enabled": true,
+            "note": "Only flame curve segments are reduced. Full deterministic simulation state, bounds and emitted lights are retained; this does not change pixel resolution.",
+            "primitives_full_median": 81.0,
+            "primitives_rendered_median": 70.0,
+            "projected_height_px": {
+              "median": 25.843692779541016,
+              "p95": 46.423221588134766
+            },
+            "segments_full_median": 6.0,
+            "segments_rendered_median": 4.0,
+            "tier_frames": [
+              0,
+              4368,
+              2832
+            ]
+          },
+          "timing_coverage": {
+            "gpu_timestamps_supported": true,
+            "gpu_timing_requested": true,
+            "late_samples": 0,
+            "rendered_frames": 7200,
+            "skipped_compute_samples": 0,
+            "skipped_samples": 0,
+            "smoke_compute_samples": 7200,
+            "timed_frames": 7200,
+            "unavailable_reason": null
+          }
+        },
+        {
+          "pair": 2,
+          "variant": "baseline",
+          "raw_report": "pair-02-baseline.engine.json",
+          "raw_report_sha256": "1e47bfa37ff9d49d09b4cfa9e41357fa4bbdd9d3050ee48212bd3779bf4e1fb8",
+          "frame_work": {
+            "median_ms": 3.522,
+            "p95_ms": 6.834583,
+            "samples": 7200
+          },
+          "gpu_render": {
+            "median_ms": 1.914208,
+            "p95_ms": 2.2337499999999997,
+            "samples": 7200
+          },
+          "atmosphere_fire": {
+            "median_ms": 1.036792,
+            "p95_ms": 1.361333,
+            "samples": 7200
+          },
+          "projected_detail": {
+            "cpu_ms": {
+              "median_ms": 0.000167,
+              "p95_ms": 0.000375,
+              "samples": 7200
+            },
+            "enabled": false,
+            "note": "Only flame curve segments are reduced. Full deterministic simulation state, bounds and emitted lights are retained; this does not change pixel resolution.",
+            "primitives_full_median": 81.0,
+            "primitives_rendered_median": 81.0,
+            "projected_height_px": {
+              "median": 25.843692779541016,
+              "p95": 46.423221588134766
+            },
+            "segments_full_median": 6.0,
+            "segments_rendered_median": 6.0,
+            "tier_frames": [
+              7200,
+              0,
+              0
+            ]
+          },
+          "timing_coverage": {
+            "gpu_timestamps_supported": true,
+            "gpu_timing_requested": true,
+            "late_samples": 0,
+            "rendered_frames": 7200,
+            "skipped_compute_samples": 0,
+            "skipped_samples": 0,
+            "smoke_compute_samples": 7200,
+            "timed_frames": 7200,
+            "unavailable_reason": null
+          }
+        },
+        {
+          "pair": 2,
+          "variant": "candidate",
+          "raw_report": "pair-02-candidate.engine.json",
+          "raw_report_sha256": "f2ea375c523ddf8f9d54a46e2468446a78da1f277096cebac1d16e7fa6e56cbd",
+          "frame_work": {
+            "median_ms": 3.516,
+            "p95_ms": 6.65025,
+            "samples": 7200
+          },
+          "gpu_render": {
+            "median_ms": 1.8033329999999999,
+            "p95_ms": 2.1345409999999996,
+            "samples": 7200
+          },
+          "atmosphere_fire": {
+            "median_ms": 0.974583,
+            "p95_ms": 1.31425,
+            "samples": 7200
+          },
+          "projected_detail": {
+            "cpu_ms": {
+              "median_ms": 0.000209,
+              "p95_ms": 0.000375,
+              "samples": 7200
+            },
+            "enabled": true,
+            "note": "Only flame curve segments are reduced. Full deterministic simulation state, bounds and emitted lights are retained; this does not change pixel resolution.",
+            "primitives_full_median": 81.0,
+            "primitives_rendered_median": 70.0,
+            "projected_height_px": {
+              "median": 25.843692779541016,
+              "p95": 46.423221588134766
+            },
+            "segments_full_median": 6.0,
+            "segments_rendered_median": 4.0,
+            "tier_frames": [
+              0,
+              4368,
+              2832
+            ]
+          },
+          "timing_coverage": {
+            "gpu_timestamps_supported": true,
+            "gpu_timing_requested": true,
+            "late_samples": 0,
+            "rendered_frames": 7200,
+            "skipped_compute_samples": 0,
+            "skipped_samples": 0,
+            "smoke_compute_samples": 7200,
+            "timed_frames": 7200,
+            "unavailable_reason": null
+          }
+        },
+        {
+          "pair": 3,
+          "variant": "baseline",
+          "raw_report": "pair-03-baseline.engine.json",
+          "raw_report_sha256": "4f92777116b8110d08effdef0a32c970899d20e9d5dedf203e06a7be25f9448c",
+          "frame_work": {
+            "median_ms": 3.602125,
+            "p95_ms": 7.4808330000000005,
+            "samples": 7200
+          },
+          "gpu_render": {
+            "median_ms": 1.9152909999999999,
+            "p95_ms": 2.240749,
+            "samples": 7200
+          },
+          "atmosphere_fire": {
+            "median_ms": 1.0432919999999999,
+            "p95_ms": 1.355,
+            "samples": 7200
+          },
+          "projected_detail": {
+            "cpu_ms": {
+              "median_ms": 0.000167,
+              "p95_ms": 0.000375,
+              "samples": 7200
+            },
+            "enabled": false,
+            "note": "Only flame curve segments are reduced. Full deterministic simulation state, bounds and emitted lights are retained; this does not change pixel resolution.",
+            "primitives_full_median": 81.0,
+            "primitives_rendered_median": 81.0,
+            "projected_height_px": {
+              "median": 25.843692779541016,
+              "p95": 46.423221588134766
+            },
+            "segments_full_median": 6.0,
+            "segments_rendered_median": 6.0,
+            "tier_frames": [
+              7200,
+              0,
+              0
+            ]
+          },
+          "timing_coverage": {
+            "gpu_timestamps_supported": true,
+            "gpu_timing_requested": true,
+            "late_samples": 0,
+            "rendered_frames": 7200,
+            "skipped_compute_samples": 0,
+            "skipped_samples": 0,
+            "smoke_compute_samples": 7200,
+            "timed_frames": 7200,
+            "unavailable_reason": null
+          }
+        },
+        {
+          "pair": 3,
+          "variant": "candidate",
+          "raw_report": "pair-03-candidate.engine.json",
+          "raw_report_sha256": "78ef65c4f2abdce26856300beaaed6dc9485a76d4ea3ea1fac48ef95e7b01e2f",
+          "frame_work": {
+            "median_ms": 3.503333,
+            "p95_ms": 6.5705,
+            "samples": 7200
+          },
+          "gpu_render": {
+            "median_ms": 1.802333,
+            "p95_ms": 2.12425,
+            "samples": 7200
+          },
+          "atmosphere_fire": {
+            "median_ms": 0.973625,
+            "p95_ms": 1.304667,
+            "samples": 7200
+          },
+          "projected_detail": {
+            "cpu_ms": {
+              "median_ms": 0.000209,
+              "p95_ms": 0.000417,
+              "samples": 7200
+            },
+            "enabled": true,
+            "note": "Only flame curve segments are reduced. Full deterministic simulation state, bounds and emitted lights are retained; this does not change pixel resolution.",
+            "primitives_full_median": 81.0,
+            "primitives_rendered_median": 70.0,
+            "projected_height_px": {
+              "median": 25.843692779541016,
+              "p95": 46.423221588134766
+            },
+            "segments_full_median": 6.0,
+            "segments_rendered_median": 4.0,
+            "tier_frames": [
+              0,
+              4368,
+              2832
+            ]
+          },
+          "timing_coverage": {
+            "gpu_timestamps_supported": true,
+            "gpu_timing_requested": true,
+            "late_samples": 0,
+            "rendered_frames": 7200,
+            "skipped_compute_samples": 0,
+            "skipped_samples": 0,
+            "smoke_compute_samples": 7200,
+            "timed_frames": 7200,
+            "unavailable_reason": null
+          }
+        }
+      ]
+    },
+    "quiet": {
+      "effect_profile": "effect-quiet",
+      "generated_scenes": {
+        "baseline": {
+          "sha256": "66200c1e5970e7692c0d2fff56d557f41752e747f0c940c6b180ca4a474e9659",
+          "projected_detail_lod": false
+        },
+        "candidate": {
+          "sha256": "6ae96bbbd96e3e1db741877da1f3e11fb843363b5e26058cf008ae2b99f87d7a",
+          "projected_detail_lod": true
+        }
+      },
+      "comparison": {
+        "frame_work": {
+          "baseline_run_medians_ms": [
+            3.551875,
+            3.607958,
+            3.6202500000000004
+          ],
+          "candidate_run_medians_ms": [
+            3.0322080000000002,
+            2.7817499999999997,
+            2.298834
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.5196669999999997,
+            -0.8262080000000003,
+            -1.3214160000000006
+          ],
+          "paired_delta_median_ms": -0.8262080000000003,
+          "paired_delta_p95_ms": -0.5196669999999997,
+          "baseline_median_of_run_medians_ms": 3.607958,
+          "candidate_median_of_run_medians_ms": 2.7817499999999997
+        },
+        "cpu_encode": {
+          "baseline_run_medians_ms": [
+            0.407708,
+            0.377125,
+            0.37233299999999997
+          ],
+          "candidate_run_medians_ms": [
+            0.31575,
+            0.262083,
+            0.261583
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.09195800000000004,
+            -0.11504199999999998,
+            -0.11074999999999996
+          ],
+          "paired_delta_median_ms": -0.11074999999999996,
+          "paired_delta_p95_ms": -0.09195800000000004,
+          "baseline_median_of_run_medians_ms": 0.377125,
+          "candidate_median_of_run_medians_ms": 0.262083
+        },
+        "cpu_tile_list_encode": {
+          "baseline_run_medians_ms": [
+            0.058582999999999996,
+            0.055583,
+            0.054791
+          ],
+          "candidate_run_medians_ms": [
+            0.048791,
+            0.039458,
+            0.040083
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.009791999999999995,
+            -0.016125,
+            -0.014707999999999999
+          ],
+          "paired_delta_median_ms": -0.014707999999999999,
+          "paired_delta_p95_ms": -0.009791999999999995,
+          "baseline_median_of_run_medians_ms": 0.055583,
+          "candidate_median_of_run_medians_ms": 0.040083
+        },
+        "cpu_shadow_encode": {
+          "baseline_run_medians_ms": [
+            8.3e-05,
+            4.2e-05,
+            4.2e-05
+          ],
+          "candidate_run_medians_ms": [
+            4.2e-05,
+            4.2e-05,
+            4.2e-05
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -4.1e-05,
+            0.0,
+            0.0
+          ],
+          "paired_delta_median_ms": 0.0,
+          "paired_delta_p95_ms": 0.0,
+          "baseline_median_of_run_medians_ms": 4.2e-05,
+          "candidate_median_of_run_medians_ms": 4.2e-05
+        },
+        "cpu_upload": {
+          "baseline_run_medians_ms": [
+            0.188292,
+            0.165542,
+            0.171708
+          ],
+          "candidate_run_medians_ms": [
+            0.123583,
+            0.10416700000000001,
+            0.104083
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.06470899999999999,
+            -0.061374999999999985,
+            -0.067625
+          ],
+          "paired_delta_median_ms": -0.06470899999999999,
+          "paired_delta_p95_ms": -0.061374999999999985,
+          "baseline_median_of_run_medians_ms": 0.171708,
+          "candidate_median_of_run_medians_ms": 0.10416700000000001
+        },
+        "simulation_cpu": {
+          "baseline_run_medians_ms": [
+            0.21475,
+            0.19625,
+            0.19487500000000002
+          ],
+          "candidate_run_medians_ms": [
+            0.176292,
+            0.15025,
+            0.148875
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.03845799999999999,
+            -0.04600000000000001,
+            -0.04600000000000001
+          ],
+          "paired_delta_median_ms": -0.04600000000000001,
+          "paired_delta_p95_ms": -0.03845799999999999,
+          "baseline_median_of_run_medians_ms": 0.19625,
+          "candidate_median_of_run_medians_ms": 0.15025
+        },
+        "simulation_encode_cpu": {
+          "baseline_run_medians_ms": [
+            0.18175000000000002,
+            0.166709,
+            0.16541699999999998
+          ],
+          "candidate_run_medians_ms": [
+            0.15020899999999998,
+            0.12875,
+            0.12716600000000003
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.03154100000000004,
+            -0.03795899999999999,
+            -0.03825099999999995
+          ],
+          "paired_delta_median_ms": -0.03795899999999999,
+          "paired_delta_p95_ms": -0.03154100000000004,
+          "baseline_median_of_run_medians_ms": 0.166709,
+          "candidate_median_of_run_medians_ms": 0.12875
+        },
+        "queue_submit_cpu": {
+          "baseline_run_medians_ms": [
+            0.106208,
+            0.090417,
+            0.090333
+          ],
+          "candidate_run_medians_ms": [
+            0.076333,
+            0.058166,
+            0.058292
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.029875,
+            -0.032250999999999995,
+            -0.032041
+          ],
+          "paired_delta_median_ms": -0.032041,
+          "paired_delta_p95_ms": -0.029875,
+          "baseline_median_of_run_medians_ms": 0.090417,
+          "candidate_median_of_run_medians_ms": 0.058292
+        },
+        "gpu_render": {
+          "baseline_run_medians_ms": [
+            1.584625,
+            1.584625,
+            1.5805409999999998
+          ],
+          "candidate_run_medians_ms": [
+            1.46325,
+            1.4603329999999999,
+            1.4431249999999998
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.12137500000000001,
+            -0.12429200000000007,
+            -0.13741599999999998
+          ],
+          "paired_delta_median_ms": -0.12429200000000007,
+          "paired_delta_p95_ms": -0.12137500000000001,
+          "baseline_median_of_run_medians_ms": 1.584625,
+          "candidate_median_of_run_medians_ms": 1.4603329999999999
+        },
+        "gpu_stages.atmosphere_fire": {
+          "baseline_run_medians_ms": [
+            0.836792,
+            0.8393339999999999,
+            0.835542
+          ],
+          "candidate_run_medians_ms": [
+            0.7819579999999999,
+            0.785334,
+            0.778917
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.05483400000000005,
+            -0.05399999999999994,
+            -0.056625000000000036
+          ],
+          "paired_delta_median_ms": -0.05483400000000005,
+          "paired_delta_p95_ms": -0.05399999999999994,
+          "baseline_median_of_run_medians_ms": 0.836792,
+          "candidate_median_of_run_medians_ms": 0.7819579999999999
+        },
+        "gpu_stages.opaque_geometry": {
+          "baseline_run_medians_ms": [
+            0.714333,
+            0.7160829999999999,
+            0.713666
+          ],
+          "candidate_run_medians_ms": [
+            0.658125,
+            0.65975,
+            0.654875
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.056208000000000036,
+            -0.056332999999999966,
+            -0.05879100000000004
+          ],
+          "paired_delta_median_ms": -0.056332999999999966,
+          "paired_delta_p95_ms": -0.056208000000000036,
+          "baseline_median_of_run_medians_ms": 0.714333,
+          "candidate_median_of_run_medians_ms": 0.658125
+        },
+        "gpu_stages.optical_resolve": {
+          "baseline_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "candidate_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "paired_candidate_minus_baseline_ms": [],
+          "paired_delta_median_ms": null,
+          "paired_delta_p95_ms": null,
+          "baseline_median_of_run_medians_ms": null,
+          "candidate_median_of_run_medians_ms": null
+        },
+        "gpu_stages.post": {
+          "baseline_run_medians_ms": [
+            0.931959,
+            0.9352499999999999,
+            0.932333
+          ],
+          "candidate_run_medians_ms": [
+            0.8803749999999999,
+            0.8827079999999999,
+            0.8711669999999999
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.051584000000000074,
+            -0.05254199999999998,
+            -0.061166000000000054
+          ],
+          "paired_delta_median_ms": -0.05254199999999998,
+          "paired_delta_p95_ms": -0.051584000000000074,
+          "baseline_median_of_run_medians_ms": 0.932333,
+          "candidate_median_of_run_medians_ms": 0.8803749999999999
+        },
+        "gpu_stages.shadow_maps": {
+          "baseline_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "candidate_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "paired_candidate_minus_baseline_ms": [],
+          "paired_delta_median_ms": null,
+          "paired_delta_p95_ms": null,
+          "baseline_median_of_run_medians_ms": null,
+          "candidate_median_of_run_medians_ms": null
+        },
+        "gpu_stages.smoke_absorption_cache": {
+          "baseline_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "candidate_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "paired_candidate_minus_baseline_ms": [],
+          "paired_delta_median_ms": null,
+          "paired_delta_p95_ms": null,
+          "baseline_median_of_run_medians_ms": null,
+          "candidate_median_of_run_medians_ms": null
+        },
+        "gpu_stages.smoke_compute": {
+          "baseline_run_medians_ms": [
+            0.017916,
+            0.017708,
+            0.017875
+          ],
+          "candidate_run_medians_ms": [
+            0.017875,
+            0.017708,
+            0.017791
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -4.100000000000284e-05,
+            0.0,
+            -8.399999999999727e-05
+          ],
+          "paired_delta_median_ms": -4.100000000000284e-05,
+          "paired_delta_p95_ms": 0.0,
+          "baseline_median_of_run_medians_ms": 0.017875,
+          "candidate_median_of_run_medians_ms": 0.017791
+        },
+        "gpu_stages.tile_list_build": {
+          "baseline_run_medians_ms": [
+            0.489959,
+            0.489459,
+            0.490666
+          ],
+          "candidate_run_medians_ms": [
+            0.4275,
+            0.42541599999999996,
+            0.424708
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.06245899999999999,
+            -0.06404300000000002,
+            -0.06595800000000002
+          ],
+          "paired_delta_median_ms": -0.06404300000000002,
+          "paired_delta_p95_ms": -0.06245899999999999,
+          "baseline_median_of_run_medians_ms": 0.489959,
+          "candidate_median_of_run_medians_ms": 0.42541599999999996
+        }
+      },
+      "run_order": [
+        {
+          "pair": 1,
+          "variant": "baseline",
+          "run_id": "pair-01-baseline"
+        },
+        {
+          "pair": 1,
+          "variant": "candidate",
+          "run_id": "pair-01-candidate"
+        },
+        {
+          "pair": 2,
+          "variant": "candidate",
+          "run_id": "pair-02-candidate"
+        },
+        {
+          "pair": 2,
+          "variant": "baseline",
+          "run_id": "pair-02-baseline"
+        },
+        {
+          "pair": 3,
+          "variant": "baseline",
+          "run_id": "pair-03-baseline"
+        },
+        {
+          "pair": 3,
+          "variant": "candidate",
+          "run_id": "pair-03-candidate"
+        }
+      ],
+      "measurement_gaps": [
+        "exact CPU-to-GPU queue latency: wgpu timestamps have no calibrated host-clock mapping; readback completion latency is reported separately",
+        "native presentation and vsync are measured by benchmark-native, not included in this offscreen comparison",
+        "buffered throughput was not measured in this serial comparison"
+      ],
+      "runs": [
+        {
+          "pair": 1,
+          "variant": "baseline",
+          "raw_report": "pair-01-baseline.engine.json",
+          "raw_report_sha256": "f4f8ab238922947c9d75fe46fd29dab4c6ed89c5d38a54d14eb8207b6fdf8ea2",
+          "frame_work": {
+            "median_ms": 3.551875,
+            "p95_ms": 6.475125,
+            "samples": 7200
+          },
+          "gpu_render": {
+            "median_ms": 1.584625,
+            "p95_ms": 1.8527909999999999,
+            "samples": 7200
+          },
+          "atmosphere_fire": {
+            "median_ms": 0.836792,
+            "p95_ms": 1.124125,
+            "samples": 7200
+          },
+          "projected_detail": {
+            "cpu_ms": {
+              "median_ms": 0.000167,
+              "p95_ms": 0.000375,
+              "samples": 7200
+            },
+            "enabled": false,
+            "note": "Only flame curve segments are reduced. Full deterministic simulation state, bounds and emitted lights are retained; this does not change pixel resolution.",
+            "primitives_full_median": 55.0,
+            "primitives_rendered_median": 55.0,
+            "projected_height_px": {
+              "median": 15.271272659301758,
+              "p95": 27.431901931762695
+            },
+            "segments_full_median": 6.0,
+            "segments_rendered_median": 6.0,
+            "tier_frames": [
+              7200,
+              0,
+              0
+            ]
+          },
+          "timing_coverage": {
+            "gpu_timestamps_supported": true,
+            "gpu_timing_requested": true,
+            "late_samples": 0,
+            "rendered_frames": 7200,
+            "skipped_compute_samples": 0,
+            "skipped_samples": 0,
+            "smoke_compute_samples": 7200,
+            "timed_frames": 7200,
+            "unavailable_reason": null
+          }
+        },
+        {
+          "pair": 1,
+          "variant": "candidate",
+          "raw_report": "pair-01-candidate.engine.json",
+          "raw_report_sha256": "b7647f274e31a2bad4a161d3af4fd74b0a7d5f19ef6775ebb096a7a7456a2609",
+          "frame_work": {
+            "median_ms": 3.0322080000000002,
+            "p95_ms": 5.717334,
+            "samples": 7200
+          },
+          "gpu_render": {
+            "median_ms": 1.46325,
+            "p95_ms": 1.72875,
+            "samples": 7200
+          },
+          "atmosphere_fire": {
+            "median_ms": 0.7819579999999999,
+            "p95_ms": 1.056916,
+            "samples": 7200
+          },
+          "projected_detail": {
+            "cpu_ms": {
+              "median_ms": 0.00020800000000000001,
+              "p95_ms": 0.000375,
+              "samples": 7200
+            },
+            "enabled": true,
+            "note": "Only flame curve segments are reduced. Full deterministic simulation state, bounds and emitted lights are retained; this does not change pixel resolution.",
+            "primitives_full_median": 55.0,
+            "primitives_rendered_median": 40.0,
+            "projected_height_px": {
+              "median": 15.271272659301758,
+              "p95": 27.431901931762695
+            },
+            "segments_full_median": 6.0,
+            "segments_rendered_median": 3.0,
+            "tier_frames": [
+              0,
+              2100,
+              5100
+            ]
+          },
+          "timing_coverage": {
+            "gpu_timestamps_supported": true,
+            "gpu_timing_requested": true,
+            "late_samples": 0,
+            "rendered_frames": 7200,
+            "skipped_compute_samples": 0,
+            "skipped_samples": 0,
+            "smoke_compute_samples": 7200,
+            "timed_frames": 7200,
+            "unavailable_reason": null
+          }
+        },
+        {
+          "pair": 2,
+          "variant": "baseline",
+          "raw_report": "pair-02-baseline.engine.json",
+          "raw_report_sha256": "59868908c628b94c8e05cb17c779c5a41890148842d7099cfa7f5fea4d3a170a",
+          "frame_work": {
+            "median_ms": 3.607958,
+            "p95_ms": 6.817625,
+            "samples": 7200
+          },
+          "gpu_render": {
+            "median_ms": 1.584625,
+            "p95_ms": 1.850625,
+            "samples": 7200
+          },
+          "atmosphere_fire": {
+            "median_ms": 0.8393339999999999,
+            "p95_ms": 1.116792,
+            "samples": 7200
+          },
+          "projected_detail": {
+            "cpu_ms": {
+              "median_ms": 0.00020800000000000001,
+              "p95_ms": 0.000334,
+              "samples": 7200
+            },
+            "enabled": false,
+            "note": "Only flame curve segments are reduced. Full deterministic simulation state, bounds and emitted lights are retained; this does not change pixel resolution.",
+            "primitives_full_median": 55.0,
+            "primitives_rendered_median": 55.0,
+            "projected_height_px": {
+              "median": 15.271272659301758,
+              "p95": 27.431901931762695
+            },
+            "segments_full_median": 6.0,
+            "segments_rendered_median": 6.0,
+            "tier_frames": [
+              7200,
+              0,
+              0
+            ]
+          },
+          "timing_coverage": {
+            "gpu_timestamps_supported": true,
+            "gpu_timing_requested": true,
+            "late_samples": 0,
+            "rendered_frames": 7200,
+            "skipped_compute_samples": 0,
+            "skipped_samples": 0,
+            "smoke_compute_samples": 7200,
+            "timed_frames": 7200,
+            "unavailable_reason": null
+          }
+        },
+        {
+          "pair": 2,
+          "variant": "candidate",
+          "raw_report": "pair-02-candidate.engine.json",
+          "raw_report_sha256": "d62588b78432f06a963aad6cb8845d2cc6a22e4e63f02e7af9b545c7a6b6ae00",
+          "frame_work": {
+            "median_ms": 2.7817499999999997,
+            "p95_ms": 5.360125,
+            "samples": 7200
+          },
+          "gpu_render": {
+            "median_ms": 1.4603329999999999,
+            "p95_ms": 1.735125,
+            "samples": 7200
+          },
+          "atmosphere_fire": {
+            "median_ms": 0.785334,
+            "p95_ms": 1.064834,
+            "samples": 7200
+          },
+          "projected_detail": {
+            "cpu_ms": {
+              "median_ms": 0.00020800000000000001,
+              "p95_ms": 0.000375,
+              "samples": 7200
+            },
+            "enabled": true,
+            "note": "Only flame curve segments are reduced. Full deterministic simulation state, bounds and emitted lights are retained; this does not change pixel resolution.",
+            "primitives_full_median": 55.0,
+            "primitives_rendered_median": 40.0,
+            "projected_height_px": {
+              "median": 15.271272659301758,
+              "p95": 27.431901931762695
+            },
+            "segments_full_median": 6.0,
+            "segments_rendered_median": 3.0,
+            "tier_frames": [
+              0,
+              2100,
+              5100
+            ]
+          },
+          "timing_coverage": {
+            "gpu_timestamps_supported": true,
+            "gpu_timing_requested": true,
+            "late_samples": 0,
+            "rendered_frames": 7200,
+            "skipped_compute_samples": 0,
+            "skipped_samples": 0,
+            "smoke_compute_samples": 7200,
+            "timed_frames": 7200,
+            "unavailable_reason": null
+          }
+        },
+        {
+          "pair": 3,
+          "variant": "baseline",
+          "raw_report": "pair-03-baseline.engine.json",
+          "raw_report_sha256": "acbe9d9282879b56726570f7b73b13e14692857700562bf6848fbc02f737cbdd",
+          "frame_work": {
+            "median_ms": 3.6202500000000004,
+            "p95_ms": 6.778417,
+            "samples": 7200
+          },
+          "gpu_render": {
+            "median_ms": 1.5805409999999998,
+            "p95_ms": 1.846957,
+            "samples": 7200
+          },
+          "atmosphere_fire": {
+            "median_ms": 0.835542,
+            "p95_ms": 1.1248749999999998,
+            "samples": 7200
+          },
+          "projected_detail": {
+            "cpu_ms": {
+              "median_ms": 0.000167,
+              "p95_ms": 0.000334,
+              "samples": 7200
+            },
+            "enabled": false,
+            "note": "Only flame curve segments are reduced. Full deterministic simulation state, bounds and emitted lights are retained; this does not change pixel resolution.",
+            "primitives_full_median": 55.0,
+            "primitives_rendered_median": 55.0,
+            "projected_height_px": {
+              "median": 15.271272659301758,
+              "p95": 27.431901931762695
+            },
+            "segments_full_median": 6.0,
+            "segments_rendered_median": 6.0,
+            "tier_frames": [
+              7200,
+              0,
+              0
+            ]
+          },
+          "timing_coverage": {
+            "gpu_timestamps_supported": true,
+            "gpu_timing_requested": true,
+            "late_samples": 0,
+            "rendered_frames": 7200,
+            "skipped_compute_samples": 0,
+            "skipped_samples": 0,
+            "smoke_compute_samples": 7200,
+            "timed_frames": 7200,
+            "unavailable_reason": null
+          }
+        },
+        {
+          "pair": 3,
+          "variant": "candidate",
+          "raw_report": "pair-03-candidate.engine.json",
+          "raw_report_sha256": "733782b3a1c2d93d1ab081a0e9ee721a53e83ddd37bf9cb9a3632daf1a917f0a",
+          "frame_work": {
+            "median_ms": 2.298834,
+            "p95_ms": 5.209458,
+            "samples": 7200
+          },
+          "gpu_render": {
+            "median_ms": 1.4431249999999998,
+            "p95_ms": 1.7233749999999999,
+            "samples": 7200
+          },
+          "atmosphere_fire": {
+            "median_ms": 0.778917,
+            "p95_ms": 1.056833,
+            "samples": 7200
+          },
+          "projected_detail": {
+            "cpu_ms": {
+              "median_ms": 0.000167,
+              "p95_ms": 0.000334,
+              "samples": 7200
+            },
+            "enabled": true,
+            "note": "Only flame curve segments are reduced. Full deterministic simulation state, bounds and emitted lights are retained; this does not change pixel resolution.",
+            "primitives_full_median": 55.0,
+            "primitives_rendered_median": 40.0,
+            "projected_height_px": {
+              "median": 15.271272659301758,
+              "p95": 27.431901931762695
+            },
+            "segments_full_median": 6.0,
+            "segments_rendered_median": 3.0,
+            "tier_frames": [
+              0,
+              2100,
+              5100
+            ]
+          },
+          "timing_coverage": {
+            "gpu_timestamps_supported": true,
+            "gpu_timing_requested": true,
+            "late_samples": 0,
+            "rendered_frames": 7200,
+            "skipped_compute_samples": 0,
+            "skipped_samples": 0,
+            "smoke_compute_samples": 7200,
+            "timed_frames": 7200,
+            "unavailable_reason": null
+          }
+        }
+      ]
+    },
+    "bonfire": {
+      "effect_profile": "effect-bonfire",
+      "generated_scenes": {
+        "baseline": {
+          "sha256": "9b54b69b19509ab6f0feff6523037e83d631dcf808efadcc74bdc44978f81f30",
+          "projected_detail_lod": false
+        },
+        "candidate": {
+          "sha256": "6d07d6e3265566fb9e3933f13322ba2b95c79fe1d19d85e162fc3b7d66583245",
+          "projected_detail_lod": true
+        }
+      },
+      "comparison": {
+        "frame_work": {
+          "baseline_run_medians_ms": [
+            4.307708000000001,
+            4.307541,
+            4.335
+          ],
+          "candidate_run_medians_ms": [
+            4.320708000000001,
+            4.33275,
+            4.349125
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.0129999999999999,
+            0.02520900000000026,
+            0.014124999999999943
+          ],
+          "paired_delta_median_ms": 0.014124999999999943,
+          "paired_delta_p95_ms": 0.02520900000000026,
+          "baseline_median_of_run_medians_ms": 4.307708000000001,
+          "candidate_median_of_run_medians_ms": 4.33275
+        },
+        "cpu_encode": {
+          "baseline_run_medians_ms": [
+            0.532958,
+            0.555001,
+            0.5595
+          ],
+          "candidate_run_medians_ms": [
+            0.486374,
+            0.567625,
+            0.5719580000000001
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.04658400000000007,
+            0.01262400000000008,
+            0.01245800000000008
+          ],
+          "paired_delta_median_ms": 0.01245800000000008,
+          "paired_delta_p95_ms": 0.01262400000000008,
+          "baseline_median_of_run_medians_ms": 0.555001,
+          "candidate_median_of_run_medians_ms": 0.567625
+        },
+        "cpu_tile_list_encode": {
+          "baseline_run_medians_ms": [
+            0.06425,
+            0.064917,
+            0.065833
+          ],
+          "candidate_run_medians_ms": [
+            0.062875,
+            0.066458,
+            0.067
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.0013750000000000012,
+            0.0015410000000000007,
+            0.0011670000000000014
+          ],
+          "paired_delta_median_ms": 0.0011670000000000014,
+          "paired_delta_p95_ms": 0.0015410000000000007,
+          "baseline_median_of_run_medians_ms": 0.064917,
+          "candidate_median_of_run_medians_ms": 0.066458
+        },
+        "cpu_shadow_encode": {
+          "baseline_run_medians_ms": [
+            8.3e-05,
+            8.3e-05,
+            8.3e-05
+          ],
+          "candidate_run_medians_ms": [
+            8.3e-05,
+            8.3e-05,
+            8.3e-05
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "paired_delta_median_ms": 0.0,
+          "paired_delta_p95_ms": 0.0,
+          "baseline_median_of_run_medians_ms": 8.3e-05,
+          "candidate_median_of_run_medians_ms": 8.3e-05
+        },
+        "cpu_upload": {
+          "baseline_run_medians_ms": [
+            0.21924900000000003,
+            0.222582,
+            0.223376
+          ],
+          "candidate_run_medians_ms": [
+            0.210834,
+            0.22783499999999995,
+            0.22862500000000002
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.008415000000000034,
+            0.005252999999999952,
+            0.005249000000000031
+          ],
+          "paired_delta_median_ms": 0.005249000000000031,
+          "paired_delta_p95_ms": 0.005252999999999952,
+          "baseline_median_of_run_medians_ms": 0.222582,
+          "candidate_median_of_run_medians_ms": 0.22783499999999995
+        },
+        "simulation_cpu": {
+          "baseline_run_medians_ms": [
+            0.340625,
+            0.344959,
+            0.34675
+          ],
+          "candidate_run_medians_ms": [
+            0.336084,
+            0.36416699999999996,
+            0.360958
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.004541000000000017,
+            0.019207999999999947,
+            0.014207999999999998
+          ],
+          "paired_delta_median_ms": 0.014207999999999998,
+          "paired_delta_p95_ms": 0.019207999999999947,
+          "baseline_median_of_run_medians_ms": 0.344959,
+          "candidate_median_of_run_medians_ms": 0.360958
+        },
+        "simulation_encode_cpu": {
+          "baseline_run_medians_ms": [
+            0.298,
+            0.301833,
+            0.303709
+          ],
+          "candidate_run_medians_ms": [
+            0.29358300000000004,
+            0.319166,
+            0.316709
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.004416999999999949,
+            0.017332999999999987,
+            0.013000000000000012
+          ],
+          "paired_delta_median_ms": 0.013000000000000012,
+          "paired_delta_p95_ms": 0.017332999999999987,
+          "baseline_median_of_run_medians_ms": 0.301833,
+          "candidate_median_of_run_medians_ms": 0.316709
+        },
+        "queue_submit_cpu": {
+          "baseline_run_medians_ms": [
+            0.11770800000000001,
+            0.119417,
+            0.12204200000000001
+          ],
+          "candidate_run_medians_ms": [
+            0.11349999999999999,
+            0.123833,
+            0.127833
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.004208000000000017,
+            0.004416000000000003,
+            0.005790999999999991
+          ],
+          "paired_delta_median_ms": 0.004416000000000003,
+          "paired_delta_p95_ms": 0.005790999999999991,
+          "baseline_median_of_run_medians_ms": 0.119417,
+          "candidate_median_of_run_medians_ms": 0.123833
+        },
+        "gpu_render": {
+          "baseline_run_medians_ms": [
+            2.777459,
+            2.7722499999999997,
+            2.771292
+          ],
+          "candidate_run_medians_ms": [
+            2.728833,
+            2.7202089999999997,
+            2.715791
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.04862600000000006,
+            -0.052041000000000004,
+            -0.05550100000000002
+          ],
+          "paired_delta_median_ms": -0.052041000000000004,
+          "paired_delta_p95_ms": -0.04862600000000006,
+          "baseline_median_of_run_medians_ms": 2.7722499999999997,
+          "candidate_median_of_run_medians_ms": 2.7202089999999997
+        },
+        "gpu_stages.atmosphere_fire": {
+          "baseline_run_medians_ms": [
+            1.510834,
+            1.5051249999999998,
+            1.5006249999999999
+          ],
+          "candidate_run_medians_ms": [
+            1.475542,
+            1.458084,
+            1.4571669999999999
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.0352920000000001,
+            -0.04704099999999989,
+            -0.043458
+          ],
+          "paired_delta_median_ms": -0.043458,
+          "paired_delta_p95_ms": -0.0352920000000001,
+          "baseline_median_of_run_medians_ms": 1.5051249999999998,
+          "candidate_median_of_run_medians_ms": 1.458084
+        },
+        "gpu_stages.opaque_geometry": {
+          "baseline_run_medians_ms": [
+            1.2464169999999999,
+            1.240167,
+            1.239166
+          ],
+          "candidate_run_medians_ms": [
+            1.227333,
+            1.21075,
+            1.208834
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.01908399999999988,
+            -0.029417000000000026,
+            -0.030332000000000026
+          ],
+          "paired_delta_median_ms": -0.029417000000000026,
+          "paired_delta_p95_ms": -0.01908399999999988,
+          "baseline_median_of_run_medians_ms": 1.240167,
+          "candidate_median_of_run_medians_ms": 1.21075
+        },
+        "gpu_stages.optical_resolve": {
+          "baseline_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "candidate_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "paired_candidate_minus_baseline_ms": [],
+          "paired_delta_median_ms": null,
+          "paired_delta_p95_ms": null,
+          "baseline_median_of_run_medians_ms": null,
+          "candidate_median_of_run_medians_ms": null
+        },
+        "gpu_stages.post": {
+          "baseline_run_medians_ms": [
+            1.607416,
+            1.60225,
+            1.5954579999999998
+          ],
+          "candidate_run_medians_ms": [
+            1.57175,
+            1.550875,
+            1.549917
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.035665999999999976,
+            -0.05137499999999995,
+            -0.04554099999999983
+          ],
+          "paired_delta_median_ms": -0.04554099999999983,
+          "paired_delta_p95_ms": -0.035665999999999976,
+          "baseline_median_of_run_medians_ms": 1.60225,
+          "candidate_median_of_run_medians_ms": 1.550875
+        },
+        "gpu_stages.shadow_maps": {
+          "baseline_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "candidate_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "paired_candidate_minus_baseline_ms": [],
+          "paired_delta_median_ms": null,
+          "paired_delta_p95_ms": null,
+          "baseline_median_of_run_medians_ms": null,
+          "candidate_median_of_run_medians_ms": null
+        },
+        "gpu_stages.smoke_absorption_cache": {
+          "baseline_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "candidate_run_medians_ms": [
+            null,
+            null,
+            null
+          ],
+          "paired_candidate_minus_baseline_ms": [],
+          "paired_delta_median_ms": null,
+          "paired_delta_p95_ms": null,
+          "baseline_median_of_run_medians_ms": null,
+          "candidate_median_of_run_medians_ms": null
+        },
+        "gpu_stages.smoke_compute": {
+          "baseline_run_medians_ms": [
+            0.017792,
+            0.01775,
+            0.017875
+          ],
+          "candidate_run_medians_ms": [
+            0.017792,
+            0.017791,
+            0.017916
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.0,
+            4.100000000000284e-05,
+            4.100000000000284e-05
+          ],
+          "paired_delta_median_ms": 4.100000000000284e-05,
+          "paired_delta_p95_ms": 4.100000000000284e-05,
+          "baseline_median_of_run_medians_ms": 0.017792,
+          "candidate_median_of_run_medians_ms": 0.017792
+        },
+        "gpu_stages.tile_list_build": {
+          "baseline_run_medians_ms": [
+            1.003917,
+            1.003709,
+            1.004583
+          ],
+          "candidate_run_medians_ms": [
+            0.993,
+            0.9935419999999999,
+            0.994458
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.010916999999999955,
+            -0.010167000000000037,
+            -0.01012500000000005
+          ],
+          "paired_delta_median_ms": -0.010167000000000037,
+          "paired_delta_p95_ms": -0.01012500000000005,
+          "baseline_median_of_run_medians_ms": 1.003917,
+          "candidate_median_of_run_medians_ms": 0.9935419999999999
+        }
+      },
+      "run_order": [
+        {
+          "pair": 1,
+          "variant": "baseline",
+          "run_id": "pair-01-baseline"
+        },
+        {
+          "pair": 1,
+          "variant": "candidate",
+          "run_id": "pair-01-candidate"
+        },
+        {
+          "pair": 2,
+          "variant": "candidate",
+          "run_id": "pair-02-candidate"
+        },
+        {
+          "pair": 2,
+          "variant": "baseline",
+          "run_id": "pair-02-baseline"
+        },
+        {
+          "pair": 3,
+          "variant": "baseline",
+          "run_id": "pair-03-baseline"
+        },
+        {
+          "pair": 3,
+          "variant": "candidate",
+          "run_id": "pair-03-candidate"
+        }
+      ],
+      "measurement_gaps": [
+        "exact CPU-to-GPU queue latency: wgpu timestamps have no calibrated host-clock mapping; readback completion latency is reported separately",
+        "native presentation and vsync are measured by benchmark-native, not included in this offscreen comparison",
+        "buffered throughput was not measured in this serial comparison"
+      ],
+      "runs": [
+        {
+          "pair": 1,
+          "variant": "baseline",
+          "raw_report": "pair-01-baseline.engine.json",
+          "raw_report_sha256": "eafef60c3ff38b12686af477b596628275c6f827d1f7a1bacee36bb43f413f97",
+          "frame_work": {
+            "median_ms": 4.307708000000001,
+            "p95_ms": 8.235541000000001,
+            "samples": 7200
+          },
+          "gpu_render": {
+            "median_ms": 2.777459,
+            "p95_ms": 3.1654169999999997,
+            "samples": 7200
+          },
+          "atmosphere_fire": {
+            "median_ms": 1.510834,
+            "p95_ms": 1.8299999999999998,
+            "samples": 7200
+          },
+          "projected_detail": {
+            "cpu_ms": {
+              "median_ms": 0.000167,
+              "p95_ms": 0.00041600000000000003,
+              "samples": 7200
+            },
+            "enabled": false,
+            "note": "Only flame curve segments are reduced. Full deterministic simulation state, bounds and emitted lights are retained; this does not change pixel resolution.",
+            "primitives_full_median": 166.0,
+            "primitives_rendered_median": 166.0,
+            "projected_height_px": {
+              "median": 51.68738555908203,
+              "p95": 92.84644317626953
+            },
+            "segments_full_median": 6.0,
+            "segments_rendered_median": 6.0,
+            "tier_frames": [
+              7200,
+              0,
+              0
+            ]
+          },
+          "timing_coverage": {
+            "gpu_timestamps_supported": true,
+            "gpu_timing_requested": true,
+            "late_samples": 0,
+            "rendered_frames": 7200,
+            "skipped_compute_samples": 0,
+            "skipped_samples": 0,
+            "smoke_compute_samples": 7200,
+            "timed_frames": 7200,
+            "unavailable_reason": null
+          }
+        },
+        {
+          "pair": 1,
+          "variant": "candidate",
+          "raw_report": "pair-01-candidate.engine.json",
+          "raw_report_sha256": "f2ba8d0d964bd7f101ee867c8a0c7611e3243ebd22ae0801aa81628742cf6eaa",
+          "frame_work": {
+            "median_ms": 4.320708000000001,
+            "p95_ms": 8.205166,
+            "samples": 7200
+          },
+          "gpu_render": {
+            "median_ms": 2.728833,
+            "p95_ms": 3.139208,
+            "samples": 7200
+          },
+          "atmosphere_fire": {
+            "median_ms": 1.475542,
+            "p95_ms": 1.8315,
+            "samples": 7200
+          },
+          "projected_detail": {
+            "cpu_ms": {
+              "median_ms": 0.00020800000000000001,
+              "p95_ms": 0.000417,
+              "samples": 7200
+            },
+            "enabled": true,
+            "note": "Only flame curve segments are reduced. Full deterministic simulation state, bounds and emitted lights are retained; this does not change pixel resolution.",
+            "primitives_full_median": 166.0,
+            "primitives_rendered_median": 165.0,
+            "projected_height_px": {
+              "median": 51.68738555908203,
+              "p95": 92.84644317626953
+            },
+            "segments_full_median": 6.0,
+            "segments_rendered_median": 6.0,
+            "tier_frames": [
+              4368,
+              2832,
+              0
+            ]
+          },
+          "timing_coverage": {
+            "gpu_timestamps_supported": true,
+            "gpu_timing_requested": true,
+            "late_samples": 0,
+            "rendered_frames": 7200,
+            "skipped_compute_samples": 0,
+            "skipped_samples": 0,
+            "smoke_compute_samples": 7200,
+            "timed_frames": 7200,
+            "unavailable_reason": null
+          }
+        },
+        {
+          "pair": 2,
+          "variant": "baseline",
+          "raw_report": "pair-02-baseline.engine.json",
+          "raw_report_sha256": "97b13411d55eb6e97f2a7141dc95878297c4ba32a7e333a95f880f3658af5ceb",
+          "frame_work": {
+            "median_ms": 4.307541,
+            "p95_ms": 8.189292,
+            "samples": 7200
+          },
+          "gpu_render": {
+            "median_ms": 2.7722499999999997,
+            "p95_ms": 3.173666,
+            "samples": 7200
+          },
+          "atmosphere_fire": {
+            "median_ms": 1.5051249999999998,
+            "p95_ms": 1.825542,
+            "samples": 7200
+          },
+          "projected_detail": {
+            "cpu_ms": {
+              "median_ms": 0.000167,
+              "p95_ms": 0.000375,
+              "samples": 7200
+            },
+            "enabled": false,
+            "note": "Only flame curve segments are reduced. Full deterministic simulation state, bounds and emitted lights are retained; this does not change pixel resolution.",
+            "primitives_full_median": 166.0,
+            "primitives_rendered_median": 166.0,
+            "projected_height_px": {
+              "median": 51.68738555908203,
+              "p95": 92.84644317626953
+            },
+            "segments_full_median": 6.0,
+            "segments_rendered_median": 6.0,
+            "tier_frames": [
+              7200,
+              0,
+              0
+            ]
+          },
+          "timing_coverage": {
+            "gpu_timestamps_supported": true,
+            "gpu_timing_requested": true,
+            "late_samples": 0,
+            "rendered_frames": 7200,
+            "skipped_compute_samples": 0,
+            "skipped_samples": 0,
+            "smoke_compute_samples": 7200,
+            "timed_frames": 7200,
+            "unavailable_reason": null
+          }
+        },
+        {
+          "pair": 2,
+          "variant": "candidate",
+          "raw_report": "pair-02-candidate.engine.json",
+          "raw_report_sha256": "1ac83da3e50051caac0cf51e428f50bb03d24376438de5c1fe9a108094295a93",
+          "frame_work": {
+            "median_ms": 4.33275,
+            "p95_ms": 7.919957999999999,
+            "samples": 7200
+          },
+          "gpu_render": {
+            "median_ms": 2.7202089999999997,
+            "p95_ms": 3.089542,
+            "samples": 7200
+          },
+          "atmosphere_fire": {
+            "median_ms": 1.458084,
+            "p95_ms": 1.810292,
+            "samples": 7200
+          },
+          "projected_detail": {
+            "cpu_ms": {
+              "median_ms": 0.00020800000000000001,
+              "p95_ms": 0.00041600000000000003,
+              "samples": 7200
+            },
+            "enabled": true,
+            "note": "Only flame curve segments are reduced. Full deterministic simulation state, bounds and emitted lights are retained; this does not change pixel resolution.",
+            "primitives_full_median": 166.0,
+            "primitives_rendered_median": 165.0,
+            "projected_height_px": {
+              "median": 51.68738555908203,
+              "p95": 92.84644317626953
+            },
+            "segments_full_median": 6.0,
+            "segments_rendered_median": 6.0,
+            "tier_frames": [
+              4368,
+              2832,
+              0
+            ]
+          },
+          "timing_coverage": {
+            "gpu_timestamps_supported": true,
+            "gpu_timing_requested": true,
+            "late_samples": 0,
+            "rendered_frames": 7200,
+            "skipped_compute_samples": 0,
+            "skipped_samples": 0,
+            "smoke_compute_samples": 7200,
+            "timed_frames": 7200,
+            "unavailable_reason": null
+          }
+        },
+        {
+          "pair": 3,
+          "variant": "baseline",
+          "raw_report": "pair-03-baseline.engine.json",
+          "raw_report_sha256": "e25bd22e0b6d4ffe79e280f662258008ed883f75fdebd8d303b1e0d4224a6312",
+          "frame_work": {
+            "median_ms": 4.335,
+            "p95_ms": 8.492666,
+            "samples": 7200
+          },
+          "gpu_render": {
+            "median_ms": 2.771292,
+            "p95_ms": 3.347417,
+            "samples": 7200
+          },
+          "atmosphere_fire": {
+            "median_ms": 1.5006249999999999,
+            "p95_ms": 1.842917,
+            "samples": 7200
+          },
+          "projected_detail": {
+            "cpu_ms": {
+              "median_ms": 0.00020800000000000001,
+              "p95_ms": 0.00041600000000000003,
+              "samples": 7200
+            },
+            "enabled": false,
+            "note": "Only flame curve segments are reduced. Full deterministic simulation state, bounds and emitted lights are retained; this does not change pixel resolution.",
+            "primitives_full_median": 166.0,
+            "primitives_rendered_median": 166.0,
+            "projected_height_px": {
+              "median": 51.68738555908203,
+              "p95": 92.84644317626953
+            },
+            "segments_full_median": 6.0,
+            "segments_rendered_median": 6.0,
+            "tier_frames": [
+              7200,
+              0,
+              0
+            ]
+          },
+          "timing_coverage": {
+            "gpu_timestamps_supported": true,
+            "gpu_timing_requested": true,
+            "late_samples": 0,
+            "rendered_frames": 7200,
+            "skipped_compute_samples": 0,
+            "skipped_samples": 0,
+            "smoke_compute_samples": 7200,
+            "timed_frames": 7200,
+            "unavailable_reason": null
+          }
+        },
+        {
+          "pair": 3,
+          "variant": "candidate",
+          "raw_report": "pair-03-candidate.engine.json",
+          "raw_report_sha256": "6b905d34b0517f8029986cb835ef585311c114c16eb717fc0d71aaa50741796b",
+          "frame_work": {
+            "median_ms": 4.349125,
+            "p95_ms": 8.145875,
+            "samples": 7200
+          },
+          "gpu_render": {
+            "median_ms": 2.715791,
+            "p95_ms": 3.231834,
+            "samples": 7200
+          },
+          "atmosphere_fire": {
+            "median_ms": 1.4571669999999999,
+            "p95_ms": 1.8227499999999999,
+            "samples": 7200
+          },
+          "projected_detail": {
+            "cpu_ms": {
+              "median_ms": 0.00020800000000000001,
+              "p95_ms": 0.00041600000000000003,
+              "samples": 7200
+            },
+            "enabled": true,
+            "note": "Only flame curve segments are reduced. Full deterministic simulation state, bounds and emitted lights are retained; this does not change pixel resolution.",
+            "primitives_full_median": 166.0,
+            "primitives_rendered_median": 165.0,
+            "projected_height_px": {
+              "median": 51.68738555908203,
+              "p95": 92.84644317626953
+            },
+            "segments_full_median": 6.0,
+            "segments_rendered_median": 6.0,
+            "tier_frames": [
+              4368,
+              2832,
+              0
+            ]
+          },
+          "timing_coverage": {
+            "gpu_timestamps_supported": true,
+            "gpu_timing_requested": true,
+            "late_samples": 0,
+            "rendered_frames": 7200,
+            "skipped_compute_samples": 0,
+            "skipped_samples": 0,
+            "smoke_compute_samples": 7200,
+            "timed_frames": 7200,
+            "unavailable_reason": null
+          }
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "M1 Max/Metal offscreen measurements only; native-window and other-adapter results are open.",
+    "The Mac was locked, so continuous GIF playback review could not be completed in this session.",
+    "Whole-frame CPU work and GPU stage intervals are reported separately; renderer stage intervals may overlap.",
+    "Quiet and bonfire profiles repeat the same 20-second orbit to fill each 120-second run; these are timing routes, not visual playback acceptance."
+  ]
+}
