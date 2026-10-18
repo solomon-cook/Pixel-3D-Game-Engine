@@ -742,6 +742,20 @@ change removes one 96-byte render-time write per active emitter per frame; no
 throughput or FPS gain is claimed. See
 [upload study](measurements-o08-smoke-config-upload.json).
 
+**Render-Globals dirty upload (18 October 2026):** fixed-step smoke dispatch now
+skips the render `Globals` uniform write. `smoke.wgsl` declares no group-0
+resources and reads its per-tick inputs from the separate source-local group-1
+configuration. The render path still uploads `Globals` once per frame. Matched
+tick-120 clearing captures are byte-identical. Three alternating 120-second
+clearing-orbit pairs on M1 Max/Metal remove one 848-byte upload per fixed step
+(6,105,600 bytes across each 7,200-step run). Median CPU-upload deltas are
+-0.012/-0.053/-0.022 ms; whole-frame deltas are -0.062/+0.087/-0.158 ms, and
+GPU-render deltas are -0.004/-0.018/+0.003 ms. The upload reduction is verified,
+but the whole-frame result is mixed and no throughput gain is claimed. Native,
+multi-workload and cross-adapter checks remain open. See
+[upload report](measurements-o08-globals-upload.json) and ignored raw runs in
+`artifacts/o08-globals-upload-study/`.
+
 **O06×O08 factorial (18 October):** the eight combinations of direct/reused
 opaque lighting, copy/no-copy optical output and RGBA16F/packed HDR were captured
 on a high-dynamic mixed smoke/fire/reflector/glass workload; each of seven

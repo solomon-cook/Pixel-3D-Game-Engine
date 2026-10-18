@@ -3572,6 +3572,10 @@ impl Renderer {
             }
             self.metrics.cpu_upload_ms +=
                 smoke_config_upload_started.elapsed().as_secs_f64() * 1000.;
+            // The smoke compute shader reads this tick's inputs from the
+            // source-local config buffer (group 1). It has no Globals bindings,
+            // so updating the render uniform here only queues an unused write.
+            return;
         }
         let mut point_lights = [PointLightGpu::zeroed(); 8];
         let mut primary_lights = scene.emitters.iter().collect::<Vec<_>>();
@@ -3743,8 +3747,14 @@ impl Renderer {
             ],
         };
         let upload_started = Instant::now();
-        self.queue
-            .write_buffer(&self.uniform, 0, bytemuck::bytes_of(&g));
+        let bytes = bytemuck::bytes_of(&g);
+        self.queue.write_buffer(&self.uniform, 0, bytes);
+        self.metrics.globals_uploads_this_frame =
+            self.metrics.globals_uploads_this_frame.saturating_add(1);
+        self.metrics.globals_upload_bytes_this_frame = self
+            .metrics
+            .globals_upload_bytes_this_frame
+            .saturating_add(bytes.len() as u64);
         self.metrics.cpu_upload_ms += upload_started.elapsed().as_secs_f64() * 1000.;
     }
 

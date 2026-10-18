@@ -360,6 +360,19 @@ frame without establishing a throughput or FPS gain. Dual-emitter sustained,
 native-window and cross-adapter gates remain open. See
 [the paired report](measurements-o08-smoke-config-upload.json).
 
+O08 now also skips the render `Globals` uniform write before each fixed smoke
+dispatch; `smoke.wgsl` reads per-tick state from the source-local config buffer.
+The render path retains one `Globals` write per frame. Three alternating
+120-second clearing-orbit pairs remove 848 bytes per simulation step (6,105,600
+bytes per 7,200-step run) and lower median CPU-upload time by 0.012–0.053 ms.
+Whole-frame deltas are mixed (-0.062/+0.087/-0.158 ms), and GPU-render deltas
+remain near zero (-0.004/-0.018/+0.003 ms); this is an upload reduction, not an
+established throughput gain. Baseline/candidate tick-120 images match
+byte-for-byte. Native-window, additional-workload and cross-adapter acceptance
+remain open. See [measurement report](measurements-o08-globals-upload.json);
+the per-frame upload counters are included in `describe`, `get_metrics`, route
+benchmarks and native benchmark samples.
+
 The experimental `Rg11b10Ufloat` HDR target reduces the primary color target and
 optical snapshot from 8 to 4 bytes per pixel when the adapter exposes the required
 feature/usages. Three fixed-tick M1 Max stills looked very similar on visual review,

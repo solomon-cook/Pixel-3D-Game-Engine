@@ -1,0 +1,216 @@
+{
+  "version": 1,
+  "change": "Skip the render Globals uniform write during fixed-step smoke dispatch. smoke.wgsl reads per-tick inputs only from group 1 source configuration; render still uploads Globals once per frame.",
+  "configuration": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "scene": "assets/scenes/clearing.json",
+    "route": "clearing-orbit",
+    "camera": "hero",
+    "seed": 42,
+    "resolution": "640x360",
+    "warmup_seconds": 10,
+    "measured_route_seconds": 120,
+    "pairs": 3,
+    "mode": "serial offscreen"
+  },
+  "binary_sha256": {
+    "baseline": "c71df36f73e4068bdfb77bed454a11ce8dbd3968f077e5d4606626ce5e9c36d0",
+    "candidate": "b802b741d1c87b9fa6274506968baeb683431ec48fca6fd0e0f1a267c24293ab"
+  },
+  "fixed_tick_capture": {
+    "tick": 120,
+    "baseline_sha256": "9ef9d7b40b22b1e68cb40ed46a4a87f0f5a5189e19e9bac4c2c04dcf23021d52",
+    "candidate_sha256": "9ef9d7b40b22b1e68cb40ed46a4a87f0f5a5189e19e9bac4c2c04dcf23021d52",
+    "pixel_identical": true
+  },
+  "candidate_upload_counts": [
+    {
+      "pair": 1,
+      "frames": 7200,
+      "fixed_steps": 7200,
+      "globals_uploads": {
+        "median_ms": 1.0,
+        "p95_ms": 1.0,
+        "samples": 7200
+      },
+      "globals_upload_bytes": {
+        "median_ms": 848.0,
+        "p95_ms": 848.0,
+        "samples": 7200
+      },
+      "smoke_config_uploads": {
+        "median_ms": 1.0,
+        "p95_ms": 1.0,
+        "samples": 7200
+      },
+      "smoke_config_upload_bytes": {
+        "median_ms": 96.0,
+        "p95_ms": 96.0,
+        "samples": 7200
+      }
+    },
+    {
+      "pair": 2,
+      "frames": 7200,
+      "fixed_steps": 7200,
+      "globals_uploads": {
+        "median_ms": 1.0,
+        "p95_ms": 1.0,
+        "samples": 7200
+      },
+      "globals_upload_bytes": {
+        "median_ms": 848.0,
+        "p95_ms": 848.0,
+        "samples": 7200
+      },
+      "smoke_config_uploads": {
+        "median_ms": 1.0,
+        "p95_ms": 1.0,
+        "samples": 7200
+      },
+      "smoke_config_upload_bytes": {
+        "median_ms": 96.0,
+        "p95_ms": 96.0,
+        "samples": 7200
+      }
+    },
+    {
+      "pair": 3,
+      "frames": 7200,
+      "fixed_steps": 7200,
+      "globals_uploads": {
+        "median_ms": 1.0,
+        "p95_ms": 1.0,
+        "samples": 7200
+      },
+      "globals_upload_bytes": {
+        "median_ms": 848.0,
+        "p95_ms": 848.0,
+        "samples": 7200
+      },
+      "smoke_config_uploads": {
+        "median_ms": 1.0,
+        "p95_ms": 1.0,
+        "samples": 7200
+      },
+      "smoke_config_upload_bytes": {
+        "median_ms": 96.0,
+        "p95_ms": 96.0,
+        "samples": 7200
+      }
+    }
+  ],
+  "metrics": {
+    "frame_work": {
+      "baseline_run_medians_ms": [
+        4.044041,
+        4.00725,
+        4.119000000000001
+      ],
+      "candidate_run_medians_ms": [
+        3.9823749999999998,
+        4.094125,
+        3.9612909999999997
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        -0.06166600000000022,
+        0.08687500000000004,
+        -0.157709000000001
+      ],
+      "paired_delta_median_ms": -0.06166600000000022,
+      "paired_delta_p95_ms": 0.08687500000000004
+    },
+    "cpu_upload": {
+      "baseline_run_medians_ms": [
+        0.126625,
+        0.181375,
+        0.18791599999999997
+      ],
+      "candidate_run_medians_ms": [
+        0.11458299999999999,
+        0.128335,
+        0.16637600000000002
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        -0.012041999999999997,
+        -0.053040000000000004,
+        -0.021539999999999948
+      ],
+      "paired_delta_median_ms": -0.021539999999999948,
+      "paired_delta_p95_ms": -0.012041999999999997
+    },
+    "cpu_encode": {
+      "baseline_run_medians_ms": [
+        0.272417,
+        0.41616700000000006,
+        0.43125099999999994
+      ],
+      "candidate_run_medians_ms": [
+        0.26358299999999996,
+        0.28824999999999995,
+        0.405
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        -0.008834000000000064,
+        -0.12791700000000011,
+        -0.026250999999999913
+      ],
+      "paired_delta_median_ms": -0.026250999999999913,
+      "paired_delta_p95_ms": -0.008834000000000064
+    },
+    "gpu_render": {
+      "baseline_run_medians_ms": [
+        2.6885009999999996,
+        2.701666,
+        2.7094169999999997
+      ],
+      "candidate_run_medians_ms": [
+        2.684125,
+        2.6832909999999996,
+        2.712001
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        -0.0043759999999997135,
+        -0.018375000000000252,
+        0.0025840000000001417
+      ],
+      "paired_delta_median_ms": -0.0043759999999997135,
+      "paired_delta_p95_ms": 0.0025840000000001417
+    },
+    "gpu_stages.smoke_compute": {
+      "baseline_run_medians_ms": [
+        0.017875,
+        0.017917,
+        0.018
+      ],
+      "candidate_run_medians_ms": [
+        0.017667,
+        0.017667,
+        0.017875
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        -0.00020799999999999985,
+        -0.0002500000000000002,
+        -0.0001250000000000001
+      ],
+      "paired_delta_median_ms": -0.00020799999999999985,
+      "paired_delta_p95_ms": -0.0001250000000000001
+    }
+  },
+  "interpretation": "Each candidate frame retained one 848-byte render Globals upload and one 96-byte smoke config upload. The baseline queued one 848-byte Globals write per fixed simulation tick; one fixed step per measured frame was observed, removing 7200 writes (6,105,600 bytes) per run. Upload-time and whole-frame medians improved modestly but paired frame-work deltas are mixed; no general throughput or native-window gain is claimed.",
+  "limitations": [
+    "single M1 Max/Metal clearing route",
+    "offscreen serial benchmark excludes native presentation, inspector and vsync",
+    "Windows/DX12 and other adapters not verified",
+    "human native playback not reviewed"
+  ],
+  "raw_reports": "artifacts/o08-globals-upload-study/",
+  "source_provenance": {
+    "baseline_revision": "866821c (main before this change)",
+    "baseline_binary_captured_before_edits": true,
+    "candidate": "working tree changes described here; candidate binary hash is recorded above",
+    "raw_runner_note": "The legacy runner records the same checkout path for both variants when distinct binaries are supplied; use the binary hashes and this provenance block to distinguish them."
+  },
+  "command": "python3 scripts/profile_compare.py --baseline assets/scenes/clearing.json --candidate assets/scenes/clearing.json --route clearing-orbit --camera hero --duration 120 --warmup 10 --pairs 3 --seed 42 --baseline-binary <baseline> --candidate-binary <candidate> --output artifacts/o08-globals-upload-study"
+}
