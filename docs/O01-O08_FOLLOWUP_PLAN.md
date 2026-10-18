@@ -231,6 +231,12 @@ off and close the experiment with that result.
    camera acceptance remain open. See
    [measurements-o06-native-reuse.json](measurements-o06-native-reuse.json) and
    [measurements-o06-sustained.json](measurements-o06-sustained.json).
+   A fixed-tick offscreen tolerance sweep across mixed-from-behind, mixed-close
+   and glass-near views reduced behind-view changed pixels from 12 to 4 as the
+   guard tightened, while maximum channel error stayed 52/255. The other two
+   views remained exact. No timing was measured for tighter guards, so keep the
+   current value; see [measurements-o06-depth-guard.json](measurements-o06-depth-guard.json)
+   and [the sweep runner](../scripts/optical_depth_guard_study.py).
 
 **Exit gate:** sustained total-render gain larger than run variance, acceptable
 images in reflection/transmission stress views and no stale live-edit output.

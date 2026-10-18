@@ -1,0 +1,237 @@
+{
+  "version": 1,
+  "date": "2026-10-18",
+  "workstream": "O06 opaque surface reuse depth guard sweep",
+  "adapter": {
+    "name": "Apple M1 Max",
+    "backend": "Metal"
+  },
+  "source_scenes": {
+    "clearing_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+    "materials_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
+    "generated_mixed_scene": "artifacts/o06/depth-guard/mixed-scene.json",
+    "generated_mixed_scene_sha256": "7975020e1dbb4f69737cb96f1f120a83d0fcc7efcb57dcef9238b9b99a148ee3"
+  },
+  "optical_shader_sha256": "2a946bc823df1a588046155d2d66c78aca8d33f246aa73e25c9a2aef8b5453ad",
+  "binary_sha256": "3e5050590b26b1d09fcbc9620307f484e669a54dbdb61cbae426d320a9249225",
+  "runner_sha256": "f935138f1a188f9ef1b885ad2c46a6e3a66ff4cda3cc209466be1e62f497f4d5",
+  "seed": 42,
+  "tick": 300,
+  "resolution": [
+    640,
+    360
+  ],
+  "comparison": "Direct versus reused opaque lighting at identical fixed ticks. Only the snapshot depth-match tolerance changes between candidate variants.",
+  "cases": [
+    {
+      "guard": "current",
+      "absolute_floor": 0.002,
+      "relative_depth_tolerance": 0.0005,
+      "cameras": [
+        {
+          "camera": "mixed-from-behind",
+          "reference_capture": "artifacts/o06/depth-guard/direct-mixed-from-behind.png",
+          "capture": "artifacts/o06/depth-guard/current-mixed-from-behind.png",
+          "shader_sha256": "af8b4b60a5e7fb0a99621a0630a1fc94b3ff16d92b433e6a9d269df3bf6f48ee",
+          "image_comparison": {
+            "changed_pixels": 12,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.00029947916666666664,
+            "max_channel_error": 52,
+            "difference_bounds": [
+              261,
+              192,
+              379,
+              248
+            ]
+          }
+        },
+        {
+          "camera": "mixed-close",
+          "reference_capture": "artifacts/o06/depth-guard/direct-mixed-close.png",
+          "capture": "artifacts/o06/depth-guard/current-mixed-close.png",
+          "shader_sha256": "af8b4b60a5e7fb0a99621a0630a1fc94b3ff16d92b433e6a9d269df3bf6f48ee",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "glass-near",
+          "reference_capture": "artifacts/o06/depth-guard/direct-glass-near.png",
+          "capture": "artifacts/o06/depth-guard/current-glass-near.png",
+          "shader_sha256": "af8b4b60a5e7fb0a99621a0630a1fc94b3ff16d92b433e6a9d269df3bf6f48ee",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        }
+      ]
+    },
+    {
+      "guard": "tight",
+      "absolute_floor": 0.001,
+      "relative_depth_tolerance": 0.00025,
+      "cameras": [
+        {
+          "camera": "mixed-from-behind",
+          "reference_capture": "artifacts/o06/depth-guard/direct-mixed-from-behind.png",
+          "capture": "artifacts/o06/depth-guard/tight-mixed-from-behind.png",
+          "shader_sha256": "6855c5480f183dfa85fdf353bf8f9a2b186e0b6157f520776c1df1bb317f72ef",
+          "image_comparison": {
+            "changed_pixels": 7,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0002922453703703704,
+            "max_channel_error": 52,
+            "difference_bounds": [
+              261,
+              209,
+              379,
+              248
+            ]
+          }
+        },
+        {
+          "camera": "mixed-close",
+          "reference_capture": "artifacts/o06/depth-guard/direct-mixed-close.png",
+          "capture": "artifacts/o06/depth-guard/tight-mixed-close.png",
+          "shader_sha256": "6855c5480f183dfa85fdf353bf8f9a2b186e0b6157f520776c1df1bb317f72ef",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "glass-near",
+          "reference_capture": "artifacts/o06/depth-guard/direct-glass-near.png",
+          "capture": "artifacts/o06/depth-guard/tight-glass-near.png",
+          "shader_sha256": "6855c5480f183dfa85fdf353bf8f9a2b186e0b6157f520776c1df1bb317f72ef",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        }
+      ]
+    },
+    {
+      "guard": "very-tight",
+      "absolute_floor": 0.0005,
+      "relative_depth_tolerance": 0.0001,
+      "cameras": [
+        {
+          "camera": "mixed-from-behind",
+          "reference_capture": "artifacts/o06/depth-guard/direct-mixed-from-behind.png",
+          "capture": "artifacts/o06/depth-guard/very-tight-mixed-from-behind.png",
+          "shader_sha256": "c86c2aa1b4dcd907bb1d213577f939aff2196d4ca5bf45a079aa1d779444d2cd",
+          "image_comparison": {
+            "changed_pixels": 6,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0002907986111111111,
+            "max_channel_error": 52,
+            "difference_bounds": [
+              261,
+              209,
+              379,
+              248
+            ]
+          }
+        },
+        {
+          "camera": "mixed-close",
+          "reference_capture": "artifacts/o06/depth-guard/direct-mixed-close.png",
+          "capture": "artifacts/o06/depth-guard/very-tight-mixed-close.png",
+          "shader_sha256": "c86c2aa1b4dcd907bb1d213577f939aff2196d4ca5bf45a079aa1d779444d2cd",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "glass-near",
+          "reference_capture": "artifacts/o06/depth-guard/direct-glass-near.png",
+          "capture": "artifacts/o06/depth-guard/very-tight-glass-near.png",
+          "shader_sha256": "c86c2aa1b4dcd907bb1d213577f939aff2196d4ca5bf45a079aa1d779444d2cd",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        }
+      ]
+    },
+    {
+      "guard": "exact-depth",
+      "absolute_floor": 0.0,
+      "relative_depth_tolerance": 0.0,
+      "cameras": [
+        {
+          "camera": "mixed-from-behind",
+          "reference_capture": "artifacts/o06/depth-guard/direct-mixed-from-behind.png",
+          "capture": "artifacts/o06/depth-guard/exact-depth-mixed-from-behind.png",
+          "shader_sha256": "29cf62f48033e18a817901b2e50ebe7dba38b693ac6f982af002d6b1a503507e",
+          "image_comparison": {
+            "changed_pixels": 4,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0002879050925925926,
+            "max_channel_error": 52,
+            "difference_bounds": [
+              261,
+              209,
+              379,
+              248
+            ]
+          }
+        },
+        {
+          "camera": "mixed-close",
+          "reference_capture": "artifacts/o06/depth-guard/direct-mixed-close.png",
+          "capture": "artifacts/o06/depth-guard/exact-depth-mixed-close.png",
+          "shader_sha256": "29cf62f48033e18a817901b2e50ebe7dba38b693ac6f982af002d6b1a503507e",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "glass-near",
+          "reference_capture": "artifacts/o06/depth-guard/direct-glass-near.png",
+          "capture": "artifacts/o06/depth-guard/exact-depth-glass-near.png",
+          "shader_sha256": "29cf62f48033e18a817901b2e50ebe7dba38b693ac6f982af002d6b1a503507e",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        }
+      ]
+    }
+  ],
+  "interpretation": "A tighter guard may select direct shading for more fragments. This sweep measures fixed-tick image error only; it does not establish a timing improvement or human visual acceptance.",
+  "limitations": [
+    "Offscreen M1 Max/Metal only.",
+    "Three fixed cameras do not establish continuous visual quality.",
+    "No timing conclusion is drawn from capture metadata."
+  ]
+}

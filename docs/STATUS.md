@@ -116,6 +116,15 @@ and side-by-side captures are retained locally under
 `artifacts/o06/native-lighting-reuse/`; image hashes and per-pixel errors are in
 the report.
 
+A fixed-tick depth-guard sweep across mixed-from-behind, mixed-close and glass-near
+views tested progressively stricter snapshot depth tolerances. It reduced the
+offscreen behind-view difference from 12 pixels to 4, but the maximum channel
+error stayed 52/255; the other two views were exact at every setting. This does
+not resolve the high-error pixels, and no candidate timing was measured, so retain
+the currently measured guard. See
+[depth-guard report](measurements-o06-depth-guard.json) and
+[reproducible sweep](../scripts/optical_depth_guard_study.py).
+
 O01 profiling implementation now includes bounded asynchronous timestamps for
 smoke compute, shadows, opaque geometry, atmosphere/fire, optical resolve and post;
 serial latency and buffered throughput reports; a native vsynced route report;
