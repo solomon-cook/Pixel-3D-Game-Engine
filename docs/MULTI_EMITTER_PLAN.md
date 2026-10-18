@@ -35,6 +35,11 @@ into a testable two-source runtime without changing the single-source baseline.
   stability. The scene contract still prevents this two-source packer from being
   reached by a live scene. A fixed-tick capture after the storage upload remains
   byte-identical; see [storage packing evidence](measurements-multi-emitter-storage-packing.json).
+- Each storage slot now also carries its source origin. The flame detail mask
+  uses that origin for slot one while retaining the legacy uniform origin for
+  slot zero. The capture remains pixel-identical, and the added origin metadata
+  costs 32 known bytes. Per-source palette and shape settings are still shared
+  through globals and remain unfinished.
 - One 48×64×48 Rg16Float density/temperature pair occupies 1,179,648 bytes.
   One point-light cubemap set occupies 1,572,864 bytes. The 8 authored point
   lights and 12 derived particle lights are global renderer budgets.

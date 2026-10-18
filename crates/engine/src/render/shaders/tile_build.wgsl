@@ -41,8 +41,8 @@ fn build_tile_lists(@builtin(global_invocation_id) id:vec3<u32>) {
     if tile_config.force_overflow.x==0u {
         for(var source=0u;source<2u;source++) {
             for(var i=0u;i<256u;i++) {
-                if i>=fire[source].counts.x {break;}
-                let primitive=fire[source].primitives[i];
+                if i>=fire.sources[source].counts.x {break;}
+                let primitive=fire.sources[source].primitives[i];
                 if overlaps_tile(primitive.center_radius.xyz,max(primitive.center_radius.w,primitive.axis_length.w),id.xy) {
                     if counts.x<FIRE_TILE_CAPACITY {fire_tile_indices_out[fire_base+counts.x]=source*256u+i;} else {flags.x|=1u;}
                     counts.x++;
@@ -70,8 +70,8 @@ fn build_tile_lists(@builtin(global_invocation_id) id:vec3<u32>) {
             }
         }
         for(var i=0u;i<12u;i++) {
-            if i>=fire[0].lighting.x {break;}
-            let light=fire[0].lights[i];
+            if i>=fire.sources[0].lighting.x {break;}
+            let light=fire.sources[0].lights[i];
             if light.color_power.w>0. && overlaps_tile(light.position_range.xyz,light.position_range.w,id.xy) {
                 if counts.w<PARTICLE_TILE_CAPACITY {particle_tile_indices_out[particle_base+counts.w]=i;} else {flags.x|=8u;}
                 counts.w++;

@@ -2973,6 +2973,7 @@ impl Renderer {
                 effects::render_frame_with_detail(&key, &self.fire_frame, rendered_segments);
             let upload_started = Instant::now();
             self.fire_storage.sources[0] = render_frame;
+            self.fire_storage.source_origins[0] = [origin.x, origin.y, origin.z, 0.];
             self.queue
                 .write_buffer(&self.fire_buffer, 0, bytemuck::bytes_of(&self.fire_storage));
             self.metrics.cpu_upload_ms += upload_started.elapsed().as_secs_f64() * 1000.;

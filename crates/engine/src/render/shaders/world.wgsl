@@ -92,7 +92,7 @@ fn shade_surface(v:Varying,tile:u32)->Output {
     }
     // Bounded moving emission sources; no per-particle shadow maps.
     let particle_overflow=(tile_header.flags.x&8u)!=0u;
-    let particle_count=select(tile_header.counts.w,fire[0].lighting.x,particle_overflow);
+    let particle_count=select(tile_header.counts.w,fire.sources[0].lighting.x,particle_overflow);
     for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;}
         let i=select(particle_tile_indices[tile*PARTICLE_TILE_CAPACITY+candidate],candidate,particle_overflow);
         let point=particle_light_point(i);let l=normalize(point.position_range.xyz-v.position+vec3(0.00001));

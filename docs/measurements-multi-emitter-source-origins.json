@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "purpose": "Verify per-slot source-origin metadata and source-one detail anchoring while preserving source-zero output.",
+  "host": {
+    "adapter": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "workload": {
+    "scene": "assets/scenes/profiling-heavy.json",
+    "camera": "hero",
+    "seed": 42,
+    "tick": 120,
+    "resolution": [
+      640,
+      360
+    ]
+  },
+  "storage": {
+    "source_slots": 2,
+    "origin_vec4_per_slot": true,
+    "additional_known_bytes": 32,
+    "resource_inventory_other_fixed_buffers_bytes": 27272
+  },
+  "comparison": {
+    "baseline_pixel_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48",
+    "candidate_pixel_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48",
+    "pixel_identical": true,
+    "capture": "artifacts/multi-emitter-storage-abi/source-origin-layout.png"
+  },
+  "scope": "Only source zero is populated by the live Renderer. CPU packing tests verify source-origin association and stable-ID ordering; no dual-source GPU image is claimed."
+}

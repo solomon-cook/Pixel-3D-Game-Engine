@@ -254,6 +254,7 @@ pub struct FireFrame {
 #[derive(Clone, Copy, Pod, Zeroable)]
 pub struct FireFrameStorage {
     pub sources: [FireFrame; MAX_EMITTERS],
+    pub source_origins: [[f32; 4]; MAX_EMITTERS],
 }
 
 impl FireFrameStorage {
@@ -267,8 +268,13 @@ impl FireFrameStorage {
             FireFrame::sample_emitters(sources)?
         };
         let mut storage = Self::zeroed();
-        for (slot, (_, frame)) in sampled.into_iter().enumerate() {
+        for (slot, (id, frame)) in sampled.into_iter().enumerate() {
             storage.sources[slot] = frame;
+            let (_, key) = sources
+                .iter()
+                .find(|(source_id, _)| source_id == &id)
+                .expect("sampled emitter has a matching key");
+            storage.source_origins[slot] = [key.source[0], key.source[1], key.source[2], 0.];
         }
         Ok(storage)
     }
@@ -942,7 +948,7 @@ mod tests {
         assert_eq!(std::mem::size_of::<FireFrame>(), 64 + 12 * 48 + 256 * 48);
         assert_eq!(
             std::mem::size_of::<FireFrameStorage>(),
-            MAX_EMITTERS * std::mem::size_of::<FireFrame>()
+            MAX_EMITTERS * (std::mem::size_of::<FireFrame>() + 16)
         );
     }
     #[test]
@@ -955,6 +961,8 @@ mod tests {
             bytemuck::bytes_of(&FireFrame::sample(&single_key))
         );
         assert_eq!(single.sources[1].counts, [0; 4]);
+        assert_eq!(single.source_origins[0], [0., 0.4, 0., 0.]);
+        assert_eq!(single.source_origins[1], [0.; 4]);
 
         let mut first = key();
         first.source = [-1.0, 0.0, 0.5];
@@ -969,6 +977,8 @@ mod tests {
         assert_eq!(bytemuck::bytes_of(&forward), bytemuck::bytes_of(&reverse));
         assert!(forward.sources[0].counts[0] > 0);
         assert!(forward.sources[1].counts[0] > 0);
+        assert_eq!(forward.source_origins[0], [-1., 0., 0.5, 0.]);
+        assert_eq!(forward.source_origins[1], [2., 0., -0.5, 0.]);
     }
     #[test]
     fn seeded_fire_replays_and_is_camera_independent() {

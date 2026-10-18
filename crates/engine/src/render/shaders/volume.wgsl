@@ -229,7 +229,7 @@ fn smoke_local_lights(p:vec3<f32>,normal:vec3<f32>,steps:u32,tile:u32)->vec3<f32
     // by estimated received energy. Hot fragments can light smoke from within.
     var best=12u;var runner=12u;var score=0.;var next_score=0.;
     let particle_overflow=(tile_header.flags.x&8u)!=0u;
-    let particle_count=select(tile_header.counts.w,fire[0].lighting.x,particle_overflow);
+    let particle_count=select(tile_header.counts.w,fire.sources[0].lighting.x,particle_overflow);
     for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;}
         let i=select(particle_tile_indices[tile*PARTICLE_TILE_CAPACITY+candidate],candidate,particle_overflow);
         let light=particle_light_point(i);

@@ -3,22 +3,22 @@
 struct FireSample {color:vec3<f32>,alpha:f32,depth:f32};
 fn sample_fire(origin:vec3<f32>,direction:vec3<f32>,limit:f32,tile:u32)->FireSample {
     var result=FireSample(vec3(0.),0.,limit);
-    if (fire[0].counts.x+fire[1].counts.x)==0u || g.simulation.w<=0. || g.fire_outer.w<=0. {return result;}
+    if (fire.sources[0].counts.x+fire.sources[1].counts.x)==0u || g.simulation.w<=0. || g.fire_outer.w<=0. {return result;}
     var optical=0.;var energy=vec3(0.);var peak_heat=0.;
     let inv=1./(direction+vec3(0.0000001));
     let header=tile_headers[tile];let overflow=(header.flags.x&1u)!=0u;
     for(var source_index=0u;source_index<2u;source_index++) {
-        if fire[source_index].counts.x==0u {continue;}
-        let a=(fire[source_index].bounds_min.xyz-origin)*inv;let b=(fire[source_index].bounds_max.xyz-origin)*inv;
+        if fire.sources[source_index].counts.x==0u {continue;}
+        let a=(fire.sources[source_index].bounds_min.xyz-origin)*inv;let b=(fire.sources[source_index].bounds_max.xyz-origin)*inv;
         let lo=min(a,b);let hi=max(a,b);
         if min(min(min(hi.x,hi.y),hi.z),limit)<=max(max(max(lo.x,lo.y),lo.z),0.) {continue;}
-        let candidate_count=select(header.counts.x,fire[source_index].counts.x,overflow);
+        let candidate_count=select(header.counts.x,fire.sources[source_index].counts.x,overflow);
         for(var candidate=0u;candidate<512u;candidate++) {
             if candidate>=candidate_count {break;}
             let flat_index=select(fire_tile_indices[tile*FIRE_TILE_CAPACITY+candidate],candidate,overflow);
             if !overflow && flat_index/256u!=source_index {continue;}
             let primitive_index=select(flat_index%256u,flat_index,overflow);
-            let p=fire[source_index].primitives[primitive_index];let center=p.center_radius.xyz;let radius=p.center_radius.w;
+            let p=fire.sources[source_index].primitives[primitive_index];let center=p.center_radius.xyz;let radius=p.center_radius.w;
         let axis=p.axis_length.xyz;let axial=p.axis_length.w;
         let ro=origin-center;let along=dot(center-origin,direction);let bound=max(radius,axial);
         if along+bound<0. || along-bound>limit || length(ro+direction*max(along,0.))>bound {continue;}
@@ -43,7 +43,8 @@ fn sample_fire(origin:vec3<f32>,direction:vec3<f32>,limit:f32,tile:u32)->FireSam
         color=mix(color,g.fire_hot.xyz,smoothstep(0.7,0.98,heat));
         var coverage=1.;
         if g.fire_warm.w>0. || g.fire_hot.w>0. {
-            let world=origin+direction*closest_t-g.fire_position.xyz;
+            let source_origin=select(g.fire_position.xyz,fire.source_origins[source_index].xyz,source_index>0u);
+            let world=origin+direction*closest_t-source_origin;
             let material=world/vec3(g.fire_shape.x,g.fire_shape.y,g.fire_shape.x)*vec3(18.,22.,18.)-vec3(0.,g.wind_time.w*g.fire_shape.z*2.5,0.);
             let detail=noise(material+vec3(g.params.z*0.01));
             let rim=g.fire_warm.w*(0.04+detail*0.55)*(1.-core);
