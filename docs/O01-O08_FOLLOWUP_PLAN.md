@@ -237,9 +237,14 @@ remain open. Fewer primitives alone are not a frame-win claim. See
    [two-second pause/resume](measurements-o05-pause-resume.json) plus
    [extended pause/resume](measurements-o05-pause-resume-extended.json).
 
-**Exit gate:** a workload range where total frame cost improves and motion quality
-passes. If cache maintenance remains more expensive than direct samples, leave it
-off and close the experiment with that result.
+**Exit gate — closed as a non-promoted experiment (18 October 2026):** the tested
+8³/16³ single-emitter workloads and the sustained two-emitter route show no
+whole-render benefit over direct sampling. Keep the cache selectable for research
+but disabled by default. Its fixed-tick, invalidation, replay and temporal image
+behavior are characterized on M1 Max/Metal; human continuous-playback review and
+other-adapter validation remain acceptance gates for any future promotion, not
+prerequisites for closing this negative performance decision. Reopen only with a
+new workload or backend measurement that demonstrates a total-cost opportunity.
 
 ### 5. O06 opaque lighting reuse
 
