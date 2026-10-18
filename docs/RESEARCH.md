@@ -566,6 +566,13 @@ from this continuous-invalidation result. See
 [measurements-o02-moving-route.json](measurements-o02-moving-route.json); raw
 frame samples are local under ignored `artifacts/o02/moving-route-120s/`.
 
+A separate 640×360 wide orthographic view keeps the moving log on screen through
+the six discrete caster poses. Cached images match forced redraw byte-for-byte at
+every pose; each move dirties three point/sun faces. The contact sheet was
+visually inspected. Reproduce with
+`python3 scripts/shadow_caster_visible_study.py`; measurements and source hashes
+are in [measurements-o02-visible-caster.json](measurements-o02-visible-caster.json).
+
 ## O05 absorption-cache scale study (18 October)
 
 Direct sampling, 8³ cache and 16³ cache were compared at small, medium and

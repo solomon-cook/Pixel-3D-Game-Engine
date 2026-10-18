@@ -1,0 +1,195 @@
+{
+  "workstream": "O02 visible moving-caster shadow-cache image parity",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal"
+  },
+  "git_revision": "7f959ecf2b5db37d0549c7db8f4b946f3dc608e2",
+  "scene": "assets/scenes/clearing.json",
+  "scene_sha256": "06899b7e22d670d8b42eef59a94c646cf4ce042b7697d66179a0e5105b3e21dc",
+  "renderer_source_sha256": "7670440d9ce597a036a5ee65b13175c8f00b7ff44bd78d190828fc39bb8ace8c",
+  "study_script_sha256": "b3737180e58a5c99864455ae9d3fad363b7d8b8fb1b17342ee9fe0caaafd98d8",
+  "object": "fallen-log",
+  "camera": {
+    "id": "shadow-caster-review",
+    "position": [
+      0.0,
+      9.0,
+      14.0
+    ],
+    "target": [
+      0.0,
+      0.4,
+      0.0
+    ],
+    "projection": {
+      "kind": "orthographic",
+      "height": 14.0
+    }
+  },
+  "seed": 42,
+  "resolution": [
+    640,
+    360
+  ],
+  "tick": 0,
+  "method": "Six paused caster poses are captured in a wide orthographic camera that includes the moving log. Each cached image is paired with forced redraw at the same pose, seed, tick and camera.",
+  "baseline": {
+    "image_sha256": "bc9b7104e50abe7cb69b9fccae0cdb34fb2d115481e8d8e75a9008e048f08cb6",
+    "shadow_maps_redrawn": 7,
+    "dirty_reason": "resource_initialization"
+  },
+  "poses": [
+    {
+      "pose": "east",
+      "position": [
+        5.0,
+        0.3,
+        0.0
+      ],
+      "tick": 0,
+      "cached_sha256": "a661f2e505e0b3cad71457d06ade8323eab6455c3978bd67b3fa023070292705",
+      "forced_sha256": "a661f2e505e0b3cad71457d06ade8323eab6455c3978bd67b3fa023070292705",
+      "images_match": true,
+      "cached_shadow_maps_redrawn": 3,
+      "cached_dirty_faces": [
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false
+      ],
+      "cached_dirty_reason": "casters_changed",
+      "forced_shadow_maps_redrawn": 7
+    },
+    {
+      "pose": "diagonal-east-north",
+      "position": [
+        5.0,
+        0.3,
+        5.0
+      ],
+      "tick": 0,
+      "cached_sha256": "1824b8f410710dfd9c0d09b5d9808be111e0878dd96476ba52b824369306ac22",
+      "forced_sha256": "1824b8f410710dfd9c0d09b5d9808be111e0878dd96476ba52b824369306ac22",
+      "images_match": true,
+      "cached_shadow_maps_redrawn": 3,
+      "cached_dirty_faces": [
+        true,
+        true,
+        false,
+        false,
+        false,
+        true,
+        false
+      ],
+      "cached_dirty_reason": "casters_changed",
+      "forced_shadow_maps_redrawn": 7
+    },
+    {
+      "pose": "north",
+      "position": [
+        0.0,
+        0.3,
+        5.0
+      ],
+      "tick": 0,
+      "cached_sha256": "2243b90f8077efc7ddc3251bddeb5be2f7a01b3c4abda9033f6c1475ee75a40a",
+      "forced_sha256": "2243b90f8077efc7ddc3251bddeb5be2f7a01b3c4abda9033f6c1475ee75a40a",
+      "images_match": true,
+      "cached_shadow_maps_redrawn": 3,
+      "cached_dirty_faces": [
+        true,
+        true,
+        false,
+        false,
+        false,
+        true,
+        false
+      ],
+      "cached_dirty_reason": "casters_changed",
+      "forced_shadow_maps_redrawn": 7
+    },
+    {
+      "pose": "west",
+      "position": [
+        -5.0,
+        0.3,
+        0.0
+      ],
+      "tick": 0,
+      "cached_sha256": "797365290fa33e769d43da4886158de58e3e25b32a1d7172d9b93226b6d8be69",
+      "forced_sha256": "797365290fa33e769d43da4886158de58e3e25b32a1d7172d9b93226b6d8be69",
+      "images_match": true,
+      "cached_shadow_maps_redrawn": 3,
+      "cached_dirty_faces": [
+        true,
+        false,
+        true,
+        false,
+        false,
+        true,
+        false
+      ],
+      "cached_dirty_reason": "casters_changed",
+      "forced_shadow_maps_redrawn": 7
+    },
+    {
+      "pose": "south",
+      "position": [
+        0.0,
+        0.3,
+        -5.0
+      ],
+      "tick": 0,
+      "cached_sha256": "ff58ed82a7a40c01fe536b0b7feeb54f1b26d61decfb1d5b4758eaa3a3ccd2b0",
+      "forced_sha256": "ff58ed82a7a40c01fe536b0b7feeb54f1b26d61decfb1d5b4758eaa3a3ccd2b0",
+      "images_match": true,
+      "cached_shadow_maps_redrawn": 3,
+      "cached_dirty_faces": [
+        true,
+        false,
+        true,
+        false,
+        false,
+        false,
+        true
+      ],
+      "cached_dirty_reason": "casters_changed",
+      "forced_shadow_maps_redrawn": 7
+    },
+    {
+      "pose": "return-east",
+      "position": [
+        5.0,
+        0.3,
+        0.0
+      ],
+      "tick": 0,
+      "cached_sha256": "a661f2e505e0b3cad71457d06ade8323eab6455c3978bd67b3fa023070292705",
+      "forced_sha256": "a661f2e505e0b3cad71457d06ade8323eab6455c3978bd67b3fa023070292705",
+      "images_match": true,
+      "cached_shadow_maps_redrawn": 3,
+      "cached_dirty_faces": [
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        true
+      ],
+      "cached_dirty_reason": "casters_changed",
+      "forced_shadow_maps_redrawn": 7
+    }
+  ],
+  "all_images_match": true,
+  "contact_sheet": "artifacts/o02/visible-caster/contact-sheet.png",
+  "limitations": [
+    "Discrete paused poses do not establish continuous visual quality or native-window behavior",
+    "Only M1 Max/Metal is covered; DX12 and other adapters remain open",
+    "The study moves one object, not a fire emitter or its light"
+  ]
+}

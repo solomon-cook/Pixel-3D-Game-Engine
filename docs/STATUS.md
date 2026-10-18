@@ -355,9 +355,12 @@ move redrew three maps: the sun face plus the union of old and new point-light
 faces. The unchanged follow-up was a cache hit with zero maps redrawn. Captures
 and per-pose masks, dirty reasons and CPU shadow-encoding samples are recorded in
 [measurements-o02-moving-caster.json](measurements-o02-moving-caster.json); rerun
-with `python3 scripts/shadow_caster_study.py`. This checks discrete paused edits,
-not the planned 120-second continuous-motion timing route. The mover is outside
-the selected camera view, and native-window and Windows/DX12 behavior remain
+with `python3 scripts/shadow_caster_study.py`. A separate wide orthographic study
+keeps the mover visible through six paused poses. Every cached image matches forced
+redraw byte-for-byte, with three maps redrawn per pose. See
+[measurements-o02-visible-caster.json](measurements-o02-visible-caster.json) and
+`python3 scripts/shadow_caster_visible_study.py`. The continuous-motion timing
+route is recorded separately. Native-window and Windows/DX12 behavior remain
 unverified. Synthetic unit checks now prove that mixed missing bounds and invalid
 shadow frusta dirty all seven maps; the diagnostic reason identifies conservative
 fallback. Validated scene assets do not currently produce a live unknown-bound case.

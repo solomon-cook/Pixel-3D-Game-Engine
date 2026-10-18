@@ -77,7 +77,10 @@ when casters actually move or change shadow participation?
 2. Compare cached rendering against forced redraw throughout the route. Capture
    boundary crossings and reset, shader reload, light transform, light range and
    paused-edit events. Report dirty faces/reasons, redraw maps, CPU/GPU shadow time
-   and residency.
+   and residency. **Complete for discrete image checkpoints:** six paused poses
+   keep the moving log visible in a wide orthographic view; each cached capture
+   matches forced redraw byte-for-byte and redraws the same three-map old/new face
+   union. See [measurements-o02-visible-caster.json](measurements-o02-visible-caster.json).
 3. **Complete in synthetic unit coverage:** missing bounds among otherwise known
    old/new caster bounds and invalid shadow frusta force all seven maps dirty.
    The live diagnostic reason now reports `unknown_caster_bounds` or
@@ -85,9 +88,11 @@ when casters actually move or change shadow participation?
    scene assets currently cannot produce unknown mesh bounds, so this fallback
    cannot be induced through the live scene protocol; keep that limit visible.
 
-**Exit gate:** captures match forced redraw at all checkpoints, every relevant edit
-invalidates the required maps, and stable segments show cache reuse. Report the
-continuous-invalidation cost even if caching is not beneficial during motion.
+**Exit gate:** discrete captures match forced redraw at all checkpoints, every
+relevant edit invalidates the required maps, and stable segments show cache reuse.
+These gates are now recorded on M1 Max/Metal, including the moving-image
+checkpoints. Continuous-invalidation cost is recorded separately. Native-window
+and non-Metal adapter acceptance remain open.
 
 ## Wave 2 — Decide the opt-in approximations using sustained motion
 
