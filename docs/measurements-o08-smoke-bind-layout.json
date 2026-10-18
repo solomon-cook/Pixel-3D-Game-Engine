@@ -37,6 +37,16 @@
       "baseline_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
       "candidate_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
       "pixel_identical": true
+    },
+    "heavy": {
+      "baseline_sha256": "02f40cee4c1b606cf27859ce9b4eb9a0208222f805bd2af4f61828eef9f17ed1",
+      "candidate_sha256": "02f40cee4c1b606cf27859ce9b4eb9a0208222f805bd2af4f61828eef9f17ed1",
+      "pixel_identical": true
+    },
+    "materials": {
+      "baseline_sha256": "34b2d81ed10f251c9c95c606151cab6eb1b55370ca74c3a5a99454105eca953f",
+      "candidate_sha256": "34b2d81ed10f251c9c95c606151cab6eb1b55370ca74c3a5a99454105eca953f",
+      "pixel_identical": true
     }
   },
   "candidate_run_summaries": [
@@ -201,7 +211,7 @@
       "paired_delta_p95_ms": 4.200000000000037e-05
     }
   },
-  "interpretation": "Simulation CPU-encode medians were lower in all three pairs by 0.0050/0.0150/0.0106 ms. Whole frame-work deltas were -0.031/-0.013/-0.119 ms; GPU-render deltas were +0.003/-0.008/+0.002 ms. Keep the shader/layout change as a verified bind-call reduction and CPU-encode improvement on this route, but do not claim a GPU-render or native-window gain.",
+  "interpretation": "The smoke pass now needs one source-local bind-group set per compute pass instead of a Globals bind plus smoke bind. All four fixed-tick scenes (clearing, dual-emitter, profiling-heavy and materials) match byte-for-byte. On the clearing route, simulation CPU-encode medians fell 0.005/0.015/0.011 ms across three pairs; the added profiling-heavy and materials routes do not repeat a consistent CPU-encode improvement. GPU-render signs are mixed on clearing/materials and consistently -0.006 to -0.009 ms on profiling-heavy. Keep as a reduced command count with workload-dependent measured timing, not a general performance claim.",
   "limitations": [
     "single M1 Max/Metal route for timing",
     "headless serial benchmark excludes native presentation, inspector and vsync",
@@ -220,5 +230,225 @@
     "successful_reload_invalidates_all_maps": true,
     "host": "Apple M1 Max/Metal",
     "native_window": false
+  },
+  "additional_workload_comparisons": {
+    "profiling_heavy": {
+      "configuration": {
+        "route": "clearing-orbit",
+        "scene": "assets/scenes/profiling-heavy.json",
+        "pairs": 3,
+        "warmup_seconds": 10,
+        "duration_seconds": 120,
+        "seed": 42,
+        "camera": "hero"
+      },
+      "metrics": {
+        "simulation_encode_cpu": {
+          "baseline_run_medians_ms": [
+            0.250917,
+            0.2445,
+            0.252291
+          ],
+          "candidate_run_medians_ms": [
+            0.27391699999999997,
+            0.223709,
+            0.254292
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.022999999999999965,
+            -0.020791000000000004,
+            0.0020010000000000305
+          ],
+          "paired_delta_median_ms": 0.0020010000000000305,
+          "paired_delta_p95_ms": 0.022999999999999965
+        },
+        "cpu_encode": {
+          "baseline_run_medians_ms": [
+            0.48400000000000004,
+            0.477416,
+            0.49287500000000006
+          ],
+          "candidate_run_medians_ms": [
+            0.5402919999999999,
+            0.45512499999999995,
+            0.49787500000000007
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.05629199999999984,
+            -0.02229100000000006,
+            0.0050000000000000044
+          ],
+          "paired_delta_median_ms": 0.0050000000000000044,
+          "paired_delta_p95_ms": 0.05629199999999984
+        },
+        "frame_work": {
+          "baseline_run_medians_ms": [
+            5.351208,
+            5.352084,
+            5.401042
+          ],
+          "candidate_run_medians_ms": [
+            5.40125,
+            5.242042,
+            5.3704160000000005
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.050042000000000364,
+            -0.11004199999999997,
+            -0.03062599999999982
+          ],
+          "paired_delta_median_ms": -0.03062599999999982,
+          "paired_delta_p95_ms": 0.050042000000000364
+        },
+        "gpu_render": {
+          "baseline_run_medians_ms": [
+            3.6029169999999997,
+            3.591875,
+            3.592834
+          ],
+          "candidate_run_medians_ms": [
+            3.596499,
+            3.5832509999999997,
+            3.585625
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.006417999999999591,
+            -0.008624000000000187,
+            -0.007209000000000021
+          ],
+          "paired_delta_median_ms": -0.007209000000000021,
+          "paired_delta_p95_ms": -0.006417999999999591
+        },
+        "gpu_stages.smoke_compute": {
+          "baseline_run_medians_ms": [
+            0.017708,
+            0.017708,
+            0.017791
+          ],
+          "candidate_run_medians_ms": [
+            0.017916,
+            0.017916,
+            0.017875
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.00020799999999999985,
+            0.00020799999999999985,
+            8.399999999999727e-05
+          ],
+          "paired_delta_median_ms": 0.00020799999999999985,
+          "paired_delta_p95_ms": 0.00020799999999999985
+        }
+      },
+      "raw_reports": "artifacts/o08-smoke-bind-study-profiling-heavy/"
+    },
+    "materials": {
+      "configuration": {
+        "route": "material-orbit",
+        "scene": "assets/scenes/materials.json",
+        "pairs": 3,
+        "warmup_seconds": 10,
+        "duration_seconds": 120,
+        "seed": 42,
+        "camera": "hero"
+      },
+      "metrics": {
+        "simulation_encode_cpu": {
+          "baseline_run_medians_ms": [
+            0.128251,
+            0.129082,
+            0.1205
+          ],
+          "candidate_run_medians_ms": [
+            0.125458,
+            0.12812500000000002,
+            0.128166
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.0027930000000000177,
+            -0.0009569999999999856,
+            0.007666000000000006
+          ],
+          "paired_delta_median_ms": -0.0009569999999999856,
+          "paired_delta_p95_ms": 0.007666000000000006
+        },
+        "cpu_encode": {
+          "baseline_run_medians_ms": [
+            0.29254099999999994,
+            0.29074900000000004,
+            0.27658399999999994
+          ],
+          "candidate_run_medians_ms": [
+            0.28770899999999994,
+            0.29429099999999997,
+            0.28800099999999995
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.004832000000000003,
+            0.003541999999999934,
+            0.01141700000000001
+          ],
+          "paired_delta_median_ms": 0.003541999999999934,
+          "paired_delta_p95_ms": 0.01141700000000001
+        },
+        "frame_work": {
+          "baseline_run_medians_ms": [
+            3.86525,
+            3.759458,
+            3.623542
+          ],
+          "candidate_run_medians_ms": [
+            3.70075,
+            3.773291,
+            3.71725
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.16449999999999987,
+            0.013832999999999984,
+            0.0937079999999999
+          ],
+          "paired_delta_median_ms": 0.013832999999999984,
+          "paired_delta_p95_ms": 0.0937079999999999
+        },
+        "gpu_render": {
+          "baseline_run_medians_ms": [
+            2.8842079999999997,
+            2.888,
+            2.868334
+          ],
+          "candidate_run_medians_ms": [
+            2.874084,
+            2.8927919999999996,
+            2.888291
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.0101239999999998,
+            0.004791999999999685,
+            0.019957000000000225
+          ],
+          "paired_delta_median_ms": 0.004791999999999685,
+          "paired_delta_p95_ms": 0.019957000000000225
+        },
+        "gpu_stages.smoke_compute": {
+          "baseline_run_medians_ms": [
+            0.017792,
+            0.017458,
+            0.017583
+          ],
+          "candidate_run_medians_ms": [
+            0.017542,
+            0.01775,
+            0.01775
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.0002500000000000002,
+            0.0002919999999999971,
+            0.000166999999999997
+          ],
+          "paired_delta_median_ms": 0.000166999999999997,
+          "paired_delta_p95_ms": 0.0002919999999999971
+        }
+      },
+      "raw_reports": "artifacts/o08-smoke-bind-study-materials/"
+    }
   }
 }

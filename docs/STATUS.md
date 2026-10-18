@@ -376,15 +376,17 @@ benchmarks and native benchmark samples.
 O08 also retargets smoke compute resources from group 1 to group 0 and removes
 the unused render Globals group from the advection pipeline layout. This reduces
 one bind-group set per smoke compute pass; M1 Max/Metal clearing and dual-emitter
-tick-120 captures are byte-identical to the prior layout. Across three
-alternating 120-second clearing-orbit pairs, median simulation CPU encoding is
-lower by 0.005–0.015 ms; whole-frame deltas are -0.031/-0.013/-0.119 ms and
-GPU-render deltas +0.003/-0.008/+0.002 ms. This is a CPU-encode result on one
-route, not a GPU-render or native-window claim. Windows/DX12 and other adapters
-remain unverified. The candidate also passes headless transactional reload rollback
-for all 13 reloadable shader modules, preserving the fixed-tick image on every
-failure and on the restored successful reload. See [layout report](measurements-o08-smoke-bind-layout.json)
-and ignored [rollback report](../artifacts/o08-smoke-bind-shader-rollback.json).
+tick-120 captures are byte-identical to the prior layout across clearing,
+two-emitter, profiling-heavy and Material Atelier scenes. Three alternating
+120-second clearing-orbit pairs lower median simulation CPU encoding by
+0.005–0.015 ms, but additional three-pair profiling-heavy and Material Atelier
+routes show mixed CPU-encode and frame-work results. Treat the change as fewer
+encoded bind commands; no general throughput win is established. The candidate
+also passes headless transactional reload rollback for all 13 reloadable shader
+modules, preserving the fixed-tick image on every failure and on the restored
+successful reload. Native-window and Windows/DX12/other-adapter validation remain
+open. See [layout report](measurements-o08-smoke-bind-layout.json) and ignored
+[rollback report](../artifacts/o08-smoke-bind-shader-rollback.json).
 
 The experimental `Rg11b10Ufloat` HDR target reduces the primary color target and
 optical snapshot from 8 to 4 bytes per pixel when the adapter exposes the required
