@@ -129,14 +129,25 @@ def main() -> None:
         "binary_sha256": file_hash(args.binary),
         "runner_sha256": file_hash(Path(__file__).resolve()),
         "captures": captures,
+        "expected_capture_count": len(STYLES) * len(PROFILES) * len(CAMERAS),
+        "matrix_complete": len(captures) == len(STYLES) * len(PROFILES) * len(CAMERAS),
         "all_pixel_identical": all(row["pixel_identical"] for row in captures),
+        "all_volume_path_partitions_valid": all(row["volume_path_partition_valid"] for row in captures),
         "scope": "Fixed-tick diagnostic counts, not timing. Counts per output pixel normalize workload coverage and are not per-operation costs. Normal rendering produces the image; instrumented world, volume and optical draws then write to lazily allocated scratch targets while reading the normal depth and scene inputs. No continuous-motion claim.",
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, indent=2) + "\n")
+    passed = (
+        report["matrix_complete"]
+        and report["all_pixel_identical"]
+        and report["all_volume_path_partitions_valid"]
+    )
     print(json.dumps({"report": str(args.report), "captures": len(captures),
-                      "path_partition_valid": all(row["volume_path_partition_valid"] for row in captures),
-                      "all_pixel_identical": report["all_pixel_identical"]}))
+                      "path_partition_valid": report["all_volume_path_partitions_valid"],
+                      "all_pixel_identical": report["all_pixel_identical"],
+                      "matrix_complete": report["matrix_complete"]}))
+    if not passed:
+        raise SystemExit("counter profile study failed: inspect the report for incomplete captures, image changes, or invalid path counts")
 
 
 if __name__ == "__main__":

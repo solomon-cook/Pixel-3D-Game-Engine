@@ -23,8 +23,8 @@
     "fire-study",
     "orthographic"
   ],
-  "binary_sha256": "2a2e74c5d2d0f6dbabbfa6e38ffd68bdba4949f0c90138074f1e530a49e85e08",
-  "runner_sha256": "602096e10802f3225ff5adc645856b468bb2a6205743d5e22cd20fbfacdb9aa0",
+  "binary_sha256": "c14e4e31f79ff852938ad746b410706c3495b2d6bdcd3d0c5dba79bdf8d6af06",
+  "runner_sha256": "74892f284365eb8ec8a1e92f28dd67a832356c1082b55b14e793c5020b88bbc1",
   "captures": [
     {
       "style": "ink",
@@ -2259,6 +2259,9 @@
       "diagnostic_scratch_bytes": 4608000
     }
   ],
+  "expected_capture_count": 24,
+  "matrix_complete": true,
   "all_pixel_identical": true,
+  "all_volume_path_partitions_valid": true,
   "scope": "Fixed-tick diagnostic counts, not timing. Counts per output pixel normalize workload coverage and are not per-operation costs. Normal rendering produces the image; instrumented world, volume and optical draws then write to lazily allocated scratch targets while reading the normal depth and scene inputs. No continuous-motion claim."
 }

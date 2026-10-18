@@ -133,10 +133,10 @@ between soft-volume and inked-smoke styles. Fixed-tick coverage across three fir
 profiles, four views and both styles preserves all 24 images exactly. At 640×360,
 the bonfire/fire-study soft-volume case counts 181,010,226 density samples versus
 451,096 in inked smoke. These instrumented counts identify a workload difference
-but do not measure time; a matched uninstrumented sustained soft-volume route is
-required before attributing GPU cost. See
-[path counter evidence](measurements-o01-counter-paths.json) and its
-[runner](../scripts/shading_counter_profile_study.py).
+but do not measure time. A matched uninstrumented sustained soft-volume route is
+now recorded; its paired deltas change sign and do not establish a GPU-cost
+benefit or justify a shader change. See [path counter evidence](measurements-o01-counter-paths.json)
+and its [runner](../scripts/shading_counter_profile_study.py).
 
 The soft-volume style now has three alternating uninstrumented 120-second
 `clearing-orbit` pairs at 640×360 on M1 Max/Metal. Paired atmosphere/fire deltas

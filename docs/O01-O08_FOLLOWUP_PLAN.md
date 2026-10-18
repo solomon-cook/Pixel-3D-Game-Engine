@@ -613,7 +613,8 @@ its [capture runner](../scripts/shading_counter_profile_study.py), plus the
 also reports total volume fragments and partitions them into the soft-volume and
 inked-smoke paths. The expanded runner captures both scene styles, all three fire
 profiles and all four cameras. All 24 normal/diagnostic pairs are byte-identical;
-the path partition equals 230,400 fragments in every 640×360 capture. At the
+the path partition equals 230,400 fragments in every 640×360 capture. The runner
+now fails on an incomplete matrix, changed image or invalid path partition. At the
 bonfire/fire-study checkpoint, inked smoke records 451,096 density samples and
 372,216 direct-absorption samples, while the soft-volume style records 181,010,226
 and 115,967,532 respectively. These counts expose workload scale, not elapsed
