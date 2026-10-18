@@ -172,6 +172,13 @@ format support and shader/pipeline creation failure.
 
 ### 7. O08 individual candidate decisions
 
+**Complete on M1 Max/Metal:** independent dispositions for lazy optical allocation,
+normal/depth reuse, Rg16Float targets, compact HDR and no-copy overlay are recorded
+in [DECISIONS_O08.md](DECISIONS_O08.md). The memory-saving implemented paths are
+retained with capability gates; compact HDR and no-copy remain independent,
+disabled-by-default experiments. Platform, continuous-temporal and broader-pass
+acceptance stays open as summarized in that record.
+
 Break the umbrella O08 item into decisions for lazy optical allocation, RG16 targets,
 compact HDR, normal/depth reuse and no-copy overlay. For each, record supported
 adapters, fallback behavior, memory delta, temporal and route image evidence, GPU
