@@ -203,8 +203,11 @@ byte-for-byte at every sampled tick from 120 through 477. Known allocation rises
 by 2,101,248 bytes at 640×360.
 This exercises fallback rendering but does not replace physical validation on an
 adapter without these capabilities or Windows/DX12 checks. See
-[fallback evidence](measurements-o08-rg16-fallback.json) and
-[reproducible runner](../scripts/rg16_fallback_study.py).
+[offscreen evidence](measurements-o08-rg16-fallback.json) and
+[offscreen runner](../scripts/rg16_fallback_study.py). A native-window fallback
+session also reached tick 120 and its capture matched the headless fallback
+capture byte-for-byte; see [native evidence](measurements-o08-rg16-native-fallback.json)
+and [native runner](../scripts/verify_native_rg16_fallback.py).
 The live allocation estimate also includes the tile debug uniform (16 bytes)
 and timestamp resolve/readback buffers (864 bytes when timing is enabled); the
 opaque query-set storage remains excluded. Tile-stat buffers/readbacks were

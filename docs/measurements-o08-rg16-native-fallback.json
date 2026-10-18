@@ -1,0 +1,17 @@
+{
+  "native_window_verified": true,
+  "adapter": "Apple M1 Max",
+  "backend": "Metal",
+  "seed": 42,
+  "tick": 120,
+  "resolution": [
+    640,
+    360
+  ],
+  "effect_depth_format": "Rgba16Float",
+  "smoke_volume_format": "Rgba16Float",
+  "known_gpu_allocation_bytes": 25052464,
+  "native_headless_png_identical": true,
+  "native_image": "artifacts/o08/rg16-fallback/native-window/native.png",
+  "headless_image": "artifacts/o08/rg16-fallback/native-window/headless.png"
+}
