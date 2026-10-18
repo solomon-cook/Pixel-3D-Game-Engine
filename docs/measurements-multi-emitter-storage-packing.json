@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "purpose": "Verify renderer ownership and upload of the two-slot FireFrameStorage while preserving the legacy single-emitter output.",
+  "host": {
+    "adapter": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "workload": {
+    "scene": "assets/scenes/profiling-heavy.json",
+    "camera": "hero",
+    "seed": 42,
+    "tick": 120,
+    "resolution": [
+      640,
+      360
+    ]
+  },
+  "storage": {
+    "source_slots": 2,
+    "live_scene_sources": 1,
+    "uploaded_source_slots": 1,
+    "other_slot": "zero initialized"
+  },
+  "comparison": {
+    "baseline": "committed two-slot ABI before renderer adopted FireFrameStorage",
+    "candidate": "renderer uploads whole FireFrameStorage with source zero populated",
+    "pixel_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48",
+    "pixel_identical": true
+  },
+  "scope": "The scene validator still allows exactly one emitter. Two-source CPU packing is covered by workspace unit tests; dual-source GPU upload and rendering are not exercised.",
+  "capture": "artifacts/multi-emitter-storage-abi/renderer-storage-packing.png"
+}

@@ -29,6 +29,12 @@ into a testable two-source runtime without changing the single-source baseline.
   on M1 Max/Metal. The renderer still uploads only source zero, and source-specific
   palette/detail settings, smoke, global particle lights and shadow sets are not
   implemented. See [fire consumer evidence](measurements-multi-emitter-fire-consumer.json).
+- The renderer now owns the two-slot storage value and uploads it as a unit. The
+  CPU packer preserves legacy sampling for one source and sorts multi-source
+  frames by stable ID; tests cover one-source byte parity and two-source reorder
+  stability. The scene contract still prevents this two-source packer from being
+  reached by a live scene. A fixed-tick capture after the storage upload remains
+  byte-identical; see [storage packing evidence](measurements-multi-emitter-storage-packing.json).
 - One 48×64×48 Rg16Float density/temperature pair occupies 1,179,648 bytes.
   One point-light cubemap set occupies 1,572,864 bytes. The 8 authored point
   lights and 12 derived particle lights are global renderer budgets.

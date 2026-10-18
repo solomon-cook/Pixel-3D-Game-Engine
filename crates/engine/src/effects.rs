@@ -255,6 +255,24 @@ pub struct FireFrame {
 pub struct FireFrameStorage {
     pub sources: [FireFrame; MAX_EMITTERS],
 }
+
+impl FireFrameStorage {
+    /// Pack sampled frames in stable emitter-ID order. Preserve the established
+    /// v1 sampler for a single source; multi-source sampling derives stable
+    /// source-specific seeds through `FireFrame::sample_emitters`.
+    pub fn sample_emitters(sources: &[(String, FireKey)]) -> Result<Self> {
+        let sampled = if sources.len() == 1 {
+            vec![(sources[0].0.clone(), FireFrame::sample(&sources[0].1))]
+        } else {
+            FireFrame::sample_emitters(sources)?
+        };
+        let mut storage = Self::zeroed();
+        for (slot, (_, frame)) in sampled.into_iter().enumerate() {
+            storage.sources[slot] = frame;
+        }
+        Ok(storage)
+    }
+}
 #[derive(Clone, PartialEq)]
 pub struct FireKey {
     pub tick: u64,
@@ -926,6 +944,31 @@ mod tests {
             std::mem::size_of::<FireFrameStorage>(),
             MAX_EMITTERS * std::mem::size_of::<FireFrame>()
         );
+    }
+    #[test]
+    fn fire_frame_storage_packs_sources_stably_and_preserves_v1_sampling() {
+        let single_key = key();
+        let single =
+            FireFrameStorage::sample_emitters(&[("only".into(), single_key.clone())]).unwrap();
+        assert_eq!(
+            bytemuck::bytes_of(&single.sources[0]),
+            bytemuck::bytes_of(&FireFrame::sample(&single_key))
+        );
+        assert_eq!(single.sources[1].counts, [0; 4]);
+
+        let mut first = key();
+        first.source = [-1.0, 0.0, 0.5];
+        let mut second = key();
+        second.source = [2.0, 0.0, -0.5];
+        second.profile.fire.width *= 0.6;
+        let sources = vec![("fire-b".into(), second), ("fire-a".into(), first)];
+        let forward = FireFrameStorage::sample_emitters(&sources).unwrap();
+        let reverse =
+            FireFrameStorage::sample_emitters(&sources.iter().cloned().rev().collect::<Vec<_>>())
+                .unwrap();
+        assert_eq!(bytemuck::bytes_of(&forward), bytemuck::bytes_of(&reverse));
+        assert!(forward.sources[0].counts[0] > 0);
+        assert!(forward.sources[1].counts[0] > 0);
     }
     #[test]
     fn seeded_fire_replays_and_is_camera_independent() {

@@ -458,10 +458,14 @@ The first renderer ABI step is complete: storage now has two fixed-layout
 byte-identical to the prior ABI. The second slot is not yet populated or consumed;
 tile construction and fire shading now consume both slots, and the source-zero
 capture remains byte-identical. The renderer still uploads only slot zero;
-source-specific presentation, smoke simulation, global particle lights, shadows
-and scene acceptance remain unimplemented. See the
+the CPU packing helper can now prepare both source frames in stable-ID order,
+with tests for reorder invariance and the single-source sampler. The live renderer
+does not yet populate slot one because source-specific presentation, smoke
+simulation, global particle lights, shadows and scene acceptance remain
+unimplemented. See the
 [storage ABI](measurements-multi-emitter-storage-abi.json) and
-[fire consumer](measurements-multi-emitter-fire-consumer.json) comparisons.
+[fire consumer](measurements-multi-emitter-fire-consumer.json) and
+[storage packing](measurements-multi-emitter-storage-packing.json) comparisons.
 
 **Exit gate:** all source ownership, deterministic replay, overflow, reset/edit and
 resource-recreation checks pass on Metal; then run the same evidence on DX12 and

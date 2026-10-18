@@ -203,6 +203,7 @@ pub struct Renderer {
     resolution: [u32; 2],
     uniform: wgpu::Buffer,
     fire_buffer: wgpu::Buffer,
+    fire_storage: FireFrameStorage,
     fire_key: Option<FireKey>,
     fire_frame: FireFrame,
     fire_lod_tier: u8,
@@ -1891,6 +1892,7 @@ impl Renderer {
             },
             uniform,
             fire_buffer,
+            fire_storage: FireFrameStorage::zeroed(),
             fire_key: None,
             fire_frame: FireFrame::zeroed(),
             fire_lod_tier: 0,
@@ -2970,8 +2972,9 @@ impl Renderer {
             let render_frame =
                 effects::render_frame_with_detail(&key, &self.fire_frame, rendered_segments);
             let upload_started = Instant::now();
+            self.fire_storage.sources[0] = render_frame;
             self.queue
-                .write_buffer(&self.fire_buffer, 0, bytemuck::bytes_of(&render_frame));
+                .write_buffer(&self.fire_buffer, 0, bytemuck::bytes_of(&self.fire_storage));
             self.metrics.cpu_upload_ms += upload_started.elapsed().as_secs_f64() * 1000.;
             self.fire_render_segments = rendered_segments;
             self.metrics.fire_primitives = render_frame.counts[0];
