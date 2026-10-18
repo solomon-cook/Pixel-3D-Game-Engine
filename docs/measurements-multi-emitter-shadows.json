@@ -1,0 +1,77 @@
+{
+  "date": "2026-10-18",
+  "scope": "Fixed-tick two-emitter rendering, source isolation, emitter-order invariance, and dynamic primary-light shadow allocation",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal",
+    "device_type": "IntegratedGpu",
+    "native_window_verified": false,
+    "windows_dx12_verified": false,
+    "other_adapter_verified": false
+  },
+  "scene": {
+    "path": "assets/scenes/two-emitter-review.json",
+    "sha256": "9ca7aee40dac7a9cde4010f6f90c2623e441c8e0c9a1f19ff2a9c570c1082892",
+    "source_ids": [
+      "campfire",
+      "watchfire"
+    ],
+    "seed": 42,
+    "tick": 120,
+    "resolution": [
+      640,
+      360
+    ],
+    "cameras": [
+      "hero",
+      "smoke-close",
+      "orthographic",
+      "dual-wide"
+    ]
+  },
+  "capture_runner": "scripts/two_emitter_capture_matrix.py",
+  "capture_report": "artifacts/multi-emitter-review/report.json",
+  "capture_matrix": {
+    "source_isolated_and_combined_capture_count": 12,
+    "reversed_emitter_order_capture_count": 4,
+    "emitter_order_invariant": true,
+    "combined_rgba_sha256_by_camera": {
+      "hero": "259e944886f82ccf0e7cf74714df2e74770eb297cd3c10e8dabeadbfa46e6105",
+      "smoke-close": "2bc9dd5636a745da7d6c0148736ef5888f5afe756cf5e12432cf048244129fe0",
+      "orthographic": "f7d7d4af80f548fd05bbd4a6adddfc59c24cd0fad3b397cf0e4759815b4ff015",
+      "dual-wide": "a4e01d217a2606f254c874dfa4510927785dc015091f138520b1bb4e74fa5952"
+    },
+    "source_isolated_dual_wide_rgba_sha256": {
+      "campfire": "0b2e6ae5ce588b446a15ee95b213164eb3b8c82e2dbca3e7ce3efea44dceafd6",
+      "watchfire": "1a5ea8c906aeec87d9e6123468ca5937e6c17070585ddbfcf24aac027d3baf57"
+    },
+    "visual_review": "Perspective, close-smoke and orthographic combined captures plus source-isolated dual-wide captures inspected. Fixed images do not establish motion quality."
+  },
+  "shadow_resources": {
+    "map_count": 13,
+    "layout": "one sun map plus six cube-array faces for each of two primary fire lights",
+    "shadow_map_bytes": 7340032,
+    "all_maps_redrawn_on_initialization": true,
+    "shadow_stage_gpu_ms_single_observed_frame": 3.332,
+    "invalidation_stress_reviewed": false
+  },
+  "resource_inventory": {
+    "known_total_gpu_bytes": 25889280,
+    "single_source_delta_measured": false,
+    "inventory_limit": "Known resource inventory excludes driver alignment and opaque timestamp/query storage; one initialization capture is not a sustained performance measurement."
+  },
+  "validation": {
+    "gpu_verifier": "python3 scripts/verify.py --gpu",
+    "last_recorded_result": "passed after implementation and documentation/evidence edits",
+    "backend": "Metal",
+    "unit_tests_at_last_recorded_run": 39,
+    "windows_dx12_rendering_verified": false,
+    "dual_source_scene": "target/debug/engine-lab validate assets/scenes/two-emitter-review.json: valid, 276 objects, 143454 vertices"
+  },
+  "acceptance_gaps": [
+    "No sustained two-source performance or maximum-budget tile-overflow stress study is recorded.",
+    "Cache-enabled dual-source absorption and focused source-one heat/shadow A/B reviews remain open.",
+    "Moving-caster invalidation, reset/replay, paused edits, shader reload rollback, camera motion and resource recreation need dual-source stress coverage.",
+    "Windows/DX12 and another physical adapter remain unverified."
+  ]
+}

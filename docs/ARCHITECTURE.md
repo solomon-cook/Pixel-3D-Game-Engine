@@ -15,17 +15,19 @@ object outside the camera can still cast a visible shadow. Consecutive compatibl
 instances batch in scene order. The Session exposes independent culling and
 instancing switches for exhaustive reference comparisons.
 Each fixed step submits smoke advection into ping-pong density/temperature volumes
-per accepted emitter. Compute resources and uniforms are source-local and ordered
-by stable emitter ID; the current scene validator still accepts one emitter.
+for up to two accepted emitters. Compute resources and uniforms are source-local
+and ordered by stable emitter ID.
 The soft atmosphere and optical integrals can sample a second source-local smoke
-volume, while flame coverage can consume both fixed FireFrame slots. The post
-heat/refraction pass also has a source-local secondary temperature path. Inked
+volume, while flame coverage can consume both fixed FireFrame slots. Each source
+primary light owns six cube-array shadow faces with its own dirty-face set. The
+post heat/refraction pass also has a source-local secondary temperature path. Inked
 smoke now has a source-local puff domain and separate bounded tile candidates;
 the secondary puff shading samples its own smoke volume and settings. The
-absorption cache now stores a second source-local transmittance channel, but
-shadow maps still use the primary source. Scene validation remains
-single-emitter, so the two-source shader paths have not received a live
-two-emitter visual/performance review.
+absorption cache now stores a second source-local transmittance channel, and
+opaque heat response samples both source-local temperature fields. Scene
+validation now accepts two emitters, and fixed-tick source-isolated and combined
+captures exercise the shading and shadow paths on M1 Max/Metal. Sustained
+performance, stress and cross-adapter acceptance remain open.
 Each render reuses valid directional/point shadow maps or redraws them after a
 relevant scene revision, builds bounded screen-tile candidate lists with an
 exhaustive overflow fallback, then submits HDR opaque geometry, volumetric
@@ -71,22 +73,23 @@ emitters refer to profiles and their colocated primary point lights by stable ID
 curves/fragments/embers from seed and fixed tick. A cached storage buffer is
 shared by the inked and soft volume render paths, with analytic intersections
 and bounds/depth rejection. Fire geometry is not rebuilt by a ray-march search
-inside every pixel. This remains a one-emitter prototype, with explicit budgets
+inside every pixel. This remains a bounded two-emitter implementation, with explicit budgets
 and counters rather than a claim of arbitrary source scalability.
 The bounded two-emitter proposal and its runtime/memory acceptance gates are in
 [MULTI_EMITTER_PLAN.md](MULTI_EMITTER_PLAN.md). Per-emitter smoke simulation
 resources, configuration and dispatch plus soft-atmosphere/optical sampling are
-implemented. Inked smoke and the absorption cache have source-local paths, while
-shadow maps remain single-source. Scene validation still accepts one emitter,
-so multi-emitter visual and performance acceptance remains open.
+implemented. Inked smoke, the absorption cache, opaque heat response and
+primary-light shadow maps have source-local paths. A fixed-tick two-emitter scene
+is available for authoring and review; cache-enabled dual-source behavior,
+sustained performance and portability remain open.
 
 Smoke density and heat advect together but dissipate/cool independently. Source
 heat and light flicker follow the same slow fire envelope. Profile switching
 preserves the smoke field until reset. Colour bands, dither, exposure and bounded
 HDR glow are presentation operations after world lighting. Up to eight local
 point lights illuminate geometry; smoke evaluates radial falloff and volume
-absorption from its two nearest active lights. Only the primary fire point
-light has a geometry shadow map. See EFFECTS.md for
+absorption from its two nearest active lights. Each accepted emitter's primary
+fire point light has a source-local geometry shadow set. See EFFECTS.md for
 the public authoring contract and current approximations.
 
 ## Interface contract

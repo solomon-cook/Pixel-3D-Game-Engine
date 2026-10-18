@@ -1,5 +1,5 @@
 @group(1) @binding(0) var sun_shadow: texture_depth_2d;
-@group(1) @binding(1) var point_shadow: texture_depth_cube;
+@group(1) @binding(1) var point_shadow: texture_depth_cube_array;
 @group(1) @binding(2) var shadow_sampler: sampler_comparison;
 @group(1) @binding(3) var atlas: texture_2d_array<f32>;
 @group(1) @binding(4) var atlas_sampler: sampler;
@@ -12,11 +12,12 @@ fn sun_visibility(p:vec3<f32>, n:vec3<f32>) -> f32 {
     if any(uv<vec2(0.)) || any(uv>vec2(1.)) {return 1.;}
     return textureSampleCompareLevel(sun_shadow,shadow_sampler,uv,q.z/q.w-0.0015);
 }
-fn fire_visibility(p:vec3<f32>) -> f32 {
-    let d=p-g.fire_position.xyz; let major=max(max(abs(d.x),abs(d.y)),abs(d.z));
-    let far=g.point_lights[0].position_range.w;
+fn fire_visibility(p:vec3<f32>,source_slot:u32) -> f32 {
+    let light_index=select(g.light_info.y,g.light_info.z,source_slot>0u);
+    let d=p-g.point_lights[light_index].position_range.xyz; let major=max(max(abs(d.x),abs(d.y)),abs(d.z));
+    let far=g.point_lights[light_index].position_range.w;
     let depth=far/(far-0.05)-(far*0.05)/((far-0.05)*max(major,0.051));
-    return textureSampleCompareLevel(point_shadow,shadow_sampler,d,depth-0.004);
+    return textureSampleCompareLevel(point_shadow,shadow_sampler,d,i32(source_slot),depth-0.004);
 }
 struct VertexIn { @location(0) position:vec3<f32>, @location(1) normal:vec3<f32>, @location(2) color:vec3<f32>, @location(3) uv:vec2<f32>, @location(4) texture:f32, @location(5) emission:f32, @location(6) roughness:f32, @location(7) material:u32,
     @location(8) model_0:vec4<f32>, @location(9) model_1:vec4<f32>, @location(10) model_2:vec4<f32>, @location(11) model_3:vec4<f32>,
@@ -80,14 +81,18 @@ fn shade_surface(v:Varying,tile:u32)->Output {
     for(var candidate=0u;candidate<8u;candidate++) {if candidate>=point_count {break;}
         let i=select(point_tile_indices[tile*POINT_TILE_CAPACITY+candidate],candidate,point_overflow);
         let point=g.point_lights[i];let l=normalize(point.position_range.xyz-v.position+vec3(0.00001));
-        var visibility=1.;if i==0u {visibility=fire_visibility(v.position+n*0.025);}
+        var visibility=1.;
+        if i==g.light_info.y {visibility=fire_visibility(v.position+n*0.025,0u);}
+        if i==g.light_info.z {visibility=fire_visibility(v.position+n*0.025,1u);}
         let power=point.color_power.w*point_falloff(v.position,point);
         let energy=power*visibility;
         local_light+=point.color_power.xyz*energy*max(dot(n,l),0.);
         if advanced {specular+=point.color_power.rgb*energy*microfacet(n,view,l,f0,rough);}
         else {specular+=point.color_power.xyz*pow(max(dot(n,normalize(l+view)),0.),mix(48.,6.,rough))*(1.-rough)*energy;}
         if m.optical.z>0. {
-            var scatter_vis=1.;if i==0u {scatter_vis=fire_visibility(v.position+l*m.optical.y);}
+            var scatter_vis=1.;
+            if i==g.light_info.y {scatter_vis=fire_visibility(v.position+l*m.optical.y,0u);}
+            if i==g.light_info.z {scatter_vis=fire_visibility(v.position+l*m.optical.y,1u);}
             scatter+=point.color_power.rgb*power*scattered(m,n,l)*scatter_vis;
         }
     }

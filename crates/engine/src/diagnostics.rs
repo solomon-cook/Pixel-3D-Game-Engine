@@ -19,9 +19,10 @@ pub struct FrameMetrics {
     pub camera_vertices_submitted: u64,
     pub optical_draw_batches: u32,
     pub optical_surface_reuse_enabled: bool,
-    pub shadow_objects_visible: [u32; 7],
-    pub shadow_draw_batches: [u32; 7],
-    pub shadow_vertices_submitted: [u64; 7],
+    pub shadow_objects_visible: Vec<u32>,
+    pub shadow_draw_batches: Vec<u32>,
+    pub shadow_vertices_submitted: Vec<u64>,
+    pub shadow_source_ids: Vec<String>,
     pub tile_count: u32,
     pub tile_list_bytes: u64,
     pub tile_lists_enabled: bool,
@@ -61,8 +62,8 @@ pub struct FrameMetrics {
     pub shadow_redrawn: bool,
     pub shadow_cache_resident: bool,
     pub shadow_maps_redrawn: u32,
-    /// Redrawn maps by index: sun, +X, -X, +Y, -Y, +Z, -Z.
-    pub shadow_dirty_faces: [bool; 7],
+    /// Redrawn maps: sun, then six cube faces for each sorted source ID.
+    pub shadow_dirty_faces: Vec<bool>,
     pub shadow_dirty_reason: Option<String>,
     pub effect_update_cpu_ms: f64,
     pub projected_detail_cpu_ms: f64,
@@ -121,9 +122,11 @@ impl FrameMetrics {
         self.camera_vertices_submitted = 0;
         self.optical_draw_batches = 0;
         self.optical_surface_reuse_enabled = false;
-        self.shadow_objects_visible = [0; 7];
-        self.shadow_draw_batches = [0; 7];
-        self.shadow_vertices_submitted = [0; 7];
+        self.shadow_objects_visible.clear();
+        self.shadow_draw_batches.clear();
+        self.shadow_vertices_submitted.clear();
+        self.shadow_source_ids.clear();
+        self.shadow_dirty_faces.clear();
         self.cpu_steps_this_frame = 0;
         self.cpu_upload_ms = 0.;
         self.cpu_queue_submit_ms = 0.;

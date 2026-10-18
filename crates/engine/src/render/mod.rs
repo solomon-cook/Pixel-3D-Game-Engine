@@ -25,6 +25,7 @@ pub const PIXEL_FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Rgba8UnormSrg
 const HDR: wgpu::TextureFormat = wgpu::TextureFormat::Rgba16Float;
 const DEPTH: wgpu::TextureFormat = wgpu::TextureFormat::Depth32Float;
 const VOLUME: [u32; 3] = [48, 64, 48];
+const POINT_SHADOW_FACES: usize = 6;
 
 #[derive(Clone, serde::Serialize)]
 pub struct GpuTimingSample {
@@ -306,10 +307,10 @@ pub struct Renderer {
     shadow_cache_key: Option<ShadowCacheKey>,
     shadow_invalidation_reason: Option<&'static str>,
     shadow_transform_changes: Vec<(String, Option<assets::Bounds3>, Option<assets::Bounds3>)>,
-    shadow_dirty_faces: [bool; 7],
-    shadow_visible_cache: [u32; 7],
-    shadow_batch_cache: [u32; 7],
-    shadow_vertex_cache: [u64; 7],
+    shadow_dirty_faces: Vec<bool>,
+    shadow_visible_cache: Vec<u32>,
+    shadow_batch_cache: Vec<u32>,
+    shadow_vertex_cache: Vec<u64>,
     force_shadow_redraw: bool,
     pub shader_directory: PathBuf,
 }
@@ -319,8 +320,7 @@ struct ShadowCacheKey {
     casters: Vec<crate::scene::Object>,
     shadow_materials: Vec<(String, f32)>,
     sun_position: [f32; 3],
-    fire_position: [f32; 3],
-    fire_range: f32,
+    fire_lights: Vec<(String, [f32; 3], f32)>,
 }
 
 fn shadow_cache_key(scene: &Scene) -> Option<ShadowCacheKey> {
@@ -328,8 +328,16 @@ fn shadow_cache_key(scene: &Scene) -> Option<ShadowCacheKey> {
         .lights
         .iter()
         .find(|light| light.kind == LightKind::Directional)?;
-    let emitter = scene.emitters.first()?;
-    let fire = scene.light_for_emitter(emitter)?;
+    let mut emitters = scene.emitters.iter().collect::<Vec<_>>();
+    emitters.sort_by(|left, right| left.id.cmp(&right.id));
+    let fire_lights = emitters
+        .iter()
+        .map(|emitter| {
+            scene
+                .light_for_emitter(emitter)
+                .map(|light| (emitter.id.clone(), light.position, light.range))
+        })
+        .collect::<Option<Vec<_>>>()?;
     Some(ShadowCacheKey {
         casters: scene.objects.clone(),
         shadow_materials: scene
@@ -343,8 +351,7 @@ fn shadow_cache_key(scene: &Scene) -> Option<ShadowCacheKey> {
             })
             .collect(),
         sun_position: sun.position,
-        fire_position: fire.position,
-        fire_range: fire.range,
+        fire_lights,
     })
 }
 
@@ -358,27 +365,35 @@ fn shadow_dirty_reason(previous: Option<&ShadowCacheKey>, next: &ShadowCacheKey)
         "shadow_materials_changed"
     } else if previous.sun_position != next.sun_position {
         "directional_light_projection_changed"
-    } else if previous.fire_position != next.fire_position {
+    } else if previous.fire_lights.len() != next.fire_lights.len()
+        || previous
+            .fire_lights
+            .iter()
+            .zip(&next.fire_lights)
+            .any(|(old, new)| old.0 != new.0 || old.1 != new.1)
+    {
         "point_light_projection_changed"
-    } else if previous.fire_range != next.fire_range {
+    } else if previous
+        .fire_lights
+        .iter()
+        .zip(&next.fire_lights)
+        .any(|(old, new)| old.2 != new.2)
+    {
         "point_light_range_changed"
     } else {
         "unchanged"
     }
 }
 
-fn shadow_face_mask_for_bounds(
-    bounds: &[Option<assets::Bounds3>],
-    matrices: &[Mat4; 7],
-) -> [bool; 7] {
-    let mut dirty = [false; 7];
+fn shadow_face_mask_for_bounds(bounds: &[Option<assets::Bounds3>], matrices: &[Mat4]) -> Vec<bool> {
+    let mut dirty = vec![false; matrices.len()];
     for bound in bounds {
         let Some(bound) = bound else {
-            return [true; 7];
+            return vec![true; matrices.len()];
         };
         for (index, matrix) in matrices.iter().enumerate() {
             let Some(frustum) = Frustum::from_view_projection(*matrix) else {
-                return [true; 7];
+                return vec![true; matrices.len()];
             };
             dirty[index] |= frustum.intersects(bound);
         }
@@ -388,7 +403,7 @@ fn shadow_face_mask_for_bounds(
 
 fn shadow_bounds_require_full_fallback(
     bounds: &[Option<assets::Bounds3>],
-    matrices: &[Mat4; 7],
+    matrices: &[Mat4],
 ) -> bool {
     bounds.iter().any(Option::is_none)
         || matrices
@@ -727,41 +742,46 @@ fn prepare_draws(
     result
 }
 
-fn shadow_matrices(scene: &Scene) -> [Mat4; 7] {
+fn shadow_matrices(scene: &Scene) -> Vec<Mat4> {
     let sun = scene
         .lights
         .iter()
         .find(|light| light.kind == LightKind::Directional)
         .expect("validated scene has a directional light");
-    let fire = scene
-        .light_for_emitter(&scene.emitters[0])
-        .expect("validated scene has an emitter point light");
     let sun_direction = Vec3::from(sun.position).normalize();
-    let mut result = [Mat4::IDENTITY; 7];
-    result[0] = Mat4::orthographic_rh(-24., 24., -24., 24., 0.1, 100.)
-        * Mat4::look_at_rh(
-            sun_direction * 40.,
-            Vec3::ZERO,
-            if sun_direction.dot(Vec3::Y).abs() > 0.99 {
-                Vec3::Z
-            } else {
-                Vec3::Y
-            },
-        );
-    let position = Vec3::from(fire.position);
-    for (index, (direction, up)) in [
+    let mut result = vec![
+        Mat4::orthographic_rh(-24., 24., -24., 24., 0.1, 100.)
+            * Mat4::look_at_rh(
+                sun_direction * 40.,
+                Vec3::ZERO,
+                if sun_direction.dot(Vec3::Y).abs() > 0.99 {
+                    Vec3::Z
+                } else {
+                    Vec3::Y
+                },
+            ),
+    ];
+    let directions = [
         (Vec3::X, Vec3::NEG_Y),
         (Vec3::NEG_X, Vec3::NEG_Y),
         (Vec3::Y, Vec3::Z),
         (Vec3::NEG_Y, Vec3::NEG_Z),
         (Vec3::Z, Vec3::NEG_Y),
         (Vec3::NEG_Z, Vec3::NEG_Y),
-    ]
-    .into_iter()
-    .enumerate()
-    {
-        result[index + 1] = Mat4::perspective_rh(std::f32::consts::FRAC_PI_2, 1., 0.05, fire.range)
-            * Mat4::look_at_rh(position, position + direction, up);
+    ];
+    let mut emitters = scene.emitters.iter().collect::<Vec<_>>();
+    emitters.sort_by(|left, right| left.id.cmp(&right.id));
+    for emitter in emitters {
+        let fire = scene
+            .light_for_emitter(emitter)
+            .expect("validated emitter has a primary point light");
+        let position = Vec3::from(fire.position);
+        for (direction, up) in directions {
+            result.push(
+                Mat4::perspective_rh(std::f32::consts::FRAC_PI_2, 1., 0.05, fire.range)
+                    * Mat4::look_at_rh(position, position + direction, up),
+            );
+        }
     }
     result
 }
@@ -960,7 +980,7 @@ impl Renderer {
                     1,
                     wgpu::ShaderStages::FRAGMENT,
                     sampled(
-                        wgpu::TextureViewDimension::Cube,
+                        wgpu::TextureViewDimension::CubeArray,
                         wgpu::TextureSampleType::Depth,
                     ),
                 ),
@@ -1002,23 +1022,25 @@ impl Renderer {
             wgpu::TextureDimension::D2,
         );
         let sun_view = sun.create_view(&Default::default());
+        let point_face_count = POINT_SHADOW_FACES * scene.emitters.len();
         let point = texture(
             &device,
-            "fire shadows",
-            [256, 256, 6],
+            "emitter primary-light shadows",
+            [256, 256, point_face_count as u32],
             DEPTH,
             wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::TEXTURE_BINDING,
             wgpu::TextureDimension::D2,
         );
         let point_view = point.create_view(&wgpu::TextureViewDescriptor {
-            dimension: Some(wgpu::TextureViewDimension::Cube),
+            dimension: Some(wgpu::TextureViewDimension::CubeArray),
+            array_layer_count: Some(point_face_count as u32),
             ..Default::default()
         });
-        let point_faces = (0..6)
+        let point_faces = (0..point_face_count)
             .map(|i| {
                 point.create_view(&wgpu::TextureViewDescriptor {
                     dimension: Some(wgpu::TextureViewDimension::D2),
-                    base_array_layer: i,
+                    base_array_layer: i as u32,
                     array_layer_count: Some(1),
                     ..Default::default()
                 })
@@ -1719,7 +1741,7 @@ impl Renderer {
                 },
             )],
         });
-        let shadow_buffers = (0..7)
+        let shadow_buffers = (0..1 + point_face_count)
             .map(|_| {
                 device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
                     label: Some("shadow camera"),
@@ -1738,12 +1760,15 @@ impl Renderer {
             usage: wgpu::BufferUsages::VERTEX,
         });
         let instance_capacity = mesh.object_draws.len().max(1) as u64;
-        let instance_buffer_bytes =
-            instance_capacity * std::mem::size_of::<InstanceGpu>() as u64 * 8;
-        let instance_buffers = (0..8)
+        let shadow_map_count = 1 + point_face_count;
+        let instance_buffer_count = shadow_map_count + 1;
+        let instance_buffer_bytes = instance_capacity
+            * std::mem::size_of::<InstanceGpu>() as u64
+            * instance_buffer_count as u64;
+        let instance_buffers = (0..instance_buffer_count)
             .map(|pass| {
                 device.create_buffer(&wgpu::BufferDescriptor {
-                    label: Some(if pass == 7 {
+                    label: Some(if pass == shadow_map_count {
                         "camera mesh instances"
                     } else {
                         "shadow mesh instances"
@@ -1854,7 +1879,7 @@ impl Renderer {
             * smoke_bytes_per_voxel
             * 2
             * scene.emitters.len() as u64;
-        let shadow_bytes = 1024u64 * 1024 * 4 + 256 * 256 * 6 * 4;
+        let shadow_bytes = 1024u64 * 1024 * 4 + 256 * 256 * point_face_count as u64 * 4;
         let atlas_bytes = 128u64 * 128 * 4 * mesh.textures.len() as u64;
         let tile_list_bytes = u64::from(tile_count)
             * (32
@@ -1950,6 +1975,7 @@ impl Renderer {
             "smoke_volumes_bytes":smoke_bytes,
             "smoke_absorption_cache_bytes":if scene.render.experiments.smoke_absorption_cache {(scene.render.absorption_cache_resolution as u64).pow(3)*8}else{0},
             "shadow_maps_bytes":shadow_bytes,
+            "shadow_map_count":1 + point_face_count,
             "material_atlas_bytes":atlas_bytes,
             "geometry_buffer_bytes":geometry_bytes,
             "unshared_geometry_bytes":unshared_geometry_bytes,
@@ -2082,10 +2108,10 @@ impl Renderer {
             shadow_cache_key: None,
             shadow_invalidation_reason: Some("resource_initialization"),
             shadow_transform_changes: Vec::new(),
-            shadow_dirty_faces: [true; 7],
-            shadow_visible_cache: [0; 7],
-            shadow_batch_cache: [0; 7],
-            shadow_vertex_cache: [0; 7],
+            shadow_dirty_faces: vec![true; 1 + point_face_count],
+            shadow_visible_cache: vec![0; 1 + point_face_count],
+            shadow_batch_cache: vec![0; 1 + point_face_count],
+            shadow_vertex_cache: vec![0; 1 + point_face_count],
             force_shadow_redraw: false,
             shader_directory,
         };
@@ -3010,7 +3036,7 @@ impl Renderer {
         Ok(counters)
     }
 
-    fn update_shadow_matrices(&mut self, scene: &Scene, dirty_faces: [bool; 7]) {
+    fn update_shadow_matrices(&mut self, scene: &Scene, dirty_faces: &[bool]) {
         let matrices = shadow_matrices(scene);
         for (index, matrix) in matrices.into_iter().enumerate() {
             if !dirty_faces[index] {
@@ -3322,16 +3348,57 @@ impl Renderer {
         }
         self.metrics.cpu_upload_ms += smoke_config_upload_started.elapsed().as_secs_f64() * 1000.;
         let mut point_lights = [PointLightGpu::zeroed(); 8];
-        let ordered = std::iter::once(fire).chain(
+        let mut primary_lights = scene.emitters.iter().collect::<Vec<_>>();
+        primary_lights.sort_by(|left, right| left.id.cmp(&right.id));
+        let primary_lights = primary_lights
+            .into_iter()
+            .enumerate()
+            .map(|(slot, source)| {
+                (
+                    slot,
+                    source,
+                    scene
+                        .light_for_emitter(source)
+                        .expect("validated emitter has primary light"),
+                )
+            })
+            .collect::<Vec<_>>();
+        let primary_ids = primary_lights
+            .iter()
+            .map(|(_, _, light)| light.id.as_str())
+            .collect::<Vec<_>>();
+        let mut ordered = primary_lights
+            .iter()
+            .map(|(slot, source, light)| (Some(*slot), Some(*source), *light))
+            .collect::<Vec<_>>();
+        ordered.extend(
             scene
                 .lights
                 .iter()
-                .filter(|l| l.kind == LightKind::Point && l.id != fire.id),
+                .filter(|light| {
+                    light.kind == LightKind::Point && !primary_ids.contains(&light.id.as_str())
+                })
+                .map(|light| (None, None, light)),
         );
+        let mut primary_light_indices = [u32::MAX; 2];
         let mut light_count = 0;
-        for (i, light) in ordered.enumerate() {
-            let intensity = if i == 0 {
-                light.intensity * (1. - light.flicker + light.flicker * power) * enabled
+        for (i, (source_slot, source, light)) in ordered.into_iter().enumerate() {
+            let intensity = if let Some(slot) = source_slot {
+                primary_light_indices[slot] = i as u32;
+                let (source_power, source_enabled) = if slot == 0 {
+                    (power, enabled)
+                } else {
+                    let source_power = self.fire_storage.sources[slot].bounds_min[3];
+                    let source_enabled = if source.unwrap().enabled {
+                        source.unwrap().intensity
+                    } else {
+                        0.
+                    };
+                    (source_power, source_enabled)
+                };
+                light.intensity
+                    * (1. - light.flicker + light.flicker * source_power)
+                    * source_enabled
             } else {
                 light.intensity
                     * (1. - light.flicker
@@ -3429,7 +3496,12 @@ impl Renderer {
                 profile.fire.heat_distortion,
                 profile.fire.heat_distortion_height,
             ],
-            light_info: [light_count, 0, 0, 0],
+            light_info: [
+                light_count,
+                primary_light_indices[0],
+                primary_light_indices[1],
+                0,
+            ],
             point_lights,
             presentation: [
                 scene.render.palette_strength,
@@ -3923,14 +3995,14 @@ impl Renderer {
         let dirty_reason = invalidation_reason
             .or(compared_reason)
             .unwrap_or("unknown_shadow_state");
-        let mut dirty_faces = [false; 7];
+        let mut dirty_faces = vec![false; shadow_matrices(scene).len()];
         let mut reported_reason = dirty_reason;
         let full_invalidation = self.force_shadow_redraw
             || invalidation_reason.is_some()
             || next_shadow_key.is_none()
             || self.shadow_cache_key.is_none();
         if full_invalidation {
-            dirty_faces = [true; 7];
+            dirty_faces.fill(true);
             if self.force_shadow_redraw {
                 reported_reason = "forced_redraw";
             }
@@ -3940,9 +4012,7 @@ impl Renderer {
             if previous.sun_position != next.sun_position {
                 dirty_faces[0] = true;
             }
-            if previous.fire_position != next.fire_position
-                || previous.fire_range != next.fire_range
-            {
+            if previous.fire_lights != next.fire_lights {
                 dirty_faces[1..].fill(true);
             }
             if previous.casters != next.casters {
@@ -3975,25 +4045,26 @@ impl Renderer {
                         if shadow_bounds_require_full_fallback(&bounds, &matrices) {
                             reported_reason = "unknown_caster_bounds";
                         }
-                        for (dirty, transform_dirty) in dirty_faces.iter_mut().zip(transform_faces)
+                        for (dirty, transform_dirty) in
+                            dirty_faces.iter_mut().zip(transform_faces.iter())
                         {
-                            *dirty |= transform_dirty;
+                            *dirty |= *transform_dirty;
                         }
                         if !transform_faces.iter().any(|dirty| *dirty) {
                             reported_reason = "casters_changed_outside_shadow_frusta";
                         }
                     } else {
-                        dirty_faces = [true; 7];
+                        dirty_faces.fill(true);
                         reported_reason = "unknown_caster_bounds";
                     }
                 } else {
-                    dirty_faces = [true; 7];
+                    dirty_faces.fill(true);
                 }
             }
             if previous.shadow_materials != next.shadow_materials {
                 let mut changed_material_ids = Vec::new();
                 if previous.shadow_materials.len() != next.shadow_materials.len() {
-                    dirty_faces = [true; 7];
+                    dirty_faces.fill(true);
                     reported_reason = "unknown_shadow_material_bounds";
                 }
                 for (id, old_value) in &previous.shadow_materials {
@@ -4008,7 +4079,7 @@ impl Renderer {
                         Some((_, new_value)) if old_value == new_value => {}
                         Some(_) => changed_material_ids.push(id.as_str()),
                         None => {
-                            dirty_faces = [true; 7];
+                            dirty_faces.fill(true);
                             reported_reason = "unknown_shadow_material_bounds";
                             break;
                         }
@@ -4022,7 +4093,7 @@ impl Renderer {
                         .map(|draw| draw.bounds.clone())
                         .collect::<Vec<_>>();
                     if bounds.is_empty() && !changed_material_ids.is_empty() {
-                        dirty_faces = [true; 7];
+                        dirty_faces.fill(true);
                         reported_reason = "unknown_shadow_material_bounds";
                     } else {
                         let matrices = shadow_matrices(scene);
@@ -4038,13 +4109,13 @@ impl Renderer {
             }
         }
         let shadow_redrawn = dirty_faces.iter().any(|dirty| *dirty);
-        self.shadow_dirty_faces = dirty_faces;
+        self.shadow_dirty_faces.clone_from(&dirty_faces);
         self.metrics.shadow_cache_hit = !shadow_redrawn && next_shadow_key.is_some();
         self.metrics.shadow_redrawn = shadow_redrawn;
         self.metrics.shadow_cache_resident = next_shadow_key.is_some();
         self.metrics.shadow_maps_redrawn =
             dirty_faces.iter().filter(|dirty| **dirty).count() as u32;
-        self.metrics.shadow_dirty_faces = dirty_faces;
+        self.metrics.shadow_dirty_faces.clone_from(&dirty_faces);
         self.metrics.shadow_dirty_reason = Some(reported_reason.to_string());
         self.shadow_cache_key = next_shadow_key;
         self.shadow_transform_changes.clear();
@@ -4100,7 +4171,7 @@ impl Renderer {
         let upload_started = Instant::now();
         if !camera_draws.instances.is_empty() {
             self.queue.write_buffer(
-                &self.instance_buffers[7],
+                &self.instance_buffers[self.shadow_buffers.len()],
                 0,
                 bytemuck::cast_slice(&camera_draws.instances),
             );
@@ -4118,9 +4189,22 @@ impl Renderer {
                 );
             }
         }
-        self.metrics.shadow_objects_visible = self.shadow_visible_cache;
-        self.metrics.shadow_draw_batches = self.shadow_batch_cache;
-        self.metrics.shadow_vertices_submitted = self.shadow_vertex_cache;
+        self.metrics
+            .shadow_objects_visible
+            .clone_from(&self.shadow_visible_cache);
+        self.metrics
+            .shadow_draw_batches
+            .clone_from(&self.shadow_batch_cache);
+        self.metrics
+            .shadow_vertices_submitted
+            .clone_from(&self.shadow_vertex_cache);
+        let mut shadow_sources = scene
+            .emitters
+            .iter()
+            .map(|source| source.id.clone())
+            .collect::<Vec<_>>();
+        shadow_sources.sort();
+        self.metrics.shadow_source_ids = shadow_sources;
         self.metrics.cpu_upload_ms += upload_started.elapsed().as_secs_f64() * 1000.;
         let mut encoder = self.device.create_command_encoder(&Default::default());
         self.queue.write_buffer(
@@ -4203,7 +4287,7 @@ impl Renderer {
         }
         let shadow_encode_started = Instant::now();
         if shadow_redrawn {
-            self.update_shadow_matrices(scene, dirty_faces);
+            self.update_shadow_matrices(scene, &dirty_faces);
             let first_dirty = dirty_faces.iter().position(|dirty| *dirty);
             let last_dirty = dirty_faces.iter().rposition(|dirty| *dirty);
             for (i, draws) in shadow_draws.iter().enumerate() {
@@ -4315,7 +4399,7 @@ impl Renderer {
                     .expect("baked reference buffer is allocated when instancing is disabled")
             };
             pass.set_vertex_buffer(0, vertex_buffer.slice(..));
-            let instance_buffer = &self.instance_buffers[7];
+            let instance_buffer = &self.instance_buffers[self.shadow_buffers.len()];
             for batch in &camera_draws.batches {
                 if self.geometry_instancing_enabled {
                     let offset =
@@ -4485,7 +4569,7 @@ impl Renderer {
                     .expect("baked reference buffer is allocated when instancing is disabled")
             };
             pass.set_vertex_buffer(0, vertex_buffer.slice(..));
-            let instance_buffer = &self.instance_buffers[7];
+            let instance_buffer = &self.instance_buffers[self.shadow_buffers.len()];
             for batch in camera_draws.batches.iter().filter(|batch| batch.optical) {
                 if self.geometry_instancing_enabled {
                     let offset =
@@ -4710,7 +4794,7 @@ impl Renderer {
             "shadow_cache": {
                 "enabled": !self.force_shadow_redraw,
                 "force_redraw": self.force_shadow_redraw,
-                "whole_map_count": 7,
+                "whole_map_count": self.shadow_buffers.len(),
                 "resident_bytes": self.resource_inventory["shadow_maps_bytes"]
             },
             "resource_inventory": self.resource_inventory
@@ -4964,20 +5048,16 @@ mod shadow_cache_tests {
             Vec3::Z,
             Vec3::NEG_Z,
         ];
-        let matrices = std::array::from_fn(|index| {
-            if index == 0 {
-                Mat4::IDENTITY
+        let mut matrices = vec![Mat4::IDENTITY];
+        matrices.extend(directions.into_iter().map(|direction| {
+            let up = if direction == Vec3::Y || direction == Vec3::NEG_Y {
+                Vec3::Z
             } else {
-                let direction = directions[index - 1];
-                let up = if direction == Vec3::Y || direction == Vec3::NEG_Y {
-                    Vec3::Z
-                } else {
-                    Vec3::Y
-                };
-                Mat4::perspective_rh(90_f32.to_radians(), 1., 0.1, 20.)
-                    * Mat4::look_at_rh(Vec3::ZERO, direction, up)
-            }
-        });
+                Vec3::Y
+            };
+            Mat4::perspective_rh(90_f32.to_radians(), 1., 0.1, 20.)
+                * Mat4::look_at_rh(Vec3::ZERO, direction, up)
+        }));
         let positive_x = assets::Bounds3 {
             min: [2.8, -0.2, -0.2],
             max: [3.2, 0.2, 0.2],
@@ -4993,7 +5073,7 @@ mod shadow_cache_tests {
             &[Some(positive_x.clone()), None],
             &matrices
         ));
-        let invalid_matrices = [Mat4::ZERO; 7];
+        let invalid_matrices = vec![Mat4::ZERO; 7];
         assert_eq!(
             shadow_face_mask_for_bounds(&[Some(positive_x.clone())], &invalid_matrices),
             [true; 7]
@@ -5070,6 +5150,33 @@ mod shadow_cache_tests {
             shadow_dirty_reason(Some(&key), &shadow_cache_key(&edited).unwrap()),
             "point_light_projection_changed"
         );
+    }
+
+    #[test]
+    fn emitter_shadow_faces_follow_stable_source_id_order() {
+        let mut two_sources = scene();
+        let mut second_emitter = two_sources.emitters[0].clone();
+        second_emitter.id = "zzz-fire".into();
+        second_emitter.light_id = Some("zzz-fire-light".into());
+        second_emitter.position = [3., 0.4, -1.];
+        let mut second_light = two_sources
+            .lights
+            .iter()
+            .find(|light| light.kind == LightKind::Point)
+            .unwrap()
+            .clone();
+        second_light.id = "zzz-fire-light".into();
+        second_light.position = second_emitter.position;
+        two_sources.emitters.push(second_emitter);
+        two_sources.lights.push(second_light);
+
+        let matrices = shadow_matrices(&two_sources);
+        assert_eq!(matrices.len(), 1 + POINT_SHADOW_FACES * 2);
+        assert_ne!(&matrices[1..7], &matrices[7..13]);
+        let key = shadow_cache_key(&two_sources).unwrap();
+        two_sources.emitters.reverse();
+        let reordered = shadow_cache_key(&two_sources).unwrap();
+        assert_eq!(key.fire_lights, reordered.fire_lights);
     }
 
     #[test]

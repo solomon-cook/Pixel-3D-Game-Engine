@@ -486,8 +486,11 @@ impl Scene {
         {
             bail!("lights: requires one directional light and 1..8 point lights");
         }
-        if self.emitters.len() != 1 {
-            bail!("emitters: v1 requires exactly one bounded fire/smoke emitter");
+        if !(1..=effects::MAX_EMITTERS).contains(&self.emitters.len()) {
+            bail!(
+                "emitters: expected 1..={} bounded fire/smoke emitters",
+                effects::MAX_EMITTERS
+            );
         }
         for effect in &self.effects {
             effect.validate()?;
@@ -550,6 +553,12 @@ impl Scene {
         // first source's shadow map and flicker state.
         let mut emitter_primary_lights = HashSet::new();
         for emitter in &self.emitters {
+            if self.emitters.len() > 1 && emitter.light_id.is_none() {
+                bail!(
+                    "emitter '{}'.light_id: multi-emitter scenes require an explicit primary point light ID",
+                    emitter.id
+                );
+            }
             if let Some(light_id) = &emitter.light_id {
                 if !self
                     .lights
@@ -643,8 +652,9 @@ pub fn validate_camera(c: &Camera) -> Result<()> {
 
 #[cfg(test)]
 mod emitter_light_validation_tests {
-    use super::ensure_unique_emitter_primary_light;
+    use super::{ensure_unique_emitter_primary_light, Scene};
     use std::collections::HashSet;
+    use std::path::PathBuf;
 
     #[test]
     fn emitter_primary_point_lights_have_exclusive_ownership() {
@@ -656,5 +666,41 @@ mod emitter_light_validation_tests {
         assert!(error
             .to_string()
             .contains("already assigned to another emitter"));
+    }
+
+    #[test]
+    fn two_emitter_scene_requires_profile_and_unique_primary_light_contract() {
+        let scene_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../../assets/scenes/two-emitter-review.json");
+        let base = scene_path.parent().unwrap();
+        let mut scene = Scene::load(&scene_path).unwrap();
+        assert_eq!(scene.emitters.len(), 2);
+        scene.validate(base).unwrap();
+
+        scene.emitters[1].light_id = None;
+        assert!(scene
+            .validate(base)
+            .unwrap_err()
+            .to_string()
+            .contains("multi-emitter scenes require an explicit primary point light ID"));
+
+        let mut scene = Scene::load(&scene_path).unwrap();
+        scene.emitters[1].effect_profile = "missing-profile".into();
+        assert!(scene
+            .validate(base)
+            .unwrap_err()
+            .to_string()
+            .contains("unknown effect"));
+
+        let mut scene = Scene::load(&scene_path).unwrap();
+        let mut third = scene.emitters[1].clone();
+        third.id = "third-fire".into();
+        third.light_id = Some("third-fire-light".into());
+        scene.emitters.push(third);
+        assert!(scene
+            .validate(base)
+            .unwrap_err()
+            .to_string()
+            .contains("expected 1..=2 bounded fire/smoke emitters"));
     }
 }

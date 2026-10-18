@@ -36,6 +36,13 @@ benchmarks should make scenes understandable and results reproducible. The
 headless renderer and native window should use the same session operations so
 that inspection, automation and hands-on authoring describe the same engine.
 
+Procedural generation should be a first-class engine capability. Developers
+should be able to build rich, coherent game content from rules and parameters,
+guide the results toward an authored style, and reproduce or inspect generated
+results from their inputs and seeds. Generation should work with the rendering
+and simulation systems as a whole, and remain practical to profile and optimize
+at game scale.
+
 ### Novel approaches must earn their place
 
 The engine should explore new ways to organize rendering, simulation, data and

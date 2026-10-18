@@ -356,7 +356,8 @@ fn smoke_local_lights(p:vec3<f32>,normal:vec3<f32>,steps:u32,tile:u32)->vec3<f32
         let shape=select(0.22+form*0.78,1.,dot(normal,normal)<0.1);
         let secondary_source_light=fire.source_origins[1].w>0.5 && distance(light.position_range.xyz,fire.source_origins[1].xyz)<0.001;
         var shadow=smoke_light_transmittance(p,normal,light.position_range.xyz,steps,index==0u||secondary_source_light);
-        if index==0u {shadow*=fire_visibility(p);}
+        if index==g.light_info.y {shadow*=fire_visibility(p,0u);}
+        if index==g.light_info.z {shadow*=fire_visibility(p,1u);}
         radiance+=light.color_power.xyz*light.color_power.w*point_falloff(p,light)*shadow*shape;
     }
     // Keep authored fire/fill lighting, then budget two local particle sources

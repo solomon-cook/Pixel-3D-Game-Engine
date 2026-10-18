@@ -471,41 +471,44 @@ capture remains byte-identical. The fire storage also carries one source origin
 per slot, so the flame detail mask can anchor slot one independently while
 retaining the legacy source-zero uniform. Each frame slot now also stores
 source-specific flame palette, shape, breakup, pixel treatment and activity.
-The renderer still populates only slot zero; the CPU packing helper prepares
-both source frames and settings in stable-ID order, and merges sampled particle
+The renderer populates both slots in stable-ID order; the CPU packing helper
+prepares both source frames and settings, and merges sampled particle
 lights into the shared twelve-light budget. Tests cover reorder invariance,
-legacy sampler parity and selected-light/drop accounting. Smoke compute now has
+legacy sampler parity and selected-light/drop accounting. The live renderer now
+populates both slots in a fixed-tick dual-source Metal review. Smoke compute has
 source-local ping-pong volumes, uniforms and per-source dispatches in stable-ID
 order. The soft atmosphere/optical integral now binds a second source volume and
 samples its independent domain; a fixed-tick source-zero capture remains
-byte-identical. Scene validation still requires one emitter, so no dual-source
-GPU image exists. Inked smoke, a source-local absorption-cache channel, and the
-opaque-material heat cue's second temperature field are implemented, but the
-secondary opaque path, source-specific primary-light shadows, live scene
-acceptance and visual review remain unverified. The post heat pass also has a
-source-local secondary temperature path. See
+byte-identical. Scene validation accepts two emitters, and the review exercises
+the dual-source render path. Inked smoke, a source-local absorption-cache
+channel, the opaque-material heat cue's second temperature field, post heat and
+source-specific primary-light shadows are implemented. Focused cache/heat A/B,
+stress and performance review remain open. See
 [heat evidence](measurements-multi-emitter-heat.json).
 Source-local inked smoke is implemented with 36 puff candidates per source,
 separate overflow fallback and a 72-entry total tile capacity. GPU validation and
 single-source parity pass on M1 Max/Metal; the expanded tile index buffer uses
-603,520 bytes at 640×360. No dual-source scene is accepted yet, so visual and
-performance review remains open; see
+603,520 bytes at 640×360. The dual-source capture matrix exercises source
+isolation and combined rendering; stress and sustained performance review remain
+open; see
 [inked smoke evidence](measurements-multi-emitter-ink.json).
 The second-source cache stores optical depth in the green channel of the existing
 3D cache texture, over the emitter's source-local domain. It adds no cache
-allocation and preserves the source-zero hero capture hash; the second-source
-branch remains unverified because scene validation still permits one emitter.
-See [absorption evidence](measurements-multi-emitter-absorption.json).
+allocation and preserves the source-zero hero capture hash. A fixed-tick dual-
+source scene now renders on Metal, but the review used direct absorption; the
+cache-specific branch still needs an enabled-cache A/B. See
+[absorption evidence](measurements-multi-emitter-absorption.json).
 Opaque `heat_response` materials now sample the second emitter's local
 temperature volume as well. The source-zero Metal capture is byte-identical and
-the verifier passes; the scene contract still prevents exercising this second
-field live. See
+the verifier passes. The dual-source scene is available for focused source-one
+heat A/B review. See
 [opaque heat evidence](measurements-multi-emitter-opaque-heat.json).
-`Renderer::update_globals` now has a keyed two-source sampling
-and upload branch with independent projected-detail tiers, but scene validation
-still prevents live access and no two-source GPU capture exists. The existing
-single-source profiling-heavy fixed-tick RGBA hash remains identical on M1
-Max/Metal. See the
+`Renderer::update_globals` has a keyed two-source sampling and upload branch with
+independent projected-detail tiers. The two-source fixed-tick capture matrix now
+covers each source alone, both together and reversed scene emitter order across
+four cameras on M1 Max/Metal; combined hashes are identical under reversal. The
+existing single-source profiling-heavy fixed-tick RGBA hash remains identical on
+M1 Max/Metal. See the
 [storage ABI](measurements-multi-emitter-storage-abi.json) and
 [fire consumer](measurements-multi-emitter-fire-consumer.json) and
 [storage packing](measurements-multi-emitter-storage-packing.json) comparisons,

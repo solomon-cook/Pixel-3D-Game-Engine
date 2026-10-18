@@ -5,8 +5,8 @@ scene is a woodland fire with illuminated volumetric smoke, shadows and embers.
 The reusable engine and the lab are separate workspace packages.
 
 Read the [engine vision](docs/VISION.md) for the long-term direction: selectable
-pixel density, expressive simulation and physics, and style-aware engine
-experiments grounded in visual and performance evidence.
+pixel density, procedural generation, expressive simulation and physics, and
+style-aware engine experiments grounded in visual and performance evidence.
 
 See [the work queue](TODO.md) and [optimisation plans](docs/OPTIMIZATION_PLAN.md)
 for completed profiling instrumentation, whole-map shadow reuse, tiled effect lists,
