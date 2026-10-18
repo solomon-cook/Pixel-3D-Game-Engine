@@ -190,6 +190,14 @@ def main():
                 process.stdin.close()
                 process.wait(timeout=30)
             assert process.returncode == 0
+            fallback_image = temp / "forced-rgba16-fallback.png"
+            run(binary, "capture", "--scene", scene_path, "--camera", "hero", "--seed", "42", "--tick", "120", "--scale", "1", "--output", fallback_image, "--force-rg16-fallback")
+            fallback_metadata = json.loads(fallback_image.with_suffix(".json").read_text())
+            fallback_inventory = fallback_metadata["capabilities"]["resource_inventory"]
+            assert fallback_inventory["rg16_fallback_forced"] is True
+            assert fallback_inventory["effect_depth_format"] == "Rgba16Float"
+            assert fallback_inventory["smoke_volume_format"] == "Rgba16Float"
+            assert (temp / "first.png").read_bytes() == fallback_image.read_bytes(), "RGBA16F fallback changed the fixed-tick image"
     if args.gpu:
         import sys
         run(sys.executable, ROOT / "scripts/verify_materials.py", "--binary", binary)
