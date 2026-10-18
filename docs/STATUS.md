@@ -479,16 +479,22 @@ limitations are in [static scale evidence](measurements-o07-scale-study.json) an
 [moving-caster evidence](measurements-o07-moving-caster.json). Native-window,
 continuous-motion image review and non-Metal validation remain open.
 
-The native benchmark now accepts culling/instancing modes and a moving caster,
-and reports per-frame caster positions, shadow invalidation/redraws, GPU render
-stages and presentation timings. A 3-second baked Metal smoke route recorded 353
+The native benchmark accepts culling/instancing modes and a moving caster, and
+reports per-frame caster positions, shadow invalidation/redraws, GPU render stages
+and presentation timings. A three-second baked Metal smoke route recorded 353
 frames at 117.8 FPS; all sampled caster positions were 5 world units from the
-fire-light center, and 177 frames redrew shadow maps. This validates the native
-instrumentation only. A one-pair, one-tier short study also exercised all three
-geometry comparisons and the runner's resume path; it is not sustained acceptance.
-The full native matrix is available through
-[`geometry_scale_native_study.py`](../scripts/geometry_scale_native_study.py) and
-has not yet run.
+fire-light center, and 177 frames redrew shadow maps. The full native matrix is
+now complete: four object tiers, three geometry comparisons per tier, and three
+alternating 120-second pairs per comparison after 10-second warm-ups (72 runs).
+At 2,208 objects, the culling+instancing candidate reduced median shadow-stage
+time versus instancing-only by 0.448 ms, while native CPU-frame work improved by
+0.475 ms and median FPS fell by 4.199; other tiers and the baked comparison are
+also mixed. Treat stage timings separately from native presentation and retain
+the current path; the matrix does not establish a broad native-window win. Full
+paired metrics, per-run summaries, scene hashes and limitations are in
+[native scale evidence](measurements-o07-native-scale-study.json); the raw
+resumable runner outputs remain under ignored `artifacts/o07/`. Continuous-motion
+visual review and non-Metal acceptance remain open.
 
 Implemented: reusable engine/library separation, native Metal/DX12 selection,
 versioned/validated JSON scenes, static GLB/PNG assets, fixed-step smoke grid,

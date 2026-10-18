@@ -309,10 +309,18 @@ Native-window, non-Metal, and continuous-motion image review remain open.
 `benchmark-native` now exposes the same culling, instancing and moving-caster
 controls and records per-frame caster positions and shadow-cache changes alongside
 presentation timings. A native Metal smoke route verifies the baked path and orbit
-at a fixed five-unit radius. The full four-tier native matrix runner is available
-at [geometry_scale_native_study.py](../scripts/geometry_scale_native_study.py);
-its sustained comparisons have not yet run, so native-window performance remains
-an open gate.
+at a fixed five-unit radius. The full native four-tier matrix is now complete:
+three comparisons per tier, each with three alternating 120-second pairs after
+ten-second warm-up (72 runs). Native results are mixed. At 2,208 objects,
+culling+instancing versus instancing-only lowered the paired median GPU shadow
+stage by 0.448 ms and native CPU-frame work by 0.475 ms, while median FPS fell by
+4.199. Other tiers likewise do not show a consistent whole-window win. Keep the
+current path; this evidence does not justify a more complex submission path.
+Full metrics and per-run summaries are in
+[measurements-o07-native-scale-study.json](measurements-o07-native-scale-study.json);
+raw resumable outputs remain under ignored `artifacts/o07/`. Native-window
+measurement is complete on this Mac, while continuous-motion image review and
+non-Metal acceptance remain open.
 
 1. Generate deterministic scenes at increasing object counts and mesh reuse rates,
    starting from the current 276-object clearing scene and increasing by measured
