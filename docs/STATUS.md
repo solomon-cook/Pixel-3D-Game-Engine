@@ -370,8 +370,16 @@ cube faces. The 8³ absorption cache was also toggled on/off/on at four fixed-ti
 cameras: it used the existing 4,096-byte field, released it while disabled and
 restored the exact direct image. Cache error was small in the sampled stills, but
 this does not establish temporal quality or performance. Maximum-budget stress,
-sustained performance, focused heat A/B, Windows/DX12 and other-adapter checks
-remain open. The dual-source scene inventory reports 25,889,280 known bytes at
+sustained performance, Windows/DX12 and other-adapter checks remain open. A
+focused opaque-heat A/B exposed a correctness gap: with only `watchfire` enabled
+and `earth.heat_response` changed from 0 to 0.8, all five fixed-tick captures
+were pixel-identical. The shader counter confirms the opaque heat sampling
+branch ran, while a single-emitter control changed pixels. Treat secondary
+opaque heat as unverified until its sampled temperature is traced and the A/B
+shows a visible contribution. The reproducible runner is
+[`two_emitter_heat_response_study.py`](../scripts/two_emitter_heat_response_study.py);
+captures and report are local under ignored `artifacts/`. The dual-source scene
+inventory reports 25,889,280 known bytes at
 640×360; this is not a paired single-source delta. See [implementation plan](MULTI_EMITTER_PLAN.md),
 [two-source review](measurements-multi-emitter-shadows.json), [shadow invalidation evidence](measurements-multi-emitter-shadow-invalidation.json)
 and [cache evidence](measurements-multi-emitter-absorption-cache.json).
