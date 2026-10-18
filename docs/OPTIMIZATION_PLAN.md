@@ -330,6 +330,18 @@ camera framing. The exact limitation and assertions are recorded in
 [measurements-multi-emitter-overflow.json](measurements-multi-emitter-overflow.json)
 and its [reproducible study](../scripts/two_emitter_overflow_study.py).
 
+**Natural all-tile fallback cost (18 October 2026):** a generated hold-camera
+route keeps the camera inside the plume, naturally overflowing the fire list in
+all 920 tiles for every timed frame. Three alternating 120-second pairs compare
+that tiled path with exhaustive evaluation; fixed-tick output matches exactly.
+Exhaustive-minus-tiled paired medians are −0.327 ms frame work and −1.339 ms
+GPU render, with GPU-render deltas negative in all three pairs. The atmosphere/fire
+stage is mixed (+0.062 ms median), while tile-list build costs 1.27–1.39 ms per
+frame in the tiled runs. The pathological view therefore pays list-build cost
+without reducing the fully overflowing fire work; this does not justify disabling
+tiles generally. See [the sustained report](measurements-o03-camera-inside-overflow.json)
+and [reproducible runner](../scripts/tile_overflow_camera_route_study.py).
+
 ## O04 — Detail based on projected pixel contribution
 
 **Purpose:** spend geometry and shading effort where the chosen pixel grid can

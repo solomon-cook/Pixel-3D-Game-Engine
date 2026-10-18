@@ -254,6 +254,20 @@ byte-for-byte. This remains a Metal-only diagnostic result without native-window
 or continuous visual review. Full evidence is in
 [measurements-o03-tile-size-sustained.json](measurements-o03-tile-size-sustained.json).
 
+## O03 camera-inside all-overflow cost (18 October)
+
+A generated constant-camera route places the camera inside the two-emitter fire
+plume and naturally overflows the fire list in all 920 tiles. Three alternating
+120-second pairs compare tiled evaluation with the exhaustive baseline on M1
+Max/Metal; all 7,200 frames per run have GPU timing samples, and tick-300
+captures match exactly. Exhaustive-minus-tiled paired medians are −0.327 ms
+frame work and −1.339 ms GPU render. The tiled run spends 1.27–1.39 ms per frame
+building lists that cannot avoid fire fallback; atmosphere/fire deltas are mixed.
+This isolates the cost of an adversarial all-overflow view. Keep the general
+16×16 path and fallback selectable; this result does not justify a global mode
+change. See [the report](measurements-o03-camera-inside-overflow.json) and
+[reproducible runner](../scripts/tile_overflow_camera_route_study.py).
+
 ## Material response beneath pixel treatment (16 October)
 
 Hypothesis: independent HDR metalness/refraction/scattering parameters retain

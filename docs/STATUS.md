@@ -507,6 +507,12 @@ captures at both sizes are byte-identical. The 8×8 lists use 3.91× the storage
 remains 16×16. Smoke and light categories did not overflow because their bounded
 candidate counts fit their capacities. This does not establish route-scale fallback
 cost, motion quality, native-window performance or cross-device support.
+The sustained camera-inside hold route now measures the all-overflow edge case:
+fire fallback occurs in all 920 tiles for every sample. Exhaustive evaluation
+reduces paired median GPU render by 1.339 ms and frame work by 0.327 ms; tile-list
+build costs 1.27–1.39 ms per frame, with mixed atmosphere/fire deltas. This is
+pathological-view evidence, not a general tiled-rendering decision. See
+[the report](measurements-o03-camera-inside-overflow.json).
 The two-emitter maximum-budget correctness runner now generates separate
 camera-inside-plume and near-plane-intersection scenes. Both tiled images match
 exhaustive output exactly; the inside-plume view overflows the fire list in all

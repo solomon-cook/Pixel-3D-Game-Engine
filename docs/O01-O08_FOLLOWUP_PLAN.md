@@ -117,6 +117,17 @@ current stress route finds no whole-frame tiling benefit. The sustained 8×8
 comparison finds no worthwhile total-frame gain; cross-backend evidence remains
 open.
 
+The camera-inside probe now also has sustained fallback-cost evidence. A generated
+constant-camera `camera-inside-hold` route keeps natural fire fallback at 100% of
+tile-frame samples across three alternating 120-second M1 Max/Metal pairs. Fixed-
+tick tiled and exhaustive output matches exactly. Exhaustive-minus-tiled paired
+medians are −0.327 ms frame work and −1.339 ms GPU render; GPU render favors
+exhaustive evaluation in all three pairs. Tile-list build costs 1.27–1.39 ms per
+frame, while atmosphere/fire deltas are mixed. This isolates the cost of an
+adversarial all-overflow view and does not justify a global mode change. See
+[the report](measurements-o03-camera-inside-overflow.json) and
+[reproducible runner](../scripts/tile_overflow_camera_route_study.py).
+
 **Smoke-bound materialization follow-up (18 October 2026):** a GPU compute pass
 now builds deterministic smoke-lobe bounds once per dirty rendered state and
 shares them between tile construction and ink-smoke shading. The direct shared
