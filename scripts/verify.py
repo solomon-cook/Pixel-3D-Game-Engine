@@ -87,6 +87,13 @@ def main():
                 assert rebatched_metrics["cpu_simulation_submissions_this_frame"] - before_rebatched_metrics["cpu_simulation_submissions_this_frame"] == 20
                 request("capture_frame", path=str(temp / "rebatched-after-toggle.png"), scale=1)
                 assert (temp / "first.png").read_bytes() == (temp / "rebatched-after-toggle.png").read_bytes(), "batching toggle/reset changed replay image"
+                assert request("set_tile_lists", enabled=True, force_overflow=True)["result"]["force_overflow"] is True
+                request("capture_frame", path=str(temp / "forced-overflow.png"), scale=1)
+                assert (temp / "first.png").read_bytes() == (temp / "forced-overflow.png").read_bytes(), "forced per-category tile fallback changed image"
+                forced_overflow_metrics = request("get_metrics")["result"]["frame"]
+                assert len(forced_overflow_metrics["tile_overflow_tiles"]) == 4
+                assert all(count > 0 for count in forced_overflow_metrics["tile_overflow_tiles"]), "forced overflow did not reach every candidate category"
+                request("set_tile_lists", enabled=True, force_overflow=False)
                 # Shared smoke occlusion and internal emission must be visible,
                 # reversible authoring operations at an identical simulation tick.
                 request("set_camera", id="smoke-close")
