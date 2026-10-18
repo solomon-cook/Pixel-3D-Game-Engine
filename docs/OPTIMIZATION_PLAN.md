@@ -397,6 +397,11 @@ Human review of continuous playback, native-window performance acceptance and
 non-Metal qualification remain open.
 See [measurements-o05.json](measurements-o05.json) and
 [measurements-o05-size-study.json](measurements-o05-size-study.json).
+The standard GPU protocol verifier now performs an off/on/off cache lifecycle
+check at a fixed tick: it requires nonzero cache residency while enabled, zero
+after disabling, and byte-identical direct output after the cache is released.
+This guards the live toggle/resource path; it does not replace the still-open
+continuous visual review or non-Metal acceptance.
 
 ## O06 — Specialise optical materials and avoid repeated shading
 

@@ -67,6 +67,25 @@ def main():
                 request("step", ticks=120)
                 request("capture_frame", path=str(temp / "replay.png"), scale=1)
                 assert (temp / "first.png").read_bytes() == (temp / "replay.png").read_bytes(), "same-device replay changed"
+                # The optional O05 cache must allocate only while enabled and
+                # disabling it must restore the direct-sampling reference.
+                assert "result" in request(
+                    "set_parameter",
+                    path="render.experiments.smoke_absorption_cache",
+                    value=True,
+                )
+                request("capture_frame", path=str(temp / "absorption-cached.png"), scale=1)
+                cache_on = request("get_metrics")["result"]["capabilities"]["resource_inventory"]
+                assert cache_on["smoke_absorption_cache_bytes"] > 0, "absorption cache did not allocate"
+                assert "result" in request(
+                    "set_parameter",
+                    path="render.experiments.smoke_absorption_cache",
+                    value=False,
+                )
+                request("capture_frame", path=str(temp / "absorption-disabled.png"), scale=1)
+                cache_off = request("get_metrics")["result"]["capabilities"]["resource_inventory"]
+                assert cache_off["smoke_absorption_cache_bytes"] == 0, "disabled absorption cache remains resident"
+                assert (temp / "first.png").read_bytes() == (temp / "absorption-disabled.png").read_bytes(), "disabling absorption cache changed direct output"
                 assert request("set_simulation_batching", enabled=False)["result"]["enabled"] is False
                 before_serial = request("get_metrics")["result"]
                 assert before_serial["simulation_batching_enabled"] is False
