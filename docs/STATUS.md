@@ -507,6 +507,11 @@ captures at both sizes are byte-identical. The 8×8 lists use 3.91× the storage
 remains 16×16. Smoke and light categories did not overflow because their bounded
 candidate counts fit their capacities. This does not establish route-scale fallback
 cost, motion quality, native-window performance or cross-device support.
+The two-emitter maximum-budget correctness runner now generates separate
+camera-inside-plume and near-plane-intersection scenes. Both tiled images match
+exhaustive output exactly; the inside-plume view overflows the fire list in all
+920 tiles. These are adversarial correctness captures, not art-review evidence.
+See [the report](measurements-multi-emitter-overflow.json).
 Multi-emitter ownership, Windows/DX12 and other GPU vendors remain open. The
 three-pair 120-second stress-scene orbit now records natural fire overflows at
 1.95% of tile-frame samples (maximum occupancy 144) and zero smoke/light

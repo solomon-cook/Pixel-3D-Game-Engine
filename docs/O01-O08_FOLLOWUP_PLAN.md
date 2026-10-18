@@ -72,6 +72,15 @@ crowding, and does another tile size improve the total cost?
    [study runner](../scripts/two_emitter_overflow_study.py). DX12 and other
    adapter validation remain open.
 
+   The fail-closed study runner now generates separate camera-inside-plume and
+   near-plane-intersection scene variants without changing the benchmark scene.
+   Both added M1 Max/Metal fixed-tick views match exhaustive output byte-for-byte;
+   the camera-inside view naturally overflows the fire list in all 920 tiles and
+   exercises exhaustive fallback. These deliberately close, poorly composed
+   images are correctness probes, not visual-quality evidence. See the added
+   `projection_stress_scenes` and `projection_stress_matrix` fields in the
+   maximum-budget report.
+
 The native-window gate now has three alternating 120-second tiled/exhaustive
 pairs after ten-second warm-ups on M1 Max/Metal. Tiling lowers the median GPU
 atmosphere/fire stage by 1.187–1.216 ms per pair, while native FPS and full-frame

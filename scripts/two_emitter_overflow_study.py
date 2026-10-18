@@ -105,6 +105,44 @@ def main() -> int:
             "exact_match": captures["tiled"]["sha256"] == captures["exhaustive"]["sha256"],
         }
 
+    projection_cases = {
+        "camera-inside-plume": {
+            "id": "camera-inside-plume",
+            "position": [-0.55, 1.45, 0.0],
+            "projection": {"fov_degrees": 48.0, "kind": "perspective"},
+            "target": [-0.55, 2.2, -0.35],
+        },
+        "near-plane-intersection": {
+            "id": "near-plane-intersection",
+            "position": [-0.55, 0.62, 0.32],
+            "projection": {"fov_degrees": 48.0, "kind": "perspective"},
+            "target": [-0.55, 0.62, -0.25],
+        },
+    }
+    projection_scenes = {}
+    projection_results = {}
+    for case_id, camera in projection_cases.items():
+        variant = json.loads(json.dumps(source))
+        variant["cameras"].append(camera)
+        variant_path = output / "scenes" / f"{case_id}.json"
+        variant_path.parent.mkdir(parents=True, exist_ok=True)
+        variant_path.write_text(json.dumps(variant, indent=2) + "\n")
+        subprocess.run([str(binary), "validate", str(variant_path)], cwd=ROOT, check=True, capture_output=True)
+        projection_scenes[case_id] = {
+            "scene": str(variant_path.relative_to(ROOT)) if variant_path.is_relative_to(ROOT) else str(variant_path),
+            "scene_sha256": sha256(variant_path),
+            "camera": camera,
+        }
+        captures = {
+            mode: capture(binary, variant_path, output, case_id, mode)
+            for mode in ("tiled", "exhaustive")
+        }
+        projection_results[case_id] = {
+            "captures": captures,
+            "image_error": image_error(Path(captures["exhaustive"]["image"]), Path(captures["tiled"]["image"])),
+            "exact_match": captures["tiled"]["sha256"] == captures["exhaustive"]["sha256"],
+        }
+
     stress_camera = "stress-close"
     forced = capture(binary, scene, output, stress_camera, "forced-fallback")
     expected = camera_results[stress_camera]["captures"]["exhaustive"]
@@ -168,10 +206,11 @@ def main() -> int:
     source_zero_matches = source_zero_rgba_sha256 == SOURCE_ZERO_RGBA_SHA256
 
     all_camera_matches = all(result["exact_match"] for result in camera_results.values())
+    all_projection_matches = all(result["exact_match"] for result in projection_results.values())
     isolated_matches = all(result["exact_match"] for result in isolated_results.values())
     forced_matches = forced["sha256"] == expected["sha256"]
     order_matches = reversed_capture["sha256"] == tiled_reference["sha256"]
-    all_correctness_checks = all((all_camera_matches, isolated_matches, forced_matches, order_matches, source_zero_matches))
+    all_correctness_checks = all((all_camera_matches, all_projection_matches, isolated_matches, forced_matches, order_matches, source_zero_matches))
     report = {
         "date": "2026-10-18",
         "workstream": "bounded two-emitter maximum-budget tile-list correctness",
@@ -189,6 +228,8 @@ def main() -> int:
         "cameras": cameras,
         "resolution": [640, 360],
         "camera_matrix": camera_results,
+        "projection_stress_scenes": projection_scenes,
+        "projection_stress_matrix": projection_results,
         "source_isolation": isolated_results,
         "forced_fallback": {"capture": forced, "matches_exhaustive": forced_matches},
         "natural_overflow": {
@@ -208,6 +249,7 @@ def main() -> int:
         },
         "comparisons": {
             "all_tiled_cameras_match_exhaustive": all_camera_matches,
+            "camera_inside_and_near_plane_match_exhaustive": all_projection_matches,
             "source_isolation_matches_exhaustive": isolated_matches,
             "forced_fallback_matches_exhaustive": forced_matches,
             "natural_fire_overflow_reached": natural_fire_overflow,

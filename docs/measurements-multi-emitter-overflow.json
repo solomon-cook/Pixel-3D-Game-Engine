@@ -87,7 +87,7 @@
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25892192,
+          "known_gpu_allocation_bytes": 25894508,
           "tile_list_bytes": 603520
         },
         "exhaustive": {
@@ -146,7 +146,7 @@
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25892192,
+          "known_gpu_allocation_bytes": 25894508,
           "tile_list_bytes": 603520
         }
       },
@@ -224,7 +224,7 @@
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25892192,
+          "known_gpu_allocation_bytes": 25894508,
           "tile_list_bytes": 603520
         },
         "exhaustive": {
@@ -283,7 +283,7 @@
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25892192,
+          "known_gpu_allocation_bytes": 25894508,
           "tile_list_bytes": 603520
         }
       },
@@ -361,7 +361,7 @@
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25892192,
+          "known_gpu_allocation_bytes": 25894508,
           "tile_list_bytes": 603520
         },
         "exhaustive": {
@@ -420,7 +420,7 @@
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25892192,
+          "known_gpu_allocation_bytes": 25894508,
           "tile_list_bytes": 603520
         }
       },
@@ -498,7 +498,7 @@
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25892192,
+          "known_gpu_allocation_bytes": 25894508,
           "tile_list_bytes": 603520
         },
         "exhaustive": {
@@ -557,7 +557,7 @@
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25892192,
+          "known_gpu_allocation_bytes": 25894508,
           "tile_list_bytes": 603520
         }
       },
@@ -635,7 +635,7 @@
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25892192,
+          "known_gpu_allocation_bytes": 25894508,
           "tile_list_bytes": 603520
         },
         "exhaustive": {
@@ -694,7 +694,7 @@
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25892192,
+          "known_gpu_allocation_bytes": 25894508,
           "tile_list_bytes": 603520
         }
       },
@@ -772,7 +772,7 @@
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25892192,
+          "known_gpu_allocation_bytes": 25894508,
           "tile_list_bytes": 603520
         },
         "exhaustive": {
@@ -831,7 +831,327 @@
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25892192,
+          "known_gpu_allocation_bytes": 25894508,
+          "tile_list_bytes": 603520
+        }
+      },
+      "image_error": {
+        "changed_pixel_count": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      "exact_match": true
+    }
+  },
+  "projection_stress_scenes": {
+    "camera-inside-plume": {
+      "scene": "artifacts/two-emitter-overflow/scenes/camera-inside-plume.json",
+      "scene_sha256": "361c2df81c7d34814a7974daa5bfbb8897e50ac03f86ef70bf0d20f5782e6098",
+      "camera": {
+        "id": "camera-inside-plume",
+        "position": [
+          -0.55,
+          1.45,
+          0.0
+        ],
+        "projection": {
+          "fov_degrees": 48.0,
+          "kind": "perspective"
+        },
+        "target": [
+          -0.55,
+          2.2,
+          -0.35
+        ]
+      }
+    },
+    "near-plane-intersection": {
+      "scene": "artifacts/two-emitter-overflow/scenes/near-plane-intersection.json",
+      "scene_sha256": "f8635268f331229a2a201c6135ac593127a1196667b7b73c7aa575088639fcf4",
+      "camera": {
+        "id": "near-plane-intersection",
+        "position": [
+          -0.55,
+          0.62,
+          0.32
+        ],
+        "projection": {
+          "fov_degrees": 48.0,
+          "kind": "perspective"
+        },
+        "target": [
+          -0.55,
+          0.62,
+          -0.25
+        ]
+      }
+    }
+  },
+  "projection_stress_matrix": {
+    "camera-inside-plume": {
+      "captures": {
+        "tiled": {
+          "image": "artifacts/two-emitter-overflow/camera-inside-plume-tiled.png",
+          "sha256": "53589a9296a5d45e04a967d6cdd393286fb82d2c2026a6a3980cb7364a9743b7",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              920,
+              0,
+              0,
+              0
+            ],
+            "tile_candidates": [
+              323556,
+              18172,
+              7360,
+              10488
+            ],
+            "tile_max_occupancy": [
+              354,
+              48,
+              8,
+              12
+            ]
+          },
+          "tile_categories": {
+            "fire_primitives": {
+              "capacity": 64,
+              "candidate_memberships": 323556,
+              "overflow_tiles": 920,
+              "max_occupancy": 354
+            },
+            "smoke_lobes": {
+              "capacity": 72,
+              "candidate_memberships": 18172,
+              "overflow_tiles": 0,
+              "max_occupancy": 48
+            },
+            "point_lights": {
+              "capacity": 8,
+              "candidate_memberships": 7360,
+              "overflow_tiles": 0,
+              "max_occupancy": 8
+            },
+            "particle_lights": {
+              "capacity": 12,
+              "candidate_memberships": 10488,
+              "overflow_tiles": 0,
+              "max_occupancy": 12
+            }
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "max_point_lights": 8,
+          "max_particle_lights": 12,
+          "known_gpu_allocation_bytes": 25894508,
+          "tile_list_bytes": 603520
+        },
+        "exhaustive": {
+          "image": "artifacts/two-emitter-overflow/camera-inside-plume-exhaustive.png",
+          "sha256": "53589a9296a5d45e04a967d6cdd393286fb82d2c2026a6a3980cb7364a9743b7",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              920,
+              920,
+              920,
+              920
+            ],
+            "tile_candidates": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          "tile_categories": {
+            "fire_primitives": {
+              "capacity": 64,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "smoke_lobes": {
+              "capacity": 72,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "point_lights": {
+              "capacity": 8,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "particle_lights": {
+              "capacity": 12,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            }
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "max_point_lights": 8,
+          "max_particle_lights": 12,
+          "known_gpu_allocation_bytes": 25894508,
+          "tile_list_bytes": 603520
+        }
+      },
+      "image_error": {
+        "changed_pixel_count": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      "exact_match": true
+    },
+    "near-plane-intersection": {
+      "captures": {
+        "tiled": {
+          "image": "artifacts/two-emitter-overflow/near-plane-intersection-tiled.png",
+          "sha256": "d7d35792db3b4452a6b2d26b87c297d1b2eee450fa20e2e1767a89098093353c",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              920,
+              0,
+              0,
+              0
+            ],
+            "tile_candidates": [
+              212915,
+              42320,
+              7360,
+              10440
+            ],
+            "tile_max_occupancy": [
+              265,
+              46,
+              8,
+              12
+            ]
+          },
+          "tile_categories": {
+            "fire_primitives": {
+              "capacity": 64,
+              "candidate_memberships": 212915,
+              "overflow_tiles": 920,
+              "max_occupancy": 265
+            },
+            "smoke_lobes": {
+              "capacity": 72,
+              "candidate_memberships": 42320,
+              "overflow_tiles": 0,
+              "max_occupancy": 46
+            },
+            "point_lights": {
+              "capacity": 8,
+              "candidate_memberships": 7360,
+              "overflow_tiles": 0,
+              "max_occupancy": 8
+            },
+            "particle_lights": {
+              "capacity": 12,
+              "candidate_memberships": 10440,
+              "overflow_tiles": 0,
+              "max_occupancy": 12
+            }
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "max_point_lights": 8,
+          "max_particle_lights": 12,
+          "known_gpu_allocation_bytes": 25894508,
+          "tile_list_bytes": 603520
+        },
+        "exhaustive": {
+          "image": "artifacts/two-emitter-overflow/near-plane-intersection-exhaustive.png",
+          "sha256": "d7d35792db3b4452a6b2d26b87c297d1b2eee450fa20e2e1767a89098093353c",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              920,
+              920,
+              920,
+              920
+            ],
+            "tile_candidates": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              0,
+              0,
+              0,
+              0
+            ]
+          },
+          "tile_categories": {
+            "fire_primitives": {
+              "capacity": 64,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "smoke_lobes": {
+              "capacity": 72,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "point_lights": {
+              "capacity": 8,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "particle_lights": {
+              "capacity": 12,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            }
+          },
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "max_point_lights": 8,
+          "max_particle_lights": 12,
+          "known_gpu_allocation_bytes": 25894508,
           "tile_list_bytes": 603520
         }
       },
@@ -910,7 +1230,7 @@
         "backend": "Metal",
         "max_point_lights": 8,
         "max_particle_lights": 12,
-        "known_gpu_allocation_bytes": 25892192,
+        "known_gpu_allocation_bytes": 25894508,
         "tile_list_bytes": 603520
       },
       "exhaustive": {
@@ -969,7 +1289,7 @@
         "backend": "Metal",
         "max_point_lights": 8,
         "max_particle_lights": 12,
-        "known_gpu_allocation_bytes": 25892192,
+        "known_gpu_allocation_bytes": 25894508,
         "tile_list_bytes": 603520
       },
       "exact_match": true
@@ -1031,7 +1351,7 @@
         "backend": "Metal",
         "max_point_lights": 8,
         "max_particle_lights": 12,
-        "known_gpu_allocation_bytes": 25892192,
+        "known_gpu_allocation_bytes": 25894508,
         "tile_list_bytes": 603520
       },
       "exhaustive": {
@@ -1090,7 +1410,7 @@
         "backend": "Metal",
         "max_point_lights": 8,
         "max_particle_lights": 12,
-        "known_gpu_allocation_bytes": 25892192,
+        "known_gpu_allocation_bytes": 25894508,
         "tile_list_bytes": 603520
       },
       "exact_match": true
@@ -1153,7 +1473,7 @@
       "backend": "Metal",
       "max_point_lights": 8,
       "max_particle_lights": 12,
-      "known_gpu_allocation_bytes": 25892192,
+      "known_gpu_allocation_bytes": 25894508,
       "tile_list_bytes": 603520
     },
     "matches_exhaustive": true
@@ -1220,7 +1540,7 @@
       "backend": "Metal",
       "max_point_lights": 8,
       "max_particle_lights": 12,
-      "known_gpu_allocation_bytes": 25892192,
+      "known_gpu_allocation_bytes": 25894508,
       "tile_list_bytes": 603520
     },
     "matches_tiled": true
@@ -1236,6 +1556,7 @@
   },
   "comparisons": {
     "all_tiled_cameras_match_exhaustive": true,
+    "camera_inside_and_near_plane_match_exhaustive": true,
     "source_isolation_matches_exhaustive": true,
     "forced_fallback_matches_exhaustive": true,
     "natural_fire_overflow_reached": true,
