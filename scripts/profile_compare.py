@@ -95,6 +95,8 @@ def main() -> int:
     parser.add_argument("--candidate-disable-tile-lists", action="store_true", help="use exhaustive candidate evaluation in candidate runs")
     parser.add_argument("--baseline-force-tile-overflow", action="store_true", help="force exhaustive overflow fallback in baseline runs")
     parser.add_argument("--candidate-force-tile-overflow", action="store_true", help="force exhaustive overflow fallback in candidate runs")
+    parser.add_argument("--baseline-precompute-fire-bounds", action="store_true", help="precompute conservative fire bounds in baseline runs")
+    parser.add_argument("--candidate-precompute-fire-bounds", action="store_true", help="precompute conservative fire bounds in candidate runs")
     parser.add_argument("--baseline-disable-object-culling", action="store_true", help="draw all objects in every applicable pass for baseline runs")
     parser.add_argument("--candidate-disable-object-culling", action="store_true", help="draw all objects in every applicable pass for candidate runs")
     parser.add_argument("--baseline-disable-instancing", action="store_true", help="issue one object draw per instance in baseline runs")
@@ -230,6 +232,13 @@ def main() -> int:
                 command.append("--disable-tile-lists")
             if force_tile_overflow:
                 command.append("--force-tile-overflow")
+            precompute_fire_bounds = (
+                args.baseline_precompute_fire_bounds
+                if variant == "baseline"
+                else args.candidate_precompute_fire_bounds
+            )
+            if precompute_fire_bounds:
+                command.append("--precompute-fire-bounds")
             disable_object_culling = (
                 args.baseline_disable_object_culling
                 if variant == "baseline"
@@ -356,6 +365,8 @@ def main() -> int:
             "candidate_disable_tile_lists": args.candidate_disable_tile_lists,
             "baseline_force_tile_overflow": args.baseline_force_tile_overflow,
             "candidate_force_tile_overflow": args.candidate_force_tile_overflow,
+            "baseline_precompute_fire_bounds": args.baseline_precompute_fire_bounds,
+            "candidate_precompute_fire_bounds": args.candidate_precompute_fire_bounds,
             "baseline_disable_object_culling": args.baseline_disable_object_culling,
             "candidate_disable_object_culling": args.candidate_disable_object_culling,
             "baseline_disable_instancing": args.baseline_disable_instancing,

@@ -316,10 +316,16 @@ impl Session {
                     enabled: bool,
                     #[serde(default)]
                     force_overflow: bool,
+                    #[serde(default)]
+                    precompute_fire_bounds: bool,
                 }
                 let p: P = serde_json::from_value(params)?;
                 self.renderer.set_tile_lists(p.enabled, p.force_overflow);
-                Ok(json!({"enabled":p.enabled,"force_overflow":p.force_overflow}))
+                self.renderer
+                    .set_fire_bounds_precompute(p.precompute_fire_bounds);
+                Ok(
+                    json!({"enabled":p.enabled,"force_overflow":p.force_overflow,"precompute_fire_bounds":p.precompute_fire_bounds}),
+                )
             }
             "set_shading_diagnostics" => {
                 #[derive(Deserialize)]
@@ -545,7 +551,7 @@ pub fn description() -> Value {
         "set_parameter":{"path":"render.{exposure,shading_steps,dither_strength,smoke_steps,palette_strength,bloom_strength,reflection_steps}; render.experiments.{pixel_cluster_lighting,stable_smoke_detail,connected_motion,projected_detail_lod,smoke_absorption_cache,optical_surface_reuse,smoke_candidate_cache}; environment.{wind,ambient,fog_density,sky_color,horizon_color}; emitters.<id>.{enabled,intensity,smoke_density,buoyancy,dissipation,style,secondary_bubbles,bubble_scale,self_shadow_strength,internal_glow,effect_profile}; effects.<id>.fire.{width,height,motion_speed,curl,edge_breakup,tip_breakup,fragment_size,lobe_roundness,solid,color_bands,heat_distortion,heat_distortion_height,branches,particle_lights,particle_light_strength,particle_light_range,tongues,segments,fragment_rate,fragment_lifetime,ember_rate,ember_lifetime,emission}; effects.<id>.thermal.{heat_output,cooling_rate,lift}; effects.<id>.palette.{outer,warm,hot}; lights.<id>.{intensity,flicker,color,position,range}; materials.<id>.{color,roughness,emission,metallic,reflectivity,transmission,ior,thickness,absorption,subsurface,scatter_color,heat_response}","value":"typed JSON value; moving a linked fire-light position also moves its emitter atomically"},
         "get_window":{"availability":"native run only"},"set_window":{"availability":"native run only","size":"optional logical [width,height]","minimized":"optional boolean","fullscreen":"optional boolean"},"shutdown":{"availability":"native run only"},
         "set_shadow_cache":{"force_redraw":"boolean; true redraws every shadow map on every frame for comparison"},
-        "set_tile_lists":{"enabled":"boolean; false uses exhaustive candidate evaluation for the correctness baseline","force_overflow":"optional boolean; forces exhaustive fallback for every tile to validate overflow behavior"},
+        "set_tile_lists":{"enabled":"boolean; false uses exhaustive candidate evaluation for the correctness baseline","force_overflow":"optional boolean; forces exhaustive fallback for every tile to validate overflow behavior","precompute_fire_bounds":"optional boolean; precompute conservative fire screen bounds once per frame instead of projecting each primitive for every tile"},
         "set_shading_diagnostics":{"enabled":"boolean; enables companion instrumented draws and exposes counters in capture_frame/get_metrics; adds diagnostic scratch targets and perturbs timing"},
         "set_simulation_batching":{"enabled":"boolean; true batches up to six fixed smoke ticks per queue submission; false uses one submission per tick"},
         "set_geometry_rendering":{"culling":"boolean; false draws every object in every applicable pass","instancing":"boolean; false issues one object draw for comparison"},

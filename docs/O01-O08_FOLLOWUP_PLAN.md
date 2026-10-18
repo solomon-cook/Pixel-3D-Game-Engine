@@ -139,6 +139,24 @@ whole-frame median regressions of +0.062 and +0.090 ms. Keep the experiment
 disabled by default; do not claim a frame win. Cross-adapter and native playback
 remain open. See [the report](measurements-o03-smoke-candidates.json).
 
+**Projected fire-bound reuse candidate (18 October 2026):** a separate opt-in GPU
+pass now computes all 512 conservative fire bounds once per frame, replacing the
+eight view-projection transforms repeated for every fire-primitive/tile pair. The
+direct per-tile projection remains the default. The fixed-tick matrix covers all
+named cameras in clearing, profiling-heavy, Material Atelier and the two-emitter
+stress scene, including generated near-plane and camera-inside views: 21 pairs
+match pixels, memberships, overflow counts and occupancy exactly. Three
+alternating 120-second pairs per workload have complete 7,200-frame GPU timestamp
+coverage. Paired median GPU-render improvements are 0.629/0.619/0.292/0.763 ms;
+tile-build improvements are 0.308/0.310/0.145/0.626 ms. Full frame-work improves
+in every workload's paired median, but Material Atelier p95 rises 0.179 ms and CPU
+tile-list encoding rises slightly in three workloads. Natural fire fallback
+remains 100% in the camera-inside route; the precomputed path preserves its exact
+fallback behavior. Keep this candidate selectable and disabled by default until
+native-window and non-Metal rendering are qualified. See the
+[machine-readable report](measurements-o03-fire-projected-bounds.json) and
+[reproducible runner](../scripts/fire_bounds_precompute_study.py).
+
 ### 2. O02 moving-caster and invalidation routes
 
 **Question:** Does per-face caching retain correctness and avoid excess redraw work

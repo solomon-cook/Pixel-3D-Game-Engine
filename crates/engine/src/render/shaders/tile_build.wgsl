@@ -7,6 +7,7 @@ struct TileStats {values:array<atomic<u32>,12>};
 @group(1) @binding(4) var<storage,read_write> particle_tile_indices_out:array<u32>;
 @group(1) @binding(5) var<uniform> tile_config:TileConfig;
 @group(1) @binding(6) var<storage,read_write> tile_stats_out:TileStats;
+@group(1) @binding(7) var<storage,read> fire_projected_bounds:array<vec4<f32>>;
 
 fn overlaps_tile(center:vec3<f32>,radius:f32,tile:vec2<u32>)->bool {
     if !all(center==center) || !all(abs(center)<vec3(1e20)) || !(radius>=0.) || !(radius<1e20) {return true;}
@@ -26,6 +27,12 @@ fn overlaps_tile(center:vec3<f32>,radius:f32,tile:vec2<u32>)->bool {
     return all(max_pixel>=tile_min) && all(min_pixel<=tile_max);
 }
 
+fn projected_bounds_overlap(bounds:vec4<f32>,tile:vec2<u32>)->bool {
+    let tile_min=vec2<f32>(tile*TILE_SIZE)-vec2(1.);
+    let tile_max=min(vec2<f32>((tile+vec2<u32>(1u))*TILE_SIZE)+vec2(1.),g.resolution.xy);
+    return all(bounds.zw>=tile_min) && all(bounds.xy<=tile_max);
+}
+
 @compute @workgroup_size(1)
 fn build_tile_lists(@builtin(global_invocation_id) id:vec3<u32>) {
     let tiles_x=u32(ceil(g.resolution.x/f32(TILE_SIZE)));
@@ -43,7 +50,14 @@ fn build_tile_lists(@builtin(global_invocation_id) id:vec3<u32>) {
             for(var i=0u;i<256u;i++) {
                 if i>=fire.sources[source].counts.x {break;}
                 let primitive=fire.sources[source].primitives[i];
-                if overlaps_tile(primitive.center_radius.xyz,max(primitive.center_radius.w,primitive.axis_length.w),id.xy) {
+                let radius=max(primitive.center_radius.w,primitive.axis_length.w);
+                var overlaps:bool;
+                if tile_config.force_overflow.y!=0u {
+                    overlaps=projected_bounds_overlap(fire_projected_bounds[source*256u+i],id.xy);
+                } else {
+                    overlaps=overlaps_tile(primitive.center_radius.xyz,radius,id.xy);
+                }
+                if overlaps {
                     if counts.x<FIRE_TILE_CAPACITY {fire_tile_indices_out[fire_base+counts.x]=source*256u+i;} else {flags.x|=1u;}
                     counts.x++;
                 }

@@ -513,6 +513,17 @@ reduces paired median GPU render by 1.339 ms and frame work by 0.327 ms; tile-li
 build costs 1.27–1.39 ms per frame, with mixed atmosphere/fire deltas. This is
 pathological-view evidence, not a general tiled-rendering decision. See
 [the report](measurements-o03-camera-inside-overflow.json).
+An independent O03 path now precomputes each fire primitive's projected screen
+bounds once per frame. Direct projection remains the default; the candidate is
+available through `--precompute-fire-bounds` and the shared `set_tile_lists`
+operation. Across 21 fixed-tick views in four workloads, pixels and all tile
+membership/overflow/occupancy counters match exactly. Three paired 120-second
+M1 Max/Metal routes per workload lower median GPU-render time by 0.292–0.763 ms
+and tile-build time by 0.145–0.626 ms. Frame-work paired medians improve, while
+Material Atelier p95 frame work regresses by 0.179 ms. Keep it opt-in pending
+native-window and non-Metal acceptance. See
+[the report](measurements-o03-fire-projected-bounds.json) and
+[runner](../scripts/fire_bounds_precompute_study.py).
 The two-emitter maximum-budget correctness runner now generates separate
 camera-inside-plume and near-plane-intersection scenes. Both tiled images match
 exhaustive output exactly; the inside-plume view overflows the fire list in all

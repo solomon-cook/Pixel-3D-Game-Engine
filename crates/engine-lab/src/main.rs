@@ -55,6 +55,9 @@ enum Command {
         /// Force exhaustive fallback for every tile to validate overflow behavior.
         #[arg(long)]
         force_tile_overflow: bool,
+        /// Precompute conservative fire screen bounds once per frame for O03 lists.
+        #[arg(long)]
+        precompute_fire_bounds: bool,
         /// Disable conservative per-camera and per-shadow-frustum object culling.
         #[arg(long)]
         disable_object_culling: bool,
@@ -90,6 +93,9 @@ enum Command {
         /// Force exhaustive fallback for every tile to validate overflow behavior.
         #[arg(long)]
         force_tile_overflow: bool,
+        /// Precompute conservative fire screen bounds once per frame for O03 lists.
+        #[arg(long)]
+        precompute_fire_bounds: bool,
         /// Disable conservative per-camera and per-shadow-frustum object culling.
         #[arg(long)]
         disable_object_culling: bool,
@@ -166,6 +172,7 @@ struct BenchmarkSettings {
     force_shadow_redraw: bool,
     tile_lists_enabled: bool,
     force_tile_overflow: bool,
+    precompute_fire_bounds: bool,
     object_culling_enabled: bool,
     instancing_enabled: bool,
     shading_counter_sampling: bool,
@@ -246,6 +253,7 @@ fn start() -> Result<()> {
             disable_gpu_timing,
             disable_tile_lists,
             force_tile_overflow,
+            precompute_fire_bounds,
             disable_object_culling,
             disable_instancing,
             shading_counters,
@@ -260,6 +268,9 @@ fn start() -> Result<()> {
             session
                 .renderer
                 .set_tile_lists(!disable_tile_lists, force_tile_overflow);
+            session
+                .renderer
+                .set_fire_bounds_precompute(precompute_fire_bounds);
             session
                 .renderer
                 .set_geometry_rendering(!disable_object_culling, !disable_instancing);
@@ -278,6 +289,7 @@ fn start() -> Result<()> {
             force_shadow_redraw,
             disable_tile_lists,
             force_tile_overflow,
+            precompute_fire_bounds,
             disable_object_culling,
             disable_instancing,
             shading_counter_sampling,
@@ -297,6 +309,7 @@ fn start() -> Result<()> {
                 force_shadow_redraw,
                 tile_lists_enabled: !disable_tile_lists,
                 force_tile_overflow,
+                precompute_fire_bounds,
                 object_culling_enabled: !disable_object_culling,
                 instancing_enabled: !disable_instancing,
                 shading_counter_sampling,
@@ -515,6 +528,9 @@ fn benchmark(
     session
         .renderer
         .set_tile_lists(settings.tile_lists_enabled, settings.force_tile_overflow);
+    session
+        .renderer
+        .set_fire_bounds_precompute(settings.precompute_fire_bounds);
     session
         .renderer
         .set_geometry_rendering(settings.object_culling_enabled, settings.instancing_enabled);
@@ -975,6 +991,7 @@ fn benchmark(
         "tile_lists":{
             "enabled":settings.tile_lists_enabled,
             "force_overflow":settings.force_tile_overflow,
+            "fire_bounds_precompute":settings.precompute_fire_bounds,
             "tile_size":capabilities["tile_lists"]["tile_size"],
             "capacity_bytes":capabilities["tile_lists"]["list_bytes"],
             "cpu_encode_ms":summary("cpu_tile_list_encode_ms"),

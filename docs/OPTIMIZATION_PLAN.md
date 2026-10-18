@@ -342,6 +342,26 @@ without reducing the fully overflowing fire work; this does not justify disablin
 tiles generally. See [the sustained report](measurements-o03-camera-inside-overflow.json)
 and [reproducible runner](../scripts/tile_overflow_camera_route_study.py).
 
+**Opt-in fire projected-bound precompute (18 October 2026):** the direct baseline
+projects each fire primitive's eight conservative bounds corners for every tile.
+An independent GPU pass can now project each of the 512 source slots once per
+frame; the tile builder then performs the same padded rectangle test against that
+stored bound. The 8 KiB buffer is counted in known allocations. Direct projection
+remains the default and exhaustive tile evaluation remains independently
+selectable. Matched fixed-tick output, tile memberships, overflow counts and
+occupancy match across 21 named views, including perspective, orthographic,
+camera-inside and near-plane cases. Three alternating 120-second pairs after
+10-second warm-ups cover clearing, heavy plume/eight-light, Material Atelier and
+camera-inside/all-fire-overflow on M1 Max/Metal. Paired median GPU-render deltas
+are −0.629/−0.619/−0.292/−0.763 ms, and tile-build deltas are
+−0.308/−0.310/−0.145/−0.626 ms. Frame-work deltas are −0.071/−0.513/−0.041/−0.334
+ms; Material Atelier p95 frame work regresses by 0.179 ms, and CPU tile-list
+encoding rises slightly on clearing, materials and camera-inside. Keep this
+candidate opt-in pending native-window and DX12/other-adapter validation; the
+measured GPU-stage improvements do not establish a universal frame-time win. See
+[the report](measurements-o03-fire-projected-bounds.json) and
+[reproducible runner](../scripts/fire_bounds_precompute_study.py).
+
 ## O04 — Detail based on projected pixel contribution
 
 **Purpose:** spend geometry and shading effort where the chosen pixel grid can

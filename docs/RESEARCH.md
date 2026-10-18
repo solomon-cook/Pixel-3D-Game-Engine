@@ -268,6 +268,30 @@ This isolates the cost of an adversarial all-overflow view. Keep the general
 change. See [the report](measurements-o03-camera-inside-overflow.json) and
 [reproducible runner](../scripts/tile_overflow_camera_route_study.py).
 
+## O03 fire projected-bound precompute (18 October)
+
+Hypothesis: O03 spends avoidable GPU work reprojecting the same fire bounds once
+for every screen tile. The selectable candidate dispatches one invocation per
+fire slot, projects the same eight conservative corners once per frame, and stores
+pixel-space rectangles for the tile builder. The direct projection path remains
+the default and the exhaustive tile-list mode remains separately available.
+
+The 8 KiB buffer and extra dispatch are included in the resource and tile-build
+measurements. On M1 Max/Metal, 21 fixed-tick views across clearing, heavy plume,
+Material Atelier and two-emitter stress scenes match pixel output, memberships,
+overflow counts and occupancy exactly. Three alternating 120-second pairs per
+workload show paired median GPU-render changes of −0.629/−0.619/−0.292/−0.763 ms
+and tile-build changes of −0.308/−0.310/−0.145/−0.626 ms. Paired frame-work
+medians improve by 0.071/0.513/0.041/0.334 ms, while Material Atelier p95 frame
+work regresses by 0.179 ms. CPU tile-list encoding rises slightly on clearing,
+Material Atelier and the all-overflow view. Keep it opt-in: the native surface,
+Windows/DX12 and other-adapter behavior remain unqualified, and the GPU-render
+savings do not make the whole-frame p95 uniformly better. The all-overflow
+camera retains 100% fire fallback. See
+[measurements-o03-fire-projected-bounds.json](measurements-o03-fire-projected-bounds.json),
+the [runner](../scripts/fire_bounds_precompute_study.py), and raw paired reports
+under ignored `artifacts/o03/fire-projected-bounds/`.
+
 ## Material response beneath pixel treatment (16 October)
 
 Hypothesis: independent HDR metalness/refraction/scattering parameters retain

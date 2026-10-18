@@ -171,6 +171,7 @@ struct Pipelines {
     smoke_candidates: wgpu::ComputePipeline,
     absorption: wgpu::ComputePipeline,
     tile_build: wgpu::ComputePipeline,
+    fire_projected_bounds: wgpu::ComputePipeline,
 }
 struct Timing {
     slots: Vec<TimingSlot>,
@@ -309,6 +310,8 @@ pub struct Renderer {
     tile_list_layout: wgpu::BindGroupLayout,
     tile_build_layout: wgpu::BindGroupLayout,
     tile_build_group: wgpu::BindGroup,
+    fire_projected_bounds_layout: wgpu::BindGroupLayout,
+    fire_projected_bounds_group: wgpu::BindGroup,
     tile_list_groups: [wgpu::BindGroup; 2],
     tile_headers: wgpu::Buffer,
     fire_tile_indices: wgpu::Buffer,
@@ -322,6 +325,7 @@ pub struct Renderer {
     tile_count: u32,
     tile_force_overflow: bool,
     tile_lists_enabled: bool,
+    fire_bounds_precompute_enabled: bool,
     pipelines: Pipelines,
     timing: Option<Timing>,
     completed_gpu_timings: VecDeque<GpuTimingSample>,
@@ -1317,8 +1321,14 @@ impl Renderer {
                     },
                 ),
                 binding(6, wgpu::ShaderStages::COMPUTE, storage(false)),
+                binding(7, wgpu::ShaderStages::COMPUTE, storage(true)),
             ],
         });
+        let fire_projected_bounds_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                label: Some("fire projected bounds output"),
+                entries: &[binding(0, wgpu::ShaderStages::COMPUTE, storage(false))],
+            });
         let make_storage = |label, size| {
             device.create_buffer(&wgpu::BufferDescriptor {
                 label: Some(label),
@@ -1349,6 +1359,12 @@ impl Renderer {
             contents: bytemuck::bytes_of(&TileConfigGpu::zeroed()),
             usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
         });
+        let fire_projected_bounds_buffer = make_storage("fire projected bounds", 512 * 16);
+        let fire_projected_bounds_group = group(
+            &device,
+            &fire_projected_bounds_layout,
+            &[fire_projected_bounds_buffer.as_entire_binding()],
+        );
         let tile_stats_buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("tile-list occupancy counters"),
             size: 48,
@@ -1380,6 +1396,7 @@ impl Renderer {
                 particle_tile_indices.as_entire_binding(),
                 tile_config_buffer.as_entire_binding(),
                 tile_stats_buffer.as_entire_binding(),
+                fire_projected_bounds_buffer.as_entire_binding(),
             ],
         );
         let use_color =
@@ -1941,6 +1958,7 @@ impl Renderer {
             &shadow_material_layout,
             &tile_list_layout,
             &tile_build_layout,
+            &fire_projected_bounds_layout,
             &smoke_candidate_layout,
             effect_depth_format,
             smoke_volume_format,
@@ -2047,6 +2065,7 @@ impl Renderer {
         let tile_stats_readback_bytes = 3 * 48;
         let tile_stats_bytes = tile_stats_buffer_bytes + tile_stats_readback_bytes;
         let tile_config_bytes = std::mem::size_of::<TileConfigGpu>() as u64;
+        let fire_projected_bounds_bytes = 512 * 16;
         let timing_staging_bytes = if timestamp {
             TIMING_SLOTS as u64 * GPU_QUERY_BYTES * 2
                 + COMPUTE_TIMING_SLOTS as u64 * COMPUTE_QUERY_BYTES * 2
@@ -2103,6 +2122,7 @@ impl Renderer {
             + tile_list_bytes
             + tile_stats_bytes
             + tile_config_bytes
+            + fire_projected_bounds_bytes
             + timing_staging_bytes
             + geometry_bytes
             + instance_buffer_bytes
@@ -2145,6 +2165,7 @@ impl Renderer {
             "tile_stats_bytes":tile_stats_bytes,
             "tile_stats_buffer_bytes":tile_stats_buffer_bytes,
             "tile_config_bytes":tile_config_bytes,
+            "fire_projected_bounds_bytes":fire_projected_bounds_bytes,
             "tile_stats_readback_bytes":tile_stats_readback_bytes,
             "shading_diagnostic_counter_bytes":SHADING_DIAGNOSTIC_COUNTER_COUNT as u64 * std::mem::size_of::<u32>() as u64,
             "shading_diagnostic_targets_bytes":0,
@@ -2253,6 +2274,8 @@ impl Renderer {
             tile_list_layout,
             tile_build_layout,
             tile_build_group,
+            fire_projected_bounds_layout,
+            fire_projected_bounds_group,
             tile_list_groups,
             tile_headers,
             fire_tile_indices,
@@ -2266,6 +2289,7 @@ impl Renderer {
             tile_count,
             tile_force_overflow: false,
             tile_lists_enabled: true,
+            fire_bounds_precompute_enabled: false,
             pipelines,
             timing,
             completed_gpu_timings: VecDeque::new(),
@@ -2415,6 +2439,7 @@ impl Renderer {
         shadow_materials: &wgpu::BindGroupLayout,
         tile_lists: &wgpu::BindGroupLayout,
         tile_build: &wgpu::BindGroupLayout,
+        fire_projected_bounds: &wgpu::BindGroupLayout,
         smoke_candidate_layout: &wgpu::BindGroupLayout,
         effect_depth_format: wgpu::TextureFormat,
         smoke_volume_format: wgpu::TextureFormat,
@@ -2429,6 +2454,7 @@ impl Renderer {
         let tile_common = read("tile_common.wgsl")?;
         let tile_bindings = read("tile_bindings.wgsl")?;
         let tile_build_source = read("tile_build.wgsl")?;
+        let fire_projected_bounds_source = read("fire_projected_bounds.wgsl")?;
         let smoke_candidate_source = read("smoke_candidates.wgsl")?;
         let world = format!("{}\n{}", read("materials.wgsl")?, read("world.wgsl")?);
         let optical_source = read("optical.wgsl")?;
@@ -2563,6 +2589,11 @@ impl Renderer {
             "effect tile-list builder",
             format!("{common}\n{tile_common}\n{tile_build_source}"),
         );
+        let fire_projected_bounds_module = shader(
+            device,
+            "fire projected bounds",
+            format!("{common}\n{fire_projected_bounds_source}"),
+        );
         let smoke_candidate_module = shader(
             device,
             "smoke-lobe candidate materialization",
@@ -2605,6 +2636,7 @@ impl Renderer {
         let diagnostic_volume_layout = layout(&[global, textures, volumes, tile_lists]);
         let optical_layout = layout(&[global, textures, optical, optical_smoke]);
         let tile_build_pipeline_layout = layout(&[global, tile_build]);
+        let fire_projected_bounds_pipeline_layout = layout(&[global, fire_projected_bounds]);
         let smoke_candidate_pipeline_layout = layout(&[global, smoke_candidate_layout]);
         let post_layout = layout(&[global, post]);
         let smoke_layout = layout(&[smoke]);
@@ -2988,6 +3020,15 @@ impl Renderer {
             compilation_options: Default::default(),
             cache: None,
         });
+        let fire_projected_bounds =
+            device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("fire projected bounds"),
+                layout: Some(&fire_projected_bounds_pipeline_layout),
+                module: &fire_projected_bounds_module,
+                entry_point: Some("build_fire_projected_bounds"),
+                compilation_options: Default::default(),
+                cache: None,
+            });
         let smoke_candidates = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
             label: Some("smoke-lobe candidate materialization"),
             layout: Some(&smoke_candidate_pipeline_layout),
@@ -3028,6 +3069,7 @@ impl Renderer {
             smoke_candidates,
             absorption,
             tile_build,
+            fire_projected_bounds,
         })
     }
 
@@ -3046,6 +3088,7 @@ impl Renderer {
             &self.shadow_material_layout,
             &self.tile_list_layout,
             &self.tile_build_layout,
+            &self.fire_projected_bounds_layout,
             &self.smoke_candidate_layout,
             self.effect_depth_format,
             self.smoke_volume_format,
@@ -3180,8 +3223,22 @@ impl Renderer {
     pub fn set_tile_lists(&mut self, enabled: bool, force_overflow: bool) {
         self.tile_lists_enabled = enabled;
         self.tile_force_overflow = force_overflow;
+        self.update_tile_config();
+    }
+
+    pub fn set_fire_bounds_precompute(&mut self, enabled: bool) {
+        self.fire_bounds_precompute_enabled = enabled;
+        self.update_tile_config();
+    }
+
+    fn update_tile_config(&self) {
         let config = TileConfigGpu {
-            force_overflow: [u32::from(!enabled || force_overflow), 0, 0, 0],
+            force_overflow: [
+                u32::from(!self.tile_lists_enabled || self.tile_force_overflow),
+                u32::from(self.fire_bounds_precompute_enabled),
+                0,
+                0,
+            ],
         };
         self.queue
             .write_buffer(&self.tile_config_buffer, 0, bytemuck::bytes_of(&config));
@@ -4601,6 +4658,12 @@ impl Renderer {
                     end_of_pass_write_index: Some(11),
                 }),
             });
+            if self.tile_lists_enabled && self.fire_bounds_precompute_enabled {
+                pass.set_pipeline(&self.pipelines.fire_projected_bounds);
+                pass.set_bind_group(0, &self.globals, &[]);
+                pass.set_bind_group(1, &self.fire_projected_bounds_group, &[]);
+                pass.dispatch_workgroups(8, 1, 1);
+            }
             pass.set_pipeline(&self.pipelines.tile_build);
             pass.set_bind_group(0, &self.globals, &[]);
             pass.set_bind_group(1, &self.tile_build_group, &[]);
@@ -5260,6 +5323,7 @@ impl Renderer {
             "tile_lists": {
                 "enabled": self.tile_lists_enabled,
                 "force_overflow": self.tile_force_overflow,
+                "fire_bounds_precompute": self.fire_bounds_precompute_enabled,
                 "tile_count": self.tile_count,
                 "tile_size": TILE_SIZE,
                 "list_bytes": self.resource_inventory["tile_list_bytes"],
