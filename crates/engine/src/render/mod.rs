@@ -3718,6 +3718,7 @@ impl Renderer {
                         wgpu::BindingResource::TextureView(&smoke_views[i]),
                         wgpu::BindingResource::Sampler(&self.optical_sampler),
                         wgpu::BindingResource::TextureView(&view),
+                        wgpu::BindingResource::TextureView(&secondary_smoke_views[i]),
                     ],
                 )
             });

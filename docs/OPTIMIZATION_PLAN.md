@@ -350,6 +350,12 @@ after fixed simulation updates, successful parameter edits, reset, shader reload
 and re-enable. A protocol study confirms byte-identical repeated paused output,
 expected build/skip counts, and zero residency while disabled; see
 [measurements-o05-refresh-policy.json](measurements-o05-refresh-policy.json).
+A later live `serve` toggle exposed a missing secondary-smoke binding when the
+volume groups were recreated after enabling the cache. The runtime bind group now
+matches its five-entry layout; a fresh off/on/off protocol capture completed with
+4096 cache bytes while enabled. This confirms the toggle route and resource
+lifetime, not image parity or multi-emitter cache support; see
+[runtime-toggle evidence](measurements-o05.json).
 This does not improve a moving route where each simulation step dirties the cache.
 The matching 8³ temporal study recorded mean frame RGB MAE 0.285/255, p95
 0.426/255, maximum channel difference 39/255 and mean temporal-change magnitude

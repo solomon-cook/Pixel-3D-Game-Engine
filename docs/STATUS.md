@@ -49,7 +49,10 @@ renders when inputs are unchanged. A paused serve study confirms identical
 repeated images and a rebuild after each tested dirty event; disabling releases
 the cache field. The disabled path allocates no cache field and does no build pass; a live
 off/on/off Metal capture reports 0/4096/0 cache bytes and reproduces the same
-disabled image. A sustained three-scale study compares direct, 8³ and 16³ at
+disabled image. A later live toggle audit fixed a missing secondary-smoke
+binding in the recreated volume group; off/on/off captures now succeed with the
+expected 0/4096/0-byte cache lifecycle. The audit did not compare image parity.
+A sustained three-scale study compares direct, 8³ and 16³ at
 640×360 using three paired 120-second orbit runs per tier. At all scales 16³ is
 closer to direct in fixed-tick mean RGB error. The cache reduced the targeted
 atmosphere/fire GPU stage by 0.058–0.101 ms, but adds 0.025–0.033 ms GPU build

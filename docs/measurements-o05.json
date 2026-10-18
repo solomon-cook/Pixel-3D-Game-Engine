@@ -164,5 +164,18 @@
     "cache_resident_bytes_through_edits_reload_reset": {"8^3": 4096, "16^3": 32768},
     "interpretation": "No stale-cache discrepancy or discontinuous failure was observed in the discrete captures. 16^3 remained closer to direct than 8^3. This is freshness evidence, not continuous temporal acceptance.",
     "limitations": ["Headless Metal serve only; native window and other GPUs unverified.", "Continuous temporal pixel error and wall-clock resume timing were not measured."]
-  }
+  },
+  "runtime_toggle_binding_followup": {
+    "date": "2026-10-18",
+    "host": {"gpu": "Apple M1 Max", "backend": "Metal"},
+    "protocol": "serve JSON-lines; start with cache disabled, enable, capture, inspect metrics, disable, capture",
+    "result": "passed",
+    "cache_bytes_on": 4096,
+    "on_and_off_captures_succeeded": true,
+    "image_parity_compared": false,
+    "native_window": false,
+    "windows_dx12_verified": false,
+    "issue_found": "Enabling the cache recreated the volume bind group without its secondary-smoke binding; GPU validation rejected four supplied bindings for a five-binding layout.",
+    "change": "The cache-enabled volume bind-group recreation now includes the secondary-smoke texture, matching the existing volume layout. The absorption compute bind group remains limited to the bindings declared by its shader."
+    }
 }
