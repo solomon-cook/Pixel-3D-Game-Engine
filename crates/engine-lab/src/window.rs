@@ -63,6 +63,7 @@ struct NativeBenchmarkConfig {
     output: std::path::PathBuf,
     force_shadow_redraw: bool,
     tile_lists_enabled: bool,
+    precompute_fire_bounds: bool,
     object_culling_enabled: bool,
     instancing_enabled: bool,
     moving_caster: Option<String>,
@@ -77,6 +78,7 @@ pub struct NativeBenchmarkSettings {
     pub output: std::path::PathBuf,
     pub force_shadow_redraw: bool,
     pub tile_lists_enabled: bool,
+    pub precompute_fire_bounds: bool,
     pub object_culling_enabled: bool,
     pub instancing_enabled: bool,
     pub moving_caster: Option<String>,
@@ -267,6 +269,7 @@ pub fn benchmark_native(options: Options, settings: NativeBenchmarkSettings) -> 
             output: settings.output,
             force_shadow_redraw: settings.force_shadow_redraw,
             tile_lists_enabled: settings.tile_lists_enabled,
+            precompute_fire_bounds: settings.precompute_fire_bounds,
             object_culling_enabled: settings.object_culling_enabled,
             instancing_enabled: settings.instancing_enabled,
             moving_caster: settings.moving_caster,
@@ -393,6 +396,9 @@ impl App {
             session
                 .renderer
                 .set_tile_lists(config.tile_lists_enabled, false);
+            session
+                .renderer
+                .set_fire_bounds_precompute(config.precompute_fire_bounds);
             session
                 .renderer
                 .set_geometry_rendering(config.object_culling_enabled, config.instancing_enabled);
@@ -1129,6 +1135,7 @@ fn native_benchmark_report(
         "present_mode":format!("{:?}", present_mode),
         "vsync":present_mode == wgpu::PresentMode::AutoVsync || present_mode == wgpu::PresentMode::Fifo,
         "tile_lists_enabled":benchmark.config.tile_lists_enabled,
+        "fire_bounds_precompute":benchmark.config.precompute_fire_bounds,
         "force_shadow_redraw":benchmark.config.force_shadow_redraw,
         "geometry_rendering":{"culling":benchmark.config.object_culling_enabled,"instancing":benchmark.config.instancing_enabled},
         "moving_caster":benchmark.moving_caster.as_ref().map(|(id, _)| json!({"object":id,"radius":benchmark.config.caster_orbit_radius,"period_seconds":benchmark.config.caster_orbit_period,"orbit_center_xz":benchmark.orbit_center_xz,"sample_hz":60})),

@@ -286,11 +286,19 @@ medians improve by 0.071/0.513/0.041/0.334 ms, while Material Atelier p95 frame
 work regresses by 0.179 ms. CPU tile-list encoding rises slightly on clearing,
 Material Atelier and the all-overflow view. Keep it opt-in: the native surface,
 Windows/DX12 and other-adapter behavior remain unqualified, and the GPU-render
-savings do not make the whole-frame p95 uniformly better. The all-overflow
-camera retains 100% fire fallback. See
-[measurements-o03-fire-projected-bounds.json](measurements-o03-fire-projected-bounds.json),
-the [runner](../scripts/fire_bounds_precompute_study.py), and raw paired reports
-under ignored `artifacts/o03/fire-projected-bounds/`.
+savings do not make the whole-frame p95 uniformly better. A separate three-pair
+native clearing-orbit study on M1 Max/Metal lowers atmosphere/fire GPU-stage
+median by 0.291–0.328 ms (paired median 0.319 ms) and native-frame CPU median by
+0.056 ms. FPS deltas vary (−0.029, +0.205, +0.202; paired median +0.202 FPS),
+which does not establish a reliable whole-window win. Native results keep the
+candidate opt-in; owner visual review and Windows/DX12 or other-adapter evidence
+remain open. The all-overflow camera retains 100% fire fallback. See
+[offscreen measurements](measurements-o03-fire-projected-bounds.json),
+[native measurements](measurements-o03-fire-projected-bounds-native.json), the
+[offscreen runner](../scripts/fire_bounds_precompute_study.py), the
+[native runner](../scripts/fire_bounds_native_study.py), and raw paired reports
+under ignored `artifacts/o03/fire-projected-bounds/` and
+`artifacts/o03/fire-bounds-native/`.
 
 ## Material response beneath pixel treatment (16 October)
 

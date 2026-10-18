@@ -357,10 +357,17 @@ are −0.629/−0.619/−0.292/−0.763 ms, and tile-build deltas are
 −0.308/−0.310/−0.145/−0.626 ms. Frame-work deltas are −0.071/−0.513/−0.041/−0.334
 ms; Material Atelier p95 frame work regresses by 0.179 ms, and CPU tile-list
 encoding rises slightly on clearing, materials and camera-inside. Keep this
-candidate opt-in pending native-window and DX12/other-adapter validation; the
-measured GPU-stage improvements do not establish a universal frame-time win. See
-[the report](measurements-o03-fire-projected-bounds.json) and
-[reproducible runner](../scripts/fire_bounds_precompute_study.py).
+candidate opt-in pending owner visual review and DX12/other-adapter validation;
+the measured GPU-stage improvements do not establish a universal frame-time win.
+A separate three-pair native clearing-orbit comparison on M1 Max/Metal reduces
+the atmosphere/fire GPU-stage median by 0.291–0.328 ms (paired median 0.319 ms)
+and native-frame CPU median by 0.056 ms. FPS deltas vary from −0.029 to +0.205,
+with a paired median of +0.202 FPS; this is not a reliable whole-window win.
+Native coverage is now measured, but DX12/other-adapter and owner visual review
+remain open. See the [offscreen report](measurements-o03-fire-projected-bounds.json),
+[native report](measurements-o03-fire-projected-bounds-native.json), and
+[runners](../scripts/fire_bounds_precompute_study.py) and
+[native study runner](../scripts/fire_bounds_native_study.py).
 
 ## O04 — Detail based on projected pixel contribution
 

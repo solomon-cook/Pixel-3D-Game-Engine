@@ -136,6 +136,9 @@ enum Command {
         /// Use exhaustive effect/light candidate evaluation instead of tile lists.
         #[arg(long)]
         disable_tile_lists: bool,
+        /// Precompute conservative fire screen bounds once per frame.
+        #[arg(long)]
+        precompute_fire_bounds: bool,
         /// Disable conservative per-camera and per-shadow-frustum object culling.
         #[arg(long)]
         disable_object_culling: bool,
@@ -332,6 +335,7 @@ fn start() -> Result<()> {
             options,
             force_shadow_redraw,
             disable_tile_lists,
+            precompute_fire_bounds,
             disable_object_culling,
             disable_instancing,
             moving_caster,
@@ -350,6 +354,7 @@ fn start() -> Result<()> {
                 output,
                 force_shadow_redraw,
                 tile_lists_enabled: !disable_tile_lists,
+                precompute_fire_bounds,
                 object_culling_enabled: !disable_object_culling,
                 instancing_enabled: !disable_instancing,
                 moving_caster,

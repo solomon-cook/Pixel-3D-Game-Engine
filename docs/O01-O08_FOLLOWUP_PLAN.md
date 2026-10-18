@@ -152,10 +152,17 @@ tile-build improvements are 0.308/0.310/0.145/0.626 ms. Full frame-work improves
 in every workload's paired median, but Material Atelier p95 rises 0.179 ms and CPU
 tile-list encoding rises slightly in three workloads. Natural fire fallback
 remains 100% in the camera-inside route; the precomputed path preserves its exact
-fallback behavior. Keep this candidate selectable and disabled by default until
-native-window and non-Metal rendering are qualified. See the
-[machine-readable report](measurements-o03-fire-projected-bounds.json) and
-[reproducible runner](../scripts/fire_bounds_precompute_study.py).
+fallback behavior. A separate three-pair native clearing-orbit study on M1
+Max/Metal lowers the atmosphere/fire stage median by 0.291–0.328 ms (paired
+median 0.319 ms) and native-frame CPU median by 0.056 ms. FPS varies by pair
+(−0.029 to +0.205; paired median +0.202), so no reliable whole-window gain is
+established. Native-window measurement is complete for this host; owner visual
+review and Windows/DX12 or other-adapter validation remain open. Keep the
+candidate selectable and disabled by default. See the
+[offscreen report](measurements-o03-fire-projected-bounds.json),
+[native report](measurements-o03-fire-projected-bounds-native.json), and
+[runners](../scripts/fire_bounds_precompute_study.py) and
+[native study runner](../scripts/fire_bounds_native_study.py).
 
 ### 2. O02 moving-caster and invalidation routes
 

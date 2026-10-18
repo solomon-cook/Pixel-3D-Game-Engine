@@ -520,10 +520,16 @@ operation. Across 21 fixed-tick views in four workloads, pixels and all tile
 membership/overflow/occupancy counters match exactly. Three paired 120-second
 M1 Max/Metal routes per workload lower median GPU-render time by 0.292–0.763 ms
 and tile-build time by 0.145–0.626 ms. Frame-work paired medians improve, while
-Material Atelier p95 frame work regresses by 0.179 ms. Keep it opt-in pending
-native-window and non-Metal acceptance. See
-[the report](measurements-o03-fire-projected-bounds.json) and
-[runner](../scripts/fire_bounds_precompute_study.py).
+Material Atelier p95 frame work regresses by 0.179 ms. A separate three-pair
+native clearing-orbit comparison lowers atmosphere/fire GPU-stage median by
+0.291–0.328 ms (paired median 0.319 ms) and native-frame CPU median by 0.056 ms.
+FPS deltas vary (−0.029 to +0.205; paired median +0.202), so no reliable
+whole-window win is established. Keep it opt-in; native M1 Max/Metal measurement
+is recorded, while owner visual review and Windows/DX12 or other-adapter
+acceptance remain open. See the [offscreen report](measurements-o03-fire-projected-bounds.json),
+[native report](measurements-o03-fire-projected-bounds-native.json),
+[offscreen runner](../scripts/fire_bounds_precompute_study.py), and
+[native runner](../scripts/fire_bounds_native_study.py).
 The two-emitter maximum-budget correctness runner now generates separate
 camera-inside-plume and near-plane-intersection scenes. Both tiled images match
 exhaustive output exactly; the inside-plume view overflows the fire list in all
