@@ -35,6 +35,14 @@ Detailed steps, dependencies and acceptance criteria live in
 
   Runtime inventory also counts the tile debug uniform and optional timestamp staging buffers; opaque QuerySet allocation remains excluded.
 
+  Fixed-step submission batching now has same-device image parity and three paired
+  catch-up burst measurements on M1 Max/Metal. The burst reduces host request and
+  queue-submit CPU time for the tested 120-second fixed-step backlog, but this does
+  not establish moving-route or native-frame gains. See
+  [batch parity](docs/measurements-o08-batch-parity.json),
+  [burst cost](docs/measurements-o08-batch-submit-cost.json) and the
+  [follow-up plan](docs/OPTIMIZATION_PLAN.md#o08--reduce-memory-traffic-and-unnecessary-gpu-work).
+
 ## Later scaling research
 
 - [ ] Execute the remaining O01–O08 correctness, sustained-motion,

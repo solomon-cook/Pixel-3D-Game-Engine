@@ -1,0 +1,520 @@
+{
+  "device": "Apple M1 Max",
+  "backend": "Metal",
+  "seed": 42,
+  "warmup_ticks": 600,
+  "measured_ticks_per_run": 7200,
+  "pair_count": 3,
+  "scene_scope": [
+    "assets/scenes/clearing.json",
+    "assets/scenes/two-emitter-review.json"
+  ],
+  "method": "Fixed-step catch-up burst through the headless Session protocol; one 7,200-tick request after a 600-tick (10 simulated second) warm-up; three alternating baseline/candidate pairs.",
+  "limitations": [
+    "No camera movement, frame rendering, native presentation, or 120-second wall-clock route.",
+    "Queue-submit metrics are CPU submission-call time and do not measure GPU completion latency.",
+    "Results characterize catch-up bursts only; do not infer ordinary one-tick-per-frame throughput."
+  ],
+  "revisions": {
+    "baseline": "23c4ad732cc266bf1230923181105956a84ab739",
+    "batched": "c65afc3a9cac68c5b40414f4944a475489b8868e"
+  },
+  "scenes": {
+    "clearing": {
+      "scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+      "runs": [
+        {
+          "pair": 1,
+          "variant": "baseline",
+          "measured_ticks": 7200,
+          "simulation_submissions": 7200,
+          "submission_count_source": "pre-batch Session::step loop, one simulate call per tick",
+          "request_elapsed_ms": 1235.5966660000001,
+          "request_ticks_per_second": 5827.144243848258,
+          "cpu_simulation_submit_ms": 1234.7138050000015,
+          "cpu_simulation_encode_ms": 979.8753009999974,
+          "cpu_queue_submit_ms": 254.83850399999983,
+          "cpu_upload_ms": 366.724759999999
+        },
+        {
+          "pair": 1,
+          "variant": "batched",
+          "measured_ticks": 7200,
+          "simulation_submissions": 1200,
+          "submission_count_source": "FrameMetrics.cpu_simulation_submissions_this_frame",
+          "request_elapsed_ms": 942.5384169999998,
+          "request_ticks_per_second": 7638.945925320307,
+          "cpu_simulation_submit_ms": 941.3568859999987,
+          "cpu_simulation_encode_ms": 861.1282020000007,
+          "cpu_queue_submit_ms": 80.2286839999999,
+          "cpu_upload_ms": 279.47301199999663
+        },
+        {
+          "pair": 2,
+          "variant": "batched",
+          "measured_ticks": 7200,
+          "simulation_submissions": 1200,
+          "submission_count_source": "FrameMetrics.cpu_simulation_submissions_this_frame",
+          "request_elapsed_ms": 965.4777079999999,
+          "request_ticks_per_second": 7457.448204490291,
+          "cpu_simulation_submit_ms": 964.2004770000004,
+          "cpu_simulation_encode_ms": 877.619437999999,
+          "cpu_queue_submit_ms": 86.58103900000009,
+          "cpu_upload_ms": 286.72744899999833
+        },
+        {
+          "pair": 2,
+          "variant": "baseline",
+          "measured_ticks": 7200,
+          "simulation_submissions": 7200,
+          "submission_count_source": "pre-batch Session::step loop, one simulate call per tick",
+          "request_elapsed_ms": 1241.1448329999998,
+          "request_ticks_per_second": 5801.09573722892,
+          "cpu_simulation_submit_ms": 1240.1948559999964,
+          "cpu_simulation_encode_ms": 983.9557620000014,
+          "cpu_queue_submit_ms": 256.2390940000006,
+          "cpu_upload_ms": 365.17598500000196
+        },
+        {
+          "pair": 3,
+          "variant": "baseline",
+          "measured_ticks": 7200,
+          "simulation_submissions": 7200,
+          "submission_count_source": "pre-batch Session::step loop, one simulate call per tick",
+          "request_elapsed_ms": 1220.2913750000005,
+          "request_ticks_per_second": 5900.230180681231,
+          "cpu_simulation_submit_ms": 1219.3712539999974,
+          "cpu_simulation_encode_ms": 966.2866880000015,
+          "cpu_queue_submit_ms": 253.08456599999937,
+          "cpu_upload_ms": 358.52392799999836
+        },
+        {
+          "pair": 3,
+          "variant": "batched",
+          "measured_ticks": 7200,
+          "simulation_submissions": 1200,
+          "submission_count_source": "FrameMetrics.cpu_simulation_submissions_this_frame",
+          "request_elapsed_ms": 942.0004580000008,
+          "request_ticks_per_second": 7643.30838573753,
+          "cpu_simulation_submit_ms": 940.8927890000004,
+          "cpu_simulation_encode_ms": 860.1898560000003,
+          "cpu_queue_submit_ms": 80.70293300000012,
+          "cpu_upload_ms": 277.91714299999876
+        }
+      ],
+      "summary": {
+        "baseline": {
+          "simulation_submissions": {
+            "median": 7200,
+            "p95_nearest_rank": 7200,
+            "runs": [
+              7200,
+              7200,
+              7200
+            ]
+          },
+          "request_elapsed_ms": {
+            "median": 1235.5966660000001,
+            "p95_nearest_rank": 1241.1448329999998,
+            "runs": [
+              1235.5966660000001,
+              1241.1448329999998,
+              1220.2913750000005
+            ]
+          },
+          "request_ticks_per_second": {
+            "median": 5827.144243848258,
+            "p95_nearest_rank": 5900.230180681231,
+            "runs": [
+              5827.144243848258,
+              5801.09573722892,
+              5900.230180681231
+            ]
+          },
+          "cpu_simulation_submit_ms": {
+            "median": 1234.7138050000015,
+            "p95_nearest_rank": 1240.1948559999964,
+            "runs": [
+              1234.7138050000015,
+              1240.1948559999964,
+              1219.3712539999974
+            ]
+          },
+          "cpu_simulation_encode_ms": {
+            "median": 979.8753009999974,
+            "p95_nearest_rank": 983.9557620000014,
+            "runs": [
+              979.8753009999974,
+              983.9557620000014,
+              966.2866880000015
+            ]
+          },
+          "cpu_queue_submit_ms": {
+            "median": 254.83850399999983,
+            "p95_nearest_rank": 256.2390940000006,
+            "runs": [
+              254.83850399999983,
+              256.2390940000006,
+              253.08456599999937
+            ]
+          },
+          "cpu_upload_ms": {
+            "median": 365.17598500000196,
+            "p95_nearest_rank": 366.724759999999,
+            "runs": [
+              366.724759999999,
+              365.17598500000196,
+              358.52392799999836
+            ]
+          }
+        },
+        "batched": {
+          "simulation_submissions": {
+            "median": 1200,
+            "p95_nearest_rank": 1200,
+            "runs": [
+              1200,
+              1200,
+              1200
+            ]
+          },
+          "request_elapsed_ms": {
+            "median": 942.5384169999998,
+            "p95_nearest_rank": 965.4777079999999,
+            "runs": [
+              942.5384169999998,
+              965.4777079999999,
+              942.0004580000008
+            ]
+          },
+          "request_ticks_per_second": {
+            "median": 7638.945925320307,
+            "p95_nearest_rank": 7643.30838573753,
+            "runs": [
+              7638.945925320307,
+              7457.448204490291,
+              7643.30838573753
+            ]
+          },
+          "cpu_simulation_submit_ms": {
+            "median": 941.3568859999987,
+            "p95_nearest_rank": 964.2004770000004,
+            "runs": [
+              941.3568859999987,
+              964.2004770000004,
+              940.8927890000004
+            ]
+          },
+          "cpu_simulation_encode_ms": {
+            "median": 861.1282020000007,
+            "p95_nearest_rank": 877.619437999999,
+            "runs": [
+              861.1282020000007,
+              877.619437999999,
+              860.1898560000003
+            ]
+          },
+          "cpu_queue_submit_ms": {
+            "median": 80.70293300000012,
+            "p95_nearest_rank": 86.58103900000009,
+            "runs": [
+              80.2286839999999,
+              86.58103900000009,
+              80.70293300000012
+            ]
+          },
+          "cpu_upload_ms": {
+            "median": 279.47301199999663,
+            "p95_nearest_rank": 286.72744899999833,
+            "runs": [
+              279.47301199999663,
+              286.72744899999833,
+              277.91714299999876
+            ]
+          }
+        }
+      }
+    },
+    "two-emitter-review": {
+      "scene_sha256": "9ca7aee40dac7a9cde4010f6f90c2623e441c8e0c9a1f19ff2a9c570c1082892",
+      "runs": [
+        {
+          "pair": 1,
+          "variant": "baseline",
+          "measured_ticks": 7200,
+          "simulation_submissions": 7200,
+          "submission_count_source": "pre-batch Session::step loop, one simulate call per tick",
+          "request_elapsed_ms": 1878.9579580000009,
+          "request_ticks_per_second": 3831.9111768013263,
+          "cpu_simulation_submit_ms": 1878.1117669999926,
+          "cpu_simulation_encode_ms": 1607.9943599999979,
+          "cpu_queue_submit_ms": 270.117407,
+          "cpu_upload_ms": 424.82958699999847
+        },
+        {
+          "pair": 1,
+          "variant": "batched",
+          "measured_ticks": 7200,
+          "simulation_submissions": 1200,
+          "submission_count_source": "FrameMetrics.cpu_simulation_submissions_this_frame",
+          "request_elapsed_ms": 1547.2955829999985,
+          "request_ticks_per_second": 4653.280264679724,
+          "cpu_simulation_submit_ms": 1546.0548809999998,
+          "cpu_simulation_encode_ms": 1452.8494550000005,
+          "cpu_queue_submit_ms": 93.20542599999986,
+          "cpu_upload_ms": 332.90666399999515
+        },
+        {
+          "pair": 2,
+          "variant": "batched",
+          "measured_ticks": 7200,
+          "simulation_submissions": 1200,
+          "submission_count_source": "FrameMetrics.cpu_simulation_submissions_this_frame",
+          "request_elapsed_ms": 1562.7375000000009,
+          "request_ticks_per_second": 4607.29969044705,
+          "cpu_simulation_submit_ms": 1561.4726580000022,
+          "cpu_simulation_encode_ms": 1464.4195989999994,
+          "cpu_queue_submit_ms": 97.05305899999993,
+          "cpu_upload_ms": 337.7021689999956
+        },
+        {
+          "pair": 2,
+          "variant": "baseline",
+          "measured_ticks": 7200,
+          "simulation_submissions": 7200,
+          "submission_count_source": "pre-batch Session::step loop, one simulate call per tick",
+          "request_elapsed_ms": 1893.2483330000025,
+          "request_ticks_per_second": 3802.9876347975055,
+          "cpu_simulation_submit_ms": 1892.581342999993,
+          "cpu_simulation_encode_ms": 1620.9087420000008,
+          "cpu_queue_submit_ms": 271.67260099999925,
+          "cpu_upload_ms": 428.94178000000176
+        },
+        {
+          "pair": 3,
+          "variant": "baseline",
+          "measured_ticks": 7200,
+          "simulation_submissions": 7200,
+          "submission_count_source": "pre-batch Session::step loop, one simulate call per tick",
+          "request_elapsed_ms": 1878.04225,
+          "request_ticks_per_second": 3833.779564863357,
+          "cpu_simulation_submit_ms": 1877.3895260000002,
+          "cpu_simulation_encode_ms": 1606.7271129999947,
+          "cpu_queue_submit_ms": 270.66241299999825,
+          "cpu_upload_ms": 420.26281799999776
+        },
+        {
+          "pair": 3,
+          "variant": "batched",
+          "measured_ticks": 7200,
+          "simulation_submissions": 1200,
+          "submission_count_source": "FrameMetrics.cpu_simulation_submissions_this_frame",
+          "request_elapsed_ms": 1560.5982089999984,
+          "request_ticks_per_second": 4613.615444691317,
+          "cpu_simulation_submit_ms": 1559.3574680000002,
+          "cpu_simulation_encode_ms": 1466.5685859999992,
+          "cpu_queue_submit_ms": 92.78888199999975,
+          "cpu_upload_ms": 336.08498499999786
+        }
+      ],
+      "summary": {
+        "baseline": {
+          "simulation_submissions": {
+            "median": 7200,
+            "p95_nearest_rank": 7200,
+            "runs": [
+              7200,
+              7200,
+              7200
+            ]
+          },
+          "request_elapsed_ms": {
+            "median": 1878.9579580000009,
+            "p95_nearest_rank": 1893.2483330000025,
+            "runs": [
+              1878.9579580000009,
+              1893.2483330000025,
+              1878.04225
+            ]
+          },
+          "request_ticks_per_second": {
+            "median": 3831.9111768013263,
+            "p95_nearest_rank": 3833.779564863357,
+            "runs": [
+              3831.9111768013263,
+              3802.9876347975055,
+              3833.779564863357
+            ]
+          },
+          "cpu_simulation_submit_ms": {
+            "median": 1878.1117669999926,
+            "p95_nearest_rank": 1892.581342999993,
+            "runs": [
+              1878.1117669999926,
+              1892.581342999993,
+              1877.3895260000002
+            ]
+          },
+          "cpu_simulation_encode_ms": {
+            "median": 1607.9943599999979,
+            "p95_nearest_rank": 1620.9087420000008,
+            "runs": [
+              1607.9943599999979,
+              1620.9087420000008,
+              1606.7271129999947
+            ]
+          },
+          "cpu_queue_submit_ms": {
+            "median": 270.66241299999825,
+            "p95_nearest_rank": 271.67260099999925,
+            "runs": [
+              270.117407,
+              271.67260099999925,
+              270.66241299999825
+            ]
+          },
+          "cpu_upload_ms": {
+            "median": 424.82958699999847,
+            "p95_nearest_rank": 428.94178000000176,
+            "runs": [
+              424.82958699999847,
+              428.94178000000176,
+              420.26281799999776
+            ]
+          }
+        },
+        "batched": {
+          "simulation_submissions": {
+            "median": 1200,
+            "p95_nearest_rank": 1200,
+            "runs": [
+              1200,
+              1200,
+              1200
+            ]
+          },
+          "request_elapsed_ms": {
+            "median": 1560.5982089999984,
+            "p95_nearest_rank": 1562.7375000000009,
+            "runs": [
+              1547.2955829999985,
+              1562.7375000000009,
+              1560.5982089999984
+            ]
+          },
+          "request_ticks_per_second": {
+            "median": 4613.615444691317,
+            "p95_nearest_rank": 4653.280264679724,
+            "runs": [
+              4653.280264679724,
+              4607.29969044705,
+              4613.615444691317
+            ]
+          },
+          "cpu_simulation_submit_ms": {
+            "median": 1559.3574680000002,
+            "p95_nearest_rank": 1561.4726580000022,
+            "runs": [
+              1546.0548809999998,
+              1561.4726580000022,
+              1559.3574680000002
+            ]
+          },
+          "cpu_simulation_encode_ms": {
+            "median": 1464.4195989999994,
+            "p95_nearest_rank": 1466.5685859999992,
+            "runs": [
+              1452.8494550000005,
+              1464.4195989999994,
+              1466.5685859999992
+            ]
+          },
+          "cpu_queue_submit_ms": {
+            "median": 93.20542599999986,
+            "p95_nearest_rank": 97.05305899999993,
+            "runs": [
+              93.20542599999986,
+              97.05305899999993,
+              92.78888199999975
+            ]
+          },
+          "cpu_upload_ms": {
+            "median": 336.08498499999786,
+            "p95_nearest_rank": 337.7021689999956,
+            "runs": [
+              332.90666399999515,
+              337.7021689999956,
+              336.08498499999786
+            ]
+          }
+        }
+      }
+    }
+  },
+  "paired_median_deltas_batched_minus_baseline": {
+    "clearing": {
+      "pairs": [
+        {
+          "pair": 1,
+          "request_elapsed_ms_delta": -293.0582490000004,
+          "request_ticks_per_second_delta": 1811.8016814720486,
+          "cpu_simulation_submit_ms_delta": -293.3569190000028,
+          "cpu_simulation_encode_ms_delta": -118.74709899999675,
+          "cpu_queue_submit_ms_delta": -174.60981999999993,
+          "cpu_upload_ms_delta": -87.25174800000235
+        },
+        {
+          "pair": 2,
+          "request_elapsed_ms_delta": -275.66712499999994,
+          "request_ticks_per_second_delta": 1656.3524672613703,
+          "cpu_simulation_submit_ms_delta": -275.994378999996,
+          "cpu_simulation_encode_ms_delta": -106.33632400000238,
+          "cpu_queue_submit_ms_delta": -169.6580550000005,
+          "cpu_upload_ms_delta": -78.44853600000363
+        },
+        {
+          "pair": 3,
+          "request_elapsed_ms_delta": -278.2909169999997,
+          "request_ticks_per_second_delta": 1743.0782050562993,
+          "cpu_simulation_submit_ms_delta": -278.47846499999696,
+          "cpu_simulation_encode_ms_delta": -106.0968320000012,
+          "cpu_queue_submit_ms_delta": -172.38163299999925,
+          "cpu_upload_ms_delta": -80.6067849999996
+        }
+      ],
+      "median_cpu_queue_submit_ms_delta": -174.13557099999971
+    },
+    "two-emitter-review": {
+      "pairs": [
+        {
+          "pair": 1,
+          "request_elapsed_ms_delta": -331.6623750000024,
+          "request_ticks_per_second_delta": 821.3690878783973,
+          "cpu_simulation_submit_ms_delta": -332.0568859999928,
+          "cpu_simulation_encode_ms_delta": -155.14490499999738,
+          "cpu_queue_submit_ms_delta": -176.91198100000014,
+          "cpu_upload_ms_delta": -91.92292300000332
+        },
+        {
+          "pair": 2,
+          "request_elapsed_ms_delta": -330.51083300000164,
+          "request_ticks_per_second_delta": 804.3120556495446,
+          "cpu_simulation_submit_ms_delta": -331.1086849999908,
+          "cpu_simulation_encode_ms_delta": -156.48914300000138,
+          "cpu_queue_submit_ms_delta": -174.6195419999993,
+          "cpu_upload_ms_delta": -91.23961100000616
+        },
+        {
+          "pair": 3,
+          "request_elapsed_ms_delta": -317.44404100000156,
+          "request_ticks_per_second_delta": 779.8358798279601,
+          "cpu_simulation_submit_ms_delta": -318.032058,
+          "cpu_simulation_encode_ms_delta": -140.1585269999955,
+          "cpu_queue_submit_ms_delta": -177.8735309999985,
+          "cpu_upload_ms_delta": -84.17783299999991
+        }
+      ],
+      "median_cpu_queue_submit_ms_delta": -177.45698699999838
+    }
+  }
+}

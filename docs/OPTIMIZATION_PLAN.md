@@ -564,8 +564,16 @@ one-tick requests, or mixed request sizes. A direct build-to-build sample report
 captured CPU submit times are single samples and are not performance evidence.
 See [parity report](measurements-o08-batch-parity.json) and its
 [reproducible runner](../scripts/simulation_batch_parity.py). Alternating sustained
-CPU/total-frame timing, continuous playback, native-window and other-adapter
-acceptance remain open.
+catch-up bursts now have three alternating baseline/candidate pairs on clearing
+and two-emitter review. After 600 warm-up ticks, each timed request advances 7,200
+fixed ticks without rendering: host request latency fell by 293 ms and 318 ms at
+the respective workload medians, while reported queue-submit CPU time fell by
+174 ms and 177 ms. All six pairs improved. The 7,200 submissions fell to 1,200
+per run. These results support catch-up burst efficiency only; they do not measure
+render throughput, moving-route frame cost or GPU completion latency. See
+[burst report](measurements-o08-batch-submit-cost.json) and its
+[reproducible runner](../scripts/simulation_batch_cost_study.py). Continuous-route,
+native-window and other-adapter acceptance remain open.
 
 **Acceptance:** image/state comparisons survive pause/reset, repeated fixed steps,
 camera moves, resource recreation and invalid shader rollback. Report memory,

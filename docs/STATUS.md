@@ -21,9 +21,14 @@ per-tick smoke configuration ring, tick-associated compute queries and ordered
 ping-pong passes. GPU verification on M1 Max/Metal matches pre-batch images at
 tick 120 across clearing, profiling-heavy and two-emitter review scenes, including
 four different request partitions. One 120-tick request now reports 20 compute
-submissions instead of 120; sustained timing and broader platform acceptance
-remain open. See [parity report](measurements-o08-batch-parity.json) and
-[runner](../scripts/simulation_batch_parity.py).
+submissions instead of 120. Three alternating 10-second-warm-up/120-second
+fixed-step catch-up pairs show 293/318 ms lower median host request latency on
+clearing/two-emitter review, with no rendering during the measured burst. This is
+not frame-throughput evidence. Continuous-route, native-window and broader platform
+acceptance remain open. See [parity report](measurements-o08-batch-parity.json),
+[burst report](measurements-o08-batch-submit-cost.json), and the runners
+[parity](../scripts/simulation_batch_parity.py) and
+[burst](../scripts/simulation_batch_cost_study.py).
 
 O04's opt-in projected fire-segment LOD is implemented at 40/20 px with 48/24 px
 hysteresis. In the 120-second 640×360 clearing orbit, including a close-smoke
