@@ -79,6 +79,14 @@ def main():
                 assert (temp / "first.png").read_bytes() == (temp / "unbatched.png").read_bytes(), "serial-submit baseline changed image"
                 assert request("set_simulation_batching", enabled=True)["result"]["enabled"] is True
                 assert "error" in request("set_simulation_batching", enabled=True, unknown=True)
+                before_rebatched_metrics = request("get_metrics")["result"]["frame"]
+                request("reset", seed=42)
+                request("step", ticks=120)
+                rebatched_metrics = request("get_metrics")["result"]["frame"]
+                assert rebatched_metrics["cpu_steps_this_frame"] - before_rebatched_metrics["cpu_steps_this_frame"] == 120
+                assert rebatched_metrics["cpu_simulation_submissions_this_frame"] - before_rebatched_metrics["cpu_simulation_submissions_this_frame"] == 20
+                request("capture_frame", path=str(temp / "rebatched-after-toggle.png"), scale=1)
+                assert (temp / "first.png").read_bytes() == (temp / "rebatched-after-toggle.png").read_bytes(), "batching toggle/reset changed replay image"
                 # Shared smoke occlusion and internal emission must be visible,
                 # reversible authoring operations at an identical simulation tick.
                 request("set_camera", id="smoke-close")
