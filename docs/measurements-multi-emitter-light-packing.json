@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "purpose": "Record deterministic CPU packing of multiple emitters into the renderer-wide derived particle-light budget.",
+  "algorithm": {
+    "budget": 12,
+    "priority": [
+      "descending power",
+      "stable emitter ID",
+      "event identity"
+    ],
+    "storage": "selected shared lights occupy source slot zero; slot one keeps geometry and presentation only",
+    "drop_accounting": "sum per-source omissions plus candidates excluded by global truncation"
+  },
+  "verification": {
+    "workspace_tests": 37,
+    "reorder_invariant": true,
+    "source_frame_replay": true,
+    "selected_light_identity_matches_global_selector": true,
+    "dropped_count_matches_formula": true
+  },
+  "scope": "CPU packing tests only. The live Renderer still accepts one source and does not call the multi-source storage packer; no dual-source GPU, visual or performance result is claimed."
+}

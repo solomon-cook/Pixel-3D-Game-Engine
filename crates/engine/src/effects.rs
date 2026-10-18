@@ -320,7 +320,7 @@ impl FireFrameStorage {
             FireFrame::sample_emitters(sources)?
         };
         let mut storage = Self::zeroed();
-        for (slot, (id, frame)) in sampled.into_iter().enumerate() {
+        for (slot, (id, frame)) in sampled.iter().cloned().enumerate() {
             storage.sources[slot] = frame;
             let (_, key) = sources
                 .iter()
@@ -328,6 +328,35 @@ impl FireFrameStorage {
                 .expect("sampled emitter has a matching key");
             storage.source_origins[slot] = [key.source[0], key.source[1], key.source[2], 0.];
             storage.presentations[slot] = FirePresentation::from_profile(&key.profile, key.enabled);
+        }
+        if sampled.len() > 1 {
+            let selected = select_emitter_particle_lights(&sampled)?;
+            let local_drops = sampled
+                .iter()
+                .map(|(_, frame)| frame.lighting[1])
+                .sum::<u32>();
+            let candidate_count = sampled
+                .iter()
+                .map(|(_, frame)| frame.lighting[0])
+                .sum::<u32>();
+            let branch_drops = sampled
+                .iter()
+                .map(|(_, frame)| frame.lighting[2])
+                .sum::<u32>();
+            storage.sources[0].lights = [ParticleLight::zeroed(); MAX_PARTICLE_LIGHTS];
+            for (slot, candidate) in selected.iter().enumerate() {
+                storage.sources[0].lights[slot] = candidate.light;
+            }
+            storage.sources[0].lighting = [
+                selected.len() as u32,
+                local_drops + candidate_count.saturating_sub(selected.len() as u32),
+                branch_drops,
+                0,
+            ];
+            for frame in storage.sources.iter_mut().skip(1) {
+                frame.lights = [ParticleLight::zeroed(); MAX_PARTICLE_LIGHTS];
+                frame.lighting = [0; 4];
+            }
         }
         Ok(storage)
     }
@@ -1040,6 +1069,28 @@ mod tests {
             key().profile.fire.width * 0.6
         );
         assert_eq!(forward.presentations[1].outer[..3], [2.8, 0.12, 0.01]);
+        let sampled = FireFrame::sample_emitters(&sources).unwrap();
+        let selected = select_emitter_particle_lights(&sampled).unwrap();
+        assert_eq!(forward.sources[0].lighting[0], selected.len() as u32);
+        assert_eq!(forward.sources[1].lighting, [0; 4]);
+        for (slot, candidate) in selected.iter().enumerate() {
+            assert_eq!(
+                forward.sources[0].lights[slot].identity,
+                candidate.light.identity
+            );
+        }
+        let generated = sampled
+            .iter()
+            .map(|(_, frame)| frame.lighting[0])
+            .sum::<u32>();
+        let locally_dropped = sampled
+            .iter()
+            .map(|(_, frame)| frame.lighting[1])
+            .sum::<u32>();
+        assert_eq!(
+            forward.sources[0].lighting[1],
+            locally_dropped + generated - selected.len() as u32
+        );
     }
     #[test]
     fn seeded_fire_replays_and_is_camera_independent() {

@@ -462,9 +462,10 @@ per slot, so the flame detail mask can anchor slot one independently while
 retaining the legacy source-zero uniform. Each frame slot now also stores
 source-specific flame palette, shape, breakup, pixel treatment and activity.
 The renderer still populates only slot zero; the CPU packing helper prepares
-both source frames and settings in stable-ID order, with tests for reorder
-invariance and legacy sampler parity. Dual-source smoke simulation, global
-particle lights, shadows, live scene acceptance and visual review remain
+both source frames and settings in stable-ID order, and merges sampled particle
+lights into the shared twelve-light budget. Tests cover reorder invariance,
+legacy sampler parity and selected-light/drop accounting. Dual-source smoke
+simulation, shadows, live scene acceptance and visual review remain
 unimplemented. See the
 [storage ABI](measurements-multi-emitter-storage-abi.json) and
 [fire consumer](measurements-multi-emitter-fire-consumer.json) and

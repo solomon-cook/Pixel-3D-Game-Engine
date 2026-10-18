@@ -14,9 +14,10 @@ into a testable two-source runtime without changing the single-source baseline.
 - `FireFrame` owns one 256-primitive pool and at most 12 derived particle lights.
   O03 builds one emitter's tile candidates; overflow correctly falls back to
   exhaustive evaluation, but there is no multi-source stress evidence.
-- The CPU now has a pure global particle-light selector that merges sampled
-  source candidates into the shared 12-light budget by descending power, then
-  stable emitter ID and event identity. The renderer does not call it yet.
+- The CPU storage packer now merges sampled source candidates into the shared
+  12-light budget by descending power, then stable emitter ID and event identity.
+  It stores the selected lights in source zero's shared-light slot and reports
+  local plus global drops. The live renderer still runs only the one-source path.
 - The GPU fire-storage ABI now reserves two contiguous `FireFrame` slots. A
   fixed-tick M1 Max/Metal
   comparison is byte-identical to the prior single-frame ABI; the known
