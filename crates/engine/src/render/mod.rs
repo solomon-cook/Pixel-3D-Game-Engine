@@ -105,6 +105,7 @@ struct Globals {
     volume_min: [f32; 4],
     volume_max: [f32; 4],
     params: [f32; 4],
+    /// [width, height, dither, smoke-candidate-cache experiment switch]
     resolution: [f32; 4],
     experiments: [f32; 4],
     simulation: [f32; 4],
@@ -167,6 +168,7 @@ struct Pipelines {
     shadow_baked: wgpu::RenderPipeline,
     shadow_opaque_baked: wgpu::RenderPipeline,
     smoke: wgpu::ComputePipeline,
+    smoke_candidates: wgpu::ComputePipeline,
     absorption: wgpu::ComputePipeline,
     tile_build: wgpu::ComputePipeline,
 }
@@ -232,6 +234,11 @@ pub struct Renderer {
     uniform: wgpu::Buffer,
     fire_buffer: wgpu::Buffer,
     fire_storage: FireFrameStorage,
+    smoke_candidate_buffer: wgpu::Buffer,
+    smoke_candidate_scratch: wgpu::Buffer,
+    smoke_candidate_layout: wgpu::BindGroupLayout,
+    smoke_candidate_group: wgpu::BindGroup,
+    smoke_candidate_dirty: bool,
     fire_key: Option<FireKey>,
     multi_fire_keys: Vec<(String, FireKey)>,
     multi_fire_tiers: Vec<(String, u8)>,
@@ -1002,8 +1009,47 @@ impl Renderer {
                         min_binding_size: None,
                     },
                 ),
+                binding(
+                    3,
+                    wgpu::ShaderStages::FRAGMENT | wgpu::ShaderStages::COMPUTE,
+                    wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: true },
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                ),
             ],
         });
+        let smoke_candidate_buffer = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("materialized smoke-lobe bounds"),
+            size: 72 * 16,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let smoke_candidate_scratch = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("smoke-lobe bounds generation output"),
+            size: 72 * 16,
+            usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_SRC,
+            mapped_at_creation: false,
+        });
+        let smoke_candidate_layout =
+            device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+                label: Some("smoke-lobe bounds output"),
+                entries: &[binding(
+                    0,
+                    wgpu::ShaderStages::COMPUTE,
+                    wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: false },
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                )],
+            });
+        let smoke_candidate_group = group(
+            &device,
+            &smoke_candidate_layout,
+            &[smoke_candidate_scratch.as_entire_binding()],
+        );
         let shading_diagnostic_buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("opt-in shading diagnostic counters"),
             size: 22 * 4,
@@ -1029,6 +1075,7 @@ impl Renderer {
                 uniform.as_entire_binding(),
                 fire_buffer.as_entire_binding(),
                 shading_diagnostic_buffer.as_entire_binding(),
+                smoke_candidate_buffer.as_entire_binding(),
             ],
         );
         let material_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
@@ -1893,6 +1940,7 @@ impl Renderer {
             &shadow_material_layout,
             &tile_list_layout,
             &tile_build_layout,
+            &smoke_candidate_layout,
             effect_depth_format,
             smoke_volume_format,
             hdr_color_format,
@@ -2026,6 +2074,7 @@ impl Renderer {
             (scene.materials.len() as u64 + 1) * std::mem::size_of::<MaterialGpu>() as u64;
         let fixed_buffer_bytes = std::mem::size_of::<Globals>() as u64
             + std::mem::size_of::<FireFrameStorage>() as u64
+            + 72 * 16 * 2
             + 7 * 64
             + 22 * std::mem::size_of::<u32>() as u64
             + SMOKE_CONFIG_STRIDE * SIMULATION_BATCH_CAPACITY as u64 * scene.emitters.len() as u64;
@@ -2079,6 +2128,7 @@ impl Renderer {
             "optical_output_bytes":0,
             "optical_mask_bytes":0,
             "smoke_volumes_bytes":smoke_bytes,
+            "smoke_candidate_bounds_bytes":72 * 16 * 2,
             "smoke_simulation_config_ring_bytes":SMOKE_CONFIG_STRIDE * SIMULATION_BATCH_CAPACITY as u64 * scene.emitters.len() as u64,
             "smoke_absorption_cache_bytes":if scene.render.experiments.smoke_absorption_cache {(scene.render.absorption_cache_resolution as u64).pow(3)*8}else{0},
             "shadow_maps_bytes":shadow_bytes,
@@ -2130,6 +2180,11 @@ impl Renderer {
             uniform,
             fire_buffer,
             fire_storage: FireFrameStorage::zeroed(),
+            smoke_candidate_buffer,
+            smoke_candidate_scratch,
+            smoke_candidate_layout,
+            smoke_candidate_group,
+            smoke_candidate_dirty: true,
             fire_key: None,
             multi_fire_keys: Vec::new(),
             multi_fire_tiers: Vec::new(),
@@ -2359,6 +2414,7 @@ impl Renderer {
         shadow_materials: &wgpu::BindGroupLayout,
         tile_lists: &wgpu::BindGroupLayout,
         tile_build: &wgpu::BindGroupLayout,
+        smoke_candidate_layout: &wgpu::BindGroupLayout,
         effect_depth_format: wgpu::TextureFormat,
         smoke_volume_format: wgpu::TextureFormat,
         hdr_color_format: wgpu::TextureFormat,
@@ -2372,6 +2428,7 @@ impl Renderer {
         let tile_common = read("tile_common.wgsl")?;
         let tile_bindings = read("tile_bindings.wgsl")?;
         let tile_build_source = read("tile_build.wgsl")?;
+        let smoke_candidate_source = read("smoke_candidates.wgsl")?;
         let world = format!("{}\n{}", read("materials.wgsl")?, read("world.wgsl")?);
         let optical_source = read("optical.wgsl")?;
         let volume_source = read("volume.wgsl")?;
@@ -2504,6 +2561,11 @@ impl Renderer {
             "effect tile-list builder",
             format!("{common}\n{tile_common}\n{tile_build_source}"),
         );
+        let smoke_candidate_module = shader(
+            device,
+            "smoke-lobe candidate materialization",
+            format!("{common}\n{smoke_candidate_source}"),
+        );
         let post_module = shader(
             device,
             "pixel treatment",
@@ -2541,6 +2603,7 @@ impl Renderer {
         let diagnostic_volume_layout = layout(&[global, textures, volumes, tile_lists]);
         let optical_layout = layout(&[global, textures, optical, optical_smoke]);
         let tile_build_pipeline_layout = layout(&[global, tile_build]);
+        let smoke_candidate_pipeline_layout = layout(&[global, smoke_candidate_layout]);
         let post_layout = layout(&[global, post]);
         let smoke_layout = layout(&[smoke]);
         let absorption_layout = layout(&[global, absorption]);
@@ -2923,6 +2986,14 @@ impl Renderer {
             compilation_options: Default::default(),
             cache: None,
         });
+        let smoke_candidates = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+            label: Some("smoke-lobe candidate materialization"),
+            layout: Some(&smoke_candidate_pipeline_layout),
+            module: &smoke_candidate_module,
+            entry_point: Some("build_smoke_candidates"),
+            compilation_options: Default::default(),
+            cache: None,
+        });
         if let Some(error) = pollster::block_on(device.pop_error_scope()) {
             return Err(anyhow!(error.to_string()));
         }
@@ -2952,6 +3023,7 @@ impl Renderer {
             shadow_baked,
             shadow_opaque_baked,
             smoke,
+            smoke_candidates,
             absorption,
             tile_build,
         })
@@ -2972,12 +3044,14 @@ impl Renderer {
             &self.shadow_material_layout,
             &self.tile_list_layout,
             &self.tile_build_layout,
+            &self.smoke_candidate_layout,
             self.effect_depth_format,
             self.smoke_volume_format,
             self.hdr_color_format,
             &self.shader_directory,
         )?;
         self.pipelines = replacement;
+        self.smoke_candidate_dirty = true;
         self.invalidate_shadow_cache("shader_reload");
         Ok(())
     }
@@ -3681,7 +3755,7 @@ impl Renderer {
                 self.resolution[0] as f32,
                 self.resolution[1] as f32,
                 scene.render.dither_strength,
-                0.,
+                u32::from(scene.render.experiments.smoke_candidate_cache) as f32,
             ],
             experiments: [
                 u32::from(scene.render.experiments.pixel_cluster_lighting) as f32,
@@ -3771,6 +3845,7 @@ impl Renderer {
             "particle_lights":&self.fire_frame.lights[..self.fire_frame.lighting[0] as usize]})
     }
     pub fn reset_smoke(&mut self) {
+        self.smoke_candidate_dirty = true;
         self.invalidate_shadow_cache("reset");
         self.absorption_cache_dirty = true;
         let bytes_per_voxel = if self.smoke_volume_format == wgpu::TextureFormat::Rg16Float {
@@ -3813,6 +3888,7 @@ impl Renderer {
             return;
         }
         assert!(ticks.len() <= SIMULATION_BATCH_CAPACITY);
+        self.smoke_candidate_dirty = true;
         let started = Instant::now();
         let mut used_slots: Vec<Option<usize>> = Vec::with_capacity(ticks.len());
         if let Some(timing) = &mut self.timing {
@@ -4206,6 +4282,10 @@ impl Renderer {
         self.absorption_cache_dirty = true;
     }
 
+    pub fn invalidate_smoke_candidates(&mut self) {
+        self.smoke_candidate_dirty = true;
+    }
+
     pub fn render(&mut self, scene: &Scene, camera: &Camera, tick: u64, seed: u32) {
         self.poll_timing(false);
         if self.shading_diagnostics_enabled {
@@ -4480,6 +4560,24 @@ impl Renderer {
             bytemuck::cast_slice(&[0u32; 12]),
         );
         let tile_build_started = Instant::now();
+        if self.smoke_candidate_dirty && scene.render.experiments.smoke_candidate_cache {
+            let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
+                label: Some("materialize smoke-lobe bounds"),
+                timestamp_writes: None,
+            });
+            pass.set_pipeline(&self.pipelines.smoke_candidates);
+            pass.set_bind_group(0, &self.globals, &[]);
+            pass.set_bind_group(1, &self.smoke_candidate_group, &[]);
+            pass.dispatch_workgroups(2, 1, 1);
+            drop(pass);
+            encoder.copy_buffer_to_buffer(
+                &self.smoke_candidate_scratch,
+                0,
+                &self.smoke_candidate_buffer,
+                0,
+                72 * 16,
+            );
+        }
         {
             let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
                 label: Some("effect tile-list build"),
@@ -4992,6 +5090,9 @@ impl Renderer {
         let submit_started = Instant::now();
         self.queue.submit([command_buffer]);
         let submit_ms = submit_started.elapsed().as_secs_f64() * 1000.;
+        if scene.render.experiments.smoke_candidate_cache {
+            self.smoke_candidate_dirty = false;
+        }
         if absorption_cache_build {
             self.absorption_cache_dirty = false;
         }

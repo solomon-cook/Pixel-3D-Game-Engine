@@ -87,6 +87,9 @@ pub struct Experiments {
     /// Reuse the opaque surface result from the atmosphere-composited snapshot.
     #[serde(default)]
     pub optical_surface_reuse: bool,
+    /// Materialize ink-smoke parent bounds in a reusable GPU buffer; disabled by default.
+    #[serde(default)]
+    pub smoke_candidate_cache: bool,
 }
 
 #[derive(Clone, Serialize, Deserialize, JsonSchema)]

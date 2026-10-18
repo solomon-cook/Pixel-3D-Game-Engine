@@ -861,3 +861,26 @@ for reuse, with median optical-resolve +0.0043 ms; same-session captures at
 three fixed-tick cameras are pixel-identical. These small mixed timing changes
 do not establish a whole-render win. See [exact-depth sustained report](measurements-o06-exact-depth-sustained.json) and
 [native-window report](measurements-o06-native-exact-depth.json).
+
+## O03 materialized smoke candidates (18 October)
+
+The initial shader path reconstructs deterministic parent-lobe bounds in every
+screen tile and again for each pixel candidate. A GPU compute pass now evaluates
+up to 72 source-local bounds once for the dirty rendered state and shares that
+buffer between tile construction and ink-smoke shading. Density-derived presence,
+parent radius, and child bubbles remain evaluated from the live smoke field in the
+shader. The implementation uses 2,304 known bytes and has an exact same-tick,
+same-device reference path through `render.experiments.smoke_candidate_cache`;
+that experiment defaults off. Simulation steps, reset, validated live parameter
+edits, and shader reload mark the data dirty. Camera-only changes do not, because
+the stored bounds are world-space.
+
+On M1 Max/Metal, two alternating three-pair, 120-second comparisons found the
+candidate GPU-render median 0.017 ms lower on the dual-emitter review route and
+0.013 ms higher on the heavy single-plume route. CPU tile-list encoding increased
+0.041/0.044 ms; paired whole-frame work increased 0.062/0.090 ms. The GPU-stage
+change is too small and workload-dependent to justify enabling the cache by
+default. Same-tick direct/cached dual-emitter captures are byte-identical. Keep
+the direct path as default and the buffer path as an experiment. Reports:
+[measurements-o03-smoke-candidates.json](measurements-o03-smoke-candidates.json);
+raw comparisons are under ignored `artifacts/o03/smoke-candidate-*-selectable/`.

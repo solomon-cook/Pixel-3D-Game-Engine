@@ -147,7 +147,10 @@ fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,
         let layer=f32(i/3u);let branch=f32(i%3u);let age=fract(time*0.125-layer/12.)*8.;
         if age>time || age<0.12 {continue;}
         let phase=hash(vec3(layer,branch,g.params.z))*6.28318;
-        let lobe=smoke_lobe_bounds(i);let parent=lobe.xyz;
+        var lobe:vec4<f32>;
+        if g.resolution.w>0.5 {lobe=smoke_candidates[i];}
+        else {lobe=smoke_lobe_bounds(i);}
+        let parent=lobe.xyz;
         let bound=lobe.w;
         let along=dot(parent-origin,direction);
         if along+bound<0. || along-bound>distance || length(origin+direction*max(along,0.)-parent)>bound {continue;}
@@ -206,7 +209,10 @@ fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,
             if age>time || age<0.12 {continue;}
             let source_seed=g.params.z+997.;
             let phase=hash(vec3(layer,branch,source_seed))*6.28318;
-            let lobe=smoke_lobe_bounds_for_source(i,1u);let parent=lobe.xyz;let bound=lobe.w;
+            var lobe:vec4<f32>;
+            if g.resolution.w>0.5 {lobe=smoke_candidates[36u+i];}
+            else {lobe=smoke_lobe_bounds_for_source(i,1u);}
+            let parent=lobe.xyz;let bound=lobe.w;
             let along=dot(parent-origin,direction);
             if along+bound<0. || along-bound>distance || length(origin+direction*max(along,0.)-parent)>bound {continue;}
             let uv=(parent-source_min)/(source_max-source_min);

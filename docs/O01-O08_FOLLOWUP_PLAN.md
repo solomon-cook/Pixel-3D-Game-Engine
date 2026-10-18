@@ -98,6 +98,17 @@ current stress route finds no whole-frame tiling benefit. The sustained 8×8
 comparison finds no worthwhile total-frame gain; cross-backend evidence remains
 open.
 
+**Smoke-bound materialization follow-up (18 October 2026):** a GPU compute pass
+now builds deterministic smoke-lobe bounds once per dirty rendered state and
+shares them between tile construction and ink-smoke shading. The direct shared
+WGSL path remains the selectable default; `render.experiments.smoke_candidate_cache`
+enables the cached variant. Same-tick two-emitter captures match byte-for-byte.
+Three alternating 120-second pairs on two-emitter and heavy single-plume routes
+found small/mixed GPU-stage changes, about +0.04 ms CPU tile-list encoding, and
+whole-frame median regressions of +0.062 and +0.090 ms. Keep the experiment
+disabled by default; do not claim a frame win. Cross-adapter and native playback
+remain open. See [the report](measurements-o03-smoke-candidates.json).
+
 ### 2. O02 moving-caster and invalidation routes
 
 **Question:** Does per-face caching retain correctness and avoid excess redraw work

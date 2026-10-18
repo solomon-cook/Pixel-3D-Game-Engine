@@ -1,0 +1,344 @@
+{
+  "version": 1,
+  "study": "O02 transactional shader reload rollback across runtime WGSL modules",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "session_mode": "headless serve",
+  "scene": "assets/scenes/two-emitter-review.json",
+  "scene_sha256": "9ca7aee40dac7a9cde4010f6f90c2623e441c8e0c9a1f19ff2a9c570c1082892",
+  "binary_sha256": "167c87b66dfe95f983c231ee54e8e3e119cffbbad323d249fc96cbe6a2d0619f",
+  "renderer_source_sha256": "02193558eae543435eaef48d13e6e59521b228ae8e75f6da9c000b05d5ed8606",
+  "runner_sha256": "0b65f2242929bc9a341ab4ec45017f493abd78d26369e69d105e66fd9df6c9a9",
+  "source_revision": "025bd9109071ccfbcf4930252c79002b408f00bc",
+  "seed": 42,
+  "tick": 120,
+  "camera": "dual-wide",
+  "emitters": [
+    "campfire",
+    "watchfire"
+  ],
+  "resolution": [
+    640,
+    360
+  ],
+  "baseline": {
+    "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/smoke-candidates-rollback-final/baseline.png",
+    "png_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+    "tick": 120,
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "shadow_maps_redrawn": 13,
+    "shadow_dirty_reason": "resource_initialization"
+  },
+  "failed_reloads": [
+    {
+      "shader": "common.wgsl",
+      "source_sha256": "15a17ca863215d03ad73f89bdff32ab5c06b303056c7e2e8f33365eacf571538",
+      "reload_error": {
+        "code": "invalid_operation",
+        "message": "Validation Error\n\nCaused by:\n  In Device::create_shader_module, label = 'world'\n    \nShader 'world' parsing error: expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n   \u250c\u2500 wgsl:70:1\n   \u2502\n70 \u2502 this is deliberately invalid WGSL\n   \u2502 ^^^^ expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file\n\n\n      expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n"
+      },
+      "capture": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/smoke-candidates-rollback-final/rollback-0-common.png",
+        "png_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+        "tick": 120,
+        "device": "Apple M1 Max",
+        "backend": "Metal",
+        "shadow_maps_redrawn": 0,
+        "shadow_dirty_reason": "unchanged"
+      },
+      "failure_reached_shader_validation": true,
+      "image_matches_baseline": true
+    },
+    {
+      "shader": "tile_common.wgsl",
+      "source_sha256": "01a94d430bd9807c16dcabbef3aaaa996fc2aea14153959ceef804dfa1550fc5",
+      "reload_error": {
+        "code": "invalid_operation",
+        "message": "Validation Error\n\nCaused by:\n  In Device::create_shader_module, label = 'world'\n    \nShader 'world' parsing error: expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n   \u250c\u2500 wgsl:83:1\n   \u2502\n83 \u2502 this is deliberately invalid WGSL\n   \u2502 ^^^^ expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file\n\n\n      expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n"
+      },
+      "capture": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/smoke-candidates-rollback-final/rollback-1-tile_common.png",
+        "png_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+        "tick": 120,
+        "device": "Apple M1 Max",
+        "backend": "Metal",
+        "shadow_maps_redrawn": 0,
+        "shadow_dirty_reason": "unchanged"
+      },
+      "failure_reached_shader_validation": true,
+      "image_matches_baseline": true
+    },
+    {
+      "shader": "tile_bindings.wgsl",
+      "source_sha256": "c236cde642cb4a722c50389bca1475c9d8e216cd0234c23ccb3805a4eeb8350d",
+      "reload_error": {
+        "code": "invalid_operation",
+        "message": "Validation Error\n\nCaused by:\n  In Device::create_shader_module, label = 'world'\n    \nShader 'world' parsing error: expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n   \u250c\u2500 wgsl:89:1\n   \u2502\n89 \u2502 this is deliberately invalid WGSL\n   \u2502 ^^^^ expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file\n\n\n      expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n"
+      },
+      "capture": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/smoke-candidates-rollback-final/rollback-2-tile_bindings.png",
+        "png_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+        "tick": 120,
+        "device": "Apple M1 Max",
+        "backend": "Metal",
+        "shadow_maps_redrawn": 0,
+        "shadow_dirty_reason": "unchanged"
+      },
+      "failure_reached_shader_validation": true,
+      "image_matches_baseline": true
+    },
+    {
+      "shader": "tile_build.wgsl",
+      "source_sha256": "6150659b0f062185da3c04c1b4a9e52c7dff3ccf3f2fc374d40041d09647f99d",
+      "reload_error": {
+        "code": "invalid_operation",
+        "message": "Validation Error\n\nCaused by:\n  In Device::create_shader_module, label = 'effect tile-list builder'\n    \nShader 'effect tile-list builder' parsing error: expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n    \u250c\u2500 wgsl:195:1\n    \u2502\n195 \u2502 this is deliberately invalid WGSL\n    \u2502 ^^^^ expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file\n\n\n      expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n"
+      },
+      "capture": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/smoke-candidates-rollback-final/rollback-3-tile_build.png",
+        "png_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+        "tick": 120,
+        "device": "Apple M1 Max",
+        "backend": "Metal",
+        "shadow_maps_redrawn": 0,
+        "shadow_dirty_reason": "unchanged"
+      },
+      "failure_reached_shader_validation": true,
+      "image_matches_baseline": true
+    },
+    {
+      "shader": "smoke_candidates.wgsl",
+      "source_sha256": "aa35ebc9b8d5b88643899af51f65ce4b50614bfe0c20fabd4214feb4eee00842",
+      "reload_error": {
+        "code": "invalid_operation",
+        "message": "Validation Error\n\nCaused by:\n  In Device::create_shader_module, label = 'smoke-lobe candidate materialization'\n    \nShader 'smoke-lobe candidate materialization' parsing error: expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n   \u250c\u2500 wgsl:82:1\n   \u2502\n82 \u2502 this is deliberately invalid WGSL\n   \u2502 ^^^^ expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file\n\n\n      expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n"
+      },
+      "capture": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/smoke-candidates-rollback-final/rollback-4-smoke_candidates.png",
+        "png_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+        "tick": 120,
+        "device": "Apple M1 Max",
+        "backend": "Metal",
+        "shadow_maps_redrawn": 0,
+        "shadow_dirty_reason": "unchanged"
+      },
+      "failure_reached_shader_validation": true,
+      "image_matches_baseline": true
+    },
+    {
+      "shader": "materials.wgsl",
+      "source_sha256": "1ca29b0166dcf5e8a631aef40260daafa204241e349478c0ab73dc97bc5ee729",
+      "reload_error": {
+        "code": "invalid_operation",
+        "message": "Validation Error\n\nCaused by:\n  In Device::create_shader_module, label = 'world'\n    \nShader 'world' parsing error: expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n    \u250c\u2500 wgsl:116:1\n    \u2502\n116 \u2502 this is deliberately invalid WGSL\n    \u2502 ^^^^ expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file\n\n\n      expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n"
+      },
+      "capture": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/smoke-candidates-rollback-final/rollback-5-materials.png",
+        "png_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+        "tick": 120,
+        "device": "Apple M1 Max",
+        "backend": "Metal",
+        "shadow_maps_redrawn": 0,
+        "shadow_dirty_reason": "unchanged"
+      },
+      "failure_reached_shader_validation": true,
+      "image_matches_baseline": true
+    },
+    {
+      "shader": "world.wgsl",
+      "source_sha256": "d46fa8eac927ee81e1d6f7980d26a287864596fa6a782fdf8013c41ac77ecdc0",
+      "reload_error": {
+        "code": "invalid_operation",
+        "message": "Validation Error\n\nCaused by:\n  In Device::create_shader_module, label = 'world'\n    \nShader 'world' parsing error: expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n    \u250c\u2500 wgsl:271:1\n    \u2502\n271 \u2502 this is deliberately invalid WGSL\n    \u2502 ^^^^ expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file\n\n\n      expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n"
+      },
+      "capture": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/smoke-candidates-rollback-final/rollback-6-world.png",
+        "png_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+        "tick": 120,
+        "device": "Apple M1 Max",
+        "backend": "Metal",
+        "shadow_maps_redrawn": 0,
+        "shadow_dirty_reason": "unchanged"
+      },
+      "failure_reached_shader_validation": true,
+      "image_matches_baseline": true
+    },
+    {
+      "shader": "optical.wgsl",
+      "source_sha256": "5dcff7826ffc79479843a173477c4187f2e094070ded21bbf942b7ed21f9e690",
+      "reload_error": {
+        "code": "invalid_operation",
+        "message": "Validation Error\n\nCaused by:\n  In Device::create_shader_module, label = 'optical surfaces'\n    \nShader 'optical surfaces' parsing error: expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n    \u250c\u2500 wgsl:925:1\n    \u2502\n925 \u2502 this is deliberately invalid WGSL\n    \u2502 ^^^^ expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file\n\n\n      expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n"
+      },
+      "capture": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/smoke-candidates-rollback-final/rollback-7-optical.png",
+        "png_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+        "tick": 120,
+        "device": "Apple M1 Max",
+        "backend": "Metal",
+        "shadow_maps_redrawn": 0,
+        "shadow_dirty_reason": "unchanged"
+      },
+      "failure_reached_shader_validation": true,
+      "image_matches_baseline": true
+    },
+    {
+      "shader": "volume.wgsl",
+      "source_sha256": "2d95dbbd9468fb42cf6c0609d397bd58b8fbba8a38e6a763bb3bfedbad6bee1f",
+      "reload_error": {
+        "code": "invalid_operation",
+        "message": "Validation Error\n\nCaused by:\n  In Device::create_shader_module, label = 'optical surfaces'\n    \nShader 'optical surfaces' parsing error: expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n    \u250c\u2500 wgsl:778:1\n    \u2502\n778 \u2502 this is deliberately invalid WGSL\n    \u2502 ^^^^ expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file\n\n\n      expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n"
+      },
+      "capture": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/smoke-candidates-rollback-final/rollback-8-volume.png",
+        "png_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+        "tick": 120,
+        "device": "Apple M1 Max",
+        "backend": "Metal",
+        "shadow_maps_redrawn": 0,
+        "shadow_dirty_reason": "unchanged"
+      },
+      "failure_reached_shader_validation": true,
+      "image_matches_baseline": true
+    },
+    {
+      "shader": "fire.wgsl",
+      "source_sha256": "7a5d92dd3b5220effc9f8f2e2f0f98170da7ff6e883bf6e748384294466171ab",
+      "reload_error": {
+        "code": "invalid_operation",
+        "message": "Validation Error\n\nCaused by:\n  In Device::create_shader_module, label = 'optical surfaces'\n    \nShader 'optical surfaces' parsing error: expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n    \u250c\u2500 wgsl:387:1\n    \u2502\n387 \u2502 this is deliberately invalid WGSL\n    \u2502 ^^^^ expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file\n\n\n      expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n"
+      },
+      "capture": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/smoke-candidates-rollback-final/rollback-9-fire.png",
+        "png_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+        "tick": 120,
+        "device": "Apple M1 Max",
+        "backend": "Metal",
+        "shadow_maps_redrawn": 0,
+        "shadow_dirty_reason": "unchanged"
+      },
+      "failure_reached_shader_validation": true,
+      "image_matches_baseline": true
+    },
+    {
+      "shader": "post.wgsl",
+      "source_sha256": "53743da60fe7b2f2309c76e69c8c8ba3bd839b0150f07e8865353f0307ea5be6",
+      "reload_error": {
+        "code": "invalid_operation",
+        "message": "Validation Error\n\nCaused by:\n  In Device::create_shader_module, label = 'pixel treatment'\n    \nShader 'pixel treatment' parsing error: expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n    \u250c\u2500 wgsl:210:1\n    \u2502\n210 \u2502 this is deliberately invalid WGSL\n    \u2502 ^^^^ expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file\n\n\n      expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n"
+      },
+      "capture": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/smoke-candidates-rollback-final/rollback-10-post.png",
+        "png_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+        "tick": 120,
+        "device": "Apple M1 Max",
+        "backend": "Metal",
+        "shadow_maps_redrawn": 0,
+        "shadow_dirty_reason": "unchanged"
+      },
+      "failure_reached_shader_validation": true,
+      "image_matches_baseline": true
+    },
+    {
+      "shader": "smoke.wgsl",
+      "source_sha256": "feeb69f77c6ab62547ddaa791fb9b32f48682f96aeab74ada2123e57b5331c85",
+      "reload_error": {
+        "code": "invalid_operation",
+        "message": "Validation Error\n\nCaused by:\n  In Device::create_shader_module, label = 'smoke advection'\n    \nShader 'smoke advection' parsing error: expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n    \u250c\u2500 wgsl:102:1\n    \u2502\n102 \u2502 this is deliberately invalid WGSL\n    \u2502 ^^^^ expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file\n\n\n      expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n"
+      },
+      "capture": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/smoke-candidates-rollback-final/rollback-11-smoke.png",
+        "png_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+        "tick": 120,
+        "device": "Apple M1 Max",
+        "backend": "Metal",
+        "shadow_maps_redrawn": 0,
+        "shadow_dirty_reason": "unchanged"
+      },
+      "failure_reached_shader_validation": true,
+      "image_matches_baseline": true
+    },
+    {
+      "shader": "absorption.wgsl",
+      "source_sha256": "17f4d526e40b6fd78eca049dc99f26b9cf8dcdba5a96ba58f33e61695c478c50",
+      "reload_error": {
+        "code": "invalid_operation",
+        "message": "Validation Error\n\nCaused by:\n  In Device::create_shader_module, label = 'coarse smoke absorption'\n    \nShader 'coarse smoke absorption' parsing error: expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n    \u250c\u2500 wgsl:124:1\n    \u2502\n124 \u2502 this is deliberately invalid WGSL\n    \u2502 ^^^^ expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file\n\n\n      expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n"
+      },
+      "capture": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/smoke-candidates-rollback-final/rollback-12-absorption.png",
+        "png_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+        "tick": 120,
+        "device": "Apple M1 Max",
+        "backend": "Metal",
+        "shadow_maps_redrawn": 0,
+        "shadow_dirty_reason": "unchanged"
+      },
+      "failure_reached_shader_validation": true,
+      "image_matches_baseline": true
+    },
+    {
+      "shader": "shadow.wgsl",
+      "source_sha256": "5fe5115138806071873f3d68d4b0606a856c22959bc7a72e7337906622024495",
+      "reload_error": {
+        "code": "invalid_operation",
+        "message": "Validation Error\n\nCaused by:\n  In Device::create_shader_module, label = 'shadow'\n    \nShader 'shadow' parsing error: expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n   \u250c\u2500 wgsl:44:1\n   \u2502\n44 \u2502 this is deliberately invalid WGSL\n   \u2502 ^^^^ expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file\n\n\n      expected global item (`struct`, `const`, `var`, `alias`, `fn`, `diagnostic`, `enable`, `requires`, `;`) or the end of the file, found \"this\"\n"
+      },
+      "capture": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/smoke-candidates-rollback-final/rollback-13-shadow.png",
+        "png_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+        "tick": 120,
+        "device": "Apple M1 Max",
+        "backend": "Metal",
+        "shadow_maps_redrawn": 0,
+        "shadow_dirty_reason": "unchanged"
+      },
+      "failure_reached_shader_validation": true,
+      "image_matches_baseline": true
+    }
+  ],
+  "restored_shader_reload_succeeded": true,
+  "capture_after_successful_reload": {
+    "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/smoke-candidates-rollback-final/after-successful-reload.png",
+    "png_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+    "tick": 120,
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "shadow_maps_redrawn": 13,
+    "shadow_dirty_reason": "shader_reload"
+  },
+  "successful_reload_image_matches_baseline": true,
+  "all_failed_reload_captures_match_baseline": true,
+  "all_failures_reached_shader_validation": true,
+  "failed_reloads_preserve_shadow_cache": true,
+  "successful_reload_invalidates_all_shadow_maps": true,
+  "tested_runtime_shader_modules": [
+    "common.wgsl",
+    "tile_common.wgsl",
+    "tile_bindings.wgsl",
+    "tile_build.wgsl",
+    "smoke_candidates.wgsl",
+    "materials.wgsl",
+    "world.wgsl",
+    "optical.wgsl",
+    "volume.wgsl",
+    "fire.wgsl",
+    "post.wgsl",
+    "smoke.wgsl",
+    "absorption.wgsl",
+    "shadow.wgsl"
+  ],
+  "runtime_loader_coverage_complete": true,
+  "excluded_embedded_shader_modules": [
+    "present.wgsl (compiled into the host with include_str!; not hot-reloadable)"
+  ],
+  "limitations": [
+    "Headless M1 Max/Metal fixed-tick evidence; no native-window timing or other-adapter validation.",
+    "All reloadable shader-directory modules are covered; the embedded presentation module is not hot-reloadable."
+  ],
+  "all_checks_passed": true
+}

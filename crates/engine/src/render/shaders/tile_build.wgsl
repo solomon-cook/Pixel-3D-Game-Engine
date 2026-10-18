@@ -51,7 +51,9 @@ fn build_tile_lists(@builtin(global_invocation_id) id:vec3<u32>) {
         }
         if g.experiments.w>0.5 {
             for(var i=0u;i<36u;i++) {
-                let lobe=smoke_lobe_bounds(i);
+                var lobe:vec4<f32>;
+                if g.resolution.w>0.5 {lobe=smoke_candidates[i];}
+                else {lobe=smoke_lobe_bounds(i);}
                 let time=g.wind_time.w;let layer=f32(i/3u);
                 let age=fract(time*0.125-layer/12.)*8.;
                 if age>time || age<0.12 {continue;}
@@ -63,7 +65,9 @@ fn build_tile_lists(@builtin(global_invocation_id) id:vec3<u32>) {
             if fire.source_origins[1].w>0.5 {
                 var secondary_count=0u;let time=g.wind_time.w;
                 for(var i=0u;i<36u;i++) {
-                    let lobe=smoke_lobe_bounds_for_source(i,1u);
+                    var lobe:vec4<f32>;
+                    if g.resolution.w>0.5 {lobe=smoke_candidates[36u+i];}
+                    else {lobe=smoke_lobe_bounds_for_source(i,1u);}
                     let layer=f32(i/3u);let age=fract(time*0.125-layer/12.)*8.;
                     if age>time || age<0.12 {continue;}
                     if overlaps_tile(lobe.xyz,lobe.w,id.xy) {

@@ -1,0 +1,185 @@
+{
+  "version": 1,
+  "study": "O03 materialized smoke candidate bounds",
+  "date": "2026-10-18",
+  "hypothesis": "Generating deterministic ink-smoke parent bounds once for each dirty rendered state, then sharing the 72-entry buffer between tile construction and shading, may reduce repeated trigonometric candidate reconstruction.",
+  "implementation": {
+    "enabled_by_default": false,
+    "scene_experiment": "render.experiments.smoke_candidate_cache",
+    "candidate_scene": "../assets/scenes/smoke-candidate-review.json",
+    "reference": "Direct shared-WGSL bounds evaluation remains the default and can be selected by disabling the experiment.",
+    "generation": "GPU compute, 72 vec4 bounds for up to two stable emitter slots; no CPU procedural mirror or density readback.",
+    "reuse": "Tile-list building and ink-smoke fragment shading read the materialized bounds. Density-dependent presence and child shaping remain live in the shader.",
+    "invalidation": "Fixed-step advance, reset, any validated set_parameter edit, and successful shader reload. Camera-only motion reuses world-space bounds.",
+    "known_allocation_bytes": 2304,
+    "candidate_recomputed_once_per_dirty_render_state": true
+  },
+  "correctness": {
+    "scene": "assets/scenes/two-emitter-review.json and assets/scenes/smoke-candidate-review.json",
+    "camera": "dual-wide",
+    "seed": 42,
+    "tick": 120,
+    "capture_resolution": "2560x1440 (4x nearest-neighbour capture of 640x360 scene buffer)",
+    "disabled_capture_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+    "enabled_capture_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+    "byte_identical": true,
+    "gpu_verifier": "python3 scripts/verify.py --gpu passed on M1 Max/Metal after final opt-in integration: formatting, clippy, all 40 Rust tests, scene validation, deterministic GPU checks, overflow checks, and pixel-fire verification.",
+    "transactional_reload": {
+      "report": "measurements-o03-smoke-candidate-rollback.json",
+      "runtime_shader_modules": 14,
+      "all_failed_reloads_preserved_baseline_image": true,
+      "restored_successful_reload_preserved_image": true
+    },
+    "note": "A live serve-based toggle/edit capture was not completed; invalidation is implemented in Session set_parameter, reset, simulation-step, and successful reload paths. Static direct/cached captures and GPU verification passed."
+  },
+  "performance": {
+    "two_emitter": {
+      "route": "clearing-orbit",
+      "duration_seconds": 120.0,
+      "warmup_seconds": 10.0,
+      "pairs": 3,
+      "seed": 42,
+      "resolution": "640x360",
+      "adapter": "Apple M1 Max",
+      "backend": "Metal",
+      "delta_units": "candidate minus baseline, ms; paired per-run medians",
+      "metrics": {
+        "frame_work": {
+          "paired_deltas_ms": [
+            0.06233299999999886,
+            0.07829099999999922,
+            0.030375999999999515
+          ],
+          "median_ms": 0.06233299999999886,
+          "p95_ms": 0.07829099999999922
+        },
+        "cpu_encode": {
+          "paired_deltas_ms": [
+            -0.022374000000000005,
+            0.012915999999999928,
+            -0.00029200000000007
+          ],
+          "median_ms": -0.00029200000000007,
+          "p95_ms": 0.012915999999999928
+        },
+        "cpu_tile_list_encode": {
+          "paired_deltas_ms": [
+            0.039666999999999994,
+            0.043292,
+            0.04108300000000001
+          ],
+          "median_ms": 0.04108300000000001,
+          "p95_ms": 0.043292
+        },
+        "gpu_render": {
+          "paired_deltas_ms": [
+            -0.011333000000000482,
+            -0.01858200000000032,
+            -0.01733400000000085
+          ],
+          "median_ms": -0.01733400000000085,
+          "p95_ms": -0.011333000000000482
+        },
+        "gpu_stages.atmosphere_fire": {
+          "paired_deltas_ms": [
+            -0.01316700000000015,
+            -0.021167000000000158,
+            -0.017166000000000015
+          ],
+          "median_ms": -0.017166000000000015,
+          "p95_ms": -0.01316700000000015
+        },
+        "gpu_stages.tile_list_build": {
+          "paired_deltas_ms": [
+            -0.0018340000000001133,
+            -0.0017500000000001403,
+            -0.00158299999999989
+          ],
+          "median_ms": -0.0017500000000001403,
+          "p95_ms": -0.00158299999999989
+        }
+      }
+    },
+    "heavy_single_plume_eight_lights": {
+      "route": "clearing-orbit",
+      "duration_seconds": 120.0,
+      "warmup_seconds": 10.0,
+      "pairs": 3,
+      "seed": 42,
+      "resolution": "640x360",
+      "adapter": "Apple M1 Max",
+      "backend": "Metal",
+      "delta_units": "candidate minus baseline, ms; paired per-run medians",
+      "metrics": {
+        "frame_work": {
+          "paired_deltas_ms": [
+            0.2557910000000003,
+            -0.025959000000000287,
+            0.08975000000000044
+          ],
+          "median_ms": 0.08975000000000044,
+          "p95_ms": 0.2557910000000003
+        },
+        "cpu_encode": {
+          "paired_deltas_ms": [
+            0.06879200000000002,
+            -0.02995799999999993,
+            0.0015419999999999323
+          ],
+          "median_ms": 0.0015419999999999323,
+          "p95_ms": 0.06879200000000002
+        },
+        "cpu_tile_list_encode": {
+          "paired_deltas_ms": [
+            0.04408299999999999,
+            0.041000999999999996,
+            0.04404100000000001
+          ],
+          "median_ms": 0.04404100000000001,
+          "p95_ms": 0.04408299999999999
+        },
+        "gpu_render": {
+          "paired_deltas_ms": [
+            0.013250000000000206,
+            -0.0036249999999995453,
+            0.014207999999999998
+          ],
+          "median_ms": 0.013250000000000206,
+          "p95_ms": 0.014207999999999998
+        },
+        "gpu_stages.atmosphere_fire": {
+          "paired_deltas_ms": [
+            0.003959000000000046,
+            -0.004873999999999601,
+            0.013874999999999638
+          ],
+          "median_ms": 0.003959000000000046,
+          "p95_ms": 0.013874999999999638
+        },
+        "gpu_stages.tile_list_build": {
+          "paired_deltas_ms": [
+            0.0013330000000000286,
+            0.0010839999999999739,
+            0.0015419999999999323
+          ],
+          "median_ms": 0.0013330000000000286,
+          "p95_ms": 0.0015419999999999323
+        }
+      }
+    },
+    "decision": "Keep opt-in and disabled by default. Dual-emitter GPU-render median is -0.017 ms but whole-frame work regresses +0.062 ms; heavy single-plume GPU-render median is +0.013 ms with +0.090 ms whole-frame work. Both add about 0.04 ms CPU tile-list encoding."
+  },
+  "reproduction": {
+    "benchmark": "python3 scripts/profile_compare.py --baseline assets/scenes/two-emitter-review.json --candidate assets/scenes/smoke-candidate-review.json --route clearing-orbit --duration 120 --warmup 10 --pairs 3 --seed 42",
+    "raw_reports": [
+      "artifacts/o03/smoke-candidate-two-emitter-selectable/",
+      "artifacts/o03/smoke-candidate-heavy-selectable/"
+    ],
+    "baseline_revision": "025bd9109071ccfbcf4930252c79002b408f00bc"
+  },
+  "limitations": [
+    "M1 Max/Metal offscreen only; native-window playback, DX12 and other adapters are unverified.",
+    "The experiment does not establish a whole-frame speedup.",
+    "No visual beauty or continuous human acceptance claim is made."
+  ]
+}

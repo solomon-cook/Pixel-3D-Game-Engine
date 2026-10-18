@@ -121,7 +121,11 @@ letterboxing. No automatic scene-resolution changes are made.
 
 Use `--experiments pixel_cluster_lighting`, `stable_smoke_detail`,
 `connected_motion`, `projected_detail_lod`, a comma-separated combination, or
-`all`. Projected fire detail is opt-in and leaves the selected pixel grid,
+`all`. Scene experiments also include
+`render.experiments.smoke_candidate_cache`, an opt-in GPU cache that materializes
+smoke parent bounds once per dirty rendered state; the direct path remains the
+default because paired whole-frame results are mixed. Projected fire detail
+leaves the selected pixel grid,
 simulation frame, bounds and emitted lights unchanged. The inspector uses the
 same mutations as the protocol. Shader files can be edited live and reloaded;
 invalid replacements retain the last working pipelines.

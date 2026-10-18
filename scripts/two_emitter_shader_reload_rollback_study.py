@@ -21,6 +21,7 @@ INVALID_SHADERS = (
     "tile_common.wgsl",
     "tile_bindings.wgsl",
     "tile_build.wgsl",
+    "smoke_candidates.wgsl",
     "materials.wgsl",
     "world.wgsl",
     "optical.wgsl",

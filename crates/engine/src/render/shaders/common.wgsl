@@ -4,6 +4,7 @@ struct FireFrame {counts:vec4<u32>,bounds_min:vec4<f32>,bounds_max:vec4<f32>,lig
 struct FirePresentation {outer:vec4<f32>,warm:vec4<f32>,hot:vec4<f32>,shape:vec4<f32>,pixels:vec4<f32>,controls:vec4<f32>,smoke:vec4<f32>};
 struct FireFrameStorage {sources:array<FireFrame,2>,source_origins:array<vec4<f32>,2>,presentations:array<FirePresentation,2>};
 @group(0) @binding(1) var<storage,read> fire:FireFrameStorage;
+@group(0) @binding(3) var<storage,read> smoke_candidates:array<vec4<f32>>;
 
 struct PointLight {position_range:vec4<f32>,color_power:vec4<f32>};
 struct Globals {
@@ -12,6 +13,7 @@ struct Globals {
     ambient: vec4<f32>, fire_position: vec4<f32>, fire_color: vec4<f32>,
     sky: vec4<f32>, horizon: vec4<f32>, wind_time: vec4<f32>,
     volume_min: vec4<f32>, volume_max: vec4<f32>, params: vec4<f32>,
+    // resolution.w selects cached smoke-candidate bounds; x/y/z remain width/height/dither.
     resolution: vec4<f32>, experiments: vec4<f32>, simulation: vec4<f32>, effect_settings: vec4<f32>,
     thermal:vec4<f32>,fire_outer:vec4<f32>,fire_warm:vec4<f32>,fire_hot:vec4<f32>,presentation:vec4<f32>,optical_settings:vec4<f32>,
     fire_shape:vec4<f32>,fire_pixels:vec4<f32>,light_info:vec4<u32>,point_lights:array<PointLight,8>,

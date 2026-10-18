@@ -472,6 +472,14 @@ maximum occupancy and overflow tiles. At 640×360, the buffers add 471,040 list
 bytes and 192 counter bytes; the known-allocation estimate for clearing is
 30,277,320 bytes.
 
+An opt-in smoke-candidate cache computes deterministic parent bounds on the GPU
+once per dirty rendered state and shares them between tile building and shading.
+The direct path remains selected by default: two 120-second paired workloads
+found small/mixed GPU-render changes, about 0.04 ms added CPU tile-list encoding,
+and whole-frame regressions. Exact same-tick direct/cached output matches on
+M1 Max/Metal; DX12, other adapters and native playback remain open. See
+[candidate report](measurements-o03-smoke-candidates.json).
+
 Four exact-tick view sets (hero perspective, close smoke, orthographic and glass
 close-up) matched byte-for-byte among tiled, exhaustive and forced-fallback modes.
 The hero clearing capture was visually inspected. Three alternating 10-second

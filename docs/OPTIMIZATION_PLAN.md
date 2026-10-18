@@ -237,6 +237,22 @@ is enabled by default in this build and can be switched to exhaustive evaluation
 At 640×360 the lists use 471,040 bytes plus 192 bytes of counters; the known
 allocation estimate increases by 471,232 bytes.
 
+**Opt-in smoke-candidate materialization (18 October 2026):** the scene
+experiment `render.experiments.smoke_candidate_cache` builds the bounded 72
+world-space parent bounds with one GPU compute pass for each dirty rendered state.
+Tile construction and ink-smoke shading share the buffer; density-dependent
+presence remains sampled live, and the previous direct WGSL bounds path stays
+selectable and is the default. Stepping, reset, validated parameter edits and
+shader reload invalidate the cache; camera-only movement does not. The cache
+uses 2,304 known bytes. On M1 Max/Metal, two three-pair 120-second comparisons
+found consistent but small GPU-render savings only in the dual-emitter workload
+(median -0.017 ms); the heavy single-plume result was mixed (+0.013 ms). Both
+workloads add about 0.04 ms of CPU tile-list encoding, and paired whole-frame
+work regresses by +0.062/+0.090 ms. Keep this experiment disabled by default.
+Exact tick-120 direct/cached images match byte-for-byte. See
+[candidate materialization evidence](measurements-o03-smoke-candidates.json)
+and [raw paired reports](../artifacts/o03/).
+
 On Apple M1 Max/Metal, three alternating 10-second serial pairs after 5-second
 warm-ups at 640×360 showed tiled versus exhaustive median-of-run-medians GPU render
 times of 3.017→2.575 ms (clearing), 3.878→3.393 ms (heavy single plume/eight
