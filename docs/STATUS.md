@@ -32,15 +32,17 @@ improves by 0.17–0.24 ms on three workloads but regresses by 0.26 ms on Materi
 Atelier. GPU-render median changes are neutral or slower on three workloads and
 frame-work p95 is mixed. The serial path remains selectable with
 `set_simulation_batching` or `--disable-simulation-batching`. Three-pair native
-studies on clearing and Material Atelier measure -0.085/-0.073 median FPS and
-+0.0003/-0.0054 ms CPU frame work for batching, with small mixed CPU/GPU stage
-changes. Neither shows a native whole-window gain. Profiling-heavy and other-
-adapter acceptance remain open.
+studies cover clearing, Material Atelier and the profiling-heavy eight-light
+scene. Batched-minus-serial median FPS deltas are -0.085/-0.073/+0.114 and CPU
+frame-work deltas are +0.0003/-0.0054/-0.059 ms, with mixed GPU-stage changes.
+The results are workload-dependent and do not establish a general native gain.
+Other-adapter acceptance remains open.
 See [parity report](measurements-o08-batch-parity.json),
 [burst report](measurements-o08-batch-submit-cost.json),
 [route report](measurements-o08-batch-route.json),
 [native reports](measurements-o08-batch-native.json,
-measurements-o08-batch-native-materials.json), and the runners
+measurements-o08-batch-native-materials.json,
+measurements-o08-batch-native-profiling-heavy.json), and the runners
 [parity](../scripts/simulation_batch_parity.py),
 [burst](../scripts/simulation_batch_cost_study.py), and
 [route](../scripts/simulation_batch_route_study.py),

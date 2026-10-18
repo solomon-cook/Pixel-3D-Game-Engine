@@ -400,6 +400,11 @@ frame work, with small GPU-stage reductions and +0.023 ms CPU simulation
 submission; whole-window performance remains effectively unchanged. Evidence is
 in [the native Material Atelier report](measurements-o08-batch-native-materials.json).
 
+The three-pair profiling-heavy eight-light clearing orbit measures +0.114 fps
+and -0.059 ms native CPU frame work, while atmosphere/fire GPU time increases
+0.018 ms. This is another workload-specific tradeoff; do not promote batching
+from native timing alone. See [the native profiling-heavy report](measurements-o08-batch-native-profiling-heavy.json).
+
 Break the umbrella O08 item into decisions for lazy optical allocation, RG16 targets,
 compact HDR, normal/depth reuse and no-copy overlay. For each, record supported
 adapters, fallback behavior, memory delta, temporal and route image evidence, GPU

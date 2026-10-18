@@ -610,6 +610,13 @@ in three alternating pairs. Median batched-minus-serial deltas are -0.073 fps,
 not show a whole-window gain. See
 [Material Atelier report](measurements-o08-batch-native-materials.json).
 
+The profiling-heavy eight-light scene's three-pair clearing orbit measures
++0.114 fps, -0.059 ms native CPU frame work, -0.019 ms CPU simulation submission,
++0.00004 ms smoke compute and +0.018 ms atmosphere/fire. FPS and CPU frame work
+improve slightly while atmosphere/fire rises; this remains mixed stage evidence,
+not a general native throughput result. See
+[profiling-heavy report](measurements-o08-batch-native-profiling-heavy.json).
+
 **Acceptance:** image/state comparisons survive pause/reset, repeated fixed steps,
 camera moves, resource recreation and invalid shader rollback. Report memory,
 total GPU/CPU time and supported formats on each backend, including any precision
