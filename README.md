@@ -98,7 +98,12 @@ See docs/RESEARCH.md for hypotheses and docs/STATUS.md for actual validation.
 `profile_compare.py` alternates baseline/candidate offscreen route runs and writes
 untouched raw reports, fingerprints, per-stage paired deltas, and optional timed/
 untimed overhead comparisons. `benchmark-native` records actual surface acquisition,
-present and vsync spans in a native window. `assets/scenes/profiling-heavy.json`
+present and vsync spans in a native window. For compile-time renderer experiments,
+`profile_compare.py` accepts separate `--baseline-binary`/`--candidate-binary` and
+`--baseline-shaders`/`--candidate-shaders` inputs and fingerprints each variant;
+`--baseline-source-root`/`--candidate-source-root` select the corresponding source
+checkouts for provenance.
+`assets/scenes/profiling-heavy.json`
 provides the single-plume, eight-point-light workload; it keeps the chosen 640×360
 grid and clearing route.
 

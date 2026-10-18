@@ -209,7 +209,8 @@ warm-up, max tile occupancy was 101/64 for 16×16 and 91/64 for 8×8; correspond
 fire-list fallback rates were 1.48% and 0.56%. Smoke and light categories did not
 overflow because their candidate maxima match their fixed capacities.
 
-The 8×8 list allocation is 1.843 MB, four times the 16×16 allocation of 471 KB.
+The 8×8 list allocation is 1.843 MB, 3.91 times the 16×16 allocation of 471 KB
+at 640×360 (tile-grid rounding makes the ratio slightly below four).
 One two-second serial run per mode is too short and unpaired to select a tile size;
 the measured GPU build medians were 1.396 ms (16×16) and 1.416 ms (8×8), while
 tile-enabled whole-render medians exceeded exhaustive in this saturated scene.
@@ -224,6 +225,18 @@ to 16 in the summary even though allocation/capability values reflected the shad
 configuration. The summary now reads the live capability value, and the refreshed
 8×8 raw reports identify 8 correctly. Production shaders and renderer constants
 were restored to 16×16.
+
+On 18 October, three alternating 120-second camera-orbit pairs compared isolated
+16×16 and 8×8 builds of this same stress scene. The 8×8 build lowered fire
+fallback from 1.95% to 1.36% and maximum occupancy from 144 to 128, but increased
+known allocation by 1.37 MB and candidate memberships about 3.07×. Median paired
+full-frame work improved only 0.037 ms, with no consistent p95 improvement;
+end-to-end GPU render improved 0.019 ms while tile-list build cost increased
+0.019 ms. Keep 16×16 as the default because the measured gain does not justify
+the additional memory on this route. Tick-1800 captures from both builds matched
+byte-for-byte. This remains a Metal-only diagnostic result without native-window
+or continuous visual review. Full evidence is in
+[measurements-o03-tile-size-sustained.json](measurements-o03-tile-size-sustained.json).
 
 ## Material response beneath pixel treatment (16 October)
 

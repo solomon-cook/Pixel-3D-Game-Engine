@@ -218,7 +218,7 @@ a +0.279 ms CPU encode delta even as full-frame work fell. Route runs recorded n
 natural overflow. A deterministic diagnostic scene now produces fire-list
 occupancy up to 101 against capacity 64, with fire fallback in 1.48% of sampled
 16×16 tile frames and 0.56% in an experiment-only 8×8 build. Tiled/exhaustive
-captures at both sizes are byte-identical. The 8×8 lists use four times the storage
+captures at both sizes are byte-identical. The 8×8 lists use 3.91× the storage
 (1,843,200 vs 471,040 bytes); short unpaired timing is inconclusive and production
 remains 16×16. Smoke and light categories did not overflow because their bounded
 candidate counts fit their capacities. This does not establish route-scale fallback
@@ -229,12 +229,16 @@ three-pair 120-second stress-scene orbit now records natural fire overflows at
 overflow. On this route, tiled GPU render was consistently 1.42 ms slower while
 full-frame work deltas ranged from -0.030 to +0.021 ms; the roughly 1.40 ms
 tile-list build overlaps other GPU work, so these intervals must not be summed.
-This diagnostic route provides no whole-frame speedup evidence. The 8×8 tile-size
-option still has only short unpaired evidence; route image checkpoints,
+This diagnostic route provides no whole-frame speedup evidence. A three-pair
+120-second 8×8 versus 16×16 comparison then reduced fire overflow from 1.95% to
+1.36%, but used 1.37 MB more known allocation and showed only a 0.037 ms median
+full-frame work improvement with inconsistent p95; retain 16×16. Same-tick
+fixed-camera captures matched byte-for-byte. Continuous motion review,
 native-window and other-adapter validation remain open. Results are in
 [measurements-o03-overflow.json](measurements-o03-overflow.json) and
-[measurements-o03-stress-route.json](measurements-o03-stress-route.json); raw
-reports and captures are in ignored `artifacts/o03/`.
+[measurements-o03-stress-route.json](measurements-o03-stress-route.json) and
+[measurements-o03-tile-size-sustained.json](measurements-o03-tile-size-sustained.json);
+raw reports and captures are in ignored `artifacts/o03/`.
 
 Emitter/profile ownership remains one-emitter at runtime. Scene emitters now
 bind their thermal/fire profile by `effect_profile` and their colocated primary

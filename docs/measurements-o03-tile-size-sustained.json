@@ -1,0 +1,88 @@
+{
+  "workstream": "O03 sustained 16x16 versus 8x8 tile-size comparison",
+  "status": "three alternating M1 Max/Metal offscreen pairs complete; keep 16x16 default because 8x8 cost is not justified by measured benefit",
+  "date": "2026-10-18",
+  "device": {
+    "name": "Apple M1 Max",
+    "backend": "Metal",
+    "device_type": "IntegratedGpu"
+  },
+  "scene": {
+    "path": "assets/scenes/tile-overflow-stress.json",
+    "sha256": "98e4d75196dd7cf353ef6634313f8fc67f482ab4c939b338f2a78f788659b8af",
+    "route": "clearing-orbit",
+    "seed": 42,
+    "resolution": [640, 360],
+    "warmup_seconds": 10,
+    "duration_seconds": 120,
+    "frames_per_run": 7200
+  },
+  "comparison": {
+    "method": "three alternating pairs; same scene, tiled 16x16 baseline versus tiled 8x8 candidate",
+    "run_order": ["16x16", "8x8", "8x8", "16x16", "16x16", "8x8"],
+    "paired_candidate_minus_baseline_ms": {
+      "frame_work": [-0.037459, -0.014376, -0.039542],
+      "gpu_render": [-0.016458, -0.020459, -0.019458],
+      "gpu_tile_list_build": [0.019084, 0.021625, 0.018667]
+    },
+    "paired_delta_median_ms": {
+      "frame_work": -0.037459,
+      "gpu_render": -0.019458,
+      "gpu_tile_list_build": 0.019084
+    },
+    "run_medians_ms": {
+      "16x16_frame_work": [6.058792, 6.024334, 6.058417],
+      "8x8_frame_work": [6.021333, 6.009958, 6.018875],
+      "16x16_frame_work_p95": [10.821875, 10.927333, 10.140792],
+      "8x8_frame_work_p95": [10.916667, 10.881833, 10.554583],
+      "16x16_gpu_render": [4.214959, 4.214459, 4.216041],
+      "8x8_gpu_render": [4.198501, 4.194000, 4.196583],
+      "16x16_gpu_tile_list_build": [1.400000, 1.398916, 1.400125],
+      "8x8_gpu_tile_list_build": [1.419084, 1.420541, 1.418792]
+    },
+    "storage_and_overflow": {
+      "16x16_tile_count": 920,
+      "8x8_tile_count": 3600,
+      "16x16_list_bytes": 471040,
+      "8x8_list_bytes": 1843200,
+      "known_allocation_delta_bytes": 1372160,
+      "16x16_fire_overflow_rate": 0.019524,
+      "8x8_fire_overflow_rate": 0.013601,
+      "16x16_fire_max_candidates_per_tile": 144,
+      "8x8_fire_max_candidates_per_tile": 128,
+      "16x16_fire_overflow_tile_frames": 129324,
+      "8x8_fire_overflow_tile_frames": 352526,
+      "overflow_tile_frames_denominator": {
+        "16x16": 6624000,
+        "8x8": 25920000
+      },
+      "smoke_light_categories_overflowed": false
+    },
+    "interpretation": "8x8 lowers the fire fallback rate from 1.95% to 1.36% and max occupancy from 144 to 128, but increases list storage by 1.37 MB and candidate memberships roughly 3.07x. Median full-frame work improves by only 0.037 ms, GPU render by 0.019 ms, and tile-list build becomes 0.019 ms slower. Frame-work p95 does not improve consistently. These deltas do not justify selecting 8x8 for this workload; keep 16x16 and preserve the experiment as evidence rather than shipping a new default. GPU pass intervals can overlap and are reported separately."
+  },
+  "image_parity": {
+    "scene_tick": 1800,
+    "camera": "overflow-close",
+    "same_backend_byte_identical": true,
+    "16x16_png_sha256": "9db229e17bf5453dbd79db5e8af1d20a927584ec5bc9b667d2aa097b421ffcec",
+    "8x8_png_sha256": "9db229e17bf5453dbd79db5e8af1d20a927584ec5bc9b667d2aa097b421ffcec"
+  },
+  "provenance": {
+    "base_revision": "6bfa4b50a8e355dd5fde8e323256b4fba3c570c6",
+    "baseline_binary_sha256": "0051d764f43f045ac6a87ff5312b28162774a0b5f8c50995a5c0c9729f61e0fa",
+    "candidate_binary_sha256": "3f836825a0c534d35228101f2b131ea4c974201b9faa5bab7680d952e01cfd25",
+    "candidate_source_edits": [
+      "crates/engine/src/render/mod.rs: TILE_SIZE 16 to 8; SHA-256 75b2b0f3c6d8167d6cbdad117fbc0af8dc02399c8e895beec5ac041eddef3ab6",
+      "crates/engine/src/render/shaders/tile_common.wgsl: TILE_SIZE 16 to 8; SHA-256 fddbbc86966e843ea01b4aa570d364ad694a2735790be511fa7940c5f79e2d00"
+    ],
+    "comparison_report": "artifacts/o03/tile-size-8-sustained/comparison.json",
+    "comparison_report_sha256": "80744644fadf8e8e732466966f8049ec2f5025da311dfa3b60907c899936ce7d",
+    "raw_runs": "artifacts/o03/tile-size-8-sustained/"
+  },
+  "limitations": [
+    "The scene intentionally concentrates fire primitives and is a diagnostic stress workload, not a representative art-quality scene.",
+    "Only M1 Max/Metal was measured; native-window, DX12, other-adapter and broader scene tiers remain unverified.",
+    "No continuous motion visual review was performed; same-tick fixed-camera output is byte-identical.",
+    "The 8x8 candidate was a separate experiment-only build. Production remains 16x16."
+  ]
+}

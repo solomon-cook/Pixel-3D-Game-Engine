@@ -247,7 +247,8 @@ maxima for smoke and light lists remain within their fixed bounds. At 16×16,
 1.48% of measured tile-frame samples overflowed the fire list; an experiment-only
 8×8 build reduced this to 0.56%. All four same-tick tiled/exhaustive captures
 matched byte-for-byte. The 8×8 allocation is 1,843,200 bytes versus 471,040 for
-16×16, and one short benchmark per mode is inconclusive: build medians were 1.396
+16×16 (3.91× at 640×360 due to tile-grid rounding), and one short benchmark per
+mode is inconclusive: build medians were 1.396
 and 1.416 ms respectively, with no alternating long-run comparison. A benchmark
 summary field was corrected to read tile size from live capabilities rather than
 hard-coding 16. The production setting remains 16×16. This is diagnostic evidence,

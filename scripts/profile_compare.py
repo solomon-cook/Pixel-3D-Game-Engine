@@ -108,6 +108,12 @@ def main() -> int:
     parser.add_argument("--output", type=Path, default=Path("artifacts/profile-comparison"))
     parser.add_argument("--binary", type=Path, help="use an existing engine-lab binary")
     parser.add_argument("--shaders", type=Path, help="shader directory passed to engine-lab")
+    parser.add_argument("--baseline-binary", type=Path, help="baseline engine-lab binary (overrides --binary)")
+    parser.add_argument("--candidate-binary", type=Path, help="candidate engine-lab binary (overrides --binary)")
+    parser.add_argument("--baseline-shaders", type=Path, help="baseline shader directory (overrides --shaders)")
+    parser.add_argument("--candidate-shaders", type=Path, help="candidate shader directory (overrides --shaders)")
+    parser.add_argument("--baseline-source-root", type=Path, help="baseline source checkout used for provenance")
+    parser.add_argument("--candidate-source-root", type=Path, help="candidate source checkout used for provenance")
     args = parser.parse_args()
 
     if args.pairs < 1:
@@ -128,22 +134,40 @@ def main() -> int:
     output.mkdir(parents=True, exist_ok=True)
     build_seconds = 0.0
     if args.binary:
-        binary = args.binary.resolve()
-    else:
+        shared_binary = args.binary.resolve()
+    elif not args.baseline_binary or not args.candidate_binary:
         build_started = time.perf_counter()
         subprocess.run(["cargo", "build", "--release", "-p", "engine-lab"], cwd=ROOT, check=True)
         build_seconds = time.perf_counter() - build_started
-        binary = ROOT / "target/release/engine-lab"
-    if not binary.is_file():
-        parser.error(f"engine-lab binary does not exist: {binary}")
+        shared_binary = ROOT / "target/release/engine-lab"
+    else:
+        shared_binary = None
+    binaries = {
+        "baseline": args.baseline_binary.resolve() if args.baseline_binary else shared_binary,
+        "candidate": args.candidate_binary.resolve() if args.candidate_binary else shared_binary,
+    }
+    for variant, binary in binaries.items():
+        if binary is None or not binary.is_file():
+            parser.error(f"{variant} engine-lab binary does not exist: {binary}")
 
-    source_files = [path for root in SOURCE_ROOTS for path in root.rglob("*.rs")]
-    shader_path = args.shaders.resolve() if args.shaders else ROOT / "crates/engine/src/render/shaders"
-    build_inputs = [ROOT / "Cargo.toml", ROOT / "Cargo.lock", ROOT / "rust-toolchain.toml"]
-    fixed_fingerprints = fingerprints([*source_files, *build_inputs, shader_path])
-    revision = subprocess.check_output(
-        ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
-    ).strip()
+    shared_shader_path = args.shaders.resolve() if args.shaders else ROOT / "crates/engine/src/render/shaders"
+    source_roots = {
+        "baseline": args.baseline_source_root.resolve() if args.baseline_source_root else ROOT,
+        "candidate": args.candidate_source_root.resolve() if args.candidate_source_root else ROOT,
+    }
+    shader_paths = {
+        "baseline": args.baseline_shaders.resolve() if args.baseline_shaders else (shared_shader_path if args.shaders else source_roots["baseline"] / "crates/engine/src/render/shaders"),
+        "candidate": args.candidate_shaders.resolve() if args.candidate_shaders else (shared_shader_path if args.shaders else source_roots["candidate"] / "crates/engine/src/render/shaders"),
+    }
+    variant_fingerprints = {}
+    variant_revisions = {}
+    for variant, source_root in source_roots.items():
+        source_files = [source_root / root.relative_to(ROOT) for root in SOURCE_ROOTS]
+        build_inputs = [source_root / name for name in ("Cargo.toml", "Cargo.lock", "rust-toolchain.toml")]
+        variant_fingerprints[variant] = fingerprints([*source_files, *build_inputs, shader_paths[variant]])
+        variant_revisions[variant] = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=source_root, text=True
+        ).strip()
     scenes = {"baseline": baseline, "candidate": candidate}
     reports: dict[str, list[dict]] = {
         "baseline": [],
@@ -164,7 +188,7 @@ def main() -> int:
             raw_path = output / f"{run_id}.engine.json"
             report_path = output / f"{run_id}.json"
             command = [
-                str(binary), "benchmark", "--scene", str(scenes[variant]),
+                str(binaries[variant]), "benchmark", "--scene", str(scenes[variant]),
                 "--mode", args.mode, "--route", args.route, "--duration", str(args.duration),
                 "--warmup", str(args.warmup), "--seed", str(args.seed),
                 "--camera", args.camera, "--output", str(raw_path),
@@ -177,8 +201,14 @@ def main() -> int:
                 ])
             if args.resolution:
                 command.extend(["--resolution", args.resolution])
-            if args.shaders:
-                command.extend(["--shaders", str(shader_path)])
+            if (
+                args.shaders
+                or args.baseline_shaders
+                or args.candidate_shaders
+                or args.baseline_source_root
+                or args.candidate_source_root
+            ):
+                command.extend(["--shaders", str(shader_paths[variant])])
             force_shadow_redraw = (
                 args.baseline_force_shadow_redraw
                 if variant == "baseline"
@@ -231,8 +261,13 @@ def main() -> int:
                 "disable_instancing": disable_instancing,
                 "scene_sha256": sha256(scenes[variant]),
                 "scene_assets_sha256": fingerprints(scene_asset_paths(scenes[variant])),
-                "git_revision": revision,
-                "source_and_shader_sha256": fixed_fingerprints,
+                "binary_path": str(binaries[variant]),
+                "binary_sha256": sha256(binaries[variant]),
+                "source_root": str(source_roots[variant]),
+                "shader_path": str(shader_paths[variant]),
+                "shader_sources_sha256": fingerprints([shader_paths[variant]]),
+                "git_revision": variant_revisions[variant],
+                "source_and_shader_sha256": variant_fingerprints[variant],
                 "platform": platform.platform(),
                 "python": sys.version.split()[0],
             }
@@ -294,8 +329,8 @@ def main() -> int:
     ]
     if args.mode == "serial":
         measurement_gaps.append("buffered throughput was not measured in this serial comparison")
-    if args.binary:
-        measurement_gaps.append("engine-lab build time was not measured because an existing binary was supplied")
+    if args.binary or args.baseline_binary or args.candidate_binary:
+        measurement_gaps.append("build time for supplied executable variants is not included; any shared build is reported separately")
 
     report = {
         "version": 1,
@@ -308,6 +343,12 @@ def main() -> int:
             "warmup_seconds": args.warmup,
             "pairs": args.pairs,
             "engine_lab_build_seconds": build_seconds,
+            "baseline_binary": str(binaries["baseline"]),
+            "candidate_binary": str(binaries["candidate"]),
+            "baseline_shaders": str(shader_paths["baseline"]),
+            "candidate_shaders": str(shader_paths["candidate"]),
+            "baseline_source_root": str(source_roots["baseline"]),
+            "candidate_source_root": str(source_roots["candidate"]),
             "measure_profiling_overhead": args.measure_overhead,
             "baseline_force_shadow_redraw": args.baseline_force_shadow_redraw,
             "candidate_force_shadow_redraw": args.candidate_force_shadow_redraw,
@@ -327,6 +368,10 @@ def main() -> int:
             "caster_orbit_period_seconds": args.caster_orbit_period if args.moving_caster else None,
         },
         "pair_interpretation": (
+            "paired deltas compare supplied baseline and candidate engine/shader variants"
+            if sha256(binaries["baseline"]) != sha256(binaries["candidate"])
+            or variant_fingerprints["baseline"] != variant_fingerprints["candidate"]
+            else
             "same scene content with different tile-list settings; paired deltas compare tiled candidate evaluation against exhaustive baseline evaluation"
             if sha256(baseline) == sha256(candidate)
             and (args.baseline_disable_tile_lists != args.candidate_disable_tile_lists

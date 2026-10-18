@@ -211,7 +211,7 @@
   "interpretation": [
     "The fire list naturally exceeded capacity 64: max occupancy 101 at 16px and 91 at 8px. In the measured sample, 1.476% of 16px tile-frame samples and 0.565% of 8px samples overflowed fire capacity. Smoke and light categories did not overflow.",
     "All four exact-tick captures had the same SHA-256, including tiled versus exhaustive output and 8px versus 16px.",
-    "The 8px list consumes 1,843,200 bytes versus 471,040 bytes at 16px (4x capacity). One short run showed similar tile-build cost and a small render-time difference; variance and run ordering prevent a performance conclusion.",
+    "The 8px list consumes 1,843,200 bytes versus 471,040 bytes at 16px (3.91x for the 640x360 tile-grid rounding). One short run showed similar tile-build cost and a small render-time difference; variance and run ordering prevent a performance conclusion.",
     "These are isolated, two-second diagnostic runs, not the alternating 120-second acceptance protocol. The diagnostic fire is intentionally oversized and is not a visual-quality workload."
   ],
   "limitations": [
