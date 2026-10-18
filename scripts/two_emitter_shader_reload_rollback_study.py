@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import tempfile
@@ -48,6 +49,14 @@ def main() -> int:
     parser.add_argument("--native", action="store_true", help="run the same fixed-tick sequence through the native window Session")
     args = parser.parse_args()
     binary, scene = args.binary.resolve(), args.scene.resolve()
+    renderer_source = (ROOT / "crates/engine/src/render/mod.rs").read_text()
+    loaded_shader_modules = sorted(set(re.findall(r'\bread\("([^\"]+\.wgsl)"\)', renderer_source)))
+    if loaded_shader_modules != sorted(INVALID_SHADERS):
+        raise RuntimeError(
+            "rollback coverage must match Renderer::pipelines shader reads; "
+            f"missing={sorted(set(loaded_shader_modules) - set(INVALID_SHADERS))}, "
+            f"stale={sorted(set(INVALID_SHADERS) - set(loaded_shader_modules))}"
+        )
     if not binary.is_file():
         subprocess.run(["cargo", "build", "-p", "engine-lab"], cwd=ROOT, check=True)
     output, report_path = args.output.resolve(), args.report.resolve()
@@ -157,6 +166,7 @@ def main() -> int:
         "failed_reloads_preserve_shadow_cache": (None if args.native else all(item["capture"]["shadow_maps_redrawn"] == 0 and item["capture"]["shadow_dirty_reason"] == "unchanged" for item in failures)),
         "successful_reload_invalidates_all_shadow_maps": (None if args.native else after_success["shadow_maps_redrawn"] == 13 and after_success["shadow_dirty_reason"] == "shader_reload"),
         "tested_runtime_shader_modules": list(INVALID_SHADERS),
+        "runtime_loader_coverage_complete": loaded_shader_modules == sorted(INVALID_SHADERS),
         "excluded_embedded_shader_modules": ["present.wgsl (compiled into the host with include_str!; not hot-reloadable)"],
         "limitations": (["Fixed-tick native-window captures do not establish continuous playback or native performance.",
                          "M1 Max/Metal only; other-adapter behavior remains unverified.",
@@ -170,6 +180,7 @@ def main() -> int:
                                    report["successful_reload_image_matches_baseline"] and
                                    report["all_failed_reload_captures_match_baseline"] and
                                    report["all_failures_reached_shader_validation"] and
+                                   report["runtime_loader_coverage_complete"] and
                                    (args.native or (report["failed_reloads_preserve_shadow_cache"] and
                                                     report["successful_reload_invalidates_all_shadow_maps"])))
     report_path.parent.mkdir(parents=True, exist_ok=True)

@@ -11,8 +11,8 @@
   "scene_sha256": "9ca7aee40dac7a9cde4010f6f90c2623e441c8e0c9a1f19ff2a9c570c1082892",
   "binary_sha256": "fc41c8d050ec58d25d4d5bba993f7076a75fe89aab6e7c732d717e43add55f4a",
   "renderer_source_sha256": "766f30f9fa94f5b96cc646b01ddca3f9913541a691ed2538494c171438419272",
-  "runner_sha256": "58923e6eac96b54b6f377e0be1ea1b3cc0bdbcd299139a5420577ab01064d410",
-  "source_revision": "2bb4e39d7bba3615f4a89547df3eb2fb48292809",
+  "runner_sha256": "b37bc212d29d5c07dbae94ce5d4c56cb1b26604d344694b2487c98a5fdff15d9",
+  "source_revision": "971bea456eeec7174b4a1ef8fcc2b635da15fffc",
   "seed": 42,
   "tick": 120,
   "camera": "dual-wide",
@@ -312,6 +312,7 @@
     "absorption.wgsl",
     "shadow.wgsl"
   ],
+  "runtime_loader_coverage_complete": true,
   "excluded_embedded_shader_modules": [
     "present.wgsl (compiled into the host with include_str!; not hot-reloadable)"
   ],
