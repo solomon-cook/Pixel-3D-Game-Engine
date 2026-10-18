@@ -825,7 +825,9 @@ motion capture measured effect CPU sampling/upload at a median 0.0103 ms; see me
 ## Outstanding gates
 
 - Actual Windows DX12 rendering, image/motion review and performance on an RTX
-  3060-class/16 GB PC. Compilation is not visual validation.
+  3060-class/16 GB PC. A fresh `cargo check --locked --workspace --target
+  x86_64-pc-windows-gnu` passes from this Mac; compilation is not visual
+  validation.
 - Base M1/16 GB measurement and native presentation/UI timing. The provisional
   target remains 60 fps at 1080p with a selected 480×270 scene buffer.
 - Fix/qualify native automated minimization and confirm restore behaviour.
