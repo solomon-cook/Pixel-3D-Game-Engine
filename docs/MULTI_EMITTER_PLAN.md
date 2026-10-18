@@ -4,15 +4,19 @@
 emitters with explicit, unique primary-light IDs. Stable-ID sampling, per-source
 compute, shading, heat, light and shadow paths are exercised by fixed-tick
 Metal reviews. Maximum-budget correctness and a three-pair sustained offscreen
-route are recorded; cache temporal quality, native-window and portability gates
-remain open. The single-source baseline remains selectable and pixel-identical.
+route are recorded; fixed-camera temporal evidence covers both 8³ and 16³
+absorption-cache variants, while continuous playback, performance, native-window
+and portability gates remain open. The single-source baseline remains selectable
+and pixel-identical.
 
 The opt-in 8³ source-local absorption cache also has a matched 120-frame, 20 fps
 temporal comparison using the fixed dual-wide camera. Effect counts match at all
 frames; mean frame RGB error is 0.026/255 and mean temporal-change-magnitude
 error is 0.020/255. This is offscreen M1 Max/Metal evidence, not a promotion
-decision. See [temporal report](measurements-multi-emitter-absorption-temporal.json)
-and [runner](../scripts/two_emitter_absorption_temporal_study.py).
+decision. The 16³ variant has 0.014/255 mean frame RGB error and 0.015/255 mean
+temporal-change error, also with per-frame effect-count parity. See [8³ report](measurements-multi-emitter-absorption-temporal.json),
+[16³ report](measurements-multi-emitter-absorption-temporal-cache16.json) and
+[runner](../scripts/two_emitter_absorption_temporal_study.py).
 
 ## Current boundary
 

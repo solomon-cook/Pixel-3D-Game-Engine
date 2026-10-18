@@ -520,8 +520,9 @@ maximum-budget parity and forced fallback pass. Three alternating 120-second
 offscreen pairs show 0.715 ms lower median serial frame-work for tiled rendering,
 but the reported GPU-render metric is 1.922 ms higher. Tile-build rises 2.468 ms
 and atmosphere/fire falls 0.495 ms; GPU intervals may overlap, so keep this result
-workload-specific. Cache temporal quality, native-window and other-adapter review
-remain open. Per-source
+workload-specific. Direct-versus-cache temporal samples now cover both 8³ and
+16³ source-local caches in the fixed dual-wide view; continuous playback,
+performance benefit, native-window and other-adapter review remain open. Per-source
 primary-light, sun, caster, material, shader-reload and reset invalidation now
 match forced redraw at fixed tick; see
 [shadow invalidation evidence](measurements-multi-emitter-shadow-invalidation.json)
@@ -549,8 +550,9 @@ identical effect counts at every frame. Mean RGB error is 0.026/255 (p95
 0.032/255), mean temporal-change-magnitude error is 0.020/255, and maximum
 channel difference is 21/255. This is one offscreen M1 Max/Metal workload, not
 continuous playback or performance acceptance. See
-[temporal report](measurements-multi-emitter-absorption-temporal.json) and
-[reproducible runner](../scripts/two_emitter_absorption_temporal_study.py).
+[8³ temporal report](measurements-multi-emitter-absorption-temporal.json),
+[16³ temporal report](measurements-multi-emitter-absorption-temporal-cache16.json)
+and [reproducible runner](../scripts/two_emitter_absorption_temporal_study.py).
 Opaque `heat_response` materials now sample the second emitter's local
 temperature volume as well. The source-zero Metal capture is byte-identical and
 the verifier passes. The dual-source scene is available for focused source-one

@@ -417,8 +417,9 @@ seed 42/tick 300, and `earth.heat_response` 0 versus 0.8, all six views changed
 168–5,695 pixels. The ground-focused view shows the clearest ring cue; wide views
 show subtle differences. This is fixed-tick contribution evidence, not temporal
 quality or performance evidence. Maximum-budget correctness and one sustained
-offscreen performance route are now recorded. Cache temporal quality,
-Windows/DX12 and other-adapter checks remain open. See
+offscreen performance route are now recorded. Direct-versus-cache temporal
+samples now cover both 8³ and 16³ caches, but continuous playback and performance
+benefit remain open. Windows/DX12 and other-adapter checks remain open. See
 [`two_emitter_heat_response_study.py`](../scripts/two_emitter_heat_response_study.py)
 and [opaque heat evidence](measurements-multi-emitter-opaque-heat.json). The
 dual-source scene inventory reports 25,889,280 known bytes at
@@ -434,7 +435,10 @@ change-magnitude error is 0.020/255, and maximum channel error is 21/255. The
 contact sheet shows close sampled agreement with differences around the smoke.
 This adds one offscreen M1 Max/Metal workload; it does not establish playback
 acceptance, speedup, or portability. See [temporal report](measurements-multi-emitter-absorption-temporal.json)
-and [runner](../scripts/two_emitter_absorption_temporal_study.py).
+and [runner](../scripts/two_emitter_absorption_temporal_study.py). The 16³
+comparison reports mean RGB error 0.014/255 (p95 0.019/255), mean temporal-change
+error 0.015/255 and maximum channel difference 17/255; effect counts also match
+at every frame. See [16³ temporal report](measurements-multi-emitter-absorption-temporal-cache16.json).
 
 The maximum-budget close-camera route exposed two indexing errors in the expanded
 smoke tile buffer: the primary list used a 36-entry tile stride instead of the
