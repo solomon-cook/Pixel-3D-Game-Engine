@@ -7,8 +7,9 @@ Metal reviews. Maximum-budget correctness and a three-pair sustained offscreen
 route are recorded; fixed-camera temporal evidence covers both 8³ and 16³
 absorption-cache variants. A three-pair, 120-second-per-run comparison on the
 dual-emitter review scene shows no total-render gain for either cache size;
-the full 120-second 8³-cache route is now pixel-identical to direct integration,
-and native-window cache toggles match at six route poses. Three paired
+the full 120-second 8³- and 16³-cache routes are now pixel-identical to direct
+integration, and native-window cache toggles match at six route poses. Three
+paired
 120-second native runs show mixed component deltas and no robust whole-window
 gain. Continuous native playback and portability gates remain open. The
 single-source baseline remains selectable and pixel-identical.
@@ -39,7 +40,7 @@ and [runner](../scripts/two_emitter_absorption_sustained_study.py).
   geometry shadow paths are connected. The new review scene exercises these
   paths on M1 Max/Metal. Cache-enabled fixed-tick review is complete. Maximum-
   budget tiled/exhaustive parity and sustained offscreen performance are recorded;
-  temporal samples cover both cache sizes and the full 8³-cache route, while
+  temporal samples cover both cache sizes and the full 8³/16³-cache routes, while
   continuous native playback, other-scene performance and adapter gates remain
   open.
 - Each `FireFrame` owns a 256-primitive pool; up to 12 derived particle lights

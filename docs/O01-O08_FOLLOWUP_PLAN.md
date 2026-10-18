@@ -580,11 +580,13 @@ across both emitters. At seed 42 and 640×360, direct and 8³-cache variants hav
 identical effect counts at every frame. Mean RGB error is 0.026/255 (p95
 0.032/255), mean temporal-change-magnitude error is 0.020/255, and maximum
 channel difference is 21/255. A second comparison now covers the full 120-second
-`clearing-orbit` on the maximum-budget two-emitter scene, split into four
-deterministic segments at 20 fps. Across 2,400 frames, direct and cached images
-and temporal deltas are byte-identical, with matching camera poses, cache mode,
-8³ residency and effect counts throughout. The contact sheet was inspected. A separate native-window session toggles
-direct/cache/direct at six route keyframes; repeated direct images are deterministic,
+`clearing-orbit` on the maximum-budget two-emitter scene, split into deterministic
+segments. At 20 fps, the 8³ comparison covers 2,400 frames; at 15 fps, the 16³
+comparison covers 1,800 frames. Direct and cached images and temporal deltas are
+byte-identical in both runs, with matching camera poses, cache mode, modeled
+residency and effect counts throughout. Both contact sheets were inspected. See
+[16³ moving-route report](measurements-multi-emitter-absorption-moving-route-cache16.json).
+A separate native-window session toggles direct/cache/direct at six route keyframes; repeated direct images are deterministic,
 cache mode/residency are correct, and every native pair matches pixel-for-pixel.
 These captures do not establish continuous native playback or a timing win. Three
 alternating 120-second native pairs show +0.263 median FPS, +0.083 ms CPU native

@@ -1,0 +1,127 @@
+{
+  "version": 1,
+  "date": "2026-10-18",
+  "workstream": "O05 dual-emitter absorption cache moving-camera temporal comparison",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "source_scene": "assets/scenes/two-emitter-overflow-stress.json",
+  "source_scene_sha256": "544662419ca3bb9882f2d59e83db5ef059eb1f4c8da4787c78092c6d9fa31772",
+  "scene_sha256": {
+    "direct": "fb7d9f8bd7bc7611d290dc2b747717cbfe6340bf93258ddbc10f8fa1c93ce7ec",
+    "cached": "259a94d7a3820de001eb059b3815af98a00b995f16caf588f0a07accf3690b9e"
+  },
+  "binary_sha256": "cceaa3c520243f31b3a2febe7c0ee778fe1039f9735c48e69452d042458de157",
+  "engine_source_revision": "ff520a082b6bf1a9e7133c2c39c6510e07311a83",
+  "optical_shader_sha256": "17f4d526e40b6fd78eca049dc99f26b9cf8dcdba5a96ba58f33e61695c478c50",
+  "capture_script_sha256": "a2120471d7cc238776997875b8549aedd2ffd34312dd452d77c4ae9208e9ff34",
+  "study_script_sha256": "148811b9407b315edebc3f0930ea5213b91f7de59edb1d3ec29b8c5b298437b5",
+  "source_ids": [
+    "campfire",
+    "watchfire"
+  ],
+  "seed": 42,
+  "camera": "dual-wide",
+  "route": "clearing-orbit",
+  "route_start_seconds": 24.0,
+  "route_duration_seconds": 119.93333333333334,
+  "segments": [
+    {
+      "index": 0,
+      "route_start_seconds": 24.0,
+      "route_end_seconds": 63.93333333333333,
+      "start_tick": 300,
+      "end_tick": 2696,
+      "frames": 600
+    },
+    {
+      "index": 1,
+      "route_start_seconds": 64.0,
+      "route_end_seconds": 103.93333333333334,
+      "start_tick": 2700,
+      "end_tick": 5096,
+      "frames": 600
+    },
+    {
+      "index": 2,
+      "route_start_seconds": 104.0,
+      "route_end_seconds": 143.93333333333334,
+      "start_tick": 5100,
+      "end_tick": 7496,
+      "frames": 600
+    }
+  ],
+  "resolution": [
+    640,
+    360
+  ],
+  "cache_resolution": [
+    16,
+    16,
+    16
+  ],
+  "start_tick": 300,
+  "end_tick": 7496,
+  "frames": 1800,
+  "fps": 15.0,
+  "effect_counts_match_every_frame": true,
+  "camera_poses_match_every_frame": true,
+  "direct_cache_mode_valid_every_frame": true,
+  "cached_mode_enabled_every_frame": true,
+  "cached_residency_matches_8_byte_voxel_model_every_frame": true,
+  "frame_rgb_error": {
+    "mae_0_255": {
+      "mean": 0.0,
+      "p95": 0.0,
+      "max": 0.0
+    },
+    "max_channel_error_0_255": {
+      "mean": 0,
+      "p95": 0,
+      "max": 0
+    },
+    "changed_pixels": {
+      "mean": 0,
+      "p95": 0,
+      "max": 0
+    }
+  },
+  "maximum_channel_error_0_255": 0,
+  "temporal_change_rgb_error": {
+    "mae_0_255": {
+      "mean": 0.0,
+      "p95": 0.0,
+      "max": 0.0
+    },
+    "max_channel_error_0_255": {
+      "mean": 0,
+      "p95": 0,
+      "max": 0
+    },
+    "changed_pixels": {
+      "mean": 0,
+      "p95": 0,
+      "max": 0
+    }
+  },
+  "contact_sheet": "artifacts/multi-emitter/absorption-moving-route-16/moving-route-contact.png",
+  "captures": {
+    "direct": [
+      "artifacts/multi-emitter/absorption-moving-route-16/direct/segment-00/sequence.json",
+      "artifacts/multi-emitter/absorption-moving-route-16/direct/segment-01/sequence.json",
+      "artifacts/multi-emitter/absorption-moving-route-16/direct/segment-02/sequence.json"
+    ],
+    "cached": [
+      "artifacts/multi-emitter/absorption-moving-route-16/cached/segment-00/sequence.json",
+      "artifacts/multi-emitter/absorption-moving-route-16/cached/segment-01/sequence.json",
+      "artifacts/multi-emitter/absorption-moving-route-16/cached/segment-02/sequence.json"
+    ]
+  },
+  "limitations": [
+    "Offscreen M1 Max/Metal camera-route comparison; no native-window, sustained-performance, DX12 or other-adapter acceptance.",
+    "The full sampled orbit is split into deterministic segments whose simulation ticks are aligned with route time.",
+    "The cache is an approximation and remains disabled by default; error metrics do not replace continuous playback review."
+  ]
+}
