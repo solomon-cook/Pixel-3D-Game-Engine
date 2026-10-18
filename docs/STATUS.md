@@ -364,8 +364,11 @@ keeps the mover visible through six paused poses. Every cached image matches for
 redraw byte-for-byte, with three maps redrawn per pose. See
 [measurements-o02-visible-caster.json](measurements-o02-visible-caster.json) and
 `python3 scripts/shadow_caster_visible_study.py`. The continuous-motion timing
-route is recorded separately. Native-window and Windows/DX12 behavior remain
-unverified. Synthetic unit checks now prove that mixed missing bounds and invalid
+route is recorded separately. Native-window performance and Windows/DX12 behavior
+remain unverified; the six image pairs also match through the native
+`run --agent-stdio` window at 2560×1600 physical size. See
+[measurements-o02-visible-caster-native.json](measurements-o02-visible-caster-native.json).
+Synthetic unit checks now prove that mixed missing bounds and invalid
 shadow frusta dirty all seven maps; the diagnostic reason identifies conservative
 fallback. Validated scene assets do not currently produce a live unknown-bound case.
 

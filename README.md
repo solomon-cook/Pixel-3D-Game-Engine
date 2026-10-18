@@ -16,6 +16,8 @@ geometry; the effect coverage target and smoke volumes use adapter-gated two-cha
 fallbacks. Other memory layout work remains proposed. Measurements are recorded in
 [docs/measurements-o01.json](docs/measurements-o01.json),
 [docs/measurements-o02.json](docs/measurements-o02.json),
+[docs/measurements-o02-visible-caster.json](docs/measurements-o02-visible-caster.json),
+[docs/measurements-o02-visible-caster-native.json](docs/measurements-o02-visible-caster-native.json),
 [docs/measurements-o03.json](docs/measurements-o03.json),
 [docs/measurements-o04.json](docs/measurements-o04.json) and
 [docs/measurements-o05.json](docs/measurements-o05.json),

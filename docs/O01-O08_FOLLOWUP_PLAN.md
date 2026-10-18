@@ -81,6 +81,10 @@ when casters actually move or change shadow participation?
    keep the moving log visible in a wide orthographic view; each cached capture
    matches forced redraw byte-for-byte and redraws the same three-map old/new face
    union. See [measurements-o02-visible-caster.json](measurements-o02-visible-caster.json).
+   The same six image pairs also match through the native `run --agent-stdio`
+   window; exact dirty masks come from the headless paired captures because the
+   live window may render between separate edit and capture requests. See
+   [measurements-o02-visible-caster-native.json](measurements-o02-visible-caster-native.json).
 3. **Complete in synthetic unit coverage:** missing bounds among otherwise known
    old/new caster bounds and invalid shadow frusta force all seven maps dirty.
    The live diagnostic reason now reports `unknown_caster_bounds` or
@@ -90,9 +94,9 @@ when casters actually move or change shadow participation?
 
 **Exit gate:** discrete captures match forced redraw at all checkpoints, every
 relevant edit invalidates the required maps, and stable segments show cache reuse.
-These gates are now recorded on M1 Max/Metal, including the moving-image
-checkpoints. Continuous-invalidation cost is recorded separately. Native-window
-and non-Metal adapter acceptance remain open.
+These gates are now recorded on M1 Max/Metal, including offscreen and native
+moving-image checkpoints. Continuous-invalidation cost is recorded separately.
+Native-window performance and non-Metal adapter acceptance remain open.
 
 ## Wave 2 — Decide the opt-in approximations using sustained motion
 

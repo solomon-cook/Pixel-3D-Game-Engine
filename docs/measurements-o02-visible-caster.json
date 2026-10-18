@@ -4,11 +4,13 @@
     "device": "Apple M1 Max",
     "backend": "Metal"
   },
-  "git_revision": "7f959ecf2b5db37d0549c7db8f4b946f3dc608e2",
+  "render_mode": "headless serve",
+  "native_window": null,
+  "git_revision": "4e061cc1fa8444eb7a252b428c6c4694fcc820a2",
   "scene": "assets/scenes/clearing.json",
   "scene_sha256": "06899b7e22d670d8b42eef59a94c646cf4ce042b7697d66179a0e5105b3e21dc",
   "renderer_source_sha256": "7670440d9ce597a036a5ee65b13175c8f00b7ff44bd78d190828fc39bb8ace8c",
-  "study_script_sha256": "b3737180e58a5c99864455ae9d3fad363b7d8b8fb1b17342ee9fe0caaafd98d8",
+  "study_script_sha256": "7c8b096a9d11d2ff53d476214edb586c32fb426fad836cc131c8ce1218299765",
   "object": "fallen-log",
   "camera": {
     "id": "shadow-caster-review",
@@ -34,6 +36,7 @@
   ],
   "tick": 0,
   "method": "Six paused caster poses are captured in a wide orthographic camera that includes the moving log. Each cached image is paired with forced redraw at the same pose, seed, tick and camera.",
+  "metrics_source": "metrics embedded in each capture sidecar, tied to that exact capture frame",
   "baseline": {
     "image_sha256": "bc9b7104e50abe7cb69b9fccae0cdb34fb2d115481e8d8e75a9008e048f08cb6",
     "shadow_maps_redrawn": 7,

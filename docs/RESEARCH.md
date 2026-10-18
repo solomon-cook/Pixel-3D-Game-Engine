@@ -573,6 +573,13 @@ visually inspected. Reproduce with
 `python3 scripts/shadow_caster_visible_study.py`; measurements and source hashes
 are in [measurements-o02-visible-caster.json](measurements-o02-visible-caster.json).
 
+The same six pose pairs were captured through native `run --agent-stdio` on a
+2560×1600 physical window; cached and forced-redraw images match byte-for-byte.
+Because the host may render between mutation and capture requests, the report
+omits per-pose invalidation masks for this native run. It establishes native
+capture parity, not native-window timing or surface-present image inspection. See
+[measurements-o02-visible-caster-native.json](measurements-o02-visible-caster-native.json).
+
 ## O05 absorption-cache scale study (18 October)
 
 Direct sampling, 8³ cache and 16³ cache were compared at small, medium and
