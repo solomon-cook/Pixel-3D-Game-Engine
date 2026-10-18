@@ -211,7 +211,7 @@
       "paired_delta_p95_ms": 4.200000000000037e-05
     }
   },
-  "interpretation": "The smoke pass now needs one source-local bind-group set per compute pass instead of a Globals bind plus smoke bind. All four fixed-tick scenes (clearing, dual-emitter, profiling-heavy and materials) match byte-for-byte. On the clearing route, simulation CPU-encode medians fell 0.005/0.015/0.011 ms across three pairs; the added profiling-heavy and materials routes do not repeat a consistent CPU-encode improvement. GPU-render signs are mixed on clearing/materials and consistently -0.006 to -0.009 ms on profiling-heavy. Keep as a reduced command count with workload-dependent measured timing, not a general performance claim.",
+  "interpretation": "The smoke pass now needs one source-local bind-group set per compute pass instead of a Globals bind plus smoke bind. All four fixed-tick scenes (clearing, dual-emitter, profiling-heavy and materials) match byte-for-byte. Timing is workload-dependent: clearing simulation CPU-encode medians improved 0.005/0.015/0.011 ms, but profiling-heavy, materials and two-emitter comparisons are mixed; full-frame and GPU-render deltas do not establish a general gain. Keep the deterministic command-count reduction without a general performance claim.",
   "limitations": [
     "single M1 Max/Metal route for timing",
     "headless serial benchmark excludes native presentation, inspector and vsync",
@@ -449,6 +449,116 @@
         }
       },
       "raw_reports": "artifacts/o08-smoke-bind-study-materials/"
+    },
+    "two_emitter": {
+      "configuration": {
+        "scene": "assets/scenes/two-emitter-review.json",
+        "route": "clearing-orbit",
+        "camera": "dual-wide",
+        "pairs": 3,
+        "warmup_seconds": 10,
+        "duration_seconds": 120,
+        "seed": 42
+      },
+      "metrics": {
+        "simulation_encode_cpu": {
+          "baseline_run_medians_ms": [
+            0.384875,
+            0.37262500000000004,
+            0.368583
+          ],
+          "candidate_run_medians_ms": [
+            0.377417,
+            0.356584,
+            0.372875
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.00745800000000002,
+            -0.016041000000000027,
+            0.004292000000000018
+          ],
+          "paired_delta_median_ms": -0.00745800000000002,
+          "paired_delta_p95_ms": 0.004292000000000018
+        },
+        "cpu_encode": {
+          "baseline_run_medians_ms": [
+            0.670625,
+            0.609542,
+            0.5959589999999999
+          ],
+          "candidate_run_medians_ms": [
+            0.633041,
+            0.5645,
+            0.630125
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            -0.03758400000000006,
+            -0.045042000000000026,
+            0.03416600000000014
+          ],
+          "paired_delta_median_ms": -0.03758400000000006,
+          "paired_delta_p95_ms": 0.03416600000000014
+        },
+        "frame_work": {
+          "baseline_run_medians_ms": [
+            6.087958,
+            6.0475,
+            6.014083
+          ],
+          "candidate_run_medians_ms": [
+            6.0995420000000005,
+            5.9864999999999995,
+            6.057625
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.011584000000000039,
+            -0.06100000000000083,
+            0.043541999999999526
+          ],
+          "paired_delta_median_ms": 0.011584000000000039,
+          "paired_delta_p95_ms": 0.043541999999999526
+        },
+        "gpu_render": {
+          "baseline_run_medians_ms": [
+            3.9710829999999997,
+            3.975416,
+            3.9703329999999997
+          ],
+          "candidate_run_medians_ms": [
+            3.971583,
+            3.9716249999999995,
+            3.976126
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.000500000000000167,
+            -0.003791000000000544,
+            0.005793000000000159
+          ],
+          "paired_delta_median_ms": 0.000500000000000167,
+          "paired_delta_p95_ms": 0.005793000000000159
+        },
+        "gpu_stages.smoke_compute": {
+          "baseline_run_medians_ms": [
+            0.030667,
+            0.030708,
+            0.03075
+          ],
+          "candidate_run_medians_ms": [
+            0.030875,
+            0.030833,
+            0.03075
+          ],
+          "paired_candidate_minus_baseline_ms": [
+            0.00020799999999999985,
+            0.0001250000000000001,
+            0.0
+          ],
+          "paired_delta_median_ms": 0.0001250000000000001,
+          "paired_delta_p95_ms": 0.00020799999999999985
+        }
+      },
+      "raw_reports": "artifacts/o08-smoke-bind-study-two-emitter/",
+      "fixed_tick_parity_reference": "fixed_tick_captures.two_emitter_dual_wide"
     }
   }
 }

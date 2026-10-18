@@ -381,8 +381,9 @@ two-emitter, profiling-heavy and Material Atelier scenes. Three alternating
 120-second clearing-orbit pairs lower median simulation CPU encoding by
 0.005–0.015 ms, but additional three-pair profiling-heavy and Material Atelier
 routes show mixed CPU-encode and frame-work results. Treat the change as fewer
-encoded bind commands; no general throughput win is established. The candidate
-also passes headless transactional reload rollback for all 13 reloadable shader
+encoded bind commands; the dual-emitter route also has mixed simulation encode,
+frame-work and GPU-render deltas. No general throughput win is established. The
+candidate also passes headless transactional reload rollback for all 13 reloadable shader
 modules, preserving the fixed-tick image on every failure and on the restored
 successful reload. Native-window and Windows/DX12/other-adapter validation remain
 open. See [layout report](measurements-o08-smoke-bind-layout.json) and ignored

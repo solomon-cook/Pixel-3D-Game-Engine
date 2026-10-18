@@ -768,13 +768,17 @@ runs on profiling-heavy and Material Atelier did not reproduce a consistent CPU
 simulation-encode improvement: paired deltas were +0.023/-0.021/+0.002 ms and
 -0.003/-0.001/+0.008 ms, respectively. Whole-frame signs were mixed on both
 routes; profiling-heavy GPU-render deltas were -0.006/-0.009/-0.007 ms, while
-Material Atelier results varied. Keep the reduction in per-pass bind commands,
-but treat timing impact as workload-dependent. This does not establish a general
-throughput, native-window or cross-adapter gain. See
+Material Atelier results varied. A two-emitter three-pair route also showed
+mixed simulation CPU-encode (-0.007/-0.016/+0.004 ms), frame-work
+(+0.012/-0.061/+0.044 ms) and GPU-render (+0.001/-0.004/+0.006 ms) deltas.
+Keep the reduction in per-pass bind commands, but treat timing impact as
+workload-dependent. This does not establish a general throughput, native-window
+or cross-adapter gain. See
 [layout report](measurements-o08-smoke-bind-layout.json) and ignored raw runs in
 `artifacts/o08-smoke-bind-study/`,
 `artifacts/o08-smoke-bind-study-profiling-heavy/` and
-`artifacts/o08-smoke-bind-study-materials/`. The updated pipeline also passed
+`artifacts/o08-smoke-bind-study-materials/` and
+`artifacts/o08-smoke-bind-study-two-emitter/`. The updated pipeline also passed
 the headless transactional reload study: all 13 reloadable shader modules
 rejected invalid source without changing the reference image or shadow cache,
 and the restored shader set reloaded successfully with the image unchanged. See

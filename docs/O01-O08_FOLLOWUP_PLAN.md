@@ -435,9 +435,10 @@ bind even though the shader did not declare group-0 resources. Clearing and
 dual-emitter, profiling-heavy and Material Atelier tick-120 images all match
 exactly. Three sustained clearing pairs show a 0.005–0.015 ms lower median
 simulation CPU-encode span, but further profiling-heavy and Material Atelier
-pairs do not reproduce that CPU result consistently. Keep it as a reduction in
-encoded bind commands, with timing treated as workload-dependent and native,
-DX12 and other-adapter gates open. See
+pairs do not reproduce that CPU result consistently; a separate two-emitter route
+also shows mixed CPU-encode, frame-work and GPU-render deltas. Keep it as a
+reduction in encoded bind commands, with timing treated as workload-dependent
+and native, DX12 and other-adapter gates open. See
 [the report](measurements-o08-smoke-bind-layout.json).
 
 Break the umbrella O08 item into decisions for lazy optical allocation, RG16 targets,
