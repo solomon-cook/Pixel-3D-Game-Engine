@@ -1,0 +1,83 @@
+{
+  "workstream": "O03 natural-overflow camera-orbit comparison",
+  "status": "three paired M1 Max/Metal offscreen routes complete; not a platform or visual promotion decision",
+  "date": "2026-10-18",
+  "device": {
+    "name": "Apple M1 Max",
+    "backend": "Metal",
+    "device_type": "IntegratedGpu"
+  },
+  "scene": {
+    "path": "assets/scenes/tile-overflow-stress.json",
+    "sha256": "98e4d75196dd7cf353ef6634313f8fc67f482ab4c939b338f2a78f788659b8af",
+    "route": "clearing-orbit",
+    "seed": 42,
+    "resolution": [640, 360],
+    "warmup_seconds": 10,
+    "duration_seconds": 120,
+    "frames_per_run": 7200
+  },
+  "comparison": {
+    "method": "three alternating pairs; exhaustive evaluation baseline versus 16x16 tiled candidate",
+    "run_order": ["baseline", "candidate", "candidate", "baseline", "baseline", "candidate"],
+    "paired_candidate_minus_baseline_ms": {
+      "frame_work": [-0.022249, -0.029874, 0.021375],
+      "gpu_render": [1.421000, 1.417085, 1.421167],
+      "gpu_tile_list_build": [1.381916, 1.382041, 1.382084]
+    },
+    "paired_delta_median_ms": {
+      "frame_work": -0.022249,
+      "gpu_render": 1.421000,
+      "gpu_tile_list_build": 1.382041
+    },
+    "run_medians_ms": {
+      "baseline_frame_work": [6.060583, 6.065416, 6.035292],
+      "candidate_frame_work": [6.038334, 6.035542, 6.056667],
+      "baseline_frame_work_p95": [10.654709, 10.656042, 11.023416],
+      "candidate_frame_work_p95": [10.748833, 10.553250, 10.618250],
+      "baseline_gpu_render": [2.795625, 2.798082, 2.795167],
+      "candidate_gpu_render": [4.216625, 4.215167, 4.216334],
+      "candidate_gpu_tile_list_build": [1.399208, 1.399333, 1.399584]
+    },
+    "candidate_natural_overflow": {
+      "tile_frames_per_category": 6624000,
+      "fire_primitives": {
+        "candidate_memberships": 24111820,
+        "max_candidates_per_tile": 144,
+        "overflow_tile_frames": 129324,
+        "overflow_rate": 0.019524
+      },
+      "smoke_lobes": {
+        "candidate_memberships": 10364420,
+        "max_candidates_per_tile": 21,
+        "overflow_tile_frames": 0
+      },
+      "point_lights": {
+        "candidate_memberships": 6624000,
+        "max_candidates_per_tile": 1,
+        "overflow_tile_frames": 0
+      },
+      "particle_lights": {
+        "candidate_memberships": 21614175,
+        "max_candidates_per_tile": 12,
+        "overflow_tile_frames": 0
+      }
+    },
+    "list_bytes": 471040,
+    "interpretation": "Full-frame work is effectively unchanged within the observed run spread, but tiled GPU render is consistently 1.42 ms higher and the tile-list build is about 1.40 ms. Overflow fallback preserves the exhaustive behavior, but this stress workload does not show a whole-frame benefit from tiling. Keep the 16x16 implementation selectable; do not claim a stress-route speedup. GPU pass intervals can overlap, so stage values are not summed."
+  },
+  "provenance": {
+    "repository_commit": "4b753bd0bceff60d439db3c71cfa3d5ea7fed217",
+    "engine_lab_sha256": "0051d764f43f045ac6a87ff5312b28162774a0b5f8c50995a5c0c9729f61e0fa",
+    "comparison_report": "artifacts/o03/natural-overflow-orbit-comparison.json/comparison.json",
+    "comparison_report_sha256": "f26ba845da0f1c2229c4c1dc03dc4289f9d5ab607dbb32727e00c9aaa9e2408f",
+    "raw_runs": "artifacts/o03/natural-overflow-orbit-comparison.json/"
+  },
+  "limitations": [
+    "This was an offscreen serial benchmark; native presentation and vsync are excluded.",
+    "The scene is an intentionally oversized diagnostic and does not establish normal gameplay performance or motion quality.",
+    "No route image checkpoints were captured in this run; byte-identical fixed-tick parity is documented separately in measurements-o03-overflow.json.",
+    "Only M1 Max/Metal was measured. The 8x8 tile-size candidate was not included in this sustained run.",
+    "Exact queue latency is unavailable because GPU timestamps are not calibrated to the host clock."
+  ]
+}

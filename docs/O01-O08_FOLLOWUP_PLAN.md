@@ -42,14 +42,22 @@ crowding, and does another tile size improve the total cost?
    list-build CPU/GPU time, bytes, occupancy distributions, overflow frequency,
    shading time and full-frame cost. Do not select a tile size based on shading time
    alone.
-4. Repeat the winning candidate and baseline on DX12 and another adapter. Keep the
-   exhaustive option and existing ordering until image parity and fallback behavior
-   pass on each backend.
+4. A three-pair 120-second 16×16 tiled-versus-exhaustive stress orbit is now
+   recorded in [measurements-o03-stress-route.json](measurements-o03-stress-route.json).
+   Fire overflow affected 1.95% of tile-frame samples, but full-frame work was
+   effectively unchanged and GPU render was 1.42 ms slower with tiling. This is
+   not a stress-route speedup. Repeat the 8×8 candidate under the same sustained
+   protocol and capture motion checkpoints before deciding the tile size.
+5. Repeat the candidate and baseline on DX12 and another adapter. Keep the
+   exhaustive option and existing ordering until image parity and fallback
+   behavior pass on each backend.
 
 **Exit gate:** no dropped effects or lights; exact same-backend capture parity,
 including natural overflow; stable membership after camera/state edits; and a net
 whole-frame benefit on representative workloads. If no alternative size beats the
-current setting, retain 16×16 and document the measured operating envelope.
+current setting, retain 16×16 and document the measured operating envelope. The
+current stress route finds no whole-frame tiling benefit; 8×8 sustained and
+cross-backend evidence remain open.
 
 ### 2. O02 moving-caster and invalidation routes
 

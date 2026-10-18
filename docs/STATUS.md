@@ -223,10 +223,18 @@ captures at both sizes are byte-identical. The 8×8 lists use four times the sto
 remains 16×16. Smoke and light categories did not overflow because their bounded
 candidate counts fit their capacities. This does not establish route-scale fallback
 cost, motion quality, native-window performance or cross-device support.
-Multi-emitter ownership, longer alternating stress routes, Windows/DX12 and other
-GPU vendors remain open. Results are in
-[measurements-o03-overflow.json](measurements-o03-overflow.json); raw reports and
-captures are in ignored `artifacts/o03/`.
+Multi-emitter ownership, Windows/DX12 and other GPU vendors remain open. The
+three-pair 120-second stress-scene orbit now records natural fire overflows at
+1.95% of tile-frame samples (maximum occupancy 144) and zero smoke/light
+overflow. On this route, tiled GPU render was consistently 1.42 ms slower while
+full-frame work deltas ranged from -0.030 to +0.021 ms; the roughly 1.40 ms
+tile-list build overlaps other GPU work, so these intervals must not be summed.
+This diagnostic route provides no whole-frame speedup evidence. The 8×8 tile-size
+option still has only short unpaired evidence; route image checkpoints,
+native-window and other-adapter validation remain open. Results are in
+[measurements-o03-overflow.json](measurements-o03-overflow.json) and
+[measurements-o03-stress-route.json](measurements-o03-stress-route.json); raw
+reports and captures are in ignored `artifacts/o03/`.
 
 Emitter/profile ownership remains one-emitter at runtime. Scene emitters now
 bind their thermal/fire profile by `effect_profile` and their colocated primary
