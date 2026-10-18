@@ -48,6 +48,12 @@ def main() -> int:
     generated_scene = output / "materials-away.json"
     generated_scene.write_text(json.dumps(scene, indent=2) + "\n")
     subprocess.run([str(binary), "validate", str(generated_scene)], cwd=ROOT, check=True, stdout=subprocess.PIPE)
+    edited_scene_data = json.loads(json.dumps(scene))
+    chalk = next(material for material in edited_scene_data["materials"] if material.get("id") == "chalk")
+    chalk["reflectivity"] = 0.3
+    edited_scene = output / "materials-away-edited.json"
+    edited_scene.write_text(json.dumps(edited_scene_data, indent=2) + "\n")
+    subprocess.run([str(binary), "validate", str(edited_scene)], cwd=ROOT, check=True, stdout=subprocess.PIPE)
 
     process = subprocess.Popen(
         [str(binary), "run", "--agent-stdio", "--paused", "--scene", str(generated_scene),
@@ -102,6 +108,16 @@ def main() -> int:
             process.terminate()
             process.wait(timeout=30)
 
+    headless_captures = {}
+    for camera in ("away", "hero"):
+        image_path = output / f"headless-{camera}.png"
+        subprocess.run(
+            [str(binary), "capture", "--scene", str(edited_scene), "--camera", camera,
+             "--seed", str(args.seed), "--tick", "0", "--output", str(image_path), "--scale", "1"],
+            cwd=ROOT, check=True, stdout=subprocess.PIPE,
+        )
+        headless_captures[camera] = {"image": display_path(image_path), "image_sha256": sha256(image_path)}
+
     edited = captures["edited_offscreen"]
     first_visible = captures["first_visible"]
     turned_away = captures["turned_away"]
@@ -115,6 +131,8 @@ def main() -> int:
         "scene_sha256": sha256(source),
         "generated_scene": display_path(generated_scene),
         "generated_scene_sha256": sha256(generated_scene),
+        "edited_scene": display_path(edited_scene),
+        "edited_scene_sha256": sha256(edited_scene),
         "binary_sha256": sha256(binary),
         "render_source_sha256": sha256(ROOT / "crates/engine/src/render/mod.rs"),
         "session_source_sha256": sha256(ROOT / "crates/engine/src/session.rs"),
@@ -122,6 +140,7 @@ def main() -> int:
         "resolution": metadata["capabilities"].get("resolution"),
         "edit": {"path": "materials.chalk.reflectivity", "value": 0.3},
         "captures": captures,
+        "headless_reference_captures": headless_captures,
         "checks": {
             "offscreen_edit_keeps_snapshot_unallocated": edited["snapshot_bytes"] == 0 and edited["optical_draw_batches"] == 0,
             "offscreen_states_skip_optical_timestamp": not edited["optical_resolve_timed"] and not turned_away["optical_resolve_timed"],
@@ -131,6 +150,8 @@ def main() -> int:
             "revisiting_visible_geometry_does_not_duplicate_allocation": visible_again["snapshot_bytes"] == first_visible["snapshot_bytes"] and visible_again["known_gpu_allocation_bytes"] == first_visible["known_gpu_allocation_bytes"],
             "allocation_increase_is_one_snapshot": first_visible["known_gpu_allocation_bytes"] - edited["known_gpu_allocation_bytes"] == 1843200,
             "repeated_paused_camera_captures_are_identical": edited["image_sha256"] == turned_away["image_sha256"] and first_visible["image_sha256"] == visible_again["image_sha256"],
+            "native_away_matches_headless": edited["image_sha256"] == headless_captures["away"]["image_sha256"],
+            "native_visible_matches_headless": first_visible["image_sha256"] == headless_captures["hero"]["image_sha256"],
         },
         "limitations": [
             "One paused native-window Session on Apple M1 Max/Metal; this checks Session/resource lifecycle, not continuous timing.",

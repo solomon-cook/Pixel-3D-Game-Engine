@@ -19,6 +19,8 @@
   "scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
   "generated_scene": "artifacts/o08/lazy-optical-native/materials-away.json",
   "generated_scene_sha256": "95ff33093a47f19fc0fe639eaaedf4c562d41998228e89fc1e47467e6c3b693f",
+  "edited_scene": "artifacts/o08/lazy-optical-native/materials-away-edited.json",
+  "edited_scene_sha256": "a86277fd66a8f894bbc6c21a13754073015b04f45e7ad07274a652e405149aa4",
   "binary_sha256": "0c27f6b10921935fc71f65d5226a74367b4be400a20887b08d4f8083eed15b7b",
   "render_source_sha256": "c95d5026b9266b1725f308411b6db6663b909345e999369a505b9123cb873f6b",
   "session_source_sha256": "4fddb2f0046c105d94d69522ce2542ddd5297cf833ce76e3c6bc479501b3f83b",
@@ -73,6 +75,16 @@
       "optical_resolve_timed": true
     }
   },
+  "headless_reference_captures": {
+    "away": {
+      "image": "artifacts/o08/lazy-optical-native/headless-away.png",
+      "image_sha256": "d5621f255b59aab0c3584ea24272b9c8df1177c798a18c76381fb6887689ffdc"
+    },
+    "hero": {
+      "image": "artifacts/o08/lazy-optical-native/headless-hero.png",
+      "image_sha256": "5763a99b6249d36b9f3aeca049a9a6a3ff61f8490546575931abce7fbe658784"
+    }
+  },
   "checks": {
     "offscreen_edit_keeps_snapshot_unallocated": true,
     "offscreen_states_skip_optical_timestamp": true,
@@ -81,7 +93,9 @@
     "turning_away_skips_optical_batch_but_retains_snapshot": true,
     "revisiting_visible_geometry_does_not_duplicate_allocation": true,
     "allocation_increase_is_one_snapshot": true,
-    "repeated_paused_camera_captures_are_identical": true
+    "repeated_paused_camera_captures_are_identical": true,
+    "native_away_matches_headless": true,
+    "native_visible_matches_headless": true
   },
   "limitations": [
     "One paused native-window Session on Apple M1 Max/Metal; this checks Session/resource lifecycle, not continuous timing.",

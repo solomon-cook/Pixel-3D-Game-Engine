@@ -489,7 +489,8 @@ a live chalk-reflectivity edit while facing away leaves snapshot residency at ze
 and has no optical-resolve timestamp. The first hero view creates one 1,843,200-byte
 snapshot for nine optical batches; turning away skips resolve while retaining the
 allocation, and returning does not allocate again. Repeated paused away/hero
-captures are byte-identical. This is native lifecycle evidence for one adapter,
+captures match each other and same-adapter headless captures byte-for-byte. This
+is native lifecycle evidence for one adapter,
 not DX12 or other-adapter qualification. See
 [native report](measurements-o08-lazy-optical-native.json) and its
 [runner](../scripts/lazy_optical_native_study.py).

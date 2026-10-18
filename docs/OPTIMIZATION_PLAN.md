@@ -823,7 +823,8 @@ reflectivity edit keeps snapshot residency at zero and emits no optical-resolve
 timestamp; first visibility allocates exactly one 1,843,200-byte snapshot and
 renders nine optical batches. Turning away skips resolve while retaining the
 allocation, and revisiting does not reallocate; repeated paused captures match
-byte-for-byte. This closes native lifecycle behavior on this adapter only. See
+byte-for-byte with each other and with same-adapter headless captures at both
+cameras. This closes native lifecycle behavior on this adapter only. See
 [native lifecycle report](measurements-o08-lazy-optical-native.json) and
 [runner](../scripts/lazy_optical_native_study.py).
 O08 layout/pass experiments and the later sparse-smoke gate

@@ -369,7 +369,8 @@ now repeats the lifecycle at tick 0: offscreen edit stays at 0 snapshot bytes an
 has no optical-resolve timestamp; first visibility creates one 1,843,200-byte
 snapshot across nine optical batches; turning away skips resolve but retains the
 allocation; returning to hero does not allocate again. Repeated away and hero
-captures are byte-identical. Native lifecycle is verified on M1 Max/Metal only;
+captures are byte-identical to each other and to same-adapter headless captures
+at both poses. Native lifecycle is verified on M1 Max/Metal only;
 other-adapter and DX12 behavior remain open. See
 [native report](measurements-o08-lazy-optical-native.json) and
 [runner](../scripts/lazy_optical_native_study.py).
