@@ -324,6 +324,41 @@ def main():
             assert dual_images["tiled"] == dual_images["reversed-order"], (
                 "two-emitter output depends on scene array order"
             )
+            dual_cache_images = {}
+            dual_cache_bytes = {}
+            dual_cache_source = ROOT / "assets/scenes/two-emitter-overflow-stress.json"
+            for mode, enabled in (("direct", False), ("cache8", True)):
+                definition = json.loads(dual_cache_source.read_text())
+                definition["render"]["absorption_cache_resolution"] = 8
+                definition["render"]["experiments"]["smoke_absorption_cache"] = enabled
+                scene_variant = temp / f"dual-absorption-{mode}.json"
+                scene_variant.write_text(json.dumps(definition))
+                image_path = temp / f"dual-absorption-{mode}.png"
+                run(
+                    binary,
+                    "capture",
+                    "--scene",
+                    scene_variant,
+                    "--camera",
+                    "dual-wide",
+                    "--seed",
+                    "42",
+                    "--tick",
+                    "300",
+                    "--scale",
+                    "1",
+                    "--output",
+                    image_path,
+                )
+                metadata = json.loads(image_path.with_suffix(".json").read_text())
+                dual_cache_images[mode] = image_path.read_bytes()
+                dual_cache_bytes[mode] = metadata["capabilities"]["resource_inventory"]["smoke_absorption_cache_bytes"]
+                assert len(metadata["scene_definition"]["emitters"]) == 2
+                assert metadata["metrics"]["smoke_absorption_cache_enabled"] is enabled
+                assert dual_cache_bytes[mode] == (4096 if enabled else 0)
+            assert dual_cache_images["direct"] == dual_cache_images["cache8"], (
+                "two-emitter 8^3 absorption cache changed the matched fixed-tick image"
+            )
     if args.gpu:
         import sys
         run(sys.executable, ROOT / "scripts/verify_materials.py", "--binary", binary)

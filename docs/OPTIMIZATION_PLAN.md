@@ -426,8 +426,11 @@ See [measurements-o05.json](measurements-o05.json) and
 The standard GPU protocol verifier now performs an off/on/off cache lifecycle
 check at a fixed tick: it requires nonzero cache residency while enabled, zero
 after disabling, and byte-identical direct output after the cache is released.
-This guards the live toggle/resource path; it does not replace the still-open
-continuous visual review or non-Metal acceptance.
+It also compares direct and 8³ cache output for the maximum-budget two-emitter
+scene at tick 300/`dual-wide`, requiring exact PNG equality and 0/4096 resident
+cache bytes. These checks guard both single- and dual-source resource paths;
+they do not replace the still-open continuous visual review or non-Metal
+acceptance.
 
 ## O06 — Specialise optical materials and avoid repeated shading
 
