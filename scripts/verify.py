@@ -58,6 +58,9 @@ def main():
                 assert "error" in request("set_parameter", path="render.exposure", value=-2)
                 assert "error" in request("set_camera", id="missing")
                 assert "result" in request("step", ticks=120)
+                batched_metrics = request("get_metrics")["result"]["frame"]
+                assert batched_metrics["cpu_steps_this_frame"] == 120
+                assert batched_metrics["cpu_simulation_submissions_this_frame"] == 20
                 first = request("capture_frame", path=str(temp / "first.png"), scale=1)
                 assert first["result"]["tick"] == 120, first
                 request("reset", seed=42)
@@ -65,9 +68,13 @@ def main():
                 request("capture_frame", path=str(temp / "replay.png"), scale=1)
                 assert (temp / "first.png").read_bytes() == (temp / "replay.png").read_bytes(), "same-device replay changed"
                 assert request("set_simulation_batching", enabled=False)["result"]["enabled"] is False
-                assert request("get_metrics")["result"]["simulation_batching_enabled"] is False
+                before_serial = request("get_metrics")["result"]
+                assert before_serial["simulation_batching_enabled"] is False
                 request("reset", seed=42)
                 request("step", ticks=120)
+                serial_metrics = request("get_metrics")["result"]["frame"]
+                assert serial_metrics["cpu_steps_this_frame"] - before_serial["frame"]["cpu_steps_this_frame"] == 120
+                assert serial_metrics["cpu_simulation_submissions_this_frame"] - before_serial["frame"]["cpu_simulation_submissions_this_frame"] == 120
                 request("capture_frame", path=str(temp / "unbatched.png"), scale=1)
                 assert (temp / "first.png").read_bytes() == (temp / "unbatched.png").read_bytes(), "serial-submit baseline changed image"
                 assert request("set_simulation_batching", enabled=True)["result"]["enabled"] is True
