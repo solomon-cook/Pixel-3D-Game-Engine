@@ -479,10 +479,11 @@ source-local ping-pong volumes, uniforms and per-source dispatches in stable-ID
 order. The soft atmosphere/optical integral now binds a second source volume and
 samples its independent domain; a fixed-tick source-zero capture remains
 byte-identical. Scene validation still requires one emitter, so no dual-source
-GPU image exists. Inked smoke and a source-local absorption-cache channel are
-implemented, but source-specific opaque lighting, shadows, live scene acceptance
-and visual review remain incomplete; the post heat pass now
-has a source-local secondary temperature path. See
+GPU image exists. Inked smoke, a source-local absorption-cache channel, and the
+opaque-material heat cue's second temperature field are implemented, but the
+secondary opaque path, source-specific primary-light shadows, live scene
+acceptance and visual review remain unverified. The post heat pass also has a
+source-local secondary temperature path. See
 [heat evidence](measurements-multi-emitter-heat.json).
 Source-local inked smoke is implemented with 36 puff candidates per source,
 separate overflow fallback and a 72-entry total tile capacity. GPU validation and
@@ -495,6 +496,11 @@ The second-source cache stores optical depth in the green channel of the existin
 allocation and preserves the source-zero hero capture hash; the second-source
 branch remains unverified because scene validation still permits one emitter.
 See [absorption evidence](measurements-multi-emitter-absorption.json).
+Opaque `heat_response` materials now sample the second emitter's local
+temperature volume as well. The source-zero Metal capture is byte-identical and
+the verifier passes; the scene contract still prevents exercising this second
+field live. See
+[opaque heat evidence](measurements-multi-emitter-opaque-heat.json).
 `Renderer::update_globals` now has a keyed two-source sampling
 and upload branch with independent projected-detail tiers, but scene validation
 still prevents live access and no two-source GPU capture exists. The existing

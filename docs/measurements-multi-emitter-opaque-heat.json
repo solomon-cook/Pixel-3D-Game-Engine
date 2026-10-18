@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-18",
+  "scope": "Source-local opaque-material heat-response sampling and single-source regression evidence",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal",
+    "device_type": "IntegratedGpu",
+    "windows_dx12_verified": false
+  },
+  "implementation": {
+    "material_gate": "Only materials with heat_response greater than zero enter the heat cue",
+    "source_zero": "Existing global volume domain and temperature field",
+    "source_one": "Second source's local domain, sampled from its density/temperature volume",
+    "combination": "Use the stronger temperature sample before existing stepped response",
+    "binding": "Second smoke volume added to the existing tile-list bind group",
+    "additional_texture_allocation_bytes": 0,
+    "secondary_source_live_scene_available": false
+  },
+  "single_source_capture": {
+    "scene": "assets/scenes/profiling-heavy.json",
+    "seed": 42,
+    "camera": "hero",
+    "tick": 120,
+    "resolution": [640, 360],
+    "scale": 1,
+    "cache_enabled": true,
+    "rgba_sha256": "8c6080e1d3b47aa27f161b1325ff666ba30b63b9b90cd58f21f6ebce921543d2",
+    "pre_change_same_mode_rgba_sha256": "8c6080e1d3b47aa27f161b1325ff666ba30b63b9b90cd58f21f6ebce921543d2",
+    "matches": true
+  },
+  "validation": {
+    "command": "python3 scripts/verify.py --gpu",
+    "result": "passed",
+    "unit_tests": 37,
+    "backend": "Metal",
+    "native": false
+  },
+  "acceptance_gaps": [
+    "The scene validator accepts one emitter, so the source-one opaque heat sample has not been exercised in a dual-source frame.",
+    "No source-one visual, temporal or performance measurements exist.",
+    "Primary-light geometry shadow maps remain single-source; Windows/DX12 and other-adapter acceptance remain open."
+  ]
+}

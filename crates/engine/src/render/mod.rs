@@ -1126,6 +1126,14 @@ impl Renderer {
                     wgpu::ShaderStages::FRAGMENT,
                     wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
                 ),
+                binding(
+                    7,
+                    wgpu::ShaderStages::FRAGMENT,
+                    sampled(
+                        wgpu::TextureViewDimension::D3,
+                        wgpu::TextureSampleType::Float { filterable: true },
+                    ),
+                ),
             ],
         });
         let tile_build_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
@@ -1319,6 +1327,9 @@ impl Renderer {
                     particle_tile_indices.as_entire_binding(),
                     wgpu::BindingResource::TextureView(&smoke_views[0][i]),
                     wgpu::BindingResource::Sampler(&linear),
+                    wgpu::BindingResource::TextureView(
+                        &smoke_views.get(1).unwrap_or(&smoke_views[0])[i],
+                    ),
                 ],
             )
         });
@@ -2273,7 +2284,8 @@ impl Renderer {
             .replace("fn shade_surface(v:Varying,tile:u32)->Output {", "fn shade_surface(v:Varying,tile:u32)->Output { diag_add(14u);")
             .replace("for(var candidate=0u;candidate<8u;candidate++) {if candidate>=point_count {break;}", "for(var candidate=0u;candidate<8u;candidate++) {if candidate>=point_count {break;} diag_add(15u);")
             .replace("for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;}", "for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;} diag_add(16u);")
-            .replace("let temperature=clamp(textureSampleLevel(heat_volume,heat_sampler,heat_uv,0.).y,0.,1.);", "diag_add(17u); let temperature=clamp(textureSampleLevel(heat_volume,heat_sampler,heat_uv,0.).y,0.,1.);");
+            .replace("let temperature=clamp(textureSampleLevel(heat_volume,heat_sampler,heat_uv,0.).y,0.,1.);", "diag_add(17u); let temperature=clamp(textureSampleLevel(heat_volume,heat_sampler,heat_uv,0.).y,0.,1.);")
+            .replace("temperature=max(temperature,clamp(textureSampleLevel(secondary_heat_volume,heat_sampler,secondary_uv,0.).y,0.,1.));", "diag_add(17u); temperature=max(temperature,clamp(textureSampleLevel(secondary_heat_volume,heat_sampler,secondary_uv,0.).y,0.,1.));");
         let diagnostic_mesh_module = shader(
             device,
             "instrumented opaque world",

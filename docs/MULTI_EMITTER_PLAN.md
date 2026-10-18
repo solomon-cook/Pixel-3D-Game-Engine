@@ -73,9 +73,10 @@ into a testable two-source runtime without changing the single-source baseline.
   zero now owns the legacy global domain when multiple sources are prepared. The
   post heat pass now carries each source's heat output/cooling/lift and can sample
   the second temperature volume using its source-local shape/distortion settings.
-  Source-count guards leave the one-emitter paths unchanged. Source-specific
-  opaque lighting remains incomplete; validation still prevents a live two-source
-  GPU capture, so the new source-one cache channel remains unverified.
+  Source-count guards leave the one-emitter paths unchanged. Opaque materials
+  with `heat_response` now sample both source-local temperature fields, but the
+  second-source branch remains unverified because validation prevents a live
+  two-source GPU capture. Primary-light geometry shadows remain single-source.
   The fixed-tick `profiling-heavy.json` hero capture remains pixel-identical at
   640×360 (SHA-256 `9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48`).
   See [atmosphere evidence](measurements-multi-emitter-atmosphere.json).
@@ -101,6 +102,13 @@ into a testable two-source runtime without changing the single-source baseline.
   has no live-scene visual/performance review because validation still accepts
   one emitter. See
   [source-local absorption evidence](measurements-multi-emitter-absorption.json).
+- Opaque materials with `heat_response` now sample source one's local temperature
+  field alongside the legacy primary volume and use the stronger local heat
+  sample. The new binding adds no texture allocation. A source-zero fixed-tick
+  capture remains byte-identical; the secondary branch has not had live image
+  review because the scene contract still accepts one emitter. Primary-light
+  geometry shadows remain single-source. See
+  [opaque heat evidence](measurements-multi-emitter-opaque-heat.json).
 - One 48×64×48 Rg16Float density/temperature pair occupies 1,179,648 bytes.
   One point-light cubemap set occupies 1,572,864 bytes. The 8 authored point
   lights and 12 derived particle lights are global renderer budgets.

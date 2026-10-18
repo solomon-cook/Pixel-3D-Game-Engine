@@ -5,6 +5,7 @@
 @group(1) @binding(4) var atlas_sampler: sampler;
 @group(2) @binding(5) var heat_volume:texture_3d<f32>;
 @group(2) @binding(6) var heat_sampler:sampler;
+@group(2) @binding(7) var secondary_heat_volume:texture_3d<f32>;
 
 fn sun_visibility(p:vec3<f32>, n:vec3<f32>) -> f32 {
     let q=g.sun_matrix*vec4<f32>(p+n*0.025,1.); let uv=q.xy/q.w*vec2<f32>(0.5,-0.5)+0.5;
@@ -114,8 +115,19 @@ fn shade_surface(v:Varying,tile:u32)->Output {
     if m.optical.w>0. {
         let heat_position=v.position+vec3(0.,0.45,0.);
         let heat_uv=(heat_position-g.volume_min.xyz)/(g.volume_max.xyz-g.volume_min.xyz);
+        var temperature=0.;
         if all(heat_uv>=vec3(0.)) && all(heat_uv<=vec3(1.)) {
-            let temperature=clamp(textureSampleLevel(heat_volume,heat_sampler,heat_uv,0.).y,0.,1.);
+            temperature=clamp(textureSampleLevel(heat_volume,heat_sampler,heat_uv,0.).y,0.,1.);
+        }
+        if fire.source_origins[1].w>0.5 {
+            let secondary_origin=fire.source_origins[1].xyz;
+            let secondary_min=secondary_origin+vec3(-3.,-0.6,-3.);
+            let secondary_uv=(heat_position-secondary_min)/vec3(6.,8.,6.);
+            if all(secondary_uv>=vec3(0.)) && all(secondary_uv<=vec3(1.)) {
+                temperature=max(temperature,clamp(textureSampleLevel(secondary_heat_volume,heat_sampler,secondary_uv,0.).y,0.,1.));
+            }
+        }
+        if temperature>0. {
             let heat_level=floor(clamp(temperature*16.,0.,0.9999)*4.)/3.;
             let response=clamp(heat_level*m.optical.w,0.,1.);
             let edge=select(0.,1.,abs(dpdx(heat_level))+abs(dpdy(heat_level))>0.2 && heat_level>0.);
