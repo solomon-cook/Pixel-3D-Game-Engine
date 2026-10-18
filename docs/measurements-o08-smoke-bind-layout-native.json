@@ -17,14 +17,14 @@
   "duration_seconds_per_run": 120.0,
   "warmup_seconds": 10.0,
   "native_reports_resumed": true,
-  "git_revision": "da21cc7f8f0504a7751282ae37244e1e3c49121a",
+  "git_revision": "d21ab07acadc9e912b68481210ecf36644392572",
   "binary_sha256": "d22ac996ceed21e07022ca6cdb3aaa35abfd30996711979b4f693251c875bcd5",
   "source_sha256": {
     "crates/engine-lab/src/main.rs": "b67e404db13490d7549174a9710fd295a3c0e86ed778c9e9db569c822a6bbd30",
     "crates/engine-lab/src/window.rs": "aaea6adf975c0a04729c756b366107c89da4d3cf73ebb865746b700d81e58fa2",
     "crates/engine/src/render/mod.rs": "a9d0ee1fef025b6a086983b163ea10b10f9bdc6b5bde851a431e8847b11da0e3",
     "crates/engine/src/render/shaders/smoke.wgsl": "feeb69f77c6ab62547ddaa791fb9b32f48682f96aeab74ada2123e57b5331c85",
-    "scripts/smoke_bind_layout_native_study.py": "14373e6d3875e656712e1092933d1358d0e45eed8877487531b800f24b386d8f"
+    "scripts/smoke_bind_layout_native_study.py": "4cd67186641843622fa0ce3e69c2735cffcd8b9d615fdf4f14f0c147fef73a31"
   },
   "pairs": [
     {
@@ -66,6 +66,7 @@
           "smoke_compute_samples": 7193,
           "timed_render_frames": 5209
         },
+        "smoke_compute_timestamp_coverage": 0.9997220291869354,
         "cpu_upload": {
           "median_ms": 0.221502,
           "p95_ms": 1.7966280000000001,
@@ -109,6 +110,7 @@
           "smoke_compute_samples": 7198,
           "timed_render_frames": 5230
         },
+        "smoke_compute_timestamp_coverage": 0.9997222222222222,
         "cpu_upload": {
           "median_ms": 0.221332,
           "p95_ms": 1.8447929999999997,
@@ -167,6 +169,7 @@
           "smoke_compute_samples": 7191,
           "timed_render_frames": 5236
         },
+        "smoke_compute_timestamp_coverage": 0.9994440583738707,
         "cpu_upload": {
           "median_ms": 0.231207,
           "p95_ms": 1.984209,
@@ -210,6 +213,7 @@
           "smoke_compute_samples": 7186,
           "timed_render_frames": 5242
         },
+        "smoke_compute_timestamp_coverage": 0.9991657397107898,
         "cpu_upload": {
           "median_ms": 0.20700000000000002,
           "p95_ms": 1.9112079999999998,
@@ -268,6 +272,7 @@
           "smoke_compute_samples": 7193,
           "timed_render_frames": 5206
         },
+        "smoke_compute_timestamp_coverage": 0.9994442128664721,
         "cpu_upload": {
           "median_ms": 0.21554099999999998,
           "p95_ms": 1.837082,
@@ -311,6 +316,7 @@
           "smoke_compute_samples": 7193,
           "timed_render_frames": 5210
         },
+        "smoke_compute_timestamp_coverage": 0.9994442128664721,
         "cpu_upload": {
           "median_ms": 0.238251,
           "p95_ms": 1.844498,

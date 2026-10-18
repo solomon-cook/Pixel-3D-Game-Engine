@@ -529,20 +529,22 @@ this as a verified traffic reduction without a throughput claim. See
 The next O08 pass-layout probe moved the smoke shader's resources to group 0 and
 removed render `Globals` from the advection pipeline layout. This coordinated
 change is required because the explicit prior pipeline layout demanded a group-0
-bind even though the shader did not declare group-0 resources. Clearing and
-dual-emitter, profiling-heavy and Material Atelier tick-120 images all match
-exactly. Three sustained clearing pairs show a 0.005–0.015 ms lower median
-simulation CPU-encode span, but further profiling-heavy and Material Atelier
-pairs do not reproduce that CPU result consistently; a separate two-emitter route
-also shows mixed CPU-encode, frame-work and GPU-render deltas. Three alternating
-native clearing-orbit pairs show +0.049 median FPS, -0.032 ms simulation encode
-and -0.000022 ms smoke compute for the optimized layout. The FPS increase is
-small; CPU-frame and GPU-stage changes vary. Fixed-tick clearing and two-emitter
-captures match exactly. Keep the reduction in encoded bind commands without a
-general throughput claim. Broader native workloads, DX12 and other-adapter
-gates remain open. See
-[the offscreen report](measurements-o08-smoke-bind-layout.json),
-[native report](measurements-o08-smoke-bind-layout-native.json) and
+bind even though the shader did not declare group-0 resources. Fixed-tick
+clearing and two-emitter captures match exactly. Four native M1 Max/Metal
+three-pair studies cover clearing, profiling-heavy, Material Atelier and
+two-emitter routes, with >99% render and smoke-compute timestamp coverage. The
+coverage denominator is the number of actual fixed ticks. Median FPS deltas are
++0.049/+0.097/+0.011/-0.033; CPU-frame deltas +0.028/-0.066/-0.068/+0.041 ms;
+simulation-encode deltas -0.032/-0.061/-0.030/+0.014 ms; and atmosphere/fire GPU
+deltas -0.0014/+0.0218/+0.0064/-0.0025 ms, respectively. Results are mixed and
+the two-emitter route regresses slightly on FPS. Keep the conclusion to fewer
+encoded bind commands, without a general throughput claim. More native routes,
+playback review, DX12 and other-adapter gates remain open. See
+[the offscreen report](measurements-o08-smoke-bind-layout.json), the four
+[native reports](measurements-o08-smoke-bind-layout-native.json),
+[profiling-heavy](measurements-o08-smoke-bind-layout-native-profiling-heavy.json),
+[materials](measurements-o08-smoke-bind-layout-native-materials.json),
+[two-emitter](measurements-o08-smoke-bind-layout-native-two-emitter.json) and
 [native runner](../scripts/smoke_bind_layout_native_study.py).
 
 Break the umbrella O08 item into decisions for lazy optical allocation, RG16 targets,

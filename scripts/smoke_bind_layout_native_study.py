@@ -41,7 +41,7 @@ def metric(run: dict, path: tuple[str, ...]) -> dict:
     return {}
 
 
-def validate_timing_coverage(run: dict) -> None:
+def validate_timing_coverage(run: dict) -> float:
     coverage = run.get("timing_coverage", {})
     rendered = coverage.get("rendered_frames", 0)
     timed = coverage.get("timed_render_frames", 0)
@@ -50,9 +50,10 @@ def validate_timing_coverage(run: dict) -> None:
     if not rendered or timed / rendered < 0.99:
         raise RuntimeError(f"native GPU timing coverage below 99%: {timed}/{rendered}")
     compute = coverage.get("smoke_compute_samples", 0)
-    expected_compute = round(run.get("route_seconds", 0) * 60)
+    expected_compute = run.get("simulation_accounting", {}).get("fixed_ticks", 0)
     if not expected_compute or compute / expected_compute < 0.99:
         raise RuntimeError(f"native smoke-compute timing coverage below 99%: {compute}/{expected_compute}")
+    return compute / expected_compute
 
 
 def summarize_compute(run: dict) -> dict:
@@ -149,8 +150,9 @@ def main() -> int:
                 raise RuntimeError(f"{variant} run reports the wrong smoke bind-group layout")
             if run.get("tile_lists_enabled") is not True:
                 raise RuntimeError(f"{variant} run did not use tile lists")
-            validate_timing_coverage(run)
+            compute_coverage = validate_timing_coverage(run)
             runs[variant] = run
+            runs[f"{variant}_compute_coverage"] = compute_coverage
         baseline, candidate = runs["legacy"], runs["optimized"]
         pairs.append({
             "pair": pair,
@@ -168,6 +170,7 @@ def main() -> int:
                 "cpu_native_frame": metric(baseline, ("cpu_native_frame",)),
                 "gpu_atmosphere_fire": metric(baseline, ("gpu_stages", "atmosphere_fire")),
                 "timing_coverage": baseline["timing_coverage"],
+                "smoke_compute_timestamp_coverage": runs["legacy_compute_coverage"],
                 "cpu_upload": metric(baseline, ("cpu_upload",)),
                 "cpu_simulation_encode": metric(baseline, ("cpu_simulation_encode",)),
                 "gpu_smoke_compute": summarize_compute(baseline),
@@ -179,6 +182,7 @@ def main() -> int:
                 "cpu_native_frame": metric(candidate, ("cpu_native_frame",)),
                 "gpu_atmosphere_fire": metric(candidate, ("gpu_stages", "atmosphere_fire")),
                 "timing_coverage": candidate["timing_coverage"],
+                "smoke_compute_timestamp_coverage": runs["optimized_compute_coverage"],
                 "cpu_upload": metric(candidate, ("cpu_upload",)),
                 "cpu_simulation_encode": metric(candidate, ("cpu_simulation_encode",)),
                 "gpu_smoke_compute": summarize_compute(candidate),

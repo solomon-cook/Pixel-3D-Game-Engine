@@ -416,26 +416,25 @@ workloads and Windows/DX12 or other-adapter validation remain open. See the
 
 O08 also retargets smoke compute resources from group 1 to group 0 and removes
 the unused render Globals group from the advection pipeline layout. This reduces
-one bind-group set per smoke compute pass; M1 Max/Metal clearing and dual-emitter
-tick-120 captures are byte-identical to the prior layout across clearing,
-two-emitter, profiling-heavy and Material Atelier scenes. Three alternating
-120-second clearing-orbit pairs lower median simulation CPU encoding by
-0.005–0.015 ms, but additional three-pair profiling-heavy and Material Atelier
-routes show mixed CPU-encode and frame-work results. Treat the change as fewer
-encoded bind commands; the dual-emitter route also has mixed simulation encode,
-frame-work and GPU-render deltas. No general throughput win is established. The
-candidate also passes headless transactional reload rollback for all 13 reloadable shader
-modules, preserving the fixed-tick image on every failure and on the restored
-successful reload. Native-window clearing timing now completes three alternating
-120-second pairs on M1 Max/Metal, with >99% render and smoke-compute timestamp
-coverage. Optimized-minus-legacy paired medians are +0.049 FPS, +0.028 ms CPU
-native frame, -0.032 ms simulation encode, -0.000022 ms smoke compute and
--0.0014 ms atmosphere/fire GPU. FPS is slightly higher in all three pairs, but
-the change is small and CPU/GPU timing results vary. No general throughput gain
-is claimed. Fixed-tick clearing and dual-emitter PNGs are byte-identical between
-layouts. Broader native workloads and Windows/DX12/other-adapter validation
-remain open. See [layout report](measurements-o08-smoke-bind-layout.json),
-[native report](measurements-o08-smoke-bind-layout-native.json),
+one bind-group set per smoke compute pass. Fixed-tick clearing and dual-emitter
+captures are byte-identical, and the headless transactional reload rollback
+study preserved the reference image when all 13 reloadable shader modules
+rejected invalid source and after the restored successful reload. Four native
+M1 Max/Metal three-pair studies now cover clearing, profiling-heavy, Material
+Atelier and two-emitter workloads, each with >99% render and smoke-compute
+timestamp coverage. Coverage uses the actual fixed-tick count as its denominator,
+not the ideal route duration. Optimized-minus-legacy median FPS deltas are
++0.049/+0.097/+0.011/-0.033; CPU native-frame deltas +0.028/-0.066/-0.068/+0.041
+ms; simulation-encode deltas -0.032/-0.061/-0.030/+0.014 ms; and atmosphere/fire
+GPU deltas -0.0014/+0.0218/+0.0064/-0.0025 ms, respectively. Results vary by
+route, including slower two-emitter FPS, so the supported conclusion remains
+fewer encoded bind commands without a general throughput gain. More native
+routes and playback review, Windows/DX12 and other-adapter validation remain
+open. See the [layout report](measurements-o08-smoke-bind-layout.json), four
+[native reports](measurements-o08-smoke-bind-layout-native.json),
+[profiling-heavy](measurements-o08-smoke-bind-layout-native-profiling-heavy.json),
+[materials](measurements-o08-smoke-bind-layout-native-materials.json),
+[two-emitter](measurements-o08-smoke-bind-layout-native-two-emitter.json),
 [native runner](../scripts/smoke_bind_layout_native_study.py) and ignored
 [rollback report](../artifacts/o08-smoke-bind-shader-rollback.json).
 
