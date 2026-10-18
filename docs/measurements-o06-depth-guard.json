@@ -14,7 +14,7 @@
   },
   "optical_shader_sha256": "2a946bc823df1a588046155d2d66c78aca8d33f246aa73e25c9a2aef8b5453ad",
   "binary_sha256": "3e5050590b26b1d09fcbc9620307f484e669a54dbdb61cbae426d320a9249225",
-  "runner_sha256": "f935138f1a188f9ef1b885ad2c46a6e3a66ff4cda3cc209466be1e62f497f4d5",
+  "runner_sha256": "13c801a2f37b55a5f4ba7d28fd989448c6a936214b1229692f83e2cf77c3af3a",
   "seed": 42,
   "tick": 300,
   "resolution": [
@@ -217,6 +217,253 @@
           "reference_capture": "artifacts/o06/depth-guard/direct-glass-near.png",
           "capture": "artifacts/o06/depth-guard/exact-depth-glass-near.png",
           "shader_sha256": "29cf62f48033e18a817901b2e50ebe7dba38b693ac6f982af002d6b1a503507e",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        }
+      ]
+    }
+  ],
+  "foreground_alpha_sweep": [
+    {
+      "maximum_foreground_alpha_for_reuse": 0.001,
+      "cameras": [
+        {
+          "camera": "mixed-from-behind",
+          "reference_capture": "artifacts/o06/depth-guard/direct-mixed-from-behind.png",
+          "capture": "artifacts/o06/depth-guard/alpha-0.001-mixed-from-behind.png",
+          "shader_sha256": "4f3594beeb87a67cf08fed4e9d87fea7e1dc1937c6331fffce6c731c268fe03d",
+          "image_comparison": {
+            "changed_pixels": 12,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.00029947916666666664,
+            "max_channel_error": 52,
+            "difference_bounds": [
+              261,
+              192,
+              379,
+              248
+            ]
+          }
+        },
+        {
+          "camera": "mixed-close",
+          "reference_capture": "artifacts/o06/depth-guard/direct-mixed-close.png",
+          "capture": "artifacts/o06/depth-guard/alpha-0.001-mixed-close.png",
+          "shader_sha256": "4f3594beeb87a67cf08fed4e9d87fea7e1dc1937c6331fffce6c731c268fe03d",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "glass-near",
+          "reference_capture": "artifacts/o06/depth-guard/direct-glass-near.png",
+          "capture": "artifacts/o06/depth-guard/alpha-0.001-glass-near.png",
+          "shader_sha256": "4f3594beeb87a67cf08fed4e9d87fea7e1dc1937c6331fffce6c731c268fe03d",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        }
+      ]
+    },
+    {
+      "maximum_foreground_alpha_for_reuse": 0.01,
+      "cameras": [
+        {
+          "camera": "mixed-from-behind",
+          "reference_capture": "artifacts/o06/depth-guard/direct-mixed-from-behind.png",
+          "capture": "artifacts/o06/depth-guard/alpha-0.010-mixed-from-behind.png",
+          "shader_sha256": "9dd89a343894fae02df85cc0e6b1dd58c1c39f192ae28dd38e8139a1a4a72441",
+          "image_comparison": {
+            "changed_pixels": 12,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.00029947916666666664,
+            "max_channel_error": 52,
+            "difference_bounds": [
+              261,
+              192,
+              379,
+              248
+            ]
+          }
+        },
+        {
+          "camera": "mixed-close",
+          "reference_capture": "artifacts/o06/depth-guard/direct-mixed-close.png",
+          "capture": "artifacts/o06/depth-guard/alpha-0.010-mixed-close.png",
+          "shader_sha256": "9dd89a343894fae02df85cc0e6b1dd58c1c39f192ae28dd38e8139a1a4a72441",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "glass-near",
+          "reference_capture": "artifacts/o06/depth-guard/direct-glass-near.png",
+          "capture": "artifacts/o06/depth-guard/alpha-0.010-glass-near.png",
+          "shader_sha256": "9dd89a343894fae02df85cc0e6b1dd58c1c39f192ae28dd38e8139a1a4a72441",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        }
+      ]
+    },
+    {
+      "maximum_foreground_alpha_for_reuse": 0.05,
+      "cameras": [
+        {
+          "camera": "mixed-from-behind",
+          "reference_capture": "artifacts/o06/depth-guard/direct-mixed-from-behind.png",
+          "capture": "artifacts/o06/depth-guard/alpha-0.050-mixed-from-behind.png",
+          "shader_sha256": "ac53be6a2669e5f42e17ce787e57819d93a97a2a5d4cba3cf4e331e089ac1b4a",
+          "image_comparison": {
+            "changed_pixels": 12,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.00029947916666666664,
+            "max_channel_error": 52,
+            "difference_bounds": [
+              261,
+              192,
+              379,
+              248
+            ]
+          }
+        },
+        {
+          "camera": "mixed-close",
+          "reference_capture": "artifacts/o06/depth-guard/direct-mixed-close.png",
+          "capture": "artifacts/o06/depth-guard/alpha-0.050-mixed-close.png",
+          "shader_sha256": "ac53be6a2669e5f42e17ce787e57819d93a97a2a5d4cba3cf4e331e089ac1b4a",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "glass-near",
+          "reference_capture": "artifacts/o06/depth-guard/direct-glass-near.png",
+          "capture": "artifacts/o06/depth-guard/alpha-0.050-glass-near.png",
+          "shader_sha256": "ac53be6a2669e5f42e17ce787e57819d93a97a2a5d4cba3cf4e331e089ac1b4a",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        }
+      ]
+    },
+    {
+      "maximum_foreground_alpha_for_reuse": 0.1,
+      "cameras": [
+        {
+          "camera": "mixed-from-behind",
+          "reference_capture": "artifacts/o06/depth-guard/direct-mixed-from-behind.png",
+          "capture": "artifacts/o06/depth-guard/alpha-0.100-mixed-from-behind.png",
+          "shader_sha256": "c980cc62191348bffd1b7546c8ab8dfb9d608dfbe2552966f1baf3e30556c2c5",
+          "image_comparison": {
+            "changed_pixels": 12,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.00029947916666666664,
+            "max_channel_error": 52,
+            "difference_bounds": [
+              261,
+              192,
+              379,
+              248
+            ]
+          }
+        },
+        {
+          "camera": "mixed-close",
+          "reference_capture": "artifacts/o06/depth-guard/direct-mixed-close.png",
+          "capture": "artifacts/o06/depth-guard/alpha-0.100-mixed-close.png",
+          "shader_sha256": "c980cc62191348bffd1b7546c8ab8dfb9d608dfbe2552966f1baf3e30556c2c5",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "glass-near",
+          "reference_capture": "artifacts/o06/depth-guard/direct-glass-near.png",
+          "capture": "artifacts/o06/depth-guard/alpha-0.100-glass-near.png",
+          "shader_sha256": "c980cc62191348bffd1b7546c8ab8dfb9d608dfbe2552966f1baf3e30556c2c5",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        }
+      ]
+    },
+    {
+      "maximum_foreground_alpha_for_reuse": 0.25,
+      "cameras": [
+        {
+          "camera": "mixed-from-behind",
+          "reference_capture": "artifacts/o06/depth-guard/direct-mixed-from-behind.png",
+          "capture": "artifacts/o06/depth-guard/alpha-0.250-mixed-from-behind.png",
+          "shader_sha256": "85aafb7cbdac866c962ea6adcbc57c73279551b5a6d9aa7d831e3462f9b21aa1",
+          "image_comparison": {
+            "changed_pixels": 12,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.00029947916666666664,
+            "max_channel_error": 52,
+            "difference_bounds": [
+              261,
+              192,
+              379,
+              248
+            ]
+          }
+        },
+        {
+          "camera": "mixed-close",
+          "reference_capture": "artifacts/o06/depth-guard/direct-mixed-close.png",
+          "capture": "artifacts/o06/depth-guard/alpha-0.250-mixed-close.png",
+          "shader_sha256": "85aafb7cbdac866c962ea6adcbc57c73279551b5a6d9aa7d831e3462f9b21aa1",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "glass-near",
+          "reference_capture": "artifacts/o06/depth-guard/direct-glass-near.png",
+          "capture": "artifacts/o06/depth-guard/alpha-0.250-glass-near.png",
+          "shader_sha256": "85aafb7cbdac866c962ea6adcbc57c73279551b5a6d9aa7d831e3462f9b21aa1",
           "image_comparison": {
             "changed_pixels": 0,
             "total_pixels": 230400,

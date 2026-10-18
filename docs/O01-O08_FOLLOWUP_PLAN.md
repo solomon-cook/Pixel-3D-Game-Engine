@@ -234,9 +234,11 @@ off and close the experiment with that result.
    A fixed-tick offscreen tolerance sweep across mixed-from-behind, mixed-close
    and glass-near views reduced behind-view changed pixels from 12 to 4 as the
    guard tightened, while maximum channel error stayed 52/255. The other two
-   views remained exact. No timing was measured for tighter guards, so keep the
-   current value; see [measurements-o06-depth-guard.json](measurements-o06-depth-guard.json)
-   and [the sweep runner](../scripts/optical_depth_guard_study.py).
+   views remained exact. A foreground-alpha gate from 0.001 to 0.25 changed none
+   of the image comparisons. No timing was measured, so keep the current guard
+   and investigate snapshot precision; see
+   [measurements-o06-depth-guard.json](measurements-o06-depth-guard.json) and
+   [the sweep runner](../scripts/optical_depth_guard_study.py).
 
 **Exit gate:** sustained total-render gain larger than run variance, acceptable
 images in reflection/transmission stress views and no stale live-edit output.

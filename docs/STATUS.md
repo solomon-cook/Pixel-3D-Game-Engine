@@ -120,8 +120,10 @@ A fixed-tick depth-guard sweep across mixed-from-behind, mixed-close and glass-n
 views tested progressively stricter snapshot depth tolerances. It reduced the
 offscreen behind-view difference from 12 pixels to 4, but the maximum channel
 error stayed 52/255; the other two views were exact at every setting. This does
-not resolve the high-error pixels, and no candidate timing was measured, so retain
-the currently measured guard. See
+not resolve the high-error pixels. A separate foreground-atmosphere alpha gate at
+limits 0.001–0.25 changed none of the three image comparisons. No candidate timing
+was measured, so retain the currently measured guard and investigate snapshot
+precision instead of widening the alpha condition. See
 [depth-guard report](measurements-o06-depth-guard.json) and
 [reproducible sweep](../scripts/optical_depth_guard_study.py).
 
