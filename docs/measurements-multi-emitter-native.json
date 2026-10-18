@@ -1,0 +1,894 @@
+{
+  "version": 1,
+  "study": "native-window two-emitter tiled versus exhaustive correctness",
+  "date": "2026-10-18",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": true
+  },
+  "binary_sha256": "cceaa3c520243f31b3a2febe7c0ee778fe1039f9735c48e69452d042458de157",
+  "source_revision": "01da4e7072e32349049def1c9901d7e4366f7311",
+  "scene": "assets/scenes/two-emitter-overflow-stress.json",
+  "scene_sha256": "544662419ca3bb9882f2d59e83db5ef059eb1f4c8da4787c78092c6d9fa31772",
+  "seed": 42,
+  "tick": 300,
+  "resolution": [
+    640,
+    360
+  ],
+  "cameras": {
+    "hero": {
+      "scene": "assets/scenes/two-emitter-overflow-stress.json",
+      "scene_sha256": "544662419ca3bb9882f2d59e83db5ef059eb1f4c8da4787c78092c6d9fa31772",
+      "camera": "hero",
+      "seed": 42,
+      "tick": 300,
+      "captures": {
+        "tiled_a": {
+          "image": "artifacts/multi-emitter/native-captures/two-emitter-overflow-stress-hero-tiled-a.png",
+          "sha256": "1253a9315dd357b5bbc818b1a2bd70e045b23bfd7db0eb6c73990855f26bec19",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              29,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "exhaustive": {
+          "image": "artifacts/multi-emitter/native-captures/two-emitter-overflow-stress-hero-exhaustive.png",
+          "sha256": "1253a9315dd357b5bbc818b1a2bd70e045b23bfd7db0eb6c73990855f26bec19",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              920,
+              920,
+              920,
+              920
+            ]
+          }
+        },
+        "tiled_b": {
+          "image": "artifacts/multi-emitter/native-captures/two-emitter-overflow-stress-hero-tiled-b.png",
+          "sha256": "1253a9315dd357b5bbc818b1a2bd70e045b23bfd7db0eb6c73990855f26bec19",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              29,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      },
+      "image_error": {
+        "tiled_a_vs_exhaustive": {
+          "changed_pixel_count": 0,
+          "pixel_count": 230400,
+          "mean_absolute_rgb_error_0_255": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_absolute_rgb_error_0_255": [
+            0,
+            0,
+            0
+          ]
+        },
+        "tiled_a_vs_tiled_b": {
+          "changed_pixel_count": 0,
+          "pixel_count": 230400,
+          "mean_absolute_rgb_error_0_255": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_absolute_rgb_error_0_255": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "tiled_matches_exhaustive": true,
+      "tiled_repeat_identical": true
+    },
+    "smoke-close": {
+      "scene": "assets/scenes/two-emitter-overflow-stress.json",
+      "scene_sha256": "544662419ca3bb9882f2d59e83db5ef059eb1f4c8da4787c78092c6d9fa31772",
+      "camera": "smoke-close",
+      "seed": 42,
+      "tick": 300,
+      "captures": {
+        "tiled_a": {
+          "image": "artifacts/multi-emitter/native-captures/two-emitter-overflow-stress-smoke-close-tiled-a.png",
+          "sha256": "4c85d9302420567f33c5fcfd98216f4aad62eb002ef3e3d1101f7bc25e44e2dd",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              82,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "exhaustive": {
+          "image": "artifacts/multi-emitter/native-captures/two-emitter-overflow-stress-smoke-close-exhaustive.png",
+          "sha256": "4c85d9302420567f33c5fcfd98216f4aad62eb002ef3e3d1101f7bc25e44e2dd",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              920,
+              920,
+              920,
+              920
+            ]
+          }
+        },
+        "tiled_b": {
+          "image": "artifacts/multi-emitter/native-captures/two-emitter-overflow-stress-smoke-close-tiled-b.png",
+          "sha256": "4c85d9302420567f33c5fcfd98216f4aad62eb002ef3e3d1101f7bc25e44e2dd",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              82,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      },
+      "image_error": {
+        "tiled_a_vs_exhaustive": {
+          "changed_pixel_count": 0,
+          "pixel_count": 230400,
+          "mean_absolute_rgb_error_0_255": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_absolute_rgb_error_0_255": [
+            0,
+            0,
+            0
+          ]
+        },
+        "tiled_a_vs_tiled_b": {
+          "changed_pixel_count": 0,
+          "pixel_count": 230400,
+          "mean_absolute_rgb_error_0_255": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_absolute_rgb_error_0_255": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "tiled_matches_exhaustive": true,
+      "tiled_repeat_identical": true
+    },
+    "orthographic": {
+      "scene": "assets/scenes/two-emitter-overflow-stress.json",
+      "scene_sha256": "544662419ca3bb9882f2d59e83db5ef059eb1f4c8da4787c78092c6d9fa31772",
+      "camera": "orthographic",
+      "seed": 42,
+      "tick": 300,
+      "captures": {
+        "tiled_a": {
+          "image": "artifacts/multi-emitter/native-captures/two-emitter-overflow-stress-orthographic-tiled-a.png",
+          "sha256": "04ff94d9638bdac700c6ff4af674bc3007d7c9a56d3f03445fa10d34da890ce1",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              19,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "exhaustive": {
+          "image": "artifacts/multi-emitter/native-captures/two-emitter-overflow-stress-orthographic-exhaustive.png",
+          "sha256": "04ff94d9638bdac700c6ff4af674bc3007d7c9a56d3f03445fa10d34da890ce1",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              920,
+              920,
+              920,
+              920
+            ]
+          }
+        },
+        "tiled_b": {
+          "image": "artifacts/multi-emitter/native-captures/two-emitter-overflow-stress-orthographic-tiled-b.png",
+          "sha256": "04ff94d9638bdac700c6ff4af674bc3007d7c9a56d3f03445fa10d34da890ce1",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              19,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      },
+      "image_error": {
+        "tiled_a_vs_exhaustive": {
+          "changed_pixel_count": 0,
+          "pixel_count": 230400,
+          "mean_absolute_rgb_error_0_255": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_absolute_rgb_error_0_255": [
+            0,
+            0,
+            0
+          ]
+        },
+        "tiled_a_vs_tiled_b": {
+          "changed_pixel_count": 0,
+          "pixel_count": 230400,
+          "mean_absolute_rgb_error_0_255": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_absolute_rgb_error_0_255": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "tiled_matches_exhaustive": true,
+      "tiled_repeat_identical": true
+    },
+    "fire-study": {
+      "scene": "assets/scenes/two-emitter-overflow-stress.json",
+      "scene_sha256": "544662419ca3bb9882f2d59e83db5ef059eb1f4c8da4787c78092c6d9fa31772",
+      "camera": "fire-study",
+      "seed": 42,
+      "tick": 300,
+      "captures": {
+        "tiled_a": {
+          "image": "artifacts/multi-emitter/native-captures/two-emitter-overflow-stress-fire-study-tiled-a.png",
+          "sha256": "5f6d0dae0881c6c0eb6f8a40399cbc56e272afc108a2a61ccac8cfd7e7999246",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              171,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "exhaustive": {
+          "image": "artifacts/multi-emitter/native-captures/two-emitter-overflow-stress-fire-study-exhaustive.png",
+          "sha256": "5f6d0dae0881c6c0eb6f8a40399cbc56e272afc108a2a61ccac8cfd7e7999246",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              920,
+              920,
+              920,
+              920
+            ]
+          }
+        },
+        "tiled_b": {
+          "image": "artifacts/multi-emitter/native-captures/two-emitter-overflow-stress-fire-study-tiled-b.png",
+          "sha256": "5f6d0dae0881c6c0eb6f8a40399cbc56e272afc108a2a61ccac8cfd7e7999246",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              171,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      },
+      "image_error": {
+        "tiled_a_vs_exhaustive": {
+          "changed_pixel_count": 0,
+          "pixel_count": 230400,
+          "mean_absolute_rgb_error_0_255": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_absolute_rgb_error_0_255": [
+            0,
+            0,
+            0
+          ]
+        },
+        "tiled_a_vs_tiled_b": {
+          "changed_pixel_count": 0,
+          "pixel_count": 230400,
+          "mean_absolute_rgb_error_0_255": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_absolute_rgb_error_0_255": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "tiled_matches_exhaustive": true,
+      "tiled_repeat_identical": true
+    },
+    "dual-wide": {
+      "scene": "assets/scenes/two-emitter-overflow-stress.json",
+      "scene_sha256": "544662419ca3bb9882f2d59e83db5ef059eb1f4c8da4787c78092c6d9fa31772",
+      "camera": "dual-wide",
+      "seed": 42,
+      "tick": 300,
+      "captures": {
+        "tiled_a": {
+          "image": "artifacts/multi-emitter/native-captures/two-emitter-overflow-stress-dual-wide-tiled-a.png",
+          "sha256": "563a2b2646a2cc839ae3e6731b69b00653716e4a47af64e796242a8cd14df086",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              16,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "exhaustive": {
+          "image": "artifacts/multi-emitter/native-captures/two-emitter-overflow-stress-dual-wide-exhaustive.png",
+          "sha256": "563a2b2646a2cc839ae3e6731b69b00653716e4a47af64e796242a8cd14df086",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              920,
+              920,
+              920,
+              920
+            ]
+          }
+        },
+        "tiled_b": {
+          "image": "artifacts/multi-emitter/native-captures/two-emitter-overflow-stress-dual-wide-tiled-b.png",
+          "sha256": "563a2b2646a2cc839ae3e6731b69b00653716e4a47af64e796242a8cd14df086",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              16,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      },
+      "image_error": {
+        "tiled_a_vs_exhaustive": {
+          "changed_pixel_count": 0,
+          "pixel_count": 230400,
+          "mean_absolute_rgb_error_0_255": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_absolute_rgb_error_0_255": [
+            0,
+            0,
+            0
+          ]
+        },
+        "tiled_a_vs_tiled_b": {
+          "changed_pixel_count": 0,
+          "pixel_count": 230400,
+          "mean_absolute_rgb_error_0_255": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_absolute_rgb_error_0_255": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "tiled_matches_exhaustive": true,
+      "tiled_repeat_identical": true
+    },
+    "stress-close": {
+      "scene": "assets/scenes/two-emitter-overflow-stress.json",
+      "scene_sha256": "544662419ca3bb9882f2d59e83db5ef059eb1f4c8da4787c78092c6d9fa31772",
+      "camera": "stress-close",
+      "seed": 42,
+      "tick": 300,
+      "captures": {
+        "tiled_a": {
+          "image": "artifacts/multi-emitter/native-captures/two-emitter-overflow-stress-stress-close-tiled-a.png",
+          "sha256": "79b74585c7deb6125e8abb472e9f11907b921adf417c3898275992f9dc321ff4",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              74,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "exhaustive": {
+          "image": "artifacts/multi-emitter/native-captures/two-emitter-overflow-stress-stress-close-exhaustive.png",
+          "sha256": "79b74585c7deb6125e8abb472e9f11907b921adf417c3898275992f9dc321ff4",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              920,
+              920,
+              920,
+              920
+            ]
+          }
+        },
+        "tiled_b": {
+          "image": "artifacts/multi-emitter/native-captures/two-emitter-overflow-stress-stress-close-tiled-b.png",
+          "sha256": "79b74585c7deb6125e8abb472e9f11907b921adf417c3898275992f9dc321ff4",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              74,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      },
+      "image_error": {
+        "tiled_a_vs_exhaustive": {
+          "changed_pixel_count": 0,
+          "pixel_count": 230400,
+          "mean_absolute_rgb_error_0_255": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_absolute_rgb_error_0_255": [
+            0,
+            0,
+            0
+          ]
+        },
+        "tiled_a_vs_tiled_b": {
+          "changed_pixel_count": 0,
+          "pixel_count": 230400,
+          "mean_absolute_rgb_error_0_255": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_absolute_rgb_error_0_255": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "tiled_matches_exhaustive": true,
+      "tiled_repeat_identical": true
+    }
+  },
+  "source_isolation": {
+    "campfire": {
+      "scene": "artifacts/multi-emitter/native-captures/scenes/campfire-only.json",
+      "scene_sha256": "bb02d9a07ee53c7d6c6d0cf8c0a47c20f28a7e4812a080d33d7aa4b2947dfcf5",
+      "camera": "stress-close",
+      "seed": 42,
+      "tick": 300,
+      "captures": {
+        "tiled_a": {
+          "image": "artifacts/multi-emitter/native-captures/campfire-only-stress-close-tiled-a.png",
+          "sha256": "f01fee5e703d4f58681b79c282527ba821be19a3853824bd444cd87c14bf5170",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 201,
+            "particle_lights": 12,
+            "particle_lights_dropped": 13,
+            "tile_overflow_tiles": [
+              17,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "exhaustive": {
+          "image": "artifacts/multi-emitter/native-captures/campfire-only-stress-close-exhaustive.png",
+          "sha256": "f01fee5e703d4f58681b79c282527ba821be19a3853824bd444cd87c14bf5170",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 201,
+            "particle_lights": 12,
+            "particle_lights_dropped": 13,
+            "tile_overflow_tiles": [
+              920,
+              920,
+              920,
+              920
+            ]
+          }
+        },
+        "tiled_b": {
+          "image": "artifacts/multi-emitter/native-captures/campfire-only-stress-close-tiled-b.png",
+          "sha256": "f01fee5e703d4f58681b79c282527ba821be19a3853824bd444cd87c14bf5170",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 201,
+            "particle_lights": 12,
+            "particle_lights_dropped": 13,
+            "tile_overflow_tiles": [
+              17,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      },
+      "image_error": {
+        "tiled_a_vs_exhaustive": {
+          "changed_pixel_count": 0,
+          "pixel_count": 230400,
+          "mean_absolute_rgb_error_0_255": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_absolute_rgb_error_0_255": [
+            0,
+            0,
+            0
+          ]
+        },
+        "tiled_a_vs_tiled_b": {
+          "changed_pixel_count": 0,
+          "pixel_count": 230400,
+          "mean_absolute_rgb_error_0_255": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_absolute_rgb_error_0_255": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "tiled_matches_exhaustive": true,
+      "tiled_repeat_identical": true
+    },
+    "watchfire": {
+      "scene": "artifacts/multi-emitter/native-captures/scenes/watchfire-only.json",
+      "scene_sha256": "6446f1efacd81bdeca9579b2af8d23ec8ae74f66ac5401ded33ec2ce1816edb2",
+      "camera": "stress-close",
+      "seed": 42,
+      "tick": 300,
+      "captures": {
+        "tiled_a": {
+          "image": "artifacts/multi-emitter/native-captures/watchfire-only-stress-close-tiled-a.png",
+          "sha256": "4eadc99c47d15c1120a361ba6381fa02f2f12b22fc42e3254fe338ed4fe00343",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 201,
+            "particle_lights": 12,
+            "particle_lights_dropped": 13,
+            "tile_overflow_tiles": [
+              24,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "exhaustive": {
+          "image": "artifacts/multi-emitter/native-captures/watchfire-only-stress-close-exhaustive.png",
+          "sha256": "4eadc99c47d15c1120a361ba6381fa02f2f12b22fc42e3254fe338ed4fe00343",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 201,
+            "particle_lights": 12,
+            "particle_lights_dropped": 13,
+            "tile_overflow_tiles": [
+              920,
+              920,
+              920,
+              920
+            ]
+          }
+        },
+        "tiled_b": {
+          "image": "artifacts/multi-emitter/native-captures/watchfire-only-stress-close-tiled-b.png",
+          "sha256": "4eadc99c47d15c1120a361ba6381fa02f2f12b22fc42e3254fe338ed4fe00343",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 201,
+            "particle_lights": 12,
+            "particle_lights_dropped": 13,
+            "tile_overflow_tiles": [
+              24,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      },
+      "image_error": {
+        "tiled_a_vs_exhaustive": {
+          "changed_pixel_count": 0,
+          "pixel_count": 230400,
+          "mean_absolute_rgb_error_0_255": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_absolute_rgb_error_0_255": [
+            0,
+            0,
+            0
+          ]
+        },
+        "tiled_a_vs_tiled_b": {
+          "changed_pixel_count": 0,
+          "pixel_count": 230400,
+          "mean_absolute_rgb_error_0_255": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_absolute_rgb_error_0_255": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "tiled_matches_exhaustive": true,
+      "tiled_repeat_identical": true
+    }
+  },
+  "reversed_emitter_order": {
+    "result": {
+      "scene": "artifacts/multi-emitter/native-captures/scenes/reversed-emitter-order.json",
+      "scene_sha256": "c64221a67c35f18ffd141d8edcdddbe68ee8d5d21cb4f3d6132fb8ae46760656",
+      "camera": "stress-close",
+      "seed": 42,
+      "tick": 300,
+      "captures": {
+        "tiled_a": {
+          "image": "artifacts/multi-emitter/native-captures/reversed-emitter-order-stress-close-tiled-a.png",
+          "sha256": "79b74585c7deb6125e8abb472e9f11907b921adf417c3898275992f9dc321ff4",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              74,
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        "exhaustive": {
+          "image": "artifacts/multi-emitter/native-captures/reversed-emitter-order-stress-close-exhaustive.png",
+          "sha256": "79b74585c7deb6125e8abb472e9f11907b921adf417c3898275992f9dc321ff4",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              920,
+              920,
+              920,
+              920
+            ]
+          }
+        },
+        "tiled_b": {
+          "image": "artifacts/multi-emitter/native-captures/reversed-emitter-order-stress-close-tiled-b.png",
+          "sha256": "79b74585c7deb6125e8abb472e9f11907b921adf417c3898275992f9dc321ff4",
+          "tick": 300,
+          "device": "Apple M1 Max",
+          "backend": "Metal",
+          "metrics": {
+            "fire_primitives": 402,
+            "particle_lights": 12,
+            "particle_lights_dropped": 38,
+            "tile_overflow_tiles": [
+              74,
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      },
+      "image_error": {
+        "tiled_a_vs_exhaustive": {
+          "changed_pixel_count": 0,
+          "pixel_count": 230400,
+          "mean_absolute_rgb_error_0_255": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_absolute_rgb_error_0_255": [
+            0,
+            0,
+            0
+          ]
+        },
+        "tiled_a_vs_tiled_b": {
+          "changed_pixel_count": 0,
+          "pixel_count": 230400,
+          "mean_absolute_rgb_error_0_255": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "maximum_absolute_rgb_error_0_255": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "tiled_matches_exhaustive": true,
+      "tiled_repeat_identical": true
+    },
+    "matches_tiled_reference": true
+  },
+  "checks": {
+    "all_cameras_match_exhaustive": true,
+    "all_cameras_repeat_identically": true,
+    "isolated_sources_match_exhaustive": true,
+    "reversed_order_matches": true
+  },
+  "result": "passed",
+  "limitations": [
+    "Fixed-tick native-window captures on one M1 Max/Metal adapter; no temporal, sustained-performance, DX12 or other-adapter acceptance.",
+    "Natural overflow metrics are captured, but the session comparison does not force overflow; forced fallback remains covered by the offscreen study.",
+    "Derived particle-light selection remains capped at 12, with overflow accounting reported in per-capture metrics."
+  ]
+}

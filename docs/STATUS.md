@@ -485,8 +485,11 @@ comparison finds tiled serial frame-work lower by a median 0.715 ms in every pai
 The reported GPU-render metric is 1.922 ms higher for tiled; tile-build rises
 2.468 ms while atmosphere/fire falls 0.495 ms. GPU intervals may overlap, so this
 is a mixed, workload-specific result rather than a universal speedup. Cache
-temporal quality, other-scene scaling, native-window, DX12 and other-adapter
-acceptance remain open. See [overflow report](measurements-multi-emitter-overflow.json),
+temporal quality and other-scene scaling remain open. Native-window fixed-tick
+captures now match exhaustive shading across six cameras, source isolation and
+reversed emitter order; native sustained performance, continuous playback, DX12
+and other-adapter acceptance remain open. See [native report](measurements-multi-emitter-native.json),
+[native runner](../scripts/two_emitter_native_study.py), [overflow report](measurements-multi-emitter-overflow.json),
 [sustained report](measurements-multi-emitter-sustained.json),
 [performance runner](../scripts/two_emitter_sustained_study.py),
 [scene](../assets/scenes/two-emitter-overflow-stress.json) and

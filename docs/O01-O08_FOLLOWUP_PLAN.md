@@ -561,8 +561,10 @@ separate overflow fallback and a 72-entry total tile capacity. GPU validation an
 single-source parity pass on M1 Max/Metal; the expanded tile index buffer uses
 603,520 bytes at 640×360. The dual-source capture matrix exercises source
 isolation and combined rendering; maximum-budget correctness and one sustained
-performance route are recorded, while other-scene scaling and platform gates
-remain open; see
+performance route are recorded. A native-window fixed-tick session study now
+matches tiled and exhaustive output across all six named cameras, source-isolated
+scenes, and reversed emitter order. Other-scene scaling, temporal playback,
+native sustained performance and cross-adapter gates remain open; see
 [inked smoke evidence](measurements-multi-emitter-ink.json).
 The second-source cache stores optical depth in the green channel of the existing
 3D cache texture, over the emitter's source-local domain. It adds no cache
