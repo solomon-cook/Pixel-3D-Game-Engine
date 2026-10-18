@@ -342,8 +342,12 @@ The 16³ fixed-tick captures were closer to direct by mean absolute RGB error at
 all three scales, but this did not establish a total-render win. Neither tier is
 promoted. The disabled path allocates no cache texture or build pass; an off/on/off
 GPU replay confirmed 0/4096/0 cache bytes and identical disabled output before and
-after. Refresh-policy and temporal/edit stress, native-window and non-Metal
-acceptance remain open. See [measurements-o05.json](measurements-o05.json) and
+after. Fixed-tick temporal error and a two-second native-window pause/resume
+parity check are recorded in [measurements-o05-temporal.json](measurements-o05-temporal.json)
+and [measurements-o05-pause-resume.json](measurements-o05-pause-resume.json).
+Human review of continuous playback, 8³ temporal coverage, refresh-policy comparison,
+native-window performance acceptance and non-Metal qualification remain open.
+See [measurements-o05.json](measurements-o05.json) and
 [measurements-o05-size-study.json](measurements-o05-size-study.json).
 
 ## O06 — Specialise optical materials and avoid repeated shading
