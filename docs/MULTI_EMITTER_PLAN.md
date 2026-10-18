@@ -157,10 +157,18 @@ and [runner](../scripts/two_emitter_absorption_sustained_study.py).
   origins, and terrain below the smoke volume uses the source's lower heat slice
   instead of being rejected as out of bounds. The new binding adds no texture
   allocation. The source-zero fixed-tick capture remains byte-identical. A
-  six-camera source-one A/B now changes 168–5,695 pixels per view, with the
-  clearest cue in the ground-focused camera; continuous temporal and performance
-  review remain open. See
-  [opaque heat evidence](measurements-multi-emitter-opaque-heat.json).
+  six-camera source-one A/B changes 168–5,695 pixels per view, with the clearest
+  cue in the ground-focused camera. A full 120-second heat-off/on `dual-wide`
+  comparison now samples 2,400 frames at 20 fps with matching ticks, camera poses,
+  fire counts and particle-light counts. Mean heat-on/off frame MAE is 0.0084/255
+  over the whole frame (mean 88 changed pixels); the cue is sparse in this wide
+  route. Temporal-change difference MAE is 0.00087/255. The contact sheet was
+  inspected, but this does not replace continuous human playback or qualify cue
+  readability in a ground-focused moving camera. No performance conclusion is
+  drawn. See [still A/B evidence](measurements-multi-emitter-opaque-heat.json),
+  [temporal report](measurements-multi-emitter-heat-response-temporal.json),
+  [inspected contact sheet](measurements-multi-emitter-heat-response-temporal-contact.png)
+  and [reproducible runner](../scripts/two_emitter_heat_response_temporal_study.py).
 - Each source primary light now owns six cube-array shadow faces in stable emitter
   ID order. Shadow matrices, caster culling, dirty-face invalidation and opaque,
   optical and volumetric light selection use the matching source layer. The

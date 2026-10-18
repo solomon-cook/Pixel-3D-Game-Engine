@@ -620,9 +620,16 @@ are 0.045/0.048 ms per frame, with 4,096/32,768 resident bytes. See
 opt-in; playback, native-window and cross-adapter review remain open.
 Opaque `heat_response` materials now sample the second emitter's local
 temperature volume as well. The source-zero Metal capture is byte-identical and
-the verifier passes. The dual-source scene is available for focused source-one
-heat A/B review. See
-[opaque heat evidence](measurements-multi-emitter-opaque-heat.json).
+the verifier passes. A source-one-only, 120-second heat-off/on `dual-wide` route
+samples 2,400 frames at 20 fps with matching ticks, poses, fire counts and light
+counts. Mean full-frame A/B MAE is 0.0084/255 (88 changed pixels on average); the
+wide-view cue is sparse. Temporal-change difference MAE is 0.00087/255. The
+contact sheet was inspected; continuous human playback and ground-focused moving
+camera readability remain open, and no performance conclusion is claimed. See
+[temporal report](measurements-multi-emitter-heat-response-temporal.json),
+[inspected contact sheet](measurements-multi-emitter-heat-response-temporal-contact.png)
+and [runner](../scripts/two_emitter_heat_response_temporal_study.py), plus the
+fixed-tick [opaque heat evidence](measurements-multi-emitter-opaque-heat.json).
 `Renderer::update_globals` has a keyed two-source sampling and upload branch with
 independent projected-detail tiers. The two-source fixed-tick capture matrix now
 covers each source alone, both together and reversed scene emitter order across

@@ -437,14 +437,18 @@ fixed the source-local opaque-heat gap: low terrain fell below the volume bounds
 after the surface offset, so the shader skipped temperature samples. Sampling
 now uses stable source origins and clamps only the sample height to the source's
 lower heat slice; x/z bounds remain enforced. With only `watchfire` enabled,
-seed 42/tick 300, and `earth.heat_response` 0 versus 0.8, all six views changed
-168–5,695 pixels. The ground-focused view shows the clearest ring cue; wide views
-show subtle differences. This is fixed-tick contribution evidence, not temporal
-quality or performance evidence. Maximum-budget correctness and one sustained
-offscreen performance route are now recorded. Direct-versus-cache temporal
-samples now cover both 8³ and 16³ caches, but continuous playback and performance
-benefit remain open. Windows/DX12 and other-adapter checks remain open. See
-[`two_emitter_heat_response_study.py`](../scripts/two_emitter_heat_response_study.py)
+seed 42/tick 300, and `earth.heat_response` 0 versus 0.8, all six still views
+changed 168–5,695 pixels. The ground-focused still shows the clearest ring cue.
+A full 120-second source-one heat-off/on `dual-wide` comparison samples 2,400
+frames at 20 fps. Ticks, camera poses, fire counts and particle-light counts
+match. Mean full-frame A/B MAE is 0.0084/255 (88 changed pixels on average), and
+temporal-change difference MAE is 0.00087/255; the cue is sparse in this wide
+route. The contact sheet was inspected, but continuous human playback and ground-
+focused moving-camera readability remain open. No performance conclusion is
+claimed. See [temporal report](measurements-multi-emitter-heat-response-temporal.json),
+[contact sheet](measurements-multi-emitter-heat-response-temporal-contact.png) and
+[runner](../scripts/two_emitter_heat_response_temporal_study.py), plus the
+fixed-tick [`two_emitter_heat_response_study.py`](../scripts/two_emitter_heat_response_study.py)
 and [opaque heat evidence](measurements-multi-emitter-opaque-heat.json). The
 dual-source scene inventory reports 25,889,280 known bytes at
 640×360; this is not a paired single-source delta. See [implementation plan](MULTI_EMITTER_PLAN.md),
