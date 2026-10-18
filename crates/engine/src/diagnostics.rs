@@ -44,6 +44,7 @@ pub struct FrameMetrics {
     pub cpu_simulation_encode_ms: f64,
     pub cpu_simulation_submit_ms: f64,
     pub cpu_steps_this_frame: u32,
+    pub cpu_simulation_submissions_this_frame: u32,
     pub cpu_native_ui_ms: Option<f64>,
     pub cpu_surface_acquire_ms: Option<f64>,
     pub cpu_present_encode_ms: Option<f64>,
@@ -112,6 +113,7 @@ pub struct ShadingCounters {
 impl FrameMetrics {
     pub fn begin_frame(&mut self) {
         self.cpu_simulation_submit_ms = 0.;
+        self.cpu_simulation_submissions_this_frame = 0;
         self.cpu_tile_list_encode_ms = 0.;
         self.cpu_absorption_cache_ms = 0.;
         self.gpu_absorption_cache_ms = None;

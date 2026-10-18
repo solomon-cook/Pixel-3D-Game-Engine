@@ -3,7 +3,7 @@
 16 October 2026. O01 profiling instrumentation, O02 whole-map shadow reuse, O03
 single-emitter tile lists and O07 object bounds, shared meshes, culling, instancing
 and live transforms are implemented and measured on M1 Max/Metal. O08's first
-resource inventory is recorded; its layout/pass changes remain proposed. O04 has
+resource inventory is recorded; its remaining layout/pass changes remain proposed. O04 has
 an opt-in projected fire-segment experiment; its default-promotion and
 visual/platform acceptance gates remain open. O05 and O06 have opt-in prototypes
 and first measurements. Platform and broader visual acceptance remains open; these
@@ -549,6 +549,16 @@ Implementation:
    conservative transport/buoyancy/turbulence halos and explicit boundary handling.
    Preserve density/heat transport and seeded replay; never stop simulation simply
    because smoke is offscreen. Keep this later experiment out of the first pass.
+
+**Implemented candidate — fixed-step submission batching:** `Session::step` now
+groups up to six consecutive ticks into one queue submission. Each dispatch reads
+its own aligned per-tick smoke configuration (including wind/time), compute timing
+queries remain associated with their tick, and separate ordered compute passes
+preserve the smoke-volume ping-pong sequence. Frame diagnostics report both fixed
+steps and simulation submissions; the resource inventory includes the config ring.
+This remains an image-preserving candidate pending same-device reset/replay hashes,
+multi-tick state parity, and alternating CPU/total-frame timing runs. GPU rendering
+was not verified as part of implementation validation.
 
 **Acceptance:** image/state comparisons survive pause/reset, repeated fixed steps,
 camera moves, resource recreation and invalid shader rollback. Report memory,

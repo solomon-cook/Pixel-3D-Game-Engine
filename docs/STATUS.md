@@ -15,6 +15,13 @@ and cross-backend measurements remain open. O03's bounded single-emitter tile li
 shared meshes, instancing and live object transforms are implemented and measured
 on M1 Max/Metal. Platform acceptance gates remain open.
 
+O08 fixed-step submission batching is now implemented as a bounded candidate:
+`Session::step` encodes up to six consecutive ticks per queue submission, with a
+per-tick smoke configuration ring, tick-associated compute queries and ordered
+ping-pong passes. The non-GPU verification suite passes, but rendering, replay
+parity and batching performance have not been verified on a GPU. Keep acceptance
+open pending same-device before/after replay evidence and alternating timing runs.
+
 O04's opt-in projected fire-segment LOD is implemented at 40/20 px with 48/24 px
 hysteresis. In the 120-second 640×360 clearing orbit, including a close-smoke
 approach and repeated crossings, the candidate occupied tiers 0/1/2 for

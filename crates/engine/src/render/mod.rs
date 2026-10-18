@@ -135,7 +135,11 @@ struct SmokeSimulationConfig {
     fire_position: [f32; 4],
     simulation: [f32; 4],
     thermal: [f32; 4],
+    wind_time: [f32; 4],
 }
+
+pub(crate) const SIMULATION_BATCH_CAPACITY: usize = COMPUTE_TIMING_SLOTS;
+const SMOKE_CONFIG_STRIDE: u64 = (std::mem::size_of::<SmokeSimulationConfig>() as u64 + 255) & !255;
 
 struct Pipelines {
     mesh: wgpu::RenderPipeline,
@@ -271,7 +275,6 @@ pub struct Renderer {
     shading_diagnostics_enabled: bool,
     smoke_groups: Vec<[wgpu::BindGroup; 2]>,
     smoke_source_buffers: Vec<wgpu::Buffer>,
-    smoke_config_cache: Vec<SmokeSimulationConfig>,
     smoke_layout: wgpu::BindGroupLayout,
     post_groups: [wgpu::BindGroup; 2],
     effect_depth: wgpu::TextureView,
@@ -1393,8 +1396,8 @@ impl Renderer {
             .iter()
             .map(|_| {
                 device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                    label: Some("per-emitter smoke simulation config"),
-                    contents: bytemuck::bytes_of(&SmokeSimulationConfig::zeroed()),
+                    label: Some("per-emitter smoke simulation config ring"),
+                    contents: &vec![0; (SMOKE_CONFIG_STRIDE as usize) * SIMULATION_BATCH_CAPACITY],
                     usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
                 })
             })
@@ -1649,7 +1652,7 @@ impl Renderer {
                     wgpu::ShaderStages::COMPUTE,
                     wgpu::BindingType::Buffer {
                         ty: wgpu::BufferBindingType::Uniform,
-                        has_dynamic_offset: false,
+                        has_dynamic_offset: true,
                         min_binding_size: None,
                     },
                 ),
@@ -1665,7 +1668,14 @@ impl Renderer {
                             wgpu::BindingResource::TextureView(&smoke_views[source][i]),
                             wgpu::BindingResource::TextureView(&smoke_views[source][1 - i]),
                             wgpu::BindingResource::Sampler(&linear),
-                            smoke_source_buffers[source].as_entire_binding(),
+                            wgpu::BindingResource::Buffer(wgpu::BufferBinding {
+                                buffer: &smoke_source_buffers[source],
+                                offset: 0,
+                                size: std::num::NonZeroU64::new(std::mem::size_of::<
+                                    SmokeSimulationConfig,
+                                >()
+                                    as u64),
+                            }),
                         ],
                     )
                 })
@@ -2010,7 +2020,7 @@ impl Renderer {
             + std::mem::size_of::<FireFrameStorage>() as u64
             + 7 * 64
             + 22 * std::mem::size_of::<u32>() as u64
-            + std::mem::size_of::<SmokeSimulationConfig>() as u64 * scene.emitters.len() as u64;
+            + SMOKE_CONFIG_STRIDE * SIMULATION_BATCH_CAPACITY as u64 * scene.emitters.len() as u64;
         let format_support = [
             wgpu::TextureFormat::Rgba16Float,
             wgpu::TextureFormat::Rg16Float,
@@ -2061,6 +2071,7 @@ impl Renderer {
             "optical_output_bytes":0,
             "optical_mask_bytes":0,
             "smoke_volumes_bytes":smoke_bytes,
+            "smoke_simulation_config_ring_bytes":SMOKE_CONFIG_STRIDE * SIMULATION_BATCH_CAPACITY as u64 * scene.emitters.len() as u64,
             "smoke_absorption_cache_bytes":if scene.render.experiments.smoke_absorption_cache {(scene.render.absorption_cache_resolution as u64).pow(3)*8}else{0},
             "shadow_maps_bytes":shadow_bytes,
             "shadow_map_count":1 + point_face_count,
@@ -2152,7 +2163,6 @@ impl Renderer {
             shading_diagnostics_enabled: false,
             smoke_groups,
             smoke_source_buffers,
-            smoke_config_cache: vec![SmokeSimulationConfig::zeroed(); scene.emitters.len()],
             smoke_layout,
             post_groups,
             effect_depth,
@@ -2209,7 +2219,7 @@ impl Renderer {
         };
         renderer.reset_smoke();
         renderer.shadow_invalidation_reason = Some("resource_initialization");
-        renderer.update_globals(scene, &scene.cameras[0], 0, 42);
+        renderer.update_globals(scene, &scene.cameras[0], 0, 42, 0);
         Ok(renderer)
     }
 
@@ -3236,7 +3246,14 @@ impl Renderer {
         }
     }
 
-    pub fn update_globals(&mut self, scene: &Scene, camera: &Camera, tick: u64, seed: u32) {
+    pub fn update_globals(
+        &mut self,
+        scene: &Scene,
+        camera: &Camera,
+        tick: u64,
+        seed: u32,
+        smoke_config_slot: usize,
+    ) {
         let sun = scene
             .lights
             .iter()
@@ -3520,15 +3537,13 @@ impl Renderer {
                     source_profile.thermal.lift,
                     source_power,
                 ],
+                wind_time: vec4(wind, tick as f32 * simulation::FIXED_DT),
             };
-            if self.smoke_config_cache[slot] != config {
-                self.queue.write_buffer(
-                    &self.smoke_source_buffers[slot],
-                    0,
-                    bytemuck::bytes_of(&config),
-                );
-                self.smoke_config_cache[slot] = config;
-            }
+            self.queue.write_buffer(
+                &self.smoke_source_buffers[slot],
+                SMOKE_CONFIG_STRIDE * smoke_config_slot as u64,
+                bytemuck::bytes_of(&config),
+            );
         }
         self.metrics.cpu_upload_ms += smoke_config_upload_started.elapsed().as_secs_f64() * 1000.;
         let mut point_lights = [PointLightGpu::zeroed(); 8];
@@ -3753,23 +3768,38 @@ impl Renderer {
         self.smoke_index = 0;
     }
     pub fn simulate(&mut self, scene: &Scene, camera: &Camera, tick: u64, seed: u32) {
+        self.simulate_batch(scene, camera, &[tick], seed);
+    }
+
+    pub fn simulate_batch(&mut self, scene: &Scene, camera: &Camera, ticks: &[u64], seed: u32) {
+        if ticks.is_empty() {
+            return;
+        }
+        assert!(ticks.len() <= SIMULATION_BATCH_CAPACITY);
         let started = Instant::now();
-        self.update_globals(scene, camera, tick, seed);
-        let compute_slot = self.timing.as_mut().and_then(|timing| {
-            let count = timing.compute_slots.len();
-            let index = (0..count)
-                .map(|offset| (timing.next_compute_slot + offset) % count)
-                .find(|&index| timing.compute_slots[index].pending.is_none());
-            if let Some(index) = index {
-                timing.next_compute_slot = (index + 1) % count;
+        let mut used_slots: Vec<Option<usize>> = Vec::with_capacity(ticks.len());
+        if let Some(timing) = &mut self.timing {
+            for _ in ticks {
+                let count = timing.compute_slots.len();
+                let index = (0..count)
+                    .map(|offset| (timing.next_compute_slot + offset) % count)
+                    .find(|index| {
+                        timing.compute_slots[*index].pending.is_none()
+                            && !used_slots.contains(&Some(*index))
+                    });
+                if let Some(index) = index {
+                    timing.next_compute_slot = (index + 1) % count;
+                } else {
+                    self.metrics.gpu_compute_samples_skipped += 1;
+                }
+                used_slots.push(index);
             }
-            index
-        });
-        if compute_slot.is_none() && self.timing.is_some() {
-            self.metrics.gpu_compute_samples_skipped += 1;
+        } else {
+            used_slots.resize(ticks.len(), None);
         }
         let mut encoder = self.device.create_command_encoder(&Default::default());
-        {
+        for (batch_index, (&tick, compute_slot)) in ticks.iter().zip(&used_slots).enumerate() {
+            self.update_globals(scene, camera, tick, seed, batch_index);
             let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
                 label: Some("smoke simulation"),
                 timestamp_writes: compute_slot.map(|index| wgpu::ComputePassTimestampWrites {
@@ -3781,21 +3811,28 @@ impl Renderer {
             pass.set_pipeline(&self.pipelines.smoke);
             pass.set_bind_group(0, &self.globals, &[]);
             for source_groups in &self.smoke_groups {
-                pass.set_bind_group(1, &source_groups[self.smoke_index], &[]);
+                pass.set_bind_group(
+                    1,
+                    &source_groups[self.smoke_index],
+                    &[(SMOKE_CONFIG_STRIDE as u32) * batch_index as u32],
+                );
                 pass.dispatch_workgroups(VOLUME[0] / 4, VOLUME[1] / 4, VOLUME[2] / 4);
             }
-        }
-        if let Some(index) = compute_slot {
-            let slot = &self.timing.as_ref().unwrap().compute_slots[index];
-            encoder.resolve_query_set(&slot.query, 0..2, &slot.resolve, 0);
-            encoder.copy_buffer_to_buffer(&slot.resolve, 0, &slot.read, 0, COMPUTE_QUERY_BYTES);
+            drop(pass);
+            if let Some(index) = compute_slot {
+                let slot = &self.timing.as_ref().unwrap().compute_slots[*index];
+                encoder.resolve_query_set(&slot.query, 0..2, &slot.resolve, 0);
+                encoder.copy_buffer_to_buffer(&slot.resolve, 0, &slot.read, 0, COMPUTE_QUERY_BYTES);
+            }
+            self.smoke_index = 1 - self.smoke_index;
         }
         let command_buffer = encoder.finish();
         let submit_started = Instant::now();
         self.queue.submit([command_buffer]);
         let submit_ms = submit_started.elapsed().as_secs_f64() * 1000.;
-        if let Some(index) = compute_slot {
-            let slot = &mut self.timing.as_mut().unwrap().compute_slots[index];
+        for (&tick, compute_slot) in ticks.iter().zip(&used_slots) {
+            let Some(index) = compute_slot else { continue };
+            let slot = &mut self.timing.as_mut().unwrap().compute_slots[*index];
             let (sender, receiver) = mpsc::channel();
             slot.read
                 .slice(..)
@@ -3806,13 +3843,19 @@ impl Renderer {
             slot.submitted_at = Some(Instant::now());
             slot.pending = Some(receiver);
         }
-        self.smoke_index = 1 - self.smoke_index;
         self.absorption_cache_dirty = true;
         let simulation_cpu_ms = started.elapsed().as_secs_f64() * 1000.;
         self.metrics.cpu_simulation_submit_ms += simulation_cpu_ms;
         self.metrics.cpu_simulation_encode_ms += (simulation_cpu_ms - submit_ms).max(0.);
         self.metrics.cpu_queue_submit_ms += submit_ms;
-        self.metrics.cpu_steps_this_frame = self.metrics.cpu_steps_this_frame.saturating_add(1);
+        self.metrics.cpu_simulation_submissions_this_frame = self
+            .metrics
+            .cpu_simulation_submissions_this_frame
+            .saturating_add(1);
+        self.metrics.cpu_steps_this_frame = self
+            .metrics
+            .cpu_steps_this_frame
+            .saturating_add(ticks.len() as u32);
     }
 
     pub fn poll_timing(&mut self, wait: bool) {
@@ -4146,7 +4189,7 @@ impl Renderer {
             self.metrics.cpu_upload_ms += upload_started.elapsed().as_secs_f64() * 1000.;
             self.material_cache.clone_from(&scene.materials);
         }
-        self.update_globals(scene, camera, tick, seed);
+        self.update_globals(scene, camera, tick, seed, 0);
         let timing_slot = self.timing.as_mut().and_then(|timing| {
             let count = timing.slots.len();
             let index = (0..count)
