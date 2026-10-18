@@ -246,16 +246,20 @@ transmission counts. Baseline, diagnostic and optical no-copy paths produced
 byte-identical pixels at matched fixed ticks. Captures are recorded in
 [measurements-o01-shading-counters.json](measurements-o01-shading-counters.json).
 Atomic counter captures are diagnostic only; their timings are not comparable.
-Continuous moving-route and native-window checks, plus other-adapter validation,
-remain open.
+Sparse start/mid/end samples now cover a full 120-second camera orbit with a
+moving caster; the separate report is
+[measurements-o01-shading-counter-route.json](measurements-o01-shading-counter-route.json).
+Native-window checks and other-adapter validation remain open. Broader optical
+motion and fire-profile samples remain useful for confirming workload coverage.
 
 Use O01 stage data to split the multi-millisecond atmosphere/fire work by candidate
 category and representative coverage. O01 shows smoke advection near 0.02 ms on the
 measured M1 Max scene, so do not pursue active-region solver work without new data.
-Use the counters to compare instrumented and uninstrumented costs on moving routes.
-Use O03 lists and O04 detail as independent
-switches to identify which operations dominate. Keep fixed pixel density and capture
-matched close, distant and crowded views.
+Use the counters on additional fire profiles, close/distant views and the optical
+motion route. Pair them with uninstrumented stage timings; counter counts alone do
+not measure per-operation cost. Use O03 lists and O04 detail as independent switches
+to identify which operations dominate. Keep fixed pixel density and capture matched
+views.
 
 **Exit gate:** name a measured dominant operation and its scaling variable before
 proposing a shader or algorithm rewrite. Any follow-up must include its per-stage

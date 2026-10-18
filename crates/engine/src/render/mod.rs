@@ -2822,6 +2822,55 @@ impl Renderer {
         self.metrics.shading_counters = None;
     }
 
+    pub fn read_shading_counters(&mut self) -> Result<crate::diagnostics::ShadingCounters> {
+        let read = self.device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("shading counter sample readback"),
+            size: 22 * 4,
+            usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+            mapped_at_creation: false,
+        });
+        let mut encoder = self.device.create_command_encoder(&Default::default());
+        encoder.copy_buffer_to_buffer(&self.shading_diagnostic_buffer, 0, &read, 0, 22 * 4);
+        self.queue.submit([encoder.finish()]);
+        let (send, receive) = mpsc::channel();
+        read.slice(..)
+            .map_async(wgpu::MapMode::Read, move |result| {
+                let _ = send.send(result);
+            });
+        self.device.poll(wgpu::Maintain::Wait);
+        receive.recv()??;
+        let bytes = read.slice(..).get_mapped_range();
+        let c = |i: usize| u32::from_le_bytes(bytes[i * 4..i * 4 + 4].try_into().unwrap());
+        let counters = crate::diagnostics::ShadingCounters {
+            fire_primitive_candidates: c(0),
+            fire_bounds_tests: c(1),
+            fire_ellipsoid_tests: c(2),
+            smoke_lobe_candidates: c(3),
+            smoke_parent_bounds_tests: c(4),
+            smoke_bubble_intersection_tests: c(5),
+            smoke_density_samples: c(6),
+            direct_absorption_samples: c(7),
+            cached_absorption_samples: c(8),
+            sun_shadow_lookups: c(9),
+            fire_shadow_lookups: c(10),
+            point_light_candidates: c(11),
+            particle_light_candidates: c(12),
+            camera_to_flame_absorption_samples: c(13),
+            world_shading_invocations: c(14),
+            world_point_light_candidates: c(15),
+            world_particle_light_candidates: c(16),
+            world_heat_samples: c(17),
+            optical_surface_interactions: c(18),
+            optical_reflection_steps: c(19),
+            optical_reflection_refinement_steps: c(20),
+            optical_transmission_interactions: c(21),
+        };
+        self.metrics.shading_counters = Some(counters.clone());
+        drop(bytes);
+        read.unmap();
+        Ok(counters)
+    }
+
     fn update_shadow_matrices(&mut self, scene: &Scene, dirty_faces: [bool; 7]) {
         let matrices = shadow_matrices(scene);
         for (index, matrix) in matrices.into_iter().enumerate() {
@@ -4170,17 +4219,6 @@ impl Renderer {
             mapped_at_creation: false,
         });
         let mut encoder = self.device.create_command_encoder(&Default::default());
-        let diagnostic_read = self.shading_diagnostics_enabled.then(|| {
-            self.device.create_buffer(&wgpu::BufferDescriptor {
-                label: Some("shading counter readback"),
-                size: 22 * 4,
-                usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
-                mapped_at_creation: false,
-            })
-        });
-        if let Some(read) = &diagnostic_read {
-            encoder.copy_buffer_to_buffer(&self.shading_diagnostic_buffer, 0, read, 0, 22 * 4);
-        }
         encoder.copy_texture_to_buffer(
             wgpu::TexelCopyTextureInfo {
                 texture: &self.pixel_texture,
@@ -4211,42 +4249,8 @@ impl Renderer {
             });
         self.device.poll(wgpu::Maintain::Wait);
         receive.recv()??;
-        if let Some(read) = &diagnostic_read {
-            let (send, receive) = mpsc::channel();
-            read.slice(..)
-                .map_async(wgpu::MapMode::Read, move |result| {
-                    let _ = send.send(result);
-                });
-            self.device.poll(wgpu::Maintain::Wait);
-            receive.recv()??;
-            let bytes = read.slice(..).get_mapped_range();
-            let c = |i: usize| u32::from_le_bytes(bytes[i * 4..i * 4 + 4].try_into().unwrap());
-            self.metrics.shading_counters = Some(crate::diagnostics::ShadingCounters {
-                fire_primitive_candidates: c(0),
-                fire_bounds_tests: c(1),
-                fire_ellipsoid_tests: c(2),
-                smoke_lobe_candidates: c(3),
-                smoke_parent_bounds_tests: c(4),
-                smoke_bubble_intersection_tests: c(5),
-                smoke_density_samples: c(6),
-                direct_absorption_samples: c(7),
-                cached_absorption_samples: c(8),
-                sun_shadow_lookups: c(9),
-                fire_shadow_lookups: c(10),
-                point_light_candidates: c(11),
-                particle_light_candidates: c(12),
-                camera_to_flame_absorption_samples: c(13),
-                world_shading_invocations: c(14),
-                world_point_light_candidates: c(15),
-                world_particle_light_candidates: c(16),
-                world_heat_samples: c(17),
-                optical_surface_interactions: c(18),
-                optical_reflection_steps: c(19),
-                optical_reflection_refinement_steps: c(20),
-                optical_transmission_interactions: c(21),
-            });
-            drop(bytes);
-            read.unmap();
+        if self.shading_diagnostics_enabled {
+            self.read_shading_counters()?;
         }
         self.poll_tile_stats();
         let mapped = buffer.slice(..).get_mapped_range();

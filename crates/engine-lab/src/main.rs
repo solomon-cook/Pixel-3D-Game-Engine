@@ -96,6 +96,9 @@ enum Command {
         /// Issue one draw per visible object instead of grouping compatible instances.
         #[arg(long)]
         disable_instancing: bool,
+        /// Sample shading counters at three fixed checkpoints; timing data is diagnostic only.
+        #[arg(long)]
+        shading_counter_sampling: bool,
         /// Move a scene object around the primary fire light during the route.
         #[arg(long)]
         moving_caster: Option<String>,
@@ -141,6 +144,7 @@ struct BenchmarkSettings {
     force_tile_overflow: bool,
     object_culling_enabled: bool,
     instancing_enabled: bool,
+    shading_counter_sampling: bool,
 }
 #[derive(Clone, Copy)]
 struct CasterMotion<'a> {
@@ -244,6 +248,7 @@ fn start() -> Result<()> {
             force_tile_overflow,
             disable_object_culling,
             disable_instancing,
+            shading_counter_sampling,
             moving_caster,
             caster_orbit_radius,
             caster_orbit_period,
@@ -261,6 +266,7 @@ fn start() -> Result<()> {
                 force_tile_overflow,
                 object_culling_enabled: !disable_object_culling,
                 instancing_enabled: !disable_instancing,
+                shading_counter_sampling,
             },
             BenchmarkRoute {
                 id: &route,
@@ -423,6 +429,7 @@ fn benchmark(
     if !matches!(mode, "serial" | "buffered") {
         bail!("mode: expected serial or buffered");
     }
+    let gpu_timing_enabled = !settings.disable_gpu_timing && !settings.shading_counter_sampling;
     if !duration.is_finite()
         || !(0.1..=600.).contains(&duration)
         || !warmup.is_finite()
@@ -439,7 +446,7 @@ fn benchmark(
         bail!("caster orbit: radius must be 0.1..100 and period 0.1..600 seconds");
     }
     let setup_started = Instant::now();
-    let mut session = headless_with_timing(options, !settings.disable_gpu_timing)?;
+    let mut session = headless_with_timing(options, gpu_timing_enabled)?;
     session
         .renderer
         .set_force_shadow_redraw(settings.force_shadow_redraw);
@@ -494,7 +501,15 @@ fn benchmark(
         session.renderer.take_gpu_compute_timing_samples();
     }
     let count = (duration * 60.).ceil() as u32;
+    let counter_sample_frames = if settings.shading_counter_sampling && count > 0 {
+        [0, count / 2, count - 1]
+            .into_iter()
+            .collect::<std::collections::BTreeSet<_>>()
+    } else {
+        std::collections::BTreeSet::new()
+    };
     let mut samples = Vec::with_capacity(count as usize);
+    let mut shading_counter_samples = Vec::with_capacity(counter_sample_frames.len());
     let mut gpu_samples = Vec::with_capacity(count as usize);
     let mut gpu_compute_samples = Vec::with_capacity(count as usize);
     let start = Instant::now();
@@ -514,10 +529,24 @@ fn benchmark(
         )?;
         session.camera = route.camera_at(route_frame as f32 / 60., &base);
         session.begin_measurement_frame();
+        let capture_counters = counter_sample_frames.contains(&frame);
+        session.renderer.set_shading_diagnostics(capture_counters);
         let sim = Instant::now();
         session.step(1);
         let simulation_cpu_ms = sim.elapsed().as_secs_f64() * 1000.;
         session.render();
+        if capture_counters {
+            let counters = session.renderer.read_shading_counters()?;
+            shading_counter_samples.push(json!({
+                "frame":frame,
+                "route_frame":route_frame,
+                "tick":session.tick,
+                "camera":{"position":session.camera.position,"target":session.camera.target},
+                "moving_caster_position":caster_position,
+                "counters":counters
+            }));
+            session.renderer.set_shading_diagnostics(false);
+        }
         session.renderer.poll_timing(mode == "serial");
         gpu_samples.extend(session.renderer.take_gpu_timing_samples());
         gpu_compute_samples.extend(session.renderer.take_gpu_compute_timing_samples());
@@ -783,7 +812,14 @@ fn benchmark(
         "scope":if mode == "serial" {"serial offscreen latency benchmark; includes CPU simulation/submission and waits for GPU completion each frame; excludes native presentation, inspector and vsync"} else {"buffered offscreen throughput benchmark; queues frames without a per-frame GPU wait, then waits once to drain; excludes native presentation, inspector and vsync"},
         "aggregation_policy":"GPU pass intervals can overlap on the backend; do not sum stage distributions. gpu_render is the end-to-end shadow-to-post interval.",
         "mode":mode,
-        "gpu_timing_enabled":!settings.disable_gpu_timing,
+        "gpu_timing_enabled":gpu_timing_enabled,
+        "performance_data_usable":!settings.shading_counter_sampling,
+        "performance_data_note":if settings.shading_counter_sampling {json!("Counter route sampling uses atomic instrumentation at selected frames and omits GPU timestamps; do not use this report for timing conclusions.")} else {Value::Null},
+        "shading_counter_sampling":{
+            "enabled":settings.shading_counter_sampling,
+            "sample_frames":counter_sample_frames,
+            "samples":shading_counter_samples
+        },
         "scene":session.scene,
         "seed":options.seed,
         "route":route,
@@ -862,7 +898,7 @@ fn benchmark(
             "note":"Stats are asynchronous and frame-tagged. Oversized categories and forced overflow use exhaustive shader evaluation."
         },
         "cpu_tile_list_encode":summary("cpu_tile_list_encode_ms"),
-        "timing_coverage":{"gpu_timing_requested":!settings.disable_gpu_timing,"gpu_timestamps_supported":session.renderer.metrics.gpu_timestamp_supported,"unavailable_reason":if settings.disable_gpu_timing {json!("disabled by request")} else if session.renderer.metrics.gpu_timestamp_supported {Value::Null} else {json!("adapter does not support TIMESTAMP_QUERY")},"timed_frames":timing_frames,"rendered_frames":total_frames,"smoke_compute_samples":gpu_compute_samples.len(),"skipped_samples":session.renderer.metrics.gpu_samples_skipped,"skipped_compute_samples":session.renderer.metrics.gpu_compute_samples_skipped,"late_samples":session.renderer.metrics.gpu_samples_late},
+        "timing_coverage":{"gpu_timing_requested":gpu_timing_enabled,"gpu_timestamps_supported":session.renderer.metrics.gpu_timestamp_supported,"unavailable_reason":if settings.shading_counter_sampling {json!("disabled for diagnostic counter sampling")} else if settings.disable_gpu_timing {json!("disabled by request")} else if session.renderer.metrics.gpu_timestamp_supported {Value::Null} else {json!("adapter does not support TIMESTAMP_QUERY")},"timed_frames":timing_frames,"rendered_frames":total_frames,"smoke_compute_samples":gpu_compute_samples.len(),"skipped_samples":session.renderer.metrics.gpu_samples_skipped,"skipped_compute_samples":session.renderer.metrics.gpu_compute_samples_skipped,"late_samples":session.renderer.metrics.gpu_samples_late},
         "queue_latency":{"value_ms":null,"reason":"wgpu timestamp queries have no calibrated CPU clock mapping; readback latency is reported separately"},
         "frame_work":summary("frame_work_ms"),
         "cpu_encode":summary("cpu_encode_ms"),

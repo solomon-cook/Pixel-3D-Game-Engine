@@ -1,0 +1,260 @@
+{
+  "version": 1,
+  "purpose": "Sparse shader-operation samples on the full fixed-tick camera and moving-caster route; no performance result is inferred from this instrumented run.",
+  "host": {
+    "adapter": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "workload": {
+    "scene": "assets/scenes/profiling-heavy.json",
+    "scene_sha256": "f736a0779a868d11c22d761b46a0920eb1b154db6241088c9d09a9fa1ca8a05b",
+    "seed": 42,
+    "route": "clearing-orbit",
+    "route_duration_seconds": 120.0,
+    "measured_duration_seconds": 120.0,
+    "warmup_seconds": 10.0,
+    "sample_rate_hz": 60,
+    "frames": 7200,
+    "resolution": [
+      640,
+      360
+    ],
+    "moving_caster": {
+      "height": 0.2800000011920929,
+      "note": "Deterministic circular transform updates use the shared Session operation before each route frame.",
+      "object": "fallen-log",
+      "orbit_center_xz": [
+        0.0,
+        0.0
+      ],
+      "period_seconds": 37.0,
+      "radius": 4.0,
+      "sample_hz": 60
+    },
+    "culling_enabled": true,
+    "instancing_enabled": true
+  },
+  "timing_scope": {
+    "gpu_timing_enabled": false,
+    "performance_data_usable": false,
+    "reason": "GPU timestamps were disabled and the three instrumented frames include atomic contention and readback waits. This file records operation counts and shadow invalidation behavior only."
+  },
+  "shadow_invalidation": {
+    "dirty_reason_counts": {
+      "casters_changed": 7200
+    },
+    "shadow_maps_redrawn_per_frame_histogram": {
+      "2": 3900,
+      "3": 3300
+    },
+    "dirty_faces_per_frame_histogram": {
+      "2": 3900,
+      "3": 3300
+    },
+    "face_order": [
+      "sun",
+      "+X",
+      "-X",
+      "+Y",
+      "-Y",
+      "+Z",
+      "-Z"
+    ],
+    "face_redraw_counts": [
+      7200,
+      1776,
+      3618,
+      0,
+      0,
+      2679,
+      2427
+    ],
+    "cache_hits": 0,
+    "cache_misses": 7200
+  },
+  "counter_samples": [
+    {
+      "benchmark_frame": 0,
+      "route_frame": 600,
+      "tick": 601,
+      "camera": {
+        "position": [
+          6.408814430236816,
+          3.8566460609436035,
+          3.5664618015289307
+        ],
+        "target": [
+          0.0,
+          2.700000286102295,
+          0.0
+        ]
+      },
+      "moving_caster_position": [
+        -0.5080715417861938,
+        0.2800000011920929,
+        3.967601776123047
+      ],
+      "shadow_dirty_faces": [
+        true,
+        false,
+        true,
+        false,
+        false,
+        true,
+        false
+      ],
+      "shadow_maps_redrawn": 3,
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 249330,
+        "fire_bounds_tests": 111307,
+        "fire_ellipsoid_tests": 14173,
+        "fire_primitive_candidates": 111307,
+        "fire_shadow_lookups": 279990,
+        "optical_reflection_refinement_steps": 0,
+        "optical_reflection_steps": 0,
+        "optical_surface_interactions": 0,
+        "optical_transmission_interactions": 0,
+        "particle_light_candidates": 29941,
+        "point_light_candidates": 156544,
+        "smoke_bubble_intersection_tests": 472903,
+        "smoke_density_samples": 404427,
+        "smoke_lobe_candidates": 401152,
+        "smoke_parent_bounds_tests": 401152,
+        "sun_shadow_lookups": 278700,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 500343,
+        "world_point_light_candidates": 2229600,
+        "world_shading_invocations": 278700
+      }
+    },
+    {
+      "benchmark_frame": 3600,
+      "route_frame": 4200,
+      "tick": 4201,
+      "camera": {
+        "position": [
+          -7.281152725219727,
+          3.0591611862182617,
+          -4.408389568328857
+        ],
+        "target": [
+          0.0,
+          2.700000047683716,
+          0.0
+        ]
+      },
+      "moving_caster_position": [
+        3.1121442317962646,
+        0.2800000011920929,
+        -2.51287841796875
+      ],
+      "shadow_dirty_faces": [
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        true
+      ],
+      "shadow_maps_redrawn": 3,
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 176796,
+        "fire_bounds_tests": 96213,
+        "fire_ellipsoid_tests": 12002,
+        "fire_primitive_candidates": 96213,
+        "fire_shadow_lookups": 295675,
+        "optical_reflection_refinement_steps": 0,
+        "optical_reflection_steps": 0,
+        "optical_surface_interactions": 0,
+        "optical_transmission_interactions": 0,
+        "particle_light_candidates": 18996,
+        "point_light_candidates": 105920,
+        "smoke_bubble_intersection_tests": 388486,
+        "smoke_density_samples": 306475,
+        "smoke_lobe_candidates": 353024,
+        "smoke_parent_bounds_tests": 353024,
+        "sun_shadow_lookups": 294184,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 363943,
+        "world_point_light_candidates": 2353472,
+        "world_shading_invocations": 294184
+      }
+    },
+    {
+      "benchmark_frame": 7199,
+      "route_frame": 7799,
+      "tick": 7800,
+      "camera": {
+        "position": [
+          6.4131317138671875,
+          3.8560519218444824,
+          3.560518980026245
+        ],
+        "target": [
+          0.0,
+          2.700000286102295,
+          0.0
+        ]
+      },
+      "moving_caster_position": [
+        -3.9865338802337646,
+        0.2800000011920929,
+        -0.32794490456581116
+      ],
+      "shadow_dirty_faces": [
+        true,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false
+      ],
+      "shadow_maps_redrawn": 2,
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 267288,
+        "fire_bounds_tests": 119851,
+        "fire_ellipsoid_tests": 15168,
+        "fire_primitive_candidates": 119851,
+        "fire_shadow_lookups": 276020,
+        "optical_reflection_refinement_steps": 0,
+        "optical_reflection_steps": 0,
+        "optical_surface_interactions": 0,
+        "optical_transmission_interactions": 0,
+        "particle_light_candidates": 32960,
+        "point_light_candidates": 161640,
+        "smoke_bubble_intersection_tests": 464691,
+        "smoke_density_samples": 423062,
+        "smoke_lobe_candidates": 403712,
+        "smoke_parent_bounds_tests": 403712,
+        "sun_shadow_lookups": 274700,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 533652,
+        "world_point_light_candidates": 2197600,
+        "world_shading_invocations": 274700
+      }
+    }
+  ],
+  "provenance": {
+    "repository_commit": "d9b4cdb08ed01dce87f5ed093b35cb514f9bd086",
+    "working_tree_sources": {
+      "crates/engine-lab/src/main.rs": "3f94f05ee67515f33a1c5b6db1b322d04f837b2c4f7124edd247b1e00175a16a",
+      "crates/engine/src/render/mod.rs": "b2ac0d04f83441d98ba9dec395e16e18a97b41a3e0a7a96a95ee41e0a91c0831"
+    },
+    "binary_sha256": "0051d764f43f045ac6a87ff5312b28162774a0b5f8c50995a5c0c9729f61e0fa",
+    "shader_sha256": {
+      "world.wgsl": "e137bb5f3abec83a1d0b5ad1c7581d3461d8ae198f537c0c642a903ba34cd8ed",
+      "volume.wgsl": "126af20b6748d8c856725631ab09881dd597613765d08e38cbe3b3639a13c53f",
+      "optical.wgsl": "80ba2382db33cb2aaaccb41a574240254c4a5eea5c802a342bf78500827f2f72",
+      "fire.wgsl": "07e4c7e6c49c00d563994faea8fb6e618fdfd3eb14a55e483ab0b1841fc85f48"
+    }
+  }
+}

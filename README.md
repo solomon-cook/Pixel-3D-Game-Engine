@@ -108,6 +108,11 @@ absorption, light candidate, shadow, reflection and transmission operation
 counts. Atomic counters perturb the diagnostic capture and are not performance
 timings.
 
+For sparse checkpoints on a moving route, pass
+`--shading-counter-sampling` to `benchmark`. It samples start, midpoint and end,
+disables GPU timestamps, and marks timing data unusable in the report. The route
+may also use `--moving-caster` to sample changing shadow membership.
+
 `--compact-hdr` opts into an `Rg11b10Ufloat` HDR color target when the active adapter
 supports filtered sampling, render targets, copies and the required render feature.
 The default remains `Rgba16Float`; selected format and fallback capability appear in

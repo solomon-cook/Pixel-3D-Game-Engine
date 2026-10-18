@@ -42,7 +42,9 @@ Detailed steps, dependencies and acceptance criteria live in
   O01 operation counters now cover world, volume and optical paths with
   byte-identical fixed-tick captures; M1 Max/Metal results are in
   [measurements-o01-shading-counters.json](docs/measurements-o01-shading-counters.json).
-  Moving-route, native-window and other-adapter counter validation remains open.
+  Sparse counters also cover a full moving-caster camera route in
+  [measurements-o01-shading-counter-route.json](docs/measurements-o01-shading-counter-route.json).
+  Native-window, additional optical-motion and other-adapter checks remain open.
 
 - [x] Simulation-driven surface heat cue — implemented and reviewed at fixed ticks across four named cameras. Readability is projection-dependent and the measured GPU-render increase is small; keep it opt-in, with authored-scene promotion gated on O08 and broader visual/DX12 acceptance. Evidence: [measurements-heat-cue.json](docs/measurements-heat-cue.json).
 - [x] Bind emitters to their thermal/fire profile and primary point light by stable IDs; legacy scenes retain positional light binding. Multi-fire stress tests and per-emitter simulation/render ownership remain open.
