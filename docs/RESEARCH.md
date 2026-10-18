@@ -776,7 +776,16 @@ named cameras, each emitter alone, forced fallback and reversed emitter order.
 The 402-primitive stress scene naturally overflows 74 fire tiles but not either
 36-entry smoke list; forced overflow remains an exact reference check. The
 source-zero profiling-heavy capture is byte-identical to the prior source-zero
-capture. This resolves fixed-tick correctness for this scene; it is not a
-sustained performance or cross-adapter result. Reproduce with
+capture. This resolves fixed-tick correctness for this scene. A separate
+three-pair, 120-second
+maximum-budget offscreen route measured tiled versus exhaustive serial frame-work
+of 10.780 versus 11.495 ms median-of-pair-medians; tiled was lower in all three
+pairs. The reported GPU-render metric was 9.299 versus 7.377 ms, with a 2.485 ms
+tile-build stage and a 6.408 ms atmosphere/fire stage for tiled. These interval
+metrics can overlap, so retain both the whole frame-work result and stage costs;
+do not infer a general win from this one route. Tiled mode also retained the
+603,520-byte index buffer. The full report is
+[`measurements-multi-emitter-sustained.json`](measurements-multi-emitter-sustained.json).
+Reproduce with
 [`two_emitter_overflow_study.py`](../scripts/two_emitter_overflow_study.py) and
 inspect [the report](measurements-multi-emitter-overflow.json).

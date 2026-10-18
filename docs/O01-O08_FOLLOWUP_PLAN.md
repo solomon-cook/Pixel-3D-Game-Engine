@@ -483,8 +483,12 @@ byte-identical. Scene validation accepts two emitters, and the review exercises
 the dual-source render path. Inked smoke, a source-local absorption-cache
 channel, the opaque-material heat cue's second temperature field, post heat and
 source-specific primary-light shadows are implemented. Fixed-tick cache/heat A/B,
-maximum-budget parity and forced fallback pass. Cache temporal and sustained
-multi-emitter performance review remain open. Per-source
+maximum-budget parity and forced fallback pass. Three alternating 120-second
+offscreen pairs show 0.715 ms lower median serial frame-work for tiled rendering,
+but the reported GPU-render metric is 1.922 ms higher. Tile-build rises 2.468 ms
+and atmosphere/fire falls 0.495 ms; GPU intervals may overlap, so keep this result
+workload-specific. Cache temporal quality, native-window and other-adapter review
+remain open. Per-source
 primary-light, sun, caster, material, shader-reload and reset invalidation now
 match forced redraw at fixed tick; see
 [shadow invalidation evidence](measurements-multi-emitter-shadow-invalidation.json)
@@ -493,8 +497,9 @@ Source-local inked smoke is implemented with 36 puff candidates per source,
 separate overflow fallback and a 72-entry total tile capacity. GPU validation and
 single-source parity pass on M1 Max/Metal; the expanded tile index buffer uses
 603,520 bytes at 640×360. The dual-source capture matrix exercises source
-isolation and combined rendering; stress and sustained performance review remain
-open; see
+isolation and combined rendering; maximum-budget correctness and one sustained
+performance route are recorded, while other-scene scaling and platform gates
+remain open; see
 [inked smoke evidence](measurements-multi-emitter-ink.json).
 The second-source cache stores optical depth in the green channel of the existing
 3D cache texture, over the emitter's source-local domain. It adds no cache
@@ -524,10 +529,13 @@ plus [per-source origin](measurements-multi-emitter-source-origins.json),
 [atmosphere evidence](measurements-multi-emitter-atmosphere.json) and
 [heat evidence](measurements-multi-emitter-heat.json).
 
-**Exit gate:** all source ownership, deterministic replay, overflow, reset/edit and
-resource-recreation checks pass on Metal; then run the same evidence on DX12 and
-another adapter before raising the source cap. Keep the cap at two until correctness,
-memory and performance budgets pass.
+**Exit gate:** source ownership, deterministic replay, fixed-tick overflow and
+reset/edit checks pass on Metal for the reviewed scenes. The maximum-budget
+sustained route shows a serial frame-work gain alongside a higher reported
+GPU-render metric, so do not generalize it to other workloads. Cache temporal
+quality, resource recreation, native-window, DX12 and another-adapter acceptance
+remain open. Keep the cap at two until those correctness, memory and performance
+budgets pass.
 
 **Maximum-budget ink-smoke parity: corrected and verified on M1 Max/Metal.** The
 reproducible route initially differed from exhaustive output in 9,616 of 230,400

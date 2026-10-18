@@ -377,7 +377,8 @@ lower heat slice; x/z bounds remain enforced. With only `watchfire` enabled,
 seed 42/tick 300, and `earth.heat_response` 0 versus 0.8, all six views changed
 168–5,695 pixels. The ground-focused view shows the clearest ring cue; wide views
 show subtle differences. This is fixed-tick contribution evidence, not temporal
-quality or performance evidence. Maximum-budget stress, sustained performance,
+quality or performance evidence. Maximum-budget correctness and one sustained
+offscreen performance route are now recorded. Cache temporal quality,
 Windows/DX12 and other-adapter checks remain open. See
 [`two_emitter_heat_response_study.py`](../scripts/two_emitter_heat_response_study.py)
 and [opaque heat evidence](measurements-multi-emitter-opaque-heat.json). The
@@ -395,8 +396,15 @@ at seed 42/tick 300 across all six named cameras. Each isolated emitter, forced
 fallback and reversed emitter order also match. The source-zero profiling-heavy
 capture retains its prior hash. Natural overflow affects 74 fire-list tiles; smoke
 lists do not overflow their per-source capacity. The fix changes addressing only:
-it adds no allocation or dispatch. Temporal quality, sustained performance, native-
-window, DX12 and other-adapter acceptance remain open. See [overflow report](measurements-multi-emitter-overflow.json),
+it adds no allocation or dispatch. A separate three-pair, 120-second offscreen
+comparison finds tiled serial frame-work lower by a median 0.715 ms in every pair.
+The reported GPU-render metric is 1.922 ms higher for tiled; tile-build rises
+2.468 ms while atmosphere/fire falls 0.495 ms. GPU intervals may overlap, so this
+is a mixed, workload-specific result rather than a universal speedup. Cache
+temporal quality, other-scene scaling, native-window, DX12 and other-adapter
+acceptance remain open. See [overflow report](measurements-multi-emitter-overflow.json),
+[sustained report](measurements-multi-emitter-sustained.json),
+[performance runner](../scripts/two_emitter_sustained_study.py),
 [scene](../assets/scenes/two-emitter-overflow-stress.json) and
 [runner](../scripts/two_emitter_overflow_study.py).
 

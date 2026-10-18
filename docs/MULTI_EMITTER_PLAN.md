@@ -2,9 +2,10 @@
 
 18 October 2026. The scene contract and core render path now accept up to two
 emitters with explicit, unique primary-light IDs. Stable-ID sampling, per-source
-compute, shading, heat, light and shadow paths are exercised by a fixed-tick
-Metal review scene. Sustained performance, stress and portability gates remain
-open; the single-source baseline remains selectable and pixel-identical.
+compute, shading, heat, light and shadow paths are exercised by fixed-tick
+Metal reviews. Maximum-budget correctness and a three-pair sustained offscreen
+route are recorded; cache temporal quality, native-window and portability gates
+remain open. The single-source baseline remains selectable and pixel-identical.
 
 ## Current boundary
 
@@ -12,12 +13,14 @@ open; the single-source baseline remains selectable and pixel-identical.
   primary-light IDs for dual-source scenes. Per-emitter smoke simulation,
   atmosphere/optical, ink, absorption, opaque heat, authored primary-light and
   geometry shadow paths are connected. The new review scene exercises these
-  paths on M1 Max/Metal. Cache-enabled fixed-tick review is complete; temporal,
-  sustained-performance and stress gates remain open.
+  paths on M1 Max/Metal. Cache-enabled fixed-tick review is complete. Maximum-
+  budget tiled/exhaustive parity and sustained offscreen performance are recorded;
+  cache temporal quality, other-scene performance and adapter gates remain open.
 - Each `FireFrame` owns a 256-primitive pool; up to 12 derived particle lights
   are shared globally. O03 tile construction now includes both sources, and
-  overflow falls back to exhaustive evaluation, but multi-source stress evidence
-  is still open.
+  overflow falls back to exhaustive evaluation. Maximum-budget parity, forced
+  fallback and a three-pair sustained route are recorded; other-scene scaling,
+  native-window and portability evidence remain open.
 - The CPU storage packer now merges sampled source candidates into the shared
   12-light budget by descending power, then stable emitter ID and event identity.
   It stores the selected lights in source zero's shared-light slot and reports
@@ -56,8 +59,8 @@ open; the single-source baseline remains selectable and pixel-identical.
   rebuilds/uploads when source state or a source's detail tier changes. Current
   scene validation now accepts two emitters, and the keyed upload path has been
   exercised by the live two-source review capture. Source-specific shadow maps
-  were also rendered for both lights. Sustained CPU/GPU comparison and overload
-  behavior remain open. The existing
+  were also rendered for both lights. A maximum-budget CPU/GPU route comparison is
+  recorded; other-scene scaling and overload/lifecycle stress remain open. The existing
   single-source profiling-heavy fixed-tick RGBA capture remains byte-identical
   on M1 Max/Metal (SHA-256 `9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48`).
 - Smoke compute now allocates a separate ping-pong density/temperature pair and
@@ -68,7 +71,9 @@ open; the single-source baseline remains selectable and pixel-identical.
   post heat have secondary-volume paths; inked smoke has a source-local puff
   path; and the absorption cache now has a source-local channel. Fixed-tick
   two-source captures exist, but that review used the direct absorption path.
-  There is no sustained two-source performance result yet. The current single-source RGBA capture
+  A maximum-budget sustained performance result is now available in
+  [the paired report](measurements-multi-emitter-sustained.json); it shows lower
+  serial frame-work with mixed GPU interval results. The current single-source RGBA capture
   remains pixel-identical, with the 80-byte source config reflected in the known
   fixed-buffer inventory; see [smoke compute evidence](measurements-multi-emitter-smoke-compute.json).
 - The soft atmosphere integral now binds and samples a second source-local smoke
@@ -93,10 +98,14 @@ open; the single-source baseline remains selectable and pixel-identical.
   remains byte-identical (SHA-256 `9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48`).
   On M1 Max/Metal at 640×360, tile indices use 603,520 bytes, up 132,480 bytes
   from one-source capacity. The two-source review scene uses 25,889,280 known
-  bytes including both smoke fields and primary shadow sets. There is no
-  dual-source sustained performance result. Per-source primary-light shadow maps
-  and discrete invalidation have fixed-tick live review; maximum-budget and
-  sustained stress remain open. See
+  bytes including both smoke fields and primary shadow sets. On the maximum-budget
+  route, three alternating 120-second pairs show 0.715 ms lower median serial
+  frame-work for tiled rendering, while the reported GPU-render metric is 1.922 ms
+  higher; tile-build rises 2.468 ms and atmosphere/fire falls 0.495 ms. These
+  measurements are workload-specific, and GPU intervals may overlap. Per-source
+  primary-light shadow maps and discrete invalidation have fixed-tick live review;
+  native-window, other-scene and portability gates remain open. See
+  [sustained performance evidence](measurements-multi-emitter-sustained.json) and
   [inked smoke evidence](measurements-multi-emitter-ink.json).
 - The O05 absorption cache retains source zero in the red channel and builds a
   second light-transmittance field in the green channel over source one's local
@@ -202,6 +211,8 @@ must remain correct under that load.
    least one other adapter before claiming portability. Keep the two-source cap
    until those results and the memory budget pass.
 
-The bounded runtime and fixed-tick visual result are now implemented on M1
-Max/Metal. This does not establish a sustained performance gain, overload
-behavior, cross-adapter correctness or target-hardware support.
+The bounded runtime, fixed-tick visual result and one maximum-budget sustained
+route are measured on M1 Max/Metal. Serial frame-work improves for that route
+while the reported GPU-render metric worsens; this is not a universal performance
+claim. Native-window behavior, broader workload scaling, cross-adapter correctness
+and target-hardware support remain unverified.
