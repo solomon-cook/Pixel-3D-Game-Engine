@@ -470,11 +470,14 @@ ten-second warm-ups and >99% render and smoke-compute timestamp coverage measure
 against actual fixed ticks. The profiling-heavy route removes about 1.38 Globals
 writes and 1,173 upload bytes per rendered frame; optimized-minus-legacy paired
 median FPS is -0.070, CPU-frame +0.001 ms, CPU-upload +0.004 ms and
-atmosphere/fire GPU -0.014 ms. Together with the clearing route's mixed timing,
-this supports a traffic reduction without a whole-window speedup claim. Material
-Atelier, two-emitter, Windows/DX12 and other-adapter checks remain open. See
+atmosphere/fire GPU -0.014 ms. Material Atelier has median deltas of +0.069 FPS,
++0.011 ms CPU-frame, -0.017 ms CPU-upload and -0.007 ms atmosphere/fire GPU,
+with mixed pair signs. Together these routes support a traffic reduction without
+a whole-window speedup claim. Two-emitter, Windows/DX12 and other-adapter checks
+remain open. See
 [clearing report](measurements-o08-globals-upload-native.json),
 [profiling-heavy report](measurements-o08-globals-upload-native-profiling-heavy.json)
+and [Material Atelier report](measurements-o08-globals-upload-native-materials.json)
 and [runner](../scripts/globals_upload_native_study.py).
 
 **Lazy snapshot native lifecycle complete on M1 Max/Metal:** a paused shared

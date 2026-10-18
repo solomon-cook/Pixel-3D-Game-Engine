@@ -52,9 +52,9 @@ baseline.
 See [parity report](measurements-o08-batch-parity.json),
 [burst report](measurements-o08-batch-submit-cost.json),
 [route report](measurements-o08-batch-route.json),
-[native reports](measurements-o08-batch-native.json,
-measurements-o08-batch-native-materials.json,
-measurements-o08-batch-native-profiling-heavy.json), and the runners
+[clearing native report](measurements-o08-batch-native.json),
+[Material Atelier report](measurements-o08-batch-native-materials.json),
+[profiling-heavy report](measurements-o08-batch-native-profiling-heavy.json), and the runners
 [parity](../scripts/simulation_batch_parity.py),
 [burst](../scripts/simulation_batch_cost_study.py), and
 [route](../scripts/simulation_batch_route_study.py),
@@ -408,12 +408,16 @@ coverage when compute coverage is divided by actual fixed ticks. Clearing
 optimized-minus-legacy medians are +0.124 FPS, -0.045 ms CPU native frame,
 -0.006 ms CPU upload and +0.006 ms atmosphere/fire GPU. Profiling-heavy medians
 are -0.070 FPS, +0.001 ms CPU native frame, +0.004 ms CPU upload and -0.014 ms
-atmosphere/fire GPU. The profiling-heavy counters show about 1.38 fewer `Globals`
-writes and 1,173 fewer uploaded bytes per rendered frame. FPS and stage results
-vary; the evidence supports traffic reduction, not a whole-window speedup. More
-workloads and Windows/DX12 or other-adapter validation remain open. See the
+atmosphere/fire GPU. Material Atelier medians are +0.069 FPS, +0.011 ms CPU
+native frame, -0.017 ms CPU upload and -0.007 ms atmosphere/fire GPU; its pair
+results vary in sign. The profiling-heavy counters show about 1.38 fewer
+`Globals` writes and 1,173 fewer uploaded bytes per rendered frame. FPS and
+stage results vary; the evidence supports traffic reduction, not a whole-window
+speedup. Two-emitter coverage and Windows/DX12 or other-adapter validation remain
+open. See the
 [clearing report](measurements-o08-globals-upload-native.json),
 [profiling-heavy report](measurements-o08-globals-upload-native-profiling-heavy.json)
+and [Material Atelier report](measurements-o08-globals-upload-native-materials.json)
 and [reproducible study](../scripts/globals_upload_native_study.py).
 
 O08 also retargets smoke compute resources from group 1 to group 0 and removes
