@@ -168,6 +168,7 @@ struct Pipelines {
     shadow_baked: wgpu::RenderPipeline,
     shadow_opaque_baked: wgpu::RenderPipeline,
     smoke: wgpu::ComputePipeline,
+    smoke_legacy_layout: wgpu::ComputePipeline,
     smoke_candidates: wgpu::ComputePipeline,
     absorption: wgpu::ComputePipeline,
     tile_build: wgpu::ComputePipeline,
@@ -327,6 +328,7 @@ pub struct Renderer {
     tile_lists_enabled: bool,
     fire_bounds_precompute_enabled: bool,
     legacy_smoke_globals_upload: bool,
+    legacy_smoke_bind_layout: bool,
     pipelines: Pipelines,
     timing: Option<Timing>,
     completed_gpu_timings: VecDeque<GpuTimingSample>,
@@ -2292,6 +2294,7 @@ impl Renderer {
             tile_lists_enabled: true,
             fire_bounds_precompute_enabled: false,
             legacy_smoke_globals_upload: false,
+            legacy_smoke_bind_layout: false,
             pipelines,
             timing,
             completed_gpu_timings: VecDeque::new(),
@@ -2464,6 +2467,14 @@ impl Renderer {
         let fire_source = read("fire.wgsl")?;
         let post_source = read("post.wgsl")?;
         let smoke_source = read("smoke.wgsl")?;
+        let smoke_wgsl = smoke_source.replace(
+            "texture_storage_3d<rgba16float,write>",
+            match smoke_volume_format {
+                wgpu::TextureFormat::Rg16Float => "texture_storage_3d<rg16float,write>",
+                _ => "texture_storage_3d<rgba16float,write>",
+            },
+        );
+        let legacy_smoke_wgsl = smoke_wgsl.replace("@group(0)", "@group(1)");
         let absorption_source = read("absorption.wgsl")?;
         let shadow_source = format!("{}\n{}", read("materials.wgsl")?, read("shadow.wgsl")?);
         device.push_error_scope(wgpu::ErrorFilter::Validation);
@@ -2606,19 +2617,11 @@ impl Renderer {
             "pixel treatment",
             format!("{common}\n{}", post_source),
         );
-        let smoke_module = shader(
+        let smoke_module = shader(device, "smoke advection", format!("{common}\n{smoke_wgsl}"));
+        let legacy_smoke_module = shader(
             device,
-            "smoke advection",
-            format!(
-                "{common}\n{}",
-                smoke_source.replace(
-                    "texture_storage_3d<rgba16float,write>",
-                    match smoke_volume_format {
-                        wgpu::TextureFormat::Rg16Float => "texture_storage_3d<rg16float,write>",
-                        _ => "texture_storage_3d<rgba16float,write>",
-                    },
-                )
-            ),
+            "legacy smoke advection",
+            format!("{common}\n{legacy_smoke_wgsl}"),
         );
         let absorption_module = shader(
             device,
@@ -2642,6 +2645,7 @@ impl Renderer {
         let smoke_candidate_pipeline_layout = layout(&[global, smoke_candidate_layout]);
         let post_layout = layout(&[global, post]);
         let smoke_layout = layout(&[smoke]);
+        let legacy_smoke_layout = layout(&[global, smoke]);
         let absorption_layout = layout(&[global, absorption]);
         let shadow_layout = layout(&[shadow, shadow_materials]);
         let vertex_buffers = [vertex_layout(), instance_layout()];
@@ -3006,6 +3010,15 @@ impl Renderer {
             compilation_options: Default::default(),
             cache: None,
         });
+        let smoke_legacy_layout =
+            device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
+                label: Some("legacy advection bind-group layout"),
+                layout: Some(&legacy_smoke_layout),
+                module: &legacy_smoke_module,
+                entry_point: Some("advect"),
+                compilation_options: Default::default(),
+                cache: None,
+            });
         let absorption = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor {
             label: Some("coarse smoke absorption"),
             layout: Some(&absorption_layout),
@@ -3068,6 +3081,7 @@ impl Renderer {
             shadow_baked,
             shadow_opaque_baked,
             smoke,
+            smoke_legacy_layout,
             smoke_candidates,
             absorption,
             tile_build,
@@ -3236,6 +3250,11 @@ impl Renderer {
     /// Restore the redundant render-uniform upload during smoke simulation for native benchmarks.
     pub fn set_legacy_smoke_globals_upload_for_benchmark(&mut self, enabled: bool) {
         self.legacy_smoke_globals_upload = enabled;
+    }
+
+    /// Restore the historical Globals + source-local bind groups for native comparisons.
+    pub fn set_legacy_smoke_bind_layout_for_benchmark(&mut self, enabled: bool) {
+        self.legacy_smoke_bind_layout = enabled;
     }
 
     fn update_tile_config(&self) {
@@ -3998,10 +4017,15 @@ impl Renderer {
                     end_of_pass_write_index: Some(1),
                 }),
             });
-            pass.set_pipeline(&self.pipelines.smoke);
+            if self.legacy_smoke_bind_layout {
+                pass.set_pipeline(&self.pipelines.smoke_legacy_layout);
+                pass.set_bind_group(0, &self.globals, &[]);
+            } else {
+                pass.set_pipeline(&self.pipelines.smoke);
+            }
             for source_groups in &self.smoke_groups {
                 pass.set_bind_group(
-                    0,
+                    usize::from(self.legacy_smoke_bind_layout) as u32,
                     &source_groups[self.smoke_index],
                     &[(SMOKE_CONFIG_STRIDE as u32) * batch_index as u32],
                 );

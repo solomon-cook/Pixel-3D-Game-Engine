@@ -64,6 +64,9 @@ enum Command {
         /// Issue one draw per visible object instead of grouping compatible instances.
         #[arg(long)]
         disable_instancing: bool,
+        /// Restore the historical Globals + source-local smoke bind-group layout for parity checks.
+        #[arg(long)]
+        legacy_smoke_bind_layout: bool,
         /// Run an opt-in instrumented volumetric shader and report GPU operation counters.
         #[arg(long)]
         shading_counters: bool,
@@ -148,6 +151,9 @@ enum Command {
         /// Restore the redundant render Globals upload during smoke simulation for comparison.
         #[arg(long)]
         legacy_smoke_globals_upload: bool,
+        /// Restore the historical Globals + source-local smoke bind-group layout for comparison.
+        #[arg(long)]
+        legacy_smoke_bind_layout: bool,
         /// Move a scene object around the primary fire light during the route.
         #[arg(long)]
         moving_caster: Option<String>,
@@ -262,6 +268,7 @@ fn start() -> Result<()> {
             precompute_fire_bounds,
             disable_object_culling,
             disable_instancing,
+            legacy_smoke_bind_layout,
             shading_counters,
             tick,
             output,
@@ -280,6 +287,9 @@ fn start() -> Result<()> {
             session
                 .renderer
                 .set_geometry_rendering(!disable_object_culling, !disable_instancing);
+            session
+                .renderer
+                .set_legacy_smoke_bind_layout_for_benchmark(legacy_smoke_bind_layout);
             session.renderer.set_shading_diagnostics(shading_counters);
             session.step(tick);
             let metadata = session.capture(&output, scale)?;
@@ -342,6 +352,7 @@ fn start() -> Result<()> {
             disable_object_culling,
             disable_instancing,
             legacy_smoke_globals_upload,
+            legacy_smoke_bind_layout,
             moving_caster,
             caster_orbit_radius,
             caster_orbit_period,
@@ -362,6 +373,7 @@ fn start() -> Result<()> {
                 object_culling_enabled: !disable_object_culling,
                 instancing_enabled: !disable_instancing,
                 legacy_smoke_globals_upload,
+                legacy_smoke_bind_layout,
                 moving_caster,
                 caster_orbit_radius,
                 caster_orbit_period,

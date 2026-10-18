@@ -55,7 +55,8 @@ fallbacks. Other memory layout work remains proposed. Measurements are recorded 
 [docs/measurements-o07-native-scale-study.json](docs/measurements-o07-native-scale-study.json) and
 [docs/measurements-o08.json](docs/measurements-o08.json),
 [docs/measurements-o08-native-no-copy.json](docs/measurements-o08-native-no-copy.json),
-[docs/measurements-o08-globals-upload-native.json](docs/measurements-o08-globals-upload-native.json).
+[docs/measurements-o08-globals-upload-native.json](docs/measurements-o08-globals-upload-native.json) and
+[docs/measurements-o08-smoke-bind-layout-native.json](docs/measurements-o08-smoke-bind-layout-native.json).
 
 ## Start
 

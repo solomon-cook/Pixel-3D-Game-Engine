@@ -426,8 +426,17 @@ encoded bind commands; the dual-emitter route also has mixed simulation encode,
 frame-work and GPU-render deltas. No general throughput win is established. The
 candidate also passes headless transactional reload rollback for all 13 reloadable shader
 modules, preserving the fixed-tick image on every failure and on the restored
-successful reload. Native-window and Windows/DX12/other-adapter validation remain
-open. See [layout report](measurements-o08-smoke-bind-layout.json) and ignored
+successful reload. Native-window clearing timing now completes three alternating
+120-second pairs on M1 Max/Metal, with >99% render and smoke-compute timestamp
+coverage. Optimized-minus-legacy paired medians are +0.049 FPS, +0.028 ms CPU
+native frame, -0.032 ms simulation encode, -0.000022 ms smoke compute and
+-0.0014 ms atmosphere/fire GPU. FPS is slightly higher in all three pairs, but
+the change is small and CPU/GPU timing results vary. No general throughput gain
+is claimed. Fixed-tick clearing and dual-emitter PNGs are byte-identical between
+layouts. Broader native workloads and Windows/DX12/other-adapter validation
+remain open. See [layout report](measurements-o08-smoke-bind-layout.json),
+[native report](measurements-o08-smoke-bind-layout-native.json),
+[native runner](../scripts/smoke_bind_layout_native_study.py) and ignored
 [rollback report](../artifacts/o08-smoke-bind-shader-rollback.json).
 
 The experimental `Rg11b10Ufloat` HDR target reduces the primary color target and

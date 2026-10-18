@@ -883,8 +883,15 @@ Material Atelier results varied. A two-emitter three-pair route also showed
 mixed simulation CPU-encode (-0.007/-0.016/+0.004 ms), frame-work
 (+0.012/-0.061/+0.044 ms) and GPU-render (+0.001/-0.004/+0.006 ms) deltas.
 Keep the reduction in per-pass bind commands, but treat timing impact as
-workload-dependent. This does not establish a general throughput, native-window
-or cross-adapter gain. See
+workload-dependent. This does not establish a general throughput gain. Three
+alternating native 120-second clearing-orbit pairs on M1 Max/Metal now compare
+the current and historical group arrangements. Optimized-minus-legacy paired
+medians are +0.049 FPS, +0.028 ms CPU native frame, -0.032 ms CPU simulation
+encode, -0.000022 ms smoke-compute GPU and -0.0014 ms atmosphere/fire GPU. FPS
+is slightly higher in each pair, but the gain is small and CPU/GPU results vary;
+do not claim a general throughput improvement. Fixed-tick clearing and
+dual-emitter captures remain byte-identical. Broader native workloads and
+cross-adapter validation remain open. See
 [layout report](measurements-o08-smoke-bind-layout.json) and ignored raw runs in
 `artifacts/o08-smoke-bind-study/`,
 `artifacts/o08-smoke-bind-study-profiling-heavy/` and
@@ -894,6 +901,8 @@ the headless transactional reload study: all 13 reloadable shader modules
 rejected invalid source without changing the reference image or shadow cache,
 and the restored shader set reloaded successfully with the image unchanged. See
 `artifacts/o08-smoke-bind-shader-rollback.json`.
+Native raw reports and the reproducible [native study](../scripts/smoke_bind_layout_native_study.py)
+are in [measurements-o08-smoke-bind-layout-native.json](measurements-o08-smoke-bind-layout-native.json).
 
 **O06×O08 factorial (18 October):** the eight combinations of direct/reused
 opaque lighting, copy/no-copy optical output and RGBA16F/packed HDR were captured

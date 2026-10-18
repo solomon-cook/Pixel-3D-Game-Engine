@@ -67,6 +67,7 @@ struct NativeBenchmarkConfig {
     object_culling_enabled: bool,
     instancing_enabled: bool,
     legacy_smoke_globals_upload: bool,
+    legacy_smoke_bind_layout: bool,
     moving_caster: Option<String>,
     caster_orbit_radius: f32,
     caster_orbit_period: f32,
@@ -83,6 +84,7 @@ pub struct NativeBenchmarkSettings {
     pub object_culling_enabled: bool,
     pub instancing_enabled: bool,
     pub legacy_smoke_globals_upload: bool,
+    pub legacy_smoke_bind_layout: bool,
     pub moving_caster: Option<String>,
     pub caster_orbit_radius: f32,
     pub caster_orbit_period: f32,
@@ -275,6 +277,7 @@ pub fn benchmark_native(options: Options, settings: NativeBenchmarkSettings) -> 
             object_culling_enabled: settings.object_culling_enabled,
             instancing_enabled: settings.instancing_enabled,
             legacy_smoke_globals_upload: settings.legacy_smoke_globals_upload,
+            legacy_smoke_bind_layout: settings.legacy_smoke_bind_layout,
             moving_caster: settings.moving_caster,
             caster_orbit_radius: settings.caster_orbit_radius,
             caster_orbit_period: settings.caster_orbit_period,
@@ -405,6 +408,9 @@ impl App {
             session
                 .renderer
                 .set_legacy_smoke_globals_upload_for_benchmark(config.legacy_smoke_globals_upload);
+            session
+                .renderer
+                .set_legacy_smoke_bind_layout_for_benchmark(config.legacy_smoke_bind_layout);
             session
                 .renderer
                 .set_geometry_rendering(config.object_culling_enabled, config.instancing_enabled);
@@ -1153,6 +1159,7 @@ fn native_benchmark_report(
         "tile_lists_enabled":benchmark.config.tile_lists_enabled,
         "fire_bounds_precompute":benchmark.config.precompute_fire_bounds,
         "legacy_smoke_globals_upload":benchmark.config.legacy_smoke_globals_upload,
+        "legacy_smoke_bind_layout":benchmark.config.legacy_smoke_bind_layout,
         "force_shadow_redraw":benchmark.config.force_shadow_redraw,
         "geometry_rendering":{"culling":benchmark.config.object_culling_enabled,"instancing":benchmark.config.instancing_enabled},
         "moving_caster":benchmark.moving_caster.as_ref().map(|(id, _)| json!({"object":id,"radius":benchmark.config.caster_orbit_radius,"period_seconds":benchmark.config.caster_orbit_period,"orbit_center_xz":benchmark.orbit_center_xz,"sample_hz":60})),

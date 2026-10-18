@@ -534,10 +534,16 @@ dual-emitter, profiling-heavy and Material Atelier tick-120 images all match
 exactly. Three sustained clearing pairs show a 0.005–0.015 ms lower median
 simulation CPU-encode span, but further profiling-heavy and Material Atelier
 pairs do not reproduce that CPU result consistently; a separate two-emitter route
-also shows mixed CPU-encode, frame-work and GPU-render deltas. Keep it as a
-reduction in encoded bind commands, with timing treated as workload-dependent
-and native, DX12 and other-adapter gates open. See
-[the report](measurements-o08-smoke-bind-layout.json).
+also shows mixed CPU-encode, frame-work and GPU-render deltas. Three alternating
+native clearing-orbit pairs show +0.049 median FPS, -0.032 ms simulation encode
+and -0.000022 ms smoke compute for the optimized layout. The FPS increase is
+small; CPU-frame and GPU-stage changes vary. Fixed-tick clearing and two-emitter
+captures match exactly. Keep the reduction in encoded bind commands without a
+general throughput claim. Broader native workloads, DX12 and other-adapter
+gates remain open. See
+[the offscreen report](measurements-o08-smoke-bind-layout.json),
+[native report](measurements-o08-smoke-bind-layout-native.json) and
+[native runner](../scripts/smoke_bind_layout_native_study.py).
 
 Break the umbrella O08 item into decisions for lazy optical allocation, RG16 targets,
 compact HDR, normal/depth reuse and no-copy overlay. For each, record supported
