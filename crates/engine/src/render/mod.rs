@@ -2,7 +2,7 @@ use crate::{
     assets::{self, Vertex},
     diagnostics::FrameMetrics,
     effects,
-    effects::{FireFrame, FireKey, MAX_FIRE_PRIMITIVES, MAX_PARTICLE_LIGHTS},
+    effects::{FireFrame, FireFrameStorage, FireKey, MAX_FIRE_PRIMITIVES, MAX_PARTICLE_LIGHTS},
     platform,
     scene::{Camera, LightKind, Material, Object, Scene},
     simulation,
@@ -883,7 +883,7 @@ impl Renderer {
         });
         let fire_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("bounded fire primitives"),
-            contents: bytemuck::bytes_of(&FireFrame::zeroed()),
+            contents: bytemuck::bytes_of(&FireFrameStorage::zeroed()),
             usage: wgpu::BufferUsages::STORAGE | wgpu::BufferUsages::COPY_DST,
         });
         let uniform = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
@@ -1793,7 +1793,7 @@ impl Renderer {
         let material_bytes =
             (scene.materials.len() as u64 + 1) * std::mem::size_of::<MaterialGpu>() as u64;
         let fixed_buffer_bytes = std::mem::size_of::<Globals>() as u64
-            + std::mem::size_of::<FireFrame>() as u64
+            + std::mem::size_of::<FireFrameStorage>() as u64
             + 7 * 64
             + 22 * std::mem::size_of::<u32>() as u64;
         let format_support = [

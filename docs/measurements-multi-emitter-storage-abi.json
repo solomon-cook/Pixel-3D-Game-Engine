@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "purpose": "Verify that reserving two contiguous FireFrame storage slots leaves the current source-zero rendering unchanged.",
+  "host": {
+    "adapter": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "workload": {
+    "scene": "assets/scenes/profiling-heavy.json",
+    "camera": "hero",
+    "seed": 42,
+    "tick": 120,
+    "resolution": [
+      640,
+      360
+    ],
+    "scale": 1
+  },
+  "comparison": {
+    "baseline": {
+      "shader_abi": "single FireFrame",
+      "capture": "artifacts/multi-emitter-storage-abi/before-single-frame-abi.png",
+      "pixel_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48"
+    },
+    "candidate": {
+      "shader_abi": "array<FireFrame,2>; shader reads source zero",
+      "capture": "artifacts/multi-emitter-storage-abi/after-two-frame-capacity.png",
+      "pixel_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48"
+    },
+    "pixel_identical": true,
+    "known_allocation_delta_bytes": 12928
+  },
+  "provenance": {
+    "comparison_method": "Same rebuilt binary and fixed scene/tick; baseline shader sources restored from the pre-change commit for the first capture, then candidate sources restored for the second.",
+    "repository_commit_before_change": "5824e9220035cdb924015e0c4fc2c572dc8a1b20",
+    "source_sha256": {
+      "crates/engine/src/effects.rs": "6ecf244d2e37092d6991a0fdcb59440183c5b0ad8afaefb9acfae9518cd509d4",
+      "crates/engine/src/render/mod.rs": "5251d72aa02d14f86378ef695839605082dfd6a79c0b1b5990985b8472fc6bf6",
+      "crates/engine/src/render/shaders/common.wgsl": "ae1dc515d527b24509f5a9aaade87237d45ee88b65c312e605a37da37917ba64",
+      "crates/engine/src/render/shaders/fire.wgsl": "d219f06047a7167dc96133d99fbd35d030e4c45e9df51c6b423327f49a6344f9",
+      "crates/engine/src/render/shaders/tile_build.wgsl": "cd9170d4f794ed734e1538b398e7bb979b183b6dd978f21a21d71554473e1315",
+      "crates/engine/src/render/shaders/world.wgsl": "9a1be6d70ec465e03999d5df16ff29c689acd12831b188d07b8cc94df5d27a50",
+      "crates/engine/src/render/shaders/volume.wgsl": "240755e54d4603e941ed9b6513f597fb0a9a50977aee0f850007dcdc6efd7d3b"
+    },
+    "binary_sha256": "37a75e4081f0d708f0f1c247ee8f506667da30450dbeb8a30d3b30de466565cb"
+  }
+}

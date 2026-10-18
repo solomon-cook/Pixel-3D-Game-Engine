@@ -17,6 +17,12 @@ into a testable two-source runtime without changing the single-source baseline.
 - The CPU now has a pure global particle-light selector that merges sampled
   source candidates into the shared 12-light budget by descending power, then
   stable emitter ID and event identity. The renderer does not call it yet.
+- The GPU fire-storage ABI now reserves two contiguous `FireFrame` slots, and
+  the current shaders still read only slot zero. A fixed-tick M1 Max/Metal
+  comparison is byte-identical to the prior single-frame ABI; the known
+  allocation increases by 12,928 bytes. This is capacity groundwork only: the
+  renderer still samples, uploads and renders one source. See
+  [storage ABI evidence](measurements-multi-emitter-storage-abi.json).
 - One 48×64×48 Rg16Float density/temperature pair occupies 1,179,648 bytes.
   One point-light cubemap set occupies 1,572,864 bytes. The 8 authored point
   lights and 12 derived particle lights are global renderer budgets.

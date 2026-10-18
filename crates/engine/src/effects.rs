@@ -246,6 +246,15 @@ pub struct FireFrame {
     pub lights: [ParticleLight; MAX_PARTICLE_LIGHTS],
     pub primitives: [FirePrimitive; MAX_FIRE_PRIMITIVES],
 }
+
+/// Fixed-capacity GPU storage for independently sampled emitter frames.
+/// Source zero retains the existing single-emitter ABI and shader behavior;
+/// source one is reserved for the bounded two-emitter renderer path.
+#[repr(C)]
+#[derive(Clone, Copy, Pod, Zeroable)]
+pub struct FireFrameStorage {
+    pub sources: [FireFrame; MAX_EMITTERS],
+}
 #[derive(Clone, PartialEq)]
 pub struct FireKey {
     pub tick: u64,
@@ -913,6 +922,10 @@ mod tests {
         assert_eq!(std::mem::size_of::<FirePrimitive>(), 48);
         assert_eq!(std::mem::size_of::<ParticleLight>(), 48);
         assert_eq!(std::mem::size_of::<FireFrame>(), 64 + 12 * 48 + 256 * 48);
+        assert_eq!(
+            std::mem::size_of::<FireFrameStorage>(),
+            MAX_EMITTERS * std::mem::size_of::<FireFrame>()
+        );
     }
     #[test]
     fn seeded_fire_replays_and_is_camera_independent() {

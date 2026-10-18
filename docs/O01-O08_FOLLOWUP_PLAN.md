@@ -453,6 +453,13 @@ separated and overlapping fires, shared tiles, maximum primitive/light budgets,
 shadow overlap, reset/replay and offscreen simulation. Measure each source and
 aggregate occupancy, memory, CPU work, GPU stages and fallback rates.
 
+The first renderer ABI step is complete: storage now has two fixed-layout
+`FireFrame` slots, existing code uploads slot zero, and a matched Metal capture is
+byte-identical to the prior ABI. The second slot is not yet populated or consumed;
+smoke simulation, multi-source shading, tile membership, shadows and scene
+acceptance remain unimplemented. See
+[storage ABI comparison](measurements-multi-emitter-storage-abi.json).
+
 **Exit gate:** all source ownership, deterministic replay, overflow, reset/edit and
 resource-recreation checks pass on Metal; then run the same evidence on DX12 and
 another adapter before raising the source cap. Keep the cap at two until correctness,

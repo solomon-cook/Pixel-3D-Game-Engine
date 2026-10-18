@@ -3,18 +3,18 @@
 struct FireSample {color:vec3<f32>,alpha:f32,depth:f32};
 fn sample_fire(origin:vec3<f32>,direction:vec3<f32>,limit:f32,tile:u32)->FireSample {
     var result=FireSample(vec3(0.),0.,limit);
-    if fire.counts.x==0u || g.simulation.w<=0. || g.fire_outer.w<=0. {return result;}
+    if fire[0].counts.x==0u || g.simulation.w<=0. || g.fire_outer.w<=0. {return result;}
     let inv=1./(direction+vec3(0.0000001));
-    let a=(fire.bounds_min.xyz-origin)*inv;let b=(fire.bounds_max.xyz-origin)*inv;
+    let a=(fire[0].bounds_min.xyz-origin)*inv;let b=(fire[0].bounds_max.xyz-origin)*inv;
     let lo=min(a,b);let hi=max(a,b);
     if min(min(min(hi.x,hi.y),hi.z),limit)<=max(max(max(lo.x,lo.y),lo.z),0.) {return result;}
     var optical=0.;var energy=vec3(0.);var peak_heat=0.;
     let header=tile_headers[tile];let overflow=(header.flags.x&1u)!=0u;
-    let candidate_count=select(header.counts.x,fire.counts.x,overflow);
+    let candidate_count=select(header.counts.x,fire[0].counts.x,overflow);
     for(var candidate=0u;candidate<256u;candidate++) {
         if candidate>=candidate_count {break;}
         let i=select(fire_tile_indices[tile*FIRE_TILE_CAPACITY+candidate],candidate,overflow);
-        let p=fire.primitives[i];let center=p.center_radius.xyz;let radius=p.center_radius.w;
+        let p=fire[0].primitives[i];let center=p.center_radius.xyz;let radius=p.center_radius.w;
         let axis=p.axis_length.xyz;let axial=p.axis_length.w;
         let ro=origin-center;let along=dot(center-origin,direction);let bound=max(radius,axial);
         if along+bound<0. || along-bound>limit || length(ro+direction*max(along,0.))>bound {continue;}
