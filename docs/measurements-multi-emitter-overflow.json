@@ -1,0 +1,104 @@
+{
+  "date": "2026-10-18",
+  "workstream": "bounded two-emitter maximum-budget tile-list correctness",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "scene": "assets/scenes/two-emitter-overflow-stress.json",
+  "scene_sha256": "544662419ca3bb9882f2d59e83db5ef059eb1f4c8da4787c78092c6d9fa31772",
+  "seed": 42,
+  "tick": 300,
+  "camera": "stress-close",
+  "resolution": [
+    640,
+    360
+  ],
+  "captures": {
+    "tiled": {
+      "image": "artifacts/two-emitter-overflow/tiled.png",
+      "sha256": "f1a9eb7bb3de45d459b8bc98630086971739633ec4ce9f8207a8bb2788fd28ef",
+      "metrics": {
+        "fire_primitives": 402,
+        "particle_lights": 12,
+        "particle_lights_dropped": 38,
+        "tile_overflow_tiles": [
+          74,
+          0,
+          0,
+          0
+        ]
+      },
+      "device": "Apple M1 Max",
+      "backend": "Metal",
+      "max_point_lights": 8,
+      "max_particle_lights": 12
+    },
+    "exhaustive": {
+      "image": "artifacts/two-emitter-overflow/exhaustive.png",
+      "sha256": "79b74585c7deb6125e8abb472e9f11907b921adf417c3898275992f9dc321ff4",
+      "metrics": {
+        "fire_primitives": 402,
+        "particle_lights": 12,
+        "particle_lights_dropped": 38,
+        "tile_overflow_tiles": [
+          920,
+          920,
+          920,
+          920
+        ]
+      },
+      "device": "Apple M1 Max",
+      "backend": "Metal",
+      "max_point_lights": 8,
+      "max_particle_lights": 12
+    },
+    "forced-fallback": {
+      "image": "artifacts/two-emitter-overflow/forced-fallback.png",
+      "sha256": "79b74585c7deb6125e8abb472e9f11907b921adf417c3898275992f9dc321ff4",
+      "metrics": {
+        "fire_primitives": 402,
+        "particle_lights": 12,
+        "particle_lights_dropped": 38,
+        "tile_overflow_tiles": [
+          920,
+          920,
+          920,
+          920
+        ]
+      },
+      "device": "Apple M1 Max",
+      "backend": "Metal",
+      "max_point_lights": 8,
+      "max_particle_lights": 12
+    }
+  },
+  "comparisons": {
+    "tiled_vs_exhaustive": {
+      "image_error": {
+        "changed_pixel_count": 9616,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          5.7711328125,
+          5.021436631944445,
+          3.402534722222222
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          250,
+          229,
+          190
+        ]
+      },
+      "exact_match": false
+    },
+    "forced_fallback_vs_exhaustive": {
+      "exact_match": true
+    }
+  },
+  "result": "failed: tiled evaluation differs from exhaustive evaluation; forced fallback matches exhaustive",
+  "limitations": [
+    "Single fixed-tick close camera on M1 Max/Metal; no temporal, native-window, DX12, or other-adapter acceptance.",
+    "Derived particle-light selection is capped at 12; 38 additional candidates are reported dropped in this scene."
+  ]
+}

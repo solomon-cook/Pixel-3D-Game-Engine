@@ -386,6 +386,17 @@ dual-source scene inventory reports 25,889,280 known bytes at
 [two-source review](measurements-multi-emitter-shadows.json), [shadow invalidation evidence](measurements-multi-emitter-shadow-invalidation.json)
 and [cache evidence](measurements-multi-emitter-absorption-cache.json).
 
+The maximum-budget close-camera route now has a checked-in scene and runner. On
+M1 Max/Metal, 402 fire primitives, eight authored point lights and the 12 derived
+light cap produce 9,616 changed pixels between tiled and exhaustive captures;
+forced fallback matches exhaustive exactly. Natural overflow affects 74 fire-list
+tiles, while smoke lists do not overflow. Exploratory fourfold smoke-bound expansion
+still left 1,169 changed pixels and was discarded. Treat ink-smoke tile-list parity
+as an unresolved correctness blocker. See [overflow report](measurements-multi-emitter-overflow.json),
+[scene](../assets/scenes/two-emitter-overflow-stress.json) and
+[runner](../scripts/two_emitter_overflow_study.py). This is one fixed-tick Metal
+camera; no temporal, native-window, DX12 or other-adapter acceptance is claimed.
+
 `python3 scripts/verify.py --gpu` passed on this host: formatting, Clippy,
 40 workspace tests, scene validation and material/fire GPU checks. The verifier
 reports `native: false`; native-window lifecycle and Windows/DX12 rendering remain

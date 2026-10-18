@@ -528,6 +528,21 @@ resource-recreation checks pass on Metal; then run the same evidence on DX12 and
 another adapter before raising the source cap. Keep the cap at two until correctness,
 memory and performance budgets pass.
 
+**Current overflow gate: failed, retained as a blocker.** The reproducible maximum-
+budget route uses two close ink emitters, 402 fire primitives, eight authored point
+lights and the 12-light derived cap. At seed 42/tick 300, tiled output differs from
+exhaustive output in 9,616 of 230,400 pixels (bbox x=320..450, y=0..147); forced
+fallback is byte-identical to exhaustive. Only the fire tile list naturally overflows
+(74 tiles); smoke lists do not, so the mismatch is not covered by the existing
+overflow fallback. The changed region is around the overlapping flame and smoke.
+Increasing both smoke-lobe bounds fourfold reduced the observed difference to 1,169
+pixels in one exploratory build but did not restore parity, so that bound change is
+not accepted. Reproduce with [the stress scene](../assets/scenes/two-emitter-overflow-stress.json),
+[the runner](../scripts/two_emitter_overflow_study.py) and
+[the report](measurements-multi-emitter-overflow.json). The cause remains unresolved;
+do not treat the two-source overflow gate as passed. This is one fixed close-camera
+Metal capture, not temporal, native-window or cross-adapter evidence.
+
 ## Program completion record
 
 Maintain per-candidate states for implementation, automated correctness, visual
