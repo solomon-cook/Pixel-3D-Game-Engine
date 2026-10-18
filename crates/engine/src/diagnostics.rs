@@ -3,6 +3,9 @@ use std::collections::BTreeMap;
 
 #[derive(Default, Clone, Serialize)]
 pub struct FrameMetrics {
+    /// Counts are populated only by an explicitly requested diagnostic capture.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub shading_counters: Option<ShadingCounters>,
     pub frame: u64,
     pub cpu_encode_ms: f64,
     pub cpu_shadow_encode_ms: f64,
@@ -74,6 +77,24 @@ pub struct FrameMetrics {
     pub particle_lights: u32,
     pub particle_lights_dropped: u32,
     pub branch_segments_dropped: u32,
+}
+
+#[derive(Default, Clone, Serialize)]
+pub struct ShadingCounters {
+    pub fire_primitive_candidates: u32,
+    pub fire_bounds_tests: u32,
+    pub fire_ellipsoid_tests: u32,
+    pub smoke_lobe_candidates: u32,
+    pub smoke_parent_bounds_tests: u32,
+    pub smoke_bubble_intersection_tests: u32,
+    pub smoke_density_samples: u32,
+    pub direct_absorption_samples: u32,
+    pub cached_absorption_samples: u32,
+    pub sun_shadow_lookups: u32,
+    pub fire_shadow_lookups: u32,
+    pub point_light_candidates: u32,
+    pub particle_light_candidates: u32,
+    pub camera_to_flame_absorption_samples: u32,
 }
 
 impl FrameMetrics {

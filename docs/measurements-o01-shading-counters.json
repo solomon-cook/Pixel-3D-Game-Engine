@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "purpose": "First fixed-tick validation of opt-in volumetric shader operation counters. Counts are not timings.",
+  "host": {
+    "adapter": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "capture": {
+    "scene": "assets/scenes/clearing.json",
+    "seed": 42,
+    "tick": 120,
+    "seconds": 2.0,
+    "camera": "hero",
+    "resolution": [640, 360],
+    "scale": 1,
+    "normal_pixel_sha256": "382f7635da050f215f87208b4f7efdddbc16b7cf8ae78fe162684d82c96246f1",
+    "diagnostic_pixel_sha256": "382f7635da050f215f87208b4f7efdddbc16b7cf8ae78fe162684d82c96246f1",
+    "pixel_identical": true
+  },
+  "counters": {
+    "fire_primitive_candidates": 82097,
+    "fire_bounds_tests": 82097,
+    "fire_ellipsoid_tests": 10102,
+    "smoke_lobe_candidates": 50432,
+    "smoke_parent_bounds_tests": 50432,
+    "smoke_bubble_intersection_tests": 48796,
+    "smoke_density_samples": 51441,
+    "direct_absorption_samples": 33882,
+    "cached_absorption_samples": 0,
+    "sun_shadow_lookups": 0,
+    "fire_shadow_lookups": 3354,
+    "point_light_candidates": 3354,
+    "particle_light_candidates": 10921,
+    "camera_to_flame_absorption_samples": 0
+  },
+  "cache_capture": {
+    "same_scene_tick_camera_resolution": true,
+    "smoke_absorption_cache_enabled": true,
+    "cache_bytes": 4096,
+    "counters": {
+      "fire_primitive_candidates": 82097,
+      "fire_bounds_tests": 82097,
+      "fire_ellipsoid_tests": 10102,
+      "smoke_lobe_candidates": 50432,
+      "smoke_parent_bounds_tests": 50432,
+      "smoke_bubble_intersection_tests": 48796,
+      "smoke_density_samples": 31317,
+      "direct_absorption_samples": 13758,
+      "cached_absorption_samples": 3354,
+      "sun_shadow_lookups": 0,
+      "fire_shadow_lookups": 3354,
+      "point_light_candidates": 3354,
+      "particle_light_candidates": 10921,
+      "camera_to_flame_absorption_samples": 0
+    }
+  },
+  "scope": {
+    "counter_mechanism": "Relaxed GPU storage atomics, enabled only by --shading-counters for the volumetric pipeline.",
+    "timing_use": "Do not interpret GPU timestamps or frame timings from this instrumented capture; atomic contention perturbs runtime.",
+    "shadow_scope": "Shadow lookups count calls made by the instrumented volumetric shader only, not opaque-world shading or shadow-map rendering.",
+    "remaining": [
+      "Optical reflection/transmission interactions are not counted.",
+      "Opaque-world shader operations are not counted.",
+      "Continuous moving-route and cross-adapter counter validation remain open."
+    ]
+  }
+}

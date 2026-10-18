@@ -61,6 +61,9 @@ enum Command {
         /// Issue one draw per visible object instead of grouping compatible instances.
         #[arg(long)]
         disable_instancing: bool,
+        /// Run an opt-in instrumented volumetric shader and report GPU operation counters.
+        #[arg(long)]
+        shading_counters: bool,
         #[arg(long, default_value_t = 300)]
         tick: u32,
         #[arg(long, default_value = "artifacts/capture.png")]
@@ -209,6 +212,7 @@ fn start() -> Result<()> {
             force_tile_overflow,
             disable_object_culling,
             disable_instancing,
+            shading_counters,
             tick,
             output,
             scale,
@@ -223,6 +227,7 @@ fn start() -> Result<()> {
             session
                 .renderer
                 .set_geometry_rendering(!disable_object_culling, !disable_instancing);
+            session.renderer.set_shading_diagnostics(shading_counters);
             session.step(tick);
             let metadata = session.capture(&output, scale)?;
             println!(

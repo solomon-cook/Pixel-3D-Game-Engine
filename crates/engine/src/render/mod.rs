@@ -133,6 +133,7 @@ struct Pipelines {
     optical_overlay_alpha: wgpu::RenderPipeline,
     optical_overlay_alpha_baked: wgpu::RenderPipeline,
     volume: wgpu::RenderPipeline,
+    volume_diagnostic: wgpu::RenderPipeline,
     post: wgpu::RenderPipeline,
     post_alpha: wgpu::RenderPipeline,
     shadow: wgpu::RenderPipeline,
@@ -228,6 +229,8 @@ pub struct Renderer {
     smoke_volume_format: wgpu::TextureFormat,
     volume_groups: [wgpu::BindGroup; 2],
     volume_layout: wgpu::BindGroupLayout,
+    shading_diagnostic_buffer: wgpu::Buffer,
+    shading_diagnostics_enabled: bool,
     smoke_groups: [wgpu::BindGroup; 2],
     smoke_layout: wgpu::BindGroupLayout,
     post_groups: [wgpu::BindGroup; 2],
@@ -1311,7 +1314,16 @@ impl Renderer {
                         wgpu::TextureSampleType::Float { filterable: true },
                     ),
                 ),
+                binding(4, wgpu::ShaderStages::FRAGMENT, storage(false)),
             ],
+        });
+        let shading_diagnostic_buffer = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("opt-in shading diagnostic counters"),
+            size: 14 * 4,
+            usage: wgpu::BufferUsages::STORAGE
+                | wgpu::BufferUsages::COPY_SRC
+                | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
         });
         let volume_groups = std::array::from_fn(|i| {
             group(
@@ -1324,6 +1336,7 @@ impl Renderer {
                     wgpu::BindingResource::TextureView(
                         absorption_view.as_ref().unwrap_or(&smoke_views[i]),
                     ),
+                    shading_diagnostic_buffer.as_entire_binding(),
                 ],
             )
         });
@@ -1751,7 +1764,8 @@ impl Renderer {
             (scene.materials.len() as u64 + 1) * std::mem::size_of::<MaterialGpu>() as u64;
         let fixed_buffer_bytes = std::mem::size_of::<Globals>() as u64
             + std::mem::size_of::<FireFrame>() as u64
-            + 7 * 64;
+            + 7 * 64
+            + 14 * std::mem::size_of::<u32>() as u64;
         let format_support = [
             wgpu::TextureFormat::Rgba16Float,
             wgpu::TextureFormat::Rg16Float,
@@ -1815,6 +1829,7 @@ impl Renderer {
             "tile_stats_buffer_bytes":tile_stats_buffer_bytes,
             "tile_config_bytes":tile_config_bytes,
             "tile_stats_readback_bytes":tile_stats_readback_bytes,
+            "shading_diagnostic_counter_bytes":14 * std::mem::size_of::<u32>() as u64,
             "gpu_timestamp_staging_bytes":timing_staging_bytes,
             "gpu_timestamp_query_set_count":if timestamp { TIMING_SLOTS + COMPUTE_TIMING_SLOTS } else { 0 },
             "tile_count":tile_count,
@@ -1878,6 +1893,8 @@ impl Renderer {
             hdr_color_format,
             volume_groups,
             volume_layout,
+            shading_diagnostic_buffer,
+            shading_diagnostics_enabled: false,
             smoke_groups,
             smoke_layout,
             post_groups,
@@ -2110,6 +2127,31 @@ impl Renderer {
                 volume_source.replace("@group(2) @binding(8)", "@group(2) @binding(3)")
             ),
         );
+        let diagnostic_preamble = "@group(2) @binding(4) var<storage, read_write> shading_diag: array<atomic<u32>,14>; fn diag_add(i:u32) { atomicAdd(&shading_diag[i],1u); }";
+        let diagnostic_world = world
+            .replace("return textureSampleCompareLevel(sun_shadow,shadow_sampler,uv,q.z/q.w-0.0015);", "diag_add(9u); return textureSampleCompareLevel(sun_shadow,shadow_sampler,uv,q.z/q.w-0.0015);")
+            .replace("return textureSampleCompareLevel(point_shadow,shadow_sampler,d,depth-0.004);", "diag_add(10u); return textureSampleCompareLevel(point_shadow,shadow_sampler,d,depth-0.004);");
+        let diagnostic_fire = fire_source
+            .replace("if candidate>=candidate_count {break;}", "if candidate>=candidate_count {break;} diag_add(0u);")
+            .replace("if along+bound<0. || along-bound>limit || length(ro+direction*max(along,0.))>bound {continue;}", "diag_add(1u); if along+bound<0. || along-bound>limit || length(ro+direction*max(along,0.))>bound {continue;}")
+            .replace("let discriminant=qb*qb-qa*qc;", "diag_add(2u); let discriminant=qb*qb-qa*qc;");
+        let diagnostic_volume = volume_source
+            .replace("if candidate>=smoke_candidate_count {break;}", "if candidate>=smoke_candidate_count {break;} diag_add(3u);")
+            .replace("if along+bound<0. || along-bound>distance || length(origin+direction*max(along,0.)-parent)>bound {continue;}", "diag_add(4u); if along+bound<0. || along-bound>distance || length(origin+direction*max(along,0.)-parent)>bound {continue;}")
+            .replace("if bubble>child_count {break;}", "if bubble>child_count {break;} diag_add(5u);")
+            .replace("let sample=textureSampleLevel(smoke,volume_sampler,volume_uv,0.);", "diag_add(6u); let sample=textureSampleLevel(smoke,volume_sampler,volume_uv,0.);")
+            .replace("let field=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x;", "diag_add(6u); let field=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x;")
+            .replace("let heat=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).y;", "diag_add(6u); let heat=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).y;")
+            .replace("optical+=textureSampleLevel(smoke,volume_sampler,q,0.).x*0.25;", "diag_add(6u); optical+=textureSampleLevel(smoke,volume_sampler,q,0.).x*0.25;")
+            .replace("absorption+=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x*span/6.*2.6;", "diag_add(6u); diag_add(13u); absorption+=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x*span/6.*2.6;")
+            .replace("let optical_depth=textureSampleLevel(smoke_absorption,volume_sampler,surface_uv,0.).x;", "diag_add(8u); let optical_depth=textureSampleLevel(smoke_absorption,volume_sampler,surface_uv,0.).x;")
+            .replace("optical_depth+=textureSampleLevel(smoke,volume_sampler,uv,0.).x*ds;", "diag_add(6u); diag_add(7u); optical_depth+=textureSampleLevel(smoke,volume_sampler,uv,0.).x*ds;")
+            .replace("for(var candidate=0u;candidate<8u;candidate++) {if candidate>=point_count {break;}", "for(var candidate=0u;candidate<8u;candidate++) {if candidate>=point_count {break;} diag_add(11u);")
+            .replace("for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;}", "for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;} diag_add(12u);");
+        let diagnostic_volume_module = shader(device, "instrumented volumetrics", format!(
+            "{common}\n{tile_common}\n{tile_group3}\n{diagnostic_preamble}\n{diagnostic_world}\n{diagnostic_fire}\n{}",
+            diagnostic_volume.replace("@group(2) @binding(8)", "@group(2) @binding(3)")
+        ));
         let tile_build_module = shader(
             device,
             "effect tile-list builder",
@@ -2149,6 +2191,7 @@ impl Renderer {
         };
         let mesh_layout = layout(&[global, textures, tile_lists]);
         let volume_layout = layout(&[global, textures, volumes, tile_lists]);
+        let diagnostic_volume_layout = layout(&[global, textures, volumes, tile_lists]);
         let optical_layout = layout(&[global, textures, optical, optical_smoke]);
         let tile_build_pipeline_layout = layout(&[global, tile_build]);
         let post_layout = layout(&[global, post]);
@@ -2324,6 +2367,23 @@ impl Renderer {
             false,
             false,
         );
+        let volume_diagnostic = render(
+            "volumetrics with operation counters",
+            &diagnostic_volume_module,
+            &diagnostic_volume_layout,
+            "fullscreen",
+            Some("volume_fs"),
+            &[
+                color_target(
+                    hdr_color_format,
+                    Some(wgpu::BlendState::PREMULTIPLIED_ALPHA_BLENDING),
+                ),
+                color_target(effect_depth_format, None),
+            ],
+            false,
+            false,
+            false,
+        );
         let post = render(
             "pixel treatment",
             &post_module,
@@ -2427,6 +2487,7 @@ impl Renderer {
             optical_overlay_alpha,
             optical_overlay_alpha_baked,
             volume,
+            volume_diagnostic,
             post,
             post_alpha,
             shadow,
@@ -2591,6 +2652,11 @@ impl Renderer {
         };
         self.queue
             .write_buffer(&self.tile_config_buffer, 0, bytemuck::bytes_of(&config));
+    }
+
+    pub fn set_shading_diagnostics(&mut self, enabled: bool) {
+        self.shading_diagnostics_enabled = enabled;
+        self.metrics.shading_counters = None;
     }
 
     fn update_shadow_matrices(&mut self, scene: &Scene, dirty_faces: [bool; 7]) {
@@ -3102,6 +3168,7 @@ impl Renderer {
                         wgpu::BindingResource::TextureView(&smoke_views[i]),
                         wgpu::BindingResource::Sampler(&self.optical_sampler),
                         wgpu::BindingResource::TextureView(&view),
+                        self.shading_diagnostic_buffer.as_entire_binding(),
                     ],
                 )
             });
@@ -3163,6 +3230,7 @@ impl Renderer {
                         wgpu::BindingResource::Sampler(&self.optical_sampler),
                         // This slot is unused by direct sampling; bind an existing volume.
                         wgpu::BindingResource::TextureView(&smoke_views[i]),
+                        self.shading_diagnostic_buffer.as_entire_binding(),
                     ],
                 )
             });
@@ -3220,6 +3288,11 @@ impl Renderer {
 
     pub fn render(&mut self, scene: &Scene, camera: &Camera, tick: u64, seed: u32) {
         self.poll_timing(false);
+        if self.shading_diagnostics_enabled {
+            self.queue
+                .write_buffer(&self.shading_diagnostic_buffer, 0, &[0; 14 * 4]);
+            self.metrics.shading_counters = None;
+        }
         self.ensure_absorption_cache(scene.render.experiments.smoke_absorption_cache);
         let started = Instant::now();
         if self.material_cache != scene.materials {
@@ -3674,7 +3747,11 @@ impl Renderer {
                 }),
                 occlusion_query_set: None,
             });
-            pass.set_pipeline(&self.pipelines.volume);
+            pass.set_pipeline(if self.shading_diagnostics_enabled {
+                &self.pipelines.volume_diagnostic
+            } else {
+                &self.pipelines.volume
+            });
             pass.set_bind_group(0, &self.globals, &[]);
             pass.set_bind_group(1, &self.textures, &[]);
             pass.set_bind_group(2, &self.volume_groups[self.smoke_index], &[]);
@@ -3908,6 +3985,17 @@ impl Renderer {
             mapped_at_creation: false,
         });
         let mut encoder = self.device.create_command_encoder(&Default::default());
+        let diagnostic_read = self.shading_diagnostics_enabled.then(|| {
+            self.device.create_buffer(&wgpu::BufferDescriptor {
+                label: Some("shading counter readback"),
+                size: 14 * 4,
+                usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
+                mapped_at_creation: false,
+            })
+        });
+        if let Some(read) = &diagnostic_read {
+            encoder.copy_buffer_to_buffer(&self.shading_diagnostic_buffer, 0, read, 0, 14 * 4);
+        }
         encoder.copy_texture_to_buffer(
             wgpu::TexelCopyTextureInfo {
                 texture: &self.pixel_texture,
@@ -3938,6 +4026,35 @@ impl Renderer {
             });
         self.device.poll(wgpu::Maintain::Wait);
         receive.recv()??;
+        if let Some(read) = &diagnostic_read {
+            let (send, receive) = mpsc::channel();
+            read.slice(..)
+                .map_async(wgpu::MapMode::Read, move |result| {
+                    let _ = send.send(result);
+                });
+            self.device.poll(wgpu::Maintain::Wait);
+            receive.recv()??;
+            let bytes = read.slice(..).get_mapped_range();
+            let c = |i: usize| u32::from_le_bytes(bytes[i * 4..i * 4 + 4].try_into().unwrap());
+            self.metrics.shading_counters = Some(crate::diagnostics::ShadingCounters {
+                fire_primitive_candidates: c(0),
+                fire_bounds_tests: c(1),
+                fire_ellipsoid_tests: c(2),
+                smoke_lobe_candidates: c(3),
+                smoke_parent_bounds_tests: c(4),
+                smoke_bubble_intersection_tests: c(5),
+                smoke_density_samples: c(6),
+                direct_absorption_samples: c(7),
+                cached_absorption_samples: c(8),
+                sun_shadow_lookups: c(9),
+                fire_shadow_lookups: c(10),
+                point_light_candidates: c(11),
+                particle_light_candidates: c(12),
+                camera_to_flame_absorption_samples: c(13),
+            });
+            drop(bytes);
+            read.unmap();
+        }
         self.poll_tile_stats();
         let mapped = buffer.slice(..).get_mapped_range();
         let mut rgba = Vec::with_capacity((w * h * 4) as usize);

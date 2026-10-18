@@ -41,6 +41,7 @@ Choose named perspective or orthographic views in the inspector.
 cargo run --release -p engine-lab -- validate
 cargo run --release -p engine-lab -- describe
 cargo run --release -p engine-lab -- capture --camera hero --tick 300 --output artifacts/hero.png
+cargo run --release -p engine-lab -- capture --tick 300 --shading-counters --output artifacts/shading-counters.png
 cargo run --release -p engine-lab -- capture --scene assets/scenes/materials.json --camera metal-close --compact-hdr --output artifacts/metal-compact-hdr.png
 cargo run --release -p engine-lab -- benchmark --duration 120 --warmup 10
 cargo run --release -p engine-lab -- benchmark-native --duration 120 --warmup 10
@@ -100,6 +101,12 @@ untimed overhead comparisons. `benchmark-native` records actual surface acquisit
 present and vsync spans in a native window. `assets/scenes/profiling-heavy.json`
 provides the single-plume, eight-point-light workload; it keeps the chosen 640×360
 grid and clearing route.
+
+`capture --shading-counters` selects a separate instrumented volumetric shader
+for one fixed-tick capture and writes executed fire, smoke, absorption, light
+candidate and volumetric shadow lookup counts into the JSON sidecar. Atomic
+counters perturb the diagnostic capture and are not performance timings. They do
+not yet count opaque-world or optical-pass work.
 
 `--compact-hdr` opts into an `Rg11b10Ufloat` HDR color target when the active adapter
 supports filtered sampling, render targets, copies and the required render feature.

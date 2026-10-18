@@ -238,16 +238,21 @@ ms. This rules out active-region solver work as the next step. O03/O04/O06 probe
 show sensitivity to candidate work, retained primitives and optical reuse, but do
 not isolate exact per-pixel operation costs.
 
-Still open: GPU counters for primitive intersection tests, smoke-lobe tests,
-executed density/absorption samples, shadow comparisons and optical ray samples.
-The current report preserves these as explicit measurement gaps; it does not claim
-that their individual costs have been measured.
+**Counter implementation partial:** `engine-lab capture --shading-counters` now
+selects an isolated instrumented volumetric pipeline and serializes fire primitive,
+smoke lobe/bubble, density/absorption, light-candidate and volumetric shadow
+lookup counts. The baseline pipeline produces byte-identical pixels at the same
+fixed tick. A first M1 Max/Metal capture is recorded in
+[measurements-o01-shading-counters.json](measurements-o01-shading-counters.json).
+Atomic counter captures are diagnostic only; their timings are not comparable.
+Opaque-world shader operations and optical reflection/transmission interactions
+remain uninstrumented, as do motion-route and other-adapter checks.
 
 Use O01 stage data to split the multi-millisecond atmosphere/fire work by candidate
 category and representative coverage. O01 shows smoke advection near 0.02 ms on the
 measured M1 Max scene, so do not pursue active-region solver work without new data.
-Instrument and compare primitive tests, smoke-lobe tests, density/absorption samples,
-shadow lookups and optical interactions. Use O03 lists and O04 detail as independent
+Complete counters for opaque-world and optical interactions, then compare
+instrumented and uninstrumented costs. Use O03 lists and O04 detail as independent
 switches to identify which operations dominate. Keep fixed pixel density and capture
 matched close, distant and crowded views.
 
