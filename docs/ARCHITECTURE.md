@@ -71,10 +71,10 @@ inside every pixel. This remains a one-emitter prototype, with explicit budgets
 and counters rather than a claim of arbitrary source scalability.
 The bounded two-emitter proposal and its runtime/memory acceptance gates are in
 [MULTI_EMITTER_PLAN.md](MULTI_EMITTER_PLAN.md). Per-emitter smoke simulation
-resources, configuration and dispatch are implemented and GPU-verified for the
-current one-emitter scene. Scene validation still accepts one emitter, and
-rendering consumes only the primary source; this is groundwork, not a complete
-multi-emitter runtime.
+resources, configuration and dispatch plus soft-atmosphere/optical sampling are
+implemented. Scene validation still accepts one emitter, and inked smoke, heat,
+absorption cache, shadows and visual acceptance remain single-source; this is
+groundwork, not a complete multi-emitter runtime.
 
 Smoke density and heat advect together but dissipate/cool independently. Source
 heat and light flicker follow the same slow fire envelope. Profile switching

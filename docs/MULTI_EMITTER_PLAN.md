@@ -9,16 +9,16 @@ into a testable two-source runtime without changing the single-source baseline.
 ## Current boundary
 
 - Scene validation requires exactly one emitter. `shadow_matrices`, post heat
-  shimmer and smoke/fire shading still use one source position/profile. Smoke
-  compute now accepts per-emitter domains/settings, but the multi-source branch
-  is unreachable while validation remains single-source.
+  shimmer and inked smoke still use one source position/profile. Per-emitter
+  smoke simulation is implemented; the soft atmosphere/optical secondary-source
+  branch is prepared but unreachable while validation remains single-source.
 - `FireFrame` owns one 256-primitive pool and at most 12 derived particle lights.
   O03 builds one emitter's tile candidates; overflow correctly falls back to
   exhaustive evaluation, but there is no multi-source stress evidence.
 - The CPU storage packer now merges sampled source candidates into the shared
   12-light budget by descending power, then stable emitter ID and event identity.
   It stores the selected lights in source zero's shared-light slot and reports
-  local plus global drops. The live renderer still runs only the one-source path.
+  local plus global drops. The live scene contract still runs only the one-source path.
 - The GPU fire-storage ABI now reserves two contiguous `FireFrame` slots. A
   fixed-tick M1 Max/Metal
   comparison is byte-identical to the prior single-frame ABI; the known
@@ -53,16 +53,17 @@ into a testable two-source runtime without changing the single-source baseline.
   rebuilds/uploads when source state or a source's detail tier changes. Current
   scene validation still requires one emitter, so this upload branch is not
   reachable from a live scene. It has not been validated with two frames on the
-  GPU; smoke, shadows, and non-flame lighting remain single-source. The existing
+  GPU; shadows and opaque/heat lighting remain single-source. The existing
   single-source profiling-heavy fixed-tick RGBA capture remains byte-identical
   on M1 Max/Metal (SHA-256 `9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48`).
 - Smoke compute now allocates a separate ping-pong density/temperature pair and
   source-config uniform per emitter, sorts those slots by stable ID, and dispatches
   one advection pass per source. Bounds, buoyancy, dissipation, density and thermal
   settings are source-local; reset clears every allocated source volume. Scene
-  validation still allows one emitter, and atmosphere, heat, optical and
-  absorption-cache shading still sample source zero only. There is no two-source
-  GPU capture or performance result yet. The current single-source RGBA capture
+  validation still allows one emitter. The soft atmosphere/optical shader has
+  secondary-volume sampling, while inked smoke, heat and absorption-cache shading
+  still use source zero. There is no two-source GPU capture or performance result
+  yet. The current single-source RGBA capture
   remains pixel-identical, with the 80-byte source config reflected in the known
   fixed-buffer inventory; see [smoke compute evidence](measurements-multi-emitter-smoke-compute.json).
 - The soft atmosphere integral now binds and samples a second source-local smoke
@@ -91,8 +92,9 @@ pair. The CPU sampler in `crates/engine/src/effects.rs` now rejects more than tw
 sources and duplicate IDs, derives event seeds from the user seed plus a stable
 FNV-1a hash of the emitter ID, and sorts source processing by stable ID. Tests
 confirm replay, array-reorder invariance, event identity stability and independence
-when one source changes. Renderer cache ownership, per-source smoke and offscreen
-simulation remain unimplemented.
+when one source changes. Renderer-owned per-source smoke resources, reset,
+dispatch and offscreen simulation are implemented; live two-source scene
+acceptance and rendering remain incomplete.
 
 Use a fixed per-source smoke domain around each emitter so distant sources do not
 shrink the existing 48×64×48 resolution. Each source gets its own thermal output,
