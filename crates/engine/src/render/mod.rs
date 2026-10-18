@@ -2227,7 +2227,7 @@ impl Renderer {
         };
         renderer.reset_smoke();
         renderer.shadow_invalidation_reason = Some("resource_initialization");
-        renderer.update_globals(scene, &scene.cameras[0], 0, 42, 0);
+        renderer.update_globals(scene, &scene.cameras[0], 0, 42, None);
         Ok(renderer)
     }
 
@@ -3267,7 +3267,7 @@ impl Renderer {
         camera: &Camera,
         tick: u64,
         seed: u32,
-        smoke_config_slot: usize,
+        smoke_config_slot: Option<usize>,
     ) {
         let sun = scene
             .lights
@@ -3508,59 +3508,71 @@ impl Renderer {
         } else {
             self.fire_frame.bounds_min[3]
         };
-        let mut smoke_emitters = [emitter, emitter];
-        let smoke_emitter_count = if multi_emitter {
-            smoke_emitters[0] = &scene.emitters[0];
-            smoke_emitters[1] = &scene.emitters[1];
-            smoke_emitters.sort_by(|left, right| left.id.cmp(&right.id));
-            2
-        } else {
-            1
-        };
-        let smoke_config_upload_started = Instant::now();
-        for (slot, source) in smoke_emitters[..smoke_emitter_count].iter().enumerate() {
-            let source_profile = scene
-                .effects
-                .iter()
-                .find(|candidate| candidate.id == source.effect_profile)
-                .expect("validated emitter profile exists");
-            let source_power = if multi_emitter {
-                let frame_slot = self
-                    .multi_fire_keys
-                    .iter()
-                    .position(|(id, _)| id == &source.id)
-                    .expect("emitter is present in the sorted fire source set");
-                self.fire_storage.sources[frame_slot].bounds_min[3]
+        if let Some(config_slot) = smoke_config_slot {
+            let mut smoke_emitters = [emitter, emitter];
+            let smoke_emitter_count = if multi_emitter {
+                smoke_emitters[0] = &scene.emitters[0];
+                smoke_emitters[1] = &scene.emitters[1];
+                smoke_emitters.sort_by(|left, right| left.id.cmp(&right.id));
+                2
             } else {
-                power
+                1
             };
-            let source_origin = Vec3::from(source.position);
-            let source_enabled = if source.enabled { source.intensity } else { 0. };
-            let config = SmokeSimulationConfig {
-                volume_min: vec4((source_origin + Vec3::new(-3., -0.6, -3.)).into(), 0.),
-                volume_max: vec4((source_origin + Vec3::new(3., 7.4, 3.)).into(), 0.),
-                fire_position: vec4(source.position, source_profile.fire.width),
-                simulation: [
-                    source.buoyancy,
-                    source.dissipation,
-                    source.smoke_density,
-                    source_enabled,
-                ],
-                thermal: [
-                    source_profile.thermal.heat_output,
-                    source_profile.thermal.cooling_rate,
-                    source_profile.thermal.lift,
-                    source_power,
-                ],
-                wind_time: vec4(wind, tick as f32 * simulation::FIXED_DT),
-            };
-            self.queue.write_buffer(
-                &self.smoke_source_buffers[slot],
-                SMOKE_CONFIG_STRIDE * smoke_config_slot as u64,
-                bytemuck::bytes_of(&config),
-            );
+            let smoke_config_upload_started = Instant::now();
+            for (slot, source) in smoke_emitters[..smoke_emitter_count].iter().enumerate() {
+                let source_profile = scene
+                    .effects
+                    .iter()
+                    .find(|candidate| candidate.id == source.effect_profile)
+                    .expect("validated emitter profile exists");
+                let source_power = if multi_emitter {
+                    let frame_slot = self
+                        .multi_fire_keys
+                        .iter()
+                        .position(|(id, _)| id == &source.id)
+                        .expect("emitter is present in the sorted fire source set");
+                    self.fire_storage.sources[frame_slot].bounds_min[3]
+                } else {
+                    power
+                };
+                let source_origin = Vec3::from(source.position);
+                let source_enabled = if source.enabled { source.intensity } else { 0. };
+                let config = SmokeSimulationConfig {
+                    volume_min: vec4((source_origin + Vec3::new(-3., -0.6, -3.)).into(), 0.),
+                    volume_max: vec4((source_origin + Vec3::new(3., 7.4, 3.)).into(), 0.),
+                    fire_position: vec4(source.position, source_profile.fire.width),
+                    simulation: [
+                        source.buoyancy,
+                        source.dissipation,
+                        source.smoke_density,
+                        source_enabled,
+                    ],
+                    thermal: [
+                        source_profile.thermal.heat_output,
+                        source_profile.thermal.cooling_rate,
+                        source_profile.thermal.lift,
+                        source_power,
+                    ],
+                    wind_time: vec4(wind, tick as f32 * simulation::FIXED_DT),
+                };
+                let bytes = bytemuck::bytes_of(&config);
+                self.queue.write_buffer(
+                    &self.smoke_source_buffers[slot],
+                    SMOKE_CONFIG_STRIDE * config_slot as u64,
+                    bytes,
+                );
+                self.metrics.smoke_config_uploads_this_frame = self
+                    .metrics
+                    .smoke_config_uploads_this_frame
+                    .saturating_add(1);
+                self.metrics.smoke_config_upload_bytes_this_frame = self
+                    .metrics
+                    .smoke_config_upload_bytes_this_frame
+                    .saturating_add(bytes.len() as u64);
+            }
+            self.metrics.cpu_upload_ms +=
+                smoke_config_upload_started.elapsed().as_secs_f64() * 1000.;
         }
-        self.metrics.cpu_upload_ms += smoke_config_upload_started.elapsed().as_secs_f64() * 1000.;
         let mut point_lights = [PointLightGpu::zeroed(); 8];
         let mut primary_lights = scene.emitters.iter().collect::<Vec<_>>();
         primary_lights.sort_by(|left, right| left.id.cmp(&right.id));
@@ -3814,7 +3826,7 @@ impl Renderer {
         }
         let mut encoder = self.device.create_command_encoder(&Default::default());
         for (batch_index, (&tick, compute_slot)) in ticks.iter().zip(&used_slots).enumerate() {
-            self.update_globals(scene, camera, tick, seed, batch_index);
+            self.update_globals(scene, camera, tick, seed, Some(batch_index));
             let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
                 label: Some("smoke simulation"),
                 timestamp_writes: compute_slot.map(|index| wgpu::ComputePassTimestampWrites {
@@ -4204,7 +4216,7 @@ impl Renderer {
             self.metrics.cpu_upload_ms += upload_started.elapsed().as_secs_f64() * 1000.;
             self.material_cache.clone_from(&scene.materials);
         }
-        self.update_globals(scene, camera, tick, seed, 0);
+        self.update_globals(scene, camera, tick, seed, None);
         let timing_slot = self.timing.as_mut().and_then(|timing| {
             let count = timing.slots.len();
             let index = (0..count)

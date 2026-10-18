@@ -1,0 +1,805 @@
+{
+  "version": 1,
+  "date": "2026-10-18",
+  "workstream": "O08 dirty simulation-config uploads",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "resolution": [
+      640,
+      360
+    ]
+  },
+  "scene": {
+    "path": "assets/scenes/clearing.json",
+    "sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+    "route": "clearing-orbit",
+    "seed": 42
+  },
+  "source": {
+    "baseline_commit": "666747b586358dccdcd1a87e6656972779dccb87",
+    "candidate_commit": "666747b586358dccdcd1a87e6656972779dccb87 plus working-tree implementation",
+    "candidate_runtime_diff_sha256": "2b5651f769a05083c7e3ad9f4deb451862e2b03decc63425f6792748a68c13b3",
+    "baseline_binary_sha256": "8bdaebe90f9e6bddbb85f9c023d5af86f787c48bfdd3a05e7d3e28c2792d5a21",
+    "candidate_binary_sha256": "c71df36f73e4068bdfb77bed454a11ce8dbd3968f077e5d4606626ce5e9c36d0",
+    "runner": "scripts/profile_compare.py",
+    "runner_sha256": "9a196bf815cf7706839bb8bdd66931ed7f56819357a64255acf68d6d822a1c40"
+  },
+  "method": {
+    "route_seconds": 120,
+    "warmup_seconds": 10,
+    "pairs": 3,
+    "sample_hz": 60,
+    "frames_per_run": 7200,
+    "mode": "serial",
+    "timing_controls": "three alternating pairs with GPU timestamps; repeated three pairs with timing disabled to characterize query overhead",
+    "baseline_and_candidate_scene": "same scene file and route; baseline executable from the stated commit, candidate executable built from the stated working-tree diff"
+  },
+  "fixed_tick_parity": {
+    "tick": 120,
+    "clearing_hero": {
+      "baseline_sha256": "9ef9d7b40b22b1e68cb40ed46a4a87f0f5a5189e19e9bac4c2c04dcf23021d52",
+      "candidate_sha256": "9ef9d7b40b22b1e68cb40ed46a4a87f0f5a5189e19e9bac4c2c04dcf23021d52",
+      "identical": true
+    },
+    "two_emitter_dual_wide": {
+      "scene": "assets/scenes/two-emitter-review.json",
+      "baseline_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+      "candidate_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+      "identical": true
+    }
+  },
+  "upload_accounting": {
+    "before": "Each simulated tick uploads the per-emitter config used by compute, then render refreshed the same config slot again even though render passes do not consume it.",
+    "after": "Only simulate_batch writes the slot bound for each compute dispatch; render-only update_globals does not touch simulation config buffers.",
+    "candidate_measured_per_one_tick_sample": {
+      "uploads_per_frame": [
+        1
+      ],
+      "payload_bytes_per_frame": [
+        96
+      ]
+    },
+    "candidate_120_second_route": {
+      "uploads": 7200,
+      "payload_bytes": 691200
+    },
+    "dual_emitter_fixed_tick_120": {
+      "uploads": 240,
+      "payload_bytes": 23040
+    }
+  },
+  "three_pair_results": {
+    "gpu_timing_enabled": {
+      "run_order": [
+        {
+          "pair": 1,
+          "variant": "baseline",
+          "run_id": "pair-01-baseline"
+        },
+        {
+          "pair": 1,
+          "variant": "candidate",
+          "run_id": "pair-01-candidate"
+        },
+        {
+          "pair": 2,
+          "variant": "candidate",
+          "run_id": "pair-02-candidate"
+        },
+        {
+          "pair": 2,
+          "variant": "baseline",
+          "run_id": "pair-02-baseline"
+        },
+        {
+          "pair": 3,
+          "variant": "baseline",
+          "run_id": "pair-03-baseline"
+        },
+        {
+          "pair": 3,
+          "variant": "candidate",
+          "run_id": "pair-03-candidate"
+        }
+      ],
+      "runs": {
+        "baseline": [
+          {
+            "run_id": "pair-01-baseline",
+            "frame_work_median_ms": 4.027125000000001,
+            "frame_work_p95_ms": 7.438917,
+            "cpu_upload_median_ms": 0.197333,
+            "cpu_upload_p95_ms": 0.6837489999999999,
+            "gpu_render_median_ms": 2.7072909999999997,
+            "gpu_render_p95_ms": 3.30225,
+            "rendered_samples": 7200,
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          },
+          {
+            "run_id": "pair-02-baseline",
+            "frame_work_median_ms": 4.01975,
+            "frame_work_p95_ms": 7.324458,
+            "cpu_upload_median_ms": 0.197124,
+            "cpu_upload_p95_ms": 0.680251,
+            "gpu_render_median_ms": 2.709167,
+            "gpu_render_p95_ms": 3.310584,
+            "rendered_samples": 7200,
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          },
+          {
+            "run_id": "pair-03-baseline",
+            "frame_work_median_ms": 4.001709,
+            "frame_work_p95_ms": 7.50725,
+            "cpu_upload_median_ms": 0.195874,
+            "cpu_upload_p95_ms": 0.660874,
+            "gpu_render_median_ms": 2.709875,
+            "gpu_render_p95_ms": 3.597791,
+            "rendered_samples": 7200,
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          }
+        ],
+        "candidate": [
+          {
+            "run_id": "pair-01-candidate",
+            "frame_work_median_ms": 3.9491250000000004,
+            "frame_work_p95_ms": 7.603917,
+            "cpu_upload_median_ms": 0.18537399999999998,
+            "cpu_upload_p95_ms": 0.6777090000000001,
+            "gpu_render_median_ms": 2.7070419999999995,
+            "gpu_render_p95_ms": 3.409416,
+            "rendered_samples": 7200,
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          },
+          {
+            "run_id": "pair-02-candidate",
+            "frame_work_median_ms": 4.008292,
+            "frame_work_p95_ms": 7.7053329999999995,
+            "cpu_upload_median_ms": 0.190041,
+            "cpu_upload_p95_ms": 0.7103320000000001,
+            "gpu_render_median_ms": 2.716375,
+            "gpu_render_p95_ms": 3.507001,
+            "rendered_samples": 7200,
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          },
+          {
+            "run_id": "pair-03-candidate",
+            "frame_work_median_ms": 4.016208000000001,
+            "frame_work_p95_ms": 7.7656670000000005,
+            "cpu_upload_median_ms": 0.188458,
+            "cpu_upload_p95_ms": 0.665166,
+            "gpu_render_median_ms": 2.709459,
+            "gpu_render_p95_ms": 3.358542,
+            "rendered_samples": 7200,
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          }
+        ]
+      },
+      "candidate_upload_counts": {
+        "unique_per_sample": [
+          1
+        ],
+        "unique_payload_bytes_per_sample": [
+          96
+        ],
+        "total_uploads": 21600,
+        "total_payload_bytes": 2073600,
+        "samples": 21600
+      },
+      "paired_deltas": {
+        "frame_work_median_ms": {
+          "baseline": [
+            4.027125000000001,
+            4.01975,
+            4.001709
+          ],
+          "candidate": [
+            3.9491250000000004,
+            4.008292,
+            4.016208000000001
+          ],
+          "candidate_minus_baseline": [
+            -0.07800000000000029,
+            -0.01145800000000019,
+            0.014499000000000706
+          ]
+        },
+        "frame_work_p95_ms": {
+          "baseline": [
+            7.438917,
+            7.324458,
+            7.50725
+          ],
+          "candidate": [
+            7.603917,
+            7.7053329999999995,
+            7.7656670000000005
+          ],
+          "candidate_minus_baseline": [
+            0.16500000000000004,
+            0.38087499999999963,
+            0.25841700000000056
+          ]
+        },
+        "cpu_upload_median_ms": {
+          "baseline": [
+            0.197333,
+            0.197124,
+            0.195874
+          ],
+          "candidate": [
+            0.18537399999999998,
+            0.190041,
+            0.188458
+          ],
+          "candidate_minus_baseline": [
+            -0.011959000000000025,
+            -0.007083000000000006,
+            -0.007416000000000006
+          ]
+        },
+        "cpu_upload_p95_ms": {
+          "baseline": [
+            0.6837489999999999,
+            0.680251,
+            0.660874
+          ],
+          "candidate": [
+            0.6777090000000001,
+            0.7103320000000001,
+            0.665166
+          ],
+          "candidate_minus_baseline": [
+            -0.006039999999999823,
+            0.030081000000000024,
+            0.0042920000000000735
+          ]
+        },
+        "gpu_render_median_ms": {
+          "baseline": [
+            2.7072909999999997,
+            2.709167,
+            2.709875
+          ],
+          "candidate": [
+            2.7070419999999995,
+            2.716375,
+            2.709459
+          ],
+          "candidate_minus_baseline": [
+            -0.00024900000000016576,
+            0.007208000000000325,
+            -0.00041599999999997195
+          ]
+        },
+        "gpu_render_p95_ms": {
+          "baseline": [
+            3.30225,
+            3.310584,
+            3.597791
+          ],
+          "candidate": [
+            3.409416,
+            3.507001,
+            3.358542
+          ],
+          "candidate_minus_baseline": [
+            0.10716599999999987,
+            0.19641699999999984,
+            -0.23924900000000004
+          ]
+        }
+      }
+    },
+    "gpu_timing_disabled": {
+      "run_order": [
+        {
+          "pair": 1,
+          "variant": "baseline",
+          "run_id": "pair-01-baseline"
+        },
+        {
+          "pair": 1,
+          "variant": "baseline",
+          "run_id": "pair-01-baseline-no-gpu-timing"
+        },
+        {
+          "pair": 1,
+          "variant": "candidate",
+          "run_id": "pair-01-candidate"
+        },
+        {
+          "pair": 1,
+          "variant": "candidate",
+          "run_id": "pair-01-candidate-no-gpu-timing"
+        },
+        {
+          "pair": 2,
+          "variant": "candidate",
+          "run_id": "pair-02-candidate"
+        },
+        {
+          "pair": 2,
+          "variant": "candidate",
+          "run_id": "pair-02-candidate-no-gpu-timing"
+        },
+        {
+          "pair": 2,
+          "variant": "baseline",
+          "run_id": "pair-02-baseline"
+        },
+        {
+          "pair": 2,
+          "variant": "baseline",
+          "run_id": "pair-02-baseline-no-gpu-timing"
+        },
+        {
+          "pair": 3,
+          "variant": "baseline",
+          "run_id": "pair-03-baseline"
+        },
+        {
+          "pair": 3,
+          "variant": "baseline",
+          "run_id": "pair-03-baseline-no-gpu-timing"
+        },
+        {
+          "pair": 3,
+          "variant": "candidate",
+          "run_id": "pair-03-candidate"
+        },
+        {
+          "pair": 3,
+          "variant": "candidate",
+          "run_id": "pair-03-candidate-no-gpu-timing"
+        }
+      ],
+      "runs": {
+        "baseline": [
+          {
+            "run_id": "pair-01-baseline",
+            "frame_work_median_ms": 4.018042,
+            "frame_work_p95_ms": 7.331708,
+            "cpu_upload_median_ms": 0.19749899999999998,
+            "cpu_upload_p95_ms": 0.6770829999999999,
+            "gpu_render_median_ms": 2.7053760000000002,
+            "gpu_render_p95_ms": 3.301291,
+            "rendered_samples": 7200,
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          },
+          {
+            "run_id": "pair-02-baseline",
+            "frame_work_median_ms": 3.9810419999999995,
+            "frame_work_p95_ms": 7.757292,
+            "cpu_upload_median_ms": 0.191334,
+            "cpu_upload_p95_ms": 0.7087920000000001,
+            "gpu_render_median_ms": 2.7039590000000002,
+            "gpu_render_p95_ms": 3.441625,
+            "rendered_samples": 7200,
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          },
+          {
+            "run_id": "pair-03-baseline",
+            "frame_work_median_ms": 3.994208,
+            "frame_work_p95_ms": 7.52075,
+            "cpu_upload_median_ms": 0.19312500000000002,
+            "cpu_upload_p95_ms": 0.655375,
+            "gpu_render_median_ms": 2.707583,
+            "gpu_render_p95_ms": 3.393374,
+            "rendered_samples": 7200,
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          }
+        ],
+        "candidate": [
+          {
+            "run_id": "pair-01-candidate",
+            "frame_work_median_ms": 3.9872500000000004,
+            "frame_work_p95_ms": 7.870042000000001,
+            "cpu_upload_median_ms": 0.1885,
+            "cpu_upload_p95_ms": 0.639999,
+            "gpu_render_median_ms": 2.712043,
+            "gpu_render_p95_ms": 3.368499,
+            "rendered_samples": 7200,
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          },
+          {
+            "run_id": "pair-02-candidate",
+            "frame_work_median_ms": 3.9430419999999997,
+            "frame_work_p95_ms": 7.16475,
+            "cpu_upload_median_ms": 0.17983100000000002,
+            "cpu_upload_p95_ms": 0.563126,
+            "gpu_render_median_ms": 2.70625,
+            "gpu_render_p95_ms": 3.3177909999999997,
+            "rendered_samples": 7200,
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          },
+          {
+            "run_id": "pair-03-candidate",
+            "frame_work_median_ms": 3.976917,
+            "frame_work_p95_ms": 7.343,
+            "cpu_upload_median_ms": 0.18483300000000003,
+            "cpu_upload_p95_ms": 0.603375,
+            "gpu_render_median_ms": 2.70375,
+            "gpu_render_p95_ms": 3.4585419999999996,
+            "rendered_samples": 7200,
+            "timing_coverage": {
+              "gpu_timestamps_supported": true,
+              "gpu_timing_requested": true,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 7200,
+              "timed_frames": 7200,
+              "unavailable_reason": null
+            }
+          }
+        ],
+        "baseline_without_gpu_timing": [
+          {
+            "run_id": "pair-01-baseline-no-gpu-timing",
+            "frame_work_median_ms": 4.089584,
+            "frame_work_p95_ms": 7.695917,
+            "cpu_upload_median_ms": 0.223958,
+            "cpu_upload_p95_ms": 0.821167,
+            "gpu_render_median_ms": null,
+            "gpu_render_p95_ms": null,
+            "rendered_samples": 7200,
+            "timing_coverage": {
+              "gpu_timestamps_supported": false,
+              "gpu_timing_requested": false,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 0,
+              "timed_frames": 0,
+              "unavailable_reason": "disabled by request"
+            }
+          },
+          {
+            "run_id": "pair-02-baseline-no-gpu-timing",
+            "frame_work_median_ms": 4.129167000000001,
+            "frame_work_p95_ms": 8.007792,
+            "cpu_upload_median_ms": 0.22341799999999998,
+            "cpu_upload_p95_ms": 0.832707,
+            "gpu_render_median_ms": null,
+            "gpu_render_p95_ms": null,
+            "rendered_samples": 7200,
+            "timing_coverage": {
+              "gpu_timestamps_supported": false,
+              "gpu_timing_requested": false,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 0,
+              "timed_frames": 0,
+              "unavailable_reason": "disabled by request"
+            }
+          },
+          {
+            "run_id": "pair-03-baseline-no-gpu-timing",
+            "frame_work_median_ms": 4.083458,
+            "frame_work_p95_ms": 7.9556249999999995,
+            "cpu_upload_median_ms": 0.22062500000000002,
+            "cpu_upload_p95_ms": 0.797375,
+            "gpu_render_median_ms": null,
+            "gpu_render_p95_ms": null,
+            "rendered_samples": 7200,
+            "timing_coverage": {
+              "gpu_timestamps_supported": false,
+              "gpu_timing_requested": false,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 0,
+              "timed_frames": 0,
+              "unavailable_reason": "disabled by request"
+            }
+          }
+        ],
+        "candidate_without_gpu_timing": [
+          {
+            "run_id": "pair-01-candidate-no-gpu-timing",
+            "frame_work_median_ms": 4.09775,
+            "frame_work_p95_ms": 7.794542,
+            "cpu_upload_median_ms": 0.216084,
+            "cpu_upload_p95_ms": 0.759625,
+            "gpu_render_median_ms": null,
+            "gpu_render_p95_ms": null,
+            "rendered_samples": 7200,
+            "timing_coverage": {
+              "gpu_timestamps_supported": false,
+              "gpu_timing_requested": false,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 0,
+              "timed_frames": 0,
+              "unavailable_reason": "disabled by request"
+            }
+          },
+          {
+            "run_id": "pair-02-candidate-no-gpu-timing",
+            "frame_work_median_ms": 4.083333,
+            "frame_work_p95_ms": 7.613875,
+            "cpu_upload_median_ms": 0.217625,
+            "cpu_upload_p95_ms": 0.753917,
+            "gpu_render_median_ms": null,
+            "gpu_render_p95_ms": null,
+            "rendered_samples": 7200,
+            "timing_coverage": {
+              "gpu_timestamps_supported": false,
+              "gpu_timing_requested": false,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 0,
+              "timed_frames": 0,
+              "unavailable_reason": "disabled by request"
+            }
+          },
+          {
+            "run_id": "pair-03-candidate-no-gpu-timing",
+            "frame_work_median_ms": 4.047416,
+            "frame_work_p95_ms": 7.713208,
+            "cpu_upload_median_ms": 0.20995999999999998,
+            "cpu_upload_p95_ms": 0.71875,
+            "gpu_render_median_ms": null,
+            "gpu_render_p95_ms": null,
+            "rendered_samples": 7200,
+            "timing_coverage": {
+              "gpu_timestamps_supported": false,
+              "gpu_timing_requested": false,
+              "late_samples": 0,
+              "rendered_frames": 7200,
+              "skipped_compute_samples": 0,
+              "skipped_samples": 0,
+              "smoke_compute_samples": 0,
+              "timed_frames": 0,
+              "unavailable_reason": "disabled by request"
+            }
+          }
+        ]
+      },
+      "candidate_upload_counts": {
+        "unique_per_sample": [
+          1
+        ],
+        "unique_payload_bytes_per_sample": [
+          96
+        ],
+        "total_uploads": 21600,
+        "total_payload_bytes": 2073600,
+        "samples": 21600
+      },
+      "paired_deltas": {
+        "frame_work_median_ms": {
+          "baseline": [
+            4.018042,
+            3.9810419999999995,
+            3.994208
+          ],
+          "candidate": [
+            3.9872500000000004,
+            3.9430419999999997,
+            3.976917
+          ],
+          "candidate_minus_baseline": [
+            -0.03079199999999993,
+            -0.03799999999999981,
+            -0.017291000000000167
+          ]
+        },
+        "frame_work_p95_ms": {
+          "baseline": [
+            7.331708,
+            7.757292,
+            7.52075
+          ],
+          "candidate": [
+            7.870042000000001,
+            7.16475,
+            7.343
+          ],
+          "candidate_minus_baseline": [
+            0.5383340000000008,
+            -0.5925419999999999,
+            -0.17774999999999963
+          ]
+        },
+        "cpu_upload_median_ms": {
+          "baseline": [
+            0.19749899999999998,
+            0.191334,
+            0.19312500000000002
+          ],
+          "candidate": [
+            0.1885,
+            0.17983100000000002,
+            0.18483300000000003
+          ],
+          "candidate_minus_baseline": [
+            -0.00899899999999998,
+            -0.011502999999999985,
+            -0.008291999999999994
+          ]
+        },
+        "cpu_upload_p95_ms": {
+          "baseline": [
+            0.6770829999999999,
+            0.7087920000000001,
+            0.655375
+          ],
+          "candidate": [
+            0.639999,
+            0.563126,
+            0.603375
+          ],
+          "candidate_minus_baseline": [
+            -0.037083999999999895,
+            -0.14566600000000007,
+            -0.052000000000000046
+          ]
+        },
+        "gpu_render_median_ms": {
+          "baseline": [
+            2.7053760000000002,
+            2.7039590000000002,
+            2.707583
+          ],
+          "candidate": [
+            2.712043,
+            2.70625,
+            2.70375
+          ],
+          "candidate_minus_baseline": [
+            0.0066669999999997565,
+            0.002290999999999599,
+            -0.0038330000000001974
+          ]
+        },
+        "gpu_render_p95_ms": {
+          "baseline": [
+            3.301291,
+            3.441625,
+            3.393374
+          ],
+          "candidate": [
+            3.368499,
+            3.3177909999999997,
+            3.4585419999999996
+          ],
+          "candidate_minus_baseline": [
+            0.06720799999999993,
+            -0.12383400000000044,
+            0.06516799999999945
+          ]
+        }
+      }
+    }
+  },
+  "decision": {
+    "keep": "Remove the redundant render-time upload. The candidate has exact fixed-tick image parity and consistently lower median CPU upload span. The bounded upload-count reduction is useful cleanup, independent of a broad speedup claim.",
+    "performance_claim": "No whole-frame throughput or FPS gain is claimed. Frame-work medians are slightly lower in both comparisons, but tail results vary; GPU-render medians are effectively flat."
+  },
+  "limitations": [
+    "Single M1 Max/Metal adapter.",
+    "The sustained timing route covers the single-emitter clearing scene; dual-emitter sustained upload timing and native-window measurement remain open.",
+    "Windows/DX12 and other-adapter validation remain open."
+  ]
+}

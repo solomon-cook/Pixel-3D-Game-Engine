@@ -350,6 +350,16 @@ metal-close seed-42 tick-300 image remained byte-identical to the saved referenc
 is frustum visibility, not full occlusion detection, and has only been exercised on
 M1 Max/Metal.
 
+The O08 simulation-config upload cleanup now skips the redundant render-time
+write while preserving the per-tick compute config. Three alternating 120-second
+clearing-orbit pairs show a stable 0.007–0.009 ms lower median CPU-upload span;
+whole-frame medians improve slightly, p95 results vary, and GPU-render medians
+remain flat. Tick-120 clearing and dual-emitter output match the prior build
+byte-for-byte. This removes one 96-byte write per active emitter per rendered
+frame without establishing a throughput or FPS gain. Dual-emitter sustained,
+native-window and cross-adapter gates remain open. See
+[the paired report](measurements-o08-smoke-config-upload.json).
+
 The experimental `Rg11b10Ufloat` HDR target reduces the primary color target and
 optical snapshot from 8 to 4 bytes per pixel when the adapter exposes the required
 feature/usages. Three fixed-tick M1 Max stills looked very similar on visual review,

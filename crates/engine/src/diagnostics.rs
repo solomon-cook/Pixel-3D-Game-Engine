@@ -48,6 +48,8 @@ pub struct FrameMetrics {
     pub absorption_cache_skips: u64,
     pub smoke_absorption_cache_enabled: bool,
     pub cpu_upload_ms: f64,
+    pub smoke_config_uploads_this_frame: u32,
+    pub smoke_config_upload_bytes_this_frame: u64,
     pub cpu_queue_submit_ms: f64,
     pub cpu_simulation_encode_ms: f64,
     pub cpu_simulation_submit_ms: f64,
@@ -139,6 +141,8 @@ impl FrameMetrics {
         self.shadow_dirty_faces.clear();
         self.cpu_steps_this_frame = 0;
         self.cpu_upload_ms = 0.;
+        self.smoke_config_uploads_this_frame = 0;
+        self.smoke_config_upload_bytes_this_frame = 0;
         self.cpu_queue_submit_ms = 0.;
         self.cpu_simulation_encode_ms = 0.;
         self.cpu_native_ui_ms = None;
@@ -181,6 +185,8 @@ mod tests {
             cpu_steps_this_frame: 3,
             cpu_simulation_submissions_this_frame: 2,
             cpu_simulation_submit_ms: 1.5,
+            smoke_config_uploads_this_frame: 4,
+            smoke_config_upload_bytes_this_frame: 384,
             gpu_samples_skipped: 2,
             ..Default::default()
         };
@@ -188,6 +194,8 @@ mod tests {
         assert_eq!(metrics.cpu_steps_this_frame, 0);
         assert_eq!(metrics.cpu_simulation_submissions_this_frame, 0);
         assert_eq!(metrics.cpu_simulation_submit_ms, 0.);
+        assert_eq!(metrics.smoke_config_uploads_this_frame, 0);
+        assert_eq!(metrics.smoke_config_upload_bytes_this_frame, 0);
         assert_eq!(metrics.gpu_samples_skipped, 2);
         let value = serde_json::to_value(metrics).unwrap();
         assert!(value.get("gpu_passes_ms").unwrap().is_object());

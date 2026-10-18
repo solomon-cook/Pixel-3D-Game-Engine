@@ -731,6 +731,17 @@ now counted. See `current_resource_inventory_refresh` in the measurement report.
 O08 layout/pass experiments and the later sparse-smoke gate
 remain open.
 
+**Simulation-config dirty upload (18 October 2026):** render-only global updates
+no longer rewrite the per-source smoke configuration ring; simulation dispatches
+remain the only writers. Three alternating 120-second clearing-orbit pairs on
+M1 Max/Metal lowered median CPU-upload time by 0.007 ms with GPU timestamps and
+0.009 ms without them. Median whole-frame work shifted by -0.011/-0.031 ms, while
+paired p95 results varied; GPU-render medians were effectively flat. Tick-120
+clearing and dual-emitter captures are byte-identical to the previous build. The
+change removes one 96-byte render-time write per active emitter per frame; no
+throughput or FPS gain is claimed. See
+[upload study](measurements-o08-smoke-config-upload.json).
+
 **O06×O08 factorial (18 October):** the eight combinations of direct/reused
 opaque lighting, copy/no-copy optical output and RGBA16F/packed HDR were captured
 on a high-dynamic mixed smoke/fire/reflector/glass workload; each of seven

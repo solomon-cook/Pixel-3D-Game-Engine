@@ -23,6 +23,13 @@ the optical overlay as independent opt-in experiments. Do not combine their
 individual deltas into a promoted default: the O06×O08 factorial is one high-output
 scene on one adapter, and its temporal and portability gates remain open.
 
+The per-emitter smoke configuration is now uploaded only for simulation
+dispatches; render-only global updates no longer rewrite the config ring. Exact
+tick-120 output parity and three alternating 120-second clearing-orbit pairs
+confirm the cleanup. Median CPU-upload time is lower by 0.007–0.009 ms, while
+whole-frame p95 varies and GPU-render time is flat, so this is not recorded as a
+throughput gain. See [the upload study](measurements-o08-smoke-config-upload.json).
+
 Evidence: [measurements-o08.json](measurements-o08.json),
 [measurements-o06-o08-factorial.json](measurements-o06-o08-factorial.json), and
 [O01-O08 follow-up plan](O01-O08_FOLLOWUP_PLAN.md). The O08 umbrella remains open

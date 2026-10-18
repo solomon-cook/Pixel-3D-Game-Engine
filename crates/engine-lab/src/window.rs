@@ -890,6 +890,8 @@ impl Native {
                     "cpu_steps":metrics.cpu_steps_this_frame,
                     "cpu_renderer_encode_ms":metrics.cpu_encode_ms,
                     "cpu_upload_calls_ms":metrics.cpu_upload_ms,
+                    "smoke_config_uploads":metrics.smoke_config_uploads_this_frame,
+                    "smoke_config_upload_bytes":metrics.smoke_config_upload_bytes_this_frame,
                     "cpu_ui_ms":metrics.cpu_native_ui_ms,
                     "cpu_surface_acquire_ms":metrics.cpu_surface_acquire_ms,
                     "cpu_present_encode_ms":metrics.cpu_present_encode_ms,
