@@ -483,6 +483,12 @@ GPU image exists. Inked smoke, source-specific lighting/cache work, shadows,
 live scene acceptance and visual review remain incomplete; the post heat pass now
 has a source-local secondary temperature path. See
 [heat evidence](measurements-multi-emitter-heat.json).
+Source-local inked smoke is implemented with 36 puff candidates per source,
+separate overflow fallback and a 72-entry total tile capacity. GPU validation and
+single-source parity pass on M1 Max/Metal; the expanded tile index buffer uses
+603,520 bytes at 640×360. No dual-source scene is accepted yet, so visual and
+performance review remains open; see
+[inked smoke evidence](measurements-multi-emitter-ink.json).
 `Renderer::update_globals` now has a keyed two-source sampling
 and upload branch with independent projected-detail tiers, but scene validation
 still prevents live access and no two-source GPU capture exists. The existing

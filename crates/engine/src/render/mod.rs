@@ -1163,7 +1163,7 @@ impl Renderer {
         );
         let smoke_tile_indices = make_storage(
             "smoke indices per tile",
-            u64::from(tile_count) * u64::from(SMOKE_TILE_CAPACITY) * 4,
+            u64::from(tile_count) * u64::from(SMOKE_TILE_CAPACITY) * 2 * 4,
         );
         let point_tile_indices = make_storage(
             "point-light indices per tile",
@@ -1840,7 +1840,7 @@ impl Renderer {
             * (32
                 + 4 * u64::from(
                     FIRE_TILE_CAPACITY
-                        + SMOKE_TILE_CAPACITY
+                        + SMOKE_TILE_CAPACITY * 2
                         + POINT_TILE_CAPACITY
                         + PARTICLE_TILE_CAPACITY,
                 ));
@@ -2281,6 +2281,11 @@ impl Renderer {
             .replace("if along+bound<0. || along-bound>distance || length(origin+direction*max(along,0.)-parent)>bound {continue;}", "diag_add(4u); if along+bound<0. || along-bound>distance || length(origin+direction*max(along,0.)-parent)>bound {continue;}")
             .replace("if bubble>child_count {break;}", "if bubble>child_count {break;} diag_add(5u);")
             .replace("let sample=textureSampleLevel(smoke,volume_sampler,volume_uv,0.);", "diag_add(6u); let sample=textureSampleLevel(smoke,volume_sampler,volume_uv,0.);")
+            .replace("let sample=textureSampleLevel(secondary_smoke", "diag_add(6u); let sample=textureSampleLevel(secondary_smoke")
+            .replace("optical+=textureSampleLevel(secondary_smoke,volume_sampler,q,0.).x*0.25;", "diag_add(6u); optical+=textureSampleLevel(secondary_smoke,volume_sampler,q,0.).x*0.25;")
+            .replace("absorption+=textureSampleLevel(secondary_smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x*source_span/6.*2.6;", "diag_add(6u); diag_add(13u); absorption+=textureSampleLevel(secondary_smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x*source_span/6.*2.6;")
+            .replace("let field=textureSampleLevel(secondary_smoke", "diag_add(6u); let field=textureSampleLevel(secondary_smoke")
+            .replace("heat=textureSampleLevel(secondary_smoke", "diag_add(6u); heat=textureSampleLevel(secondary_smoke")
             .replace("let field=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x;", "diag_add(6u); let field=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x;")
             .replace("let heat=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).y;", "diag_add(6u); let heat=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).y;")
             .replace("optical+=textureSampleLevel(smoke,volume_sampler,q,0.).x*0.25;", "diag_add(6u); optical+=textureSampleLevel(smoke,volume_sampler,q,0.).x*0.25;")
@@ -3051,6 +3056,13 @@ impl Renderer {
             wind,
             enabled,
             profile: profile.clone(),
+            smoke: [
+                emitter.buoyancy,
+                emitter.smoke_density,
+                emitter.secondary_bubbles as f32,
+                emitter.bubble_scale,
+            ],
+            smoke_shading: [emitter.self_shadow_strength, emitter.internal_glow],
         };
         let multi_emitter = scene.emitters.len() > 1;
         let mut multi_source_keys = if multi_emitter {
@@ -3072,6 +3084,13 @@ impl Renderer {
                             wind,
                             enabled: if source.enabled { source.intensity } else { 0. },
                             profile: source_profile.clone(),
+                            smoke: [
+                                source.buoyancy,
+                                source.smoke_density,
+                                source.secondary_bubbles as f32,
+                                source.bubble_scale,
+                            ],
+                            smoke_shading: [source.self_shadow_strength, source.internal_glow],
                         },
                     )
                 })
@@ -3147,9 +3166,9 @@ impl Renderer {
                     effects::render_frame_with_detail(&key, &self.fire_frame, rendered_segments);
                 let upload_started = Instant::now();
                 self.fire_storage.sources[0] = render_frame;
-                self.fire_storage.source_origins[0] = [origin.x, origin.y, origin.z, 0.];
+                self.fire_storage.source_origins[0] = [origin.x, origin.y, origin.z, 1.];
                 self.fire_storage.presentations[0] =
-                    FirePresentation::from_profile(profile, enabled);
+                    FirePresentation::from_profile(profile, enabled, key.smoke, key.smoke_shading);
                 self.queue.write_buffer(
                     &self.fire_buffer,
                     0,
@@ -4652,7 +4671,8 @@ impl Renderer {
                 "list_bytes": self.resource_inventory["tile_list_bytes"],
                 "capacities": {
                     "fire_primitives": FIRE_TILE_CAPACITY,
-                    "smoke_lobes": SMOKE_TILE_CAPACITY,
+                    "smoke_lobes_per_source": SMOKE_TILE_CAPACITY,
+                    "smoke_lobes_total": SMOKE_TILE_CAPACITY * 2,
                     "point_lights": POINT_TILE_CAPACITY,
                     "particle_lights": PARTICLE_TILE_CAPACITY
                 }

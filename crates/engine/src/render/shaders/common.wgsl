@@ -1,7 +1,7 @@
 struct FirePrimitive {center_radius:vec4<f32>,axis_length:vec4<f32>,heat_kind:vec4<f32>};
 struct ParticleLight {position_range:vec4<f32>,color_power:vec4<f32>,identity:vec4<u32>};
 struct FireFrame {counts:vec4<u32>,bounds_min:vec4<f32>,bounds_max:vec4<f32>,lighting:vec4<u32>,lights:array<ParticleLight,12>,primitives:array<FirePrimitive,256>};
-struct FirePresentation {outer:vec4<f32>,warm:vec4<f32>,hot:vec4<f32>,shape:vec4<f32>,pixels:vec4<f32>,controls:vec4<f32>};
+struct FirePresentation {outer:vec4<f32>,warm:vec4<f32>,hot:vec4<f32>,shape:vec4<f32>,pixels:vec4<f32>,controls:vec4<f32>,smoke:vec4<f32>};
 struct FireFrameStorage {sources:array<FireFrame,2>,source_origins:array<vec4<f32>,2>,presentations:array<FirePresentation,2>};
 @group(0) @binding(1) var<storage,read> fire:FireFrameStorage;
 
@@ -39,6 +39,22 @@ fn smoke_lobe_bounds(index:u32)->vec4<f32> {
     let gust=select(g.wind_time.xyz,wind_at(source+vec3(0.,rising,0.)),g.experiments.z>0.5);
     let parent=source+vec3(cos(phase+age*0.35)*spread,rising+0.65,sin(phase+age*0.35)*spread)+gust*age*0.72;
     let bound=(0.27+age*0.095)*1.12*max(1.1,0.93+g.effect_settings.y*1.16);
+    return vec4(parent,bound);
+}
+
+fn smoke_lobe_bounds_for_source(index:u32,source_index:u32)->vec4<f32> {
+    let layer=f32(index/3u);let branch=f32(index%3u);
+    let time=g.wind_time.w;
+    let source=fire.source_origins[source_index].xyz;
+    let buoyancy=fire.presentations[source_index].smoke.x;
+    let bubble_scale=fire.presentations[source_index].smoke.w;
+    let source_seed=g.params.z+f32(source_index)*997.;
+    let age=fract(time*0.125-layer/12.)*8.;
+    let phase=hash(vec3(layer,branch,source_seed))*6.28318;
+    let spread=0.12+age*0.09;let rising=age*(buoyancy*0.72+0.2);
+    let gust=select(g.wind_time.xyz,wind_at(source+vec3(0.,rising,0.)),g.experiments.z>0.5);
+    let parent=source+vec3(cos(phase+age*0.35)*spread,rising+0.65,sin(phase+age*0.35)*spread)+gust*age*0.72;
+    let bound=(0.27+age*0.095)*1.12*max(1.1,0.93+bubble_scale*1.16);
     return vec4(parent,bound);
 }
 

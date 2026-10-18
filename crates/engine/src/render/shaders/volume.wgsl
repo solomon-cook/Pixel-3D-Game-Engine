@@ -57,7 +57,7 @@ fn atmosphere_info(pixel:vec4<f32>,z:f32,tile:u32)->AtmosphereSample {
     }
     // A second source keeps its own fixed world-space domain and smoke field.
     // This branch is absent for v1 scenes, preserving their original integral.
-    if fire.sources[1].counts.x>0u {
+    if fire.source_origins[1].w>0.5 {
         let source=fire.source_origins[1].xyz;
         let source_min=source+vec3(-3.,-0.6,-3.);
         let source_max=source+vec3(3.,7.4,3.);
@@ -99,7 +99,7 @@ fn atmosphere_info(pixel:vec4<f32>,z:f32,tile:u32)->AtmosphereSample {
             let uv=(p-g.volume_min.xyz)/(g.volume_max.xyz-g.volume_min.xyz);
             absorption+=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x*span/6.*2.6;
         }
-        if fire.sources[1].counts.x>0u {
+        if fire.source_origins[1].w>0.5 {
             let source=fire.source_origins[1].xyz;
             let source_min=source+vec3(-3.,-0.6,-3.);let source_max=source+vec3(3.,7.4,3.);
             let source_a=(source_min-near)*inv;let source_b=(source_max-near)*inv;
@@ -129,16 +129,16 @@ fn atmosphere_info(pixel:vec4<f32>,z:f32,tile:u32)->AtmosphereSample {
 // Sculpted, opaque pyro lobes are a 3D presentation of the advected smoke field.
 // All lobes ray-intersect in world space, so contours survive camera rotation.
 fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,z:f32,tile:u32)->AtmosphereSample {
-    var nearest=distance;var second=distance;var second_normal=vec3(0.,1.,0.);var hit_normal=vec3(0.,1.,0.);var hit_position=vec3(0.);var smoke_hit=false;var secondary_hit=false;var hit_radius=0.3;
+    var nearest=distance;var second=distance;var second_normal=vec3(0.,1.,0.);var hit_normal=vec3(0.,1.,0.);var hit_position=vec3(0.);var smoke_hit=false;var secondary_hit=false;var hit_radius=0.3;var hit_source=0u;
     let time=g.wind_time.w;
     // Keep the original parent-puff motion and silhouette. Small attached
     // satellites enrich each puff rather than replacing it with noisy detail.
+    let tile_header=tile_headers[tile];
     let bounds_inv=1./(direction+vec3(0.0000001));
     let bounds_a=(g.volume_min.xyz-origin)*bounds_inv;let bounds_b=(g.volume_max.xyz-origin)*bounds_inv;
     let bounds_lo=min(bounds_a,bounds_b);let bounds_hi=max(bounds_a,bounds_b);
     let bounds_enter=max(max(max(bounds_lo.x,bounds_lo.y),bounds_lo.z),0.);
     let bounds_exit=min(min(min(bounds_hi.x,bounds_hi.y),bounds_hi.z),distance);
-    let tile_header=tile_headers[tile];
     let smoke_overflow=(tile_header.flags.x&2u)!=0u;
     let smoke_candidate_count=select(tile_header.counts.y,36u,smoke_overflow);
     if bounds_exit>bounds_enter {for(var candidate=0u;candidate<36u;candidate++) {
@@ -148,7 +148,6 @@ fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,
         if age>time || age<0.12 {continue;}
         let phase=hash(vec3(layer,branch,g.params.z))*6.28318;
         let lobe=smoke_lobe_bounds(i);let parent=lobe.xyz;
-        // Conservative parent/children bound: most rays never need child tests.
         let bound=lobe.w;
         let along=dot(parent-origin,direction);
         if along+bound<0. || along-bound>distance || length(origin+direction*max(along,0.)-parent)>bound {continue;}
@@ -167,8 +166,6 @@ fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,
             if bubble>0u {
                 let index=f32(bubble-1u);let angle=phase+index*6.28318/max(f32(child_count),1.);
                 let attachment=normalize(vec3(cos(angle),0.28*sin(angle*1.3+phase),sin(angle)));
-                // Centres overlap the parent. Only the little outer caps show,
-                // making secondary bubbles part of the main billow.
                 size=radius*g.effect_settings.y*(0.82+0.34*hash(vec3(layer,index,branch+21.)));
                 center=parent+attachment*radius*0.93;
                 local_axes=vec3(1.,0.95,1.);
@@ -182,7 +179,7 @@ fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,
                 let normal=normalize((hit_position-center)/(local_axes*local_axes));
                 let parent_normal=normalize((hit_position-parent)/(axes*axes));
                 hit_normal=select(normal,normalize(mix(parent_normal,normal,0.72)),bubble>0u);
-                smoke_hit=true;secondary_hit=bubble>0u;hit_radius=radius;
+                smoke_hit=true;secondary_hit=bubble>0u;hit_radius=radius;hit_source=0u;
             } else if t>0. && t<second {
                 second=t;
                 let point=origin+direction*t;
@@ -191,7 +188,65 @@ fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,
                 second_normal=select(normal,normalize(mix(parent_normal,normal,0.72)),bubble>0u);
             }
         }
-    }
+    }}
+    let secondary_smoke_overflow=(tile_header.flags.x&16u)!=0u;
+    if fire.source_origins[1].w>0.5 {
+        let secondary_count=select(tile_header.flags.y,36u,secondary_smoke_overflow);
+        let source=fire.source_origins[1].xyz;
+        let source_min=source+vec3(-3.,-0.6,-3.);let source_max=source+vec3(3.,7.4,3.);
+        let source_a=(source_min-origin)*bounds_inv;let source_b=(source_max-origin)*bounds_inv;
+        let source_lo=min(source_a,source_b);let source_hi=max(source_a,source_b);
+        let source_enter=max(max(max(source_lo.x,source_lo.y),source_lo.z),0.);
+        let source_exit=min(min(min(source_hi.x,source_hi.y),source_hi.z),distance);
+        if source_exit>source_enter {for(var candidate=0u;candidate<36u;candidate++) {
+            if candidate>=secondary_count {break;}
+            var i=candidate;
+            if !secondary_smoke_overflow {i=smoke_tile_indices[tile*SMOKE_TILE_CAPACITY*2u+candidate];}
+            let layer=f32(i/3u);let branch=f32(i%3u);let age=fract(time*0.125-layer/12.)*8.;
+            if age>time || age<0.12 {continue;}
+            let source_seed=g.params.z+997.;
+            let phase=hash(vec3(layer,branch,source_seed))*6.28318;
+            let lobe=smoke_lobe_bounds_for_source(i,1u);let parent=lobe.xyz;let bound=lobe.w;
+            let along=dot(parent-origin,direction);
+            if along+bound<0. || along-bound>distance || length(origin+direction*max(along,0.)-parent)>bound {continue;}
+            let uv=(parent-source_min)/(source_max-source_min);
+            let field=textureSampleLevel(secondary_smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x;
+            let presence=smoothstep(0.002,0.025,field);
+            let size_variation=0.84+0.28*hash(vec3(layer,branch,source_seed+17.));
+            let radius=(0.27+age*0.095)*size_variation*smoothstep(0.,0.65,age)*(1.-smoothstep(6.5,8.,age))*presence;
+            if radius<0.035 {continue;}
+            let axes=vec3(0.94+0.14*sin(phase),0.87+0.14*sin(phase+age),0.91+0.1*cos(phase));
+            let settings=fire.presentations[1].smoke;let maximum=u32(settings.z);
+            let child_count=select(0u,1u+u32(layer+branch*3.)%max(maximum,1u),maximum>0u);
+            for(var bubble=0u;bubble<9u;bubble++) {
+                if bubble>child_count {break;}
+                var center=parent;var size=radius;var local_axes=axes;
+                if bubble>0u {
+                    let index=f32(bubble-1u);let angle=phase+index*6.28318/max(f32(child_count),1.);
+                    let attachment=normalize(vec3(cos(angle),0.28*sin(angle*1.3+phase),sin(angle)));
+                    size=radius*settings.w*(0.82+0.34*hash(vec3(layer,index,branch+21.+997.)));
+                    center=parent+attachment*radius*0.93;
+                    local_axes=vec3(1.,0.95,1.);
+                }
+                let ro=(origin-center)/local_axes;let rd=direction/local_axes;
+                let qa=dot(rd,rd);let qb=dot(ro,rd);let qc=dot(ro,ro)-size*size;let discriminant=qb*qb-qa*qc;
+                if discriminant<=0. {continue;}
+                let t=(-qb-sqrt(discriminant))/qa;
+                if t>0. && t<nearest {
+                    second=nearest;second_normal=hit_normal;nearest=t;hit_position=origin+direction*t;
+                    let normal=normalize((hit_position-center)/(local_axes*local_axes));
+                    let parent_normal=normalize((hit_position-parent)/(axes*axes));
+                    hit_normal=select(normal,normalize(mix(parent_normal,normal,0.72)),bubble>0u);
+                    smoke_hit=true;secondary_hit=bubble>0u;hit_radius=radius;hit_source=1u;
+                } else if t>0. && t<second {
+                    second=t;
+                    let point=origin+direction*t;
+                    let normal=normalize((point-center)/(local_axes*local_axes));
+                    let parent_normal=normalize((point-parent)/(axes*axes));
+                    second_normal=select(normal,normalize(mix(parent_normal,normal,0.72)),bubble>0u);
+                }
+            }
+        }}
     }
     var color=vec3(0.);var transmittance=1.;
     if smoke_hit {
@@ -202,7 +257,9 @@ fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,
         hit_normal=normalize(mix(hit_normal,second_normal,contact*0.45));
         let n=hit_normal;
         let eye=max(dot(hit_normal,-direction),0.);
-        let pattern=select(hash(vec3(floor(pixel.xy/2.),31.)),hash(floor((hit_position-vec3(0.,time*0.3,0.))*14.)),g.experiments.y>0.5);
+        var pattern=0.;
+        if hit_source==0u {pattern=select(hash(vec3(floor(pixel.xy/2.),31.)),hash(floor((hit_position-vec3(0.,time*0.3,0.))*14.)),g.experiments.y>0.5);}
+        else {pattern=select(hash(vec3(floor(pixel.xy/2.),128.)),hash(floor((hit_position-vec3(0.,time*0.3,0.))*14.+vec3(17.))),g.experiments.y>0.5);}
         let soot=vec3(0.052,0.014,0.035);
         let scattering=smoke_local_lights(hit_position,n,6u,tile)*(1.-crease*0.45);
         var paint=soot+scattering*vec3(0.24,0.22,0.22)*(0.98+pattern*0.04);
@@ -213,9 +270,18 @@ fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,
             // is immediately behind it, so internal overlaps read as one body.
             paint=mix(paint,ink,(1.-overlap*0.88)*select(1.,0.7,secondary_hit));
         }
-        let uv=(hit_position-g.volume_min.xyz)/(g.volume_max.xyz-g.volume_min.xyz);
-        let heat=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).y;
-        let internal=g.fire_warm.xyz*g.effect_settings.w*heat*0.12;
+        var heat=0.;var glow=0.;
+        if hit_source==0u {
+            let uv=(hit_position-g.volume_min.xyz)/(g.volume_max.xyz-g.volume_min.xyz);
+            heat=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).y;
+            glow=g.effect_settings.w;
+        } else {
+            let source=fire.source_origins[1].xyz;
+            let uv=(hit_position-(source+vec3(-3.,-0.6,-3.)))/vec3(6.,8.,6.);
+            heat=textureSampleLevel(secondary_smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).y;
+            glow=fire.presentations[1].controls.w;
+        }
+        let internal=g.fire_warm.xyz*glow*heat*0.12;
         color=paint+internal;
         transmittance=0.;
     }

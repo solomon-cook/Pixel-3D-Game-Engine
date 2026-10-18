@@ -37,7 +37,7 @@ fn build_tile_lists(@builtin(global_invocation_id) id:vec3<u32>) {
     let point_base=tile_index*POINT_TILE_CAPACITY;
     let particle_base=tile_index*PARTICLE_TILE_CAPACITY;
     var counts=vec4<u32>(0u);var flags=vec4<u32>(0u);
-    if tile_config.force_overflow.x!=0u {flags.x=15u;}
+    if tile_config.force_overflow.x!=0u {flags.x=31u;}
     if tile_config.force_overflow.x==0u {
         for(var source=0u;source<2u;source++) {
             for(var i=0u;i<256u;i++) {
@@ -60,6 +60,19 @@ fn build_tile_lists(@builtin(global_invocation_id) id:vec3<u32>) {
                     counts.y++;
                 }
             }
+            if fire.source_origins[1].w>0.5 {
+                var secondary_count=0u;let time=g.wind_time.w;
+                for(var i=0u;i<36u;i++) {
+                    let lobe=smoke_lobe_bounds_for_source(i,1u);
+                    let layer=f32(i/3u);let age=fract(time*0.125-layer/12.)*8.;
+                    if age>time || age<0.12 {continue;}
+                    if overlaps_tile(lobe.xyz,lobe.w,id.xy) {
+                        if secondary_count<SMOKE_TILE_CAPACITY {smoke_tile_indices_out[smoke_base+SMOKE_TILE_CAPACITY+secondary_count]=i;} else {flags.x|=16u;}
+                        secondary_count++;
+                    }
+                }
+                flags.y=secondary_count;
+            }
         }
         for(var i=0u;i<8u;i++) {
             if i>=g.light_info.x {break;}
@@ -80,15 +93,15 @@ fn build_tile_lists(@builtin(global_invocation_id) id:vec3<u32>) {
     }
     tile_headers_out[tile_index]=TileHeader(counts,flags);
     atomicAdd(&tile_stats_out.values[0],counts.x);
-    atomicAdd(&tile_stats_out.values[1],counts.y);
+    atomicAdd(&tile_stats_out.values[1],counts.y+flags.y);
     atomicAdd(&tile_stats_out.values[2],counts.z);
     atomicAdd(&tile_stats_out.values[3],counts.w);
     atomicAdd(&tile_stats_out.values[4],select(0u,1u,(flags.x&1u)!=0u));
-    atomicAdd(&tile_stats_out.values[5],select(0u,1u,(flags.x&2u)!=0u));
+    atomicAdd(&tile_stats_out.values[5],select(0u,1u,(flags.x&18u)!=0u));
     atomicAdd(&tile_stats_out.values[6],select(0u,1u,(flags.x&4u)!=0u));
     atomicAdd(&tile_stats_out.values[7],select(0u,1u,(flags.x&8u)!=0u));
     atomicMax(&tile_stats_out.values[8],counts.x);
-    atomicMax(&tile_stats_out.values[9],counts.y);
+    atomicMax(&tile_stats_out.values[9],counts.y+flags.y);
     atomicMax(&tile_stats_out.values[10],counts.z);
     atomicMax(&tile_stats_out.values[11],counts.w);
 }

@@ -20,9 +20,11 @@ by stable emitter ID; the current scene validator still accepts one emitter.
 The soft atmosphere and optical integrals can sample a second source-local smoke
 volume, while flame coverage can consume both fixed FireFrame slots. The post
 heat/refraction pass also has a source-local secondary temperature path. Inked
-smoke and absorption-cache construction still use the primary source. Scene
-validation remains single-emitter, so these two-source shader paths have not
-received a live two-emitter visual/performance review.
+smoke now has a source-local puff domain and separate bounded tile candidates;
+the secondary puff shading samples its own smoke volume and settings. The
+absorption cache and shadow maps still use the primary source. Scene validation
+remains single-emitter, so the two-source shader paths have not received a live
+two-emitter visual/performance review.
 Each render reuses valid directional/point shadow maps or redraws them after a
 relevant scene revision, builds bounded screen-tile candidate lists with an
 exhaustive overflow fallback, then submits HDR opaque geometry, volumetric
@@ -73,9 +75,9 @@ and counters rather than a claim of arbitrary source scalability.
 The bounded two-emitter proposal and its runtime/memory acceptance gates are in
 [MULTI_EMITTER_PLAN.md](MULTI_EMITTER_PLAN.md). Per-emitter smoke simulation
 resources, configuration and dispatch plus soft-atmosphere/optical sampling are
-implemented. Scene validation still accepts one emitter, and inked smoke, heat,
-absorption cache, shadows and visual acceptance remain single-source; this is
-groundwork, not a complete multi-emitter runtime.
+implemented. Inked smoke has source-local puff candidates, while the absorption
+cache and shadow maps remain single-source. Scene validation still accepts one
+emitter, so multi-emitter visual and performance acceptance remains open.
 
 Smoke density and heat advect together but dissipate/cool independently. Source
 heat and light flicker follow the same slow fire envelope. Profile switching

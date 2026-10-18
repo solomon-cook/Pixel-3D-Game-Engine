@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-18",
+  "scope": "Source-local inked smoke implementation and single-source parity/resource verification",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal",
+    "device_type": "IntegratedGpu",
+    "native_window_verified": false,
+    "windows_dx12_verified": false
+  },
+  "implementation": {
+    "smoke_lobes_per_source": 36,
+    "smoke_lobes_total": 72,
+    "secondary_source_has_local_domain_and_smoke_sampling": true,
+    "secondary_source_settings": ["buoyancy", "bubble_count", "bubble_scale", "self_shadow", "internal_glow"],
+    "per_source_tile_overflow_fallback": true,
+    "live_two_emitter_scene_available": false
+  },
+  "single_source_capture": {
+    "scene": "assets/scenes/profiling-heavy.json",
+    "seed": 42,
+    "camera": "hero",
+    "tick": 120,
+    "resolution": [640, 360],
+    "scale": 1,
+    "rgba_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48",
+    "baseline_byte_identical": true
+  },
+  "resource_inventory": {
+    "tile_index_bytes": 603520,
+    "single_source_tile_index_bytes": 471040,
+    "added_tile_index_bytes": 132480,
+    "known_gpu_allocation_bytes": 22951216,
+    "estimate_excludes_driver_alignment_transient_capture_surfaces_pipelines_bind_groups_and_opaque_timestamp_storage": true
+  },
+  "validation": {
+    "command": "python3 scripts/verify.py --gpu",
+    "result": "passed",
+    "material_gpu_verified": true,
+    "pixel_fire_gpu_verified": true,
+    "native": false
+  },
+  "acceptance_gaps": [
+    "Scene validation accepts one emitter, so the second inked source has no live-scene visual review or performance measurement.",
+    "Absorption-cache construction and shadow maps remain primary-source only.",
+    "Windows/DX12 and another-adapter validation remain open."
+  ]
+}

@@ -269,10 +269,16 @@ pub struct FirePresentation {
     pub shape: [f32; 4],
     pub pixels: [f32; 4],
     pub controls: [f32; 4],
+    pub smoke: [f32; 4],
 }
 
 impl FirePresentation {
-    pub fn from_profile(profile: &EffectProfile, intensity: f32) -> Self {
+    pub fn from_profile(
+        profile: &EffectProfile,
+        intensity: f32,
+        smoke: [f32; 4],
+        smoke_shading: [f32; 2],
+    ) -> Self {
         Self {
             outer: [
                 profile.palette.outer[0],
@@ -307,9 +313,10 @@ impl FirePresentation {
             controls: [
                 intensity.max(0.),
                 profile.thermal.heat_output,
-                profile.thermal.cooling_rate,
-                profile.thermal.lift,
+                smoke_shading[0],
+                smoke_shading[1],
             ],
+            smoke,
         }
     }
 }
@@ -331,8 +338,13 @@ impl FireFrameStorage {
                 .iter()
                 .find(|(source_id, _)| source_id == &id)
                 .expect("sampled emitter has a matching key");
-            storage.source_origins[slot] = [key.source[0], key.source[1], key.source[2], 0.];
-            storage.presentations[slot] = FirePresentation::from_profile(&key.profile, key.enabled);
+            storage.source_origins[slot] = [key.source[0], key.source[1], key.source[2], 1.];
+            storage.presentations[slot] = FirePresentation::from_profile(
+                &key.profile,
+                key.enabled,
+                key.smoke,
+                key.smoke_shading,
+            );
         }
         if sampled.len() > 1 {
             let selected = select_emitter_particle_lights(&sampled)?;
@@ -374,6 +386,8 @@ pub struct FireKey {
     pub wind: [f32; 3],
     pub enabled: f32,
     pub profile: EffectProfile,
+    pub smoke: [f32; 4],
+    pub smoke_shading: [f32; 2],
 }
 
 /// A derived light selected from a source frame for the shared renderer budget.
@@ -845,6 +859,8 @@ mod tests {
             wind: [0.2, 0., 0.1],
             enabled: 1.,
             profile: EffectProfile::default(),
+            smoke: [0.6, 0.85, 3., 0.45],
+            smoke_shading: [0.9, 0.15],
         }
     }
     #[test]
@@ -1032,11 +1048,11 @@ mod tests {
     fn storage_layout_matches_wgsl_contract() {
         assert_eq!(std::mem::size_of::<FirePrimitive>(), 48);
         assert_eq!(std::mem::size_of::<ParticleLight>(), 48);
-        assert_eq!(std::mem::size_of::<FirePresentation>(), 96);
+        assert_eq!(std::mem::size_of::<FirePresentation>(), 112);
         assert_eq!(std::mem::size_of::<FireFrame>(), 64 + 12 * 48 + 256 * 48);
         assert_eq!(
             std::mem::size_of::<FireFrameStorage>(),
-            MAX_EMITTERS * (std::mem::size_of::<FireFrame>() + 16 + 96)
+            MAX_EMITTERS * (std::mem::size_of::<FireFrame>() + 16 + 112)
         );
     }
     #[test]
@@ -1049,7 +1065,7 @@ mod tests {
             bytemuck::bytes_of(&FireFrame::sample(&single_key))
         );
         assert_eq!(single.sources[1].counts, [0; 4]);
-        assert_eq!(single.source_origins[0], [0., 0.4, 0., 0.]);
+        assert_eq!(single.source_origins[0], [0., 0.4, 0., 1.]);
         assert_eq!(single.source_origins[1], [0.; 4]);
 
         let mut first = key();
@@ -1066,8 +1082,8 @@ mod tests {
         assert_eq!(bytemuck::bytes_of(&forward), bytemuck::bytes_of(&reverse));
         assert!(forward.sources[0].counts[0] > 0);
         assert!(forward.sources[1].counts[0] > 0);
-        assert_eq!(forward.source_origins[0], [-1., 0., 0.5, 0.]);
-        assert_eq!(forward.source_origins[1], [2., 0., -0.5, 0.]);
+        assert_eq!(forward.source_origins[0], [-1., 0., 0.5, 1.]);
+        assert_eq!(forward.source_origins[1], [2., 0., -0.5, 1.]);
         assert_eq!(forward.presentations[0].shape[0], key().profile.fire.width);
         assert_eq!(
             forward.presentations[1].shape[0],

@@ -8,8 +8,8 @@ into a testable two-source runtime without changing the single-source baseline.
 
 ## Current boundary
 
-- Scene validation requires exactly one emitter. `shadow_matrices`, post heat
-  shimmer and inked smoke still use one source position/profile. Per-emitter
+- Scene validation requires exactly one emitter. `shadow_matrices` and the
+  absorption cache still use one source. Per-emitter
   smoke simulation is implemented; the soft atmosphere/optical secondary-source
   branch is prepared but unreachable while validation remains single-source.
 - `FireFrame` owns one 256-primitive pool and at most 12 derived particle lights.
@@ -61,8 +61,8 @@ into a testable two-source runtime without changing the single-source baseline.
   one advection pass per source. Bounds, buoyancy, dissipation, density and thermal
   settings are source-local; reset clears every allocated source volume. Scene
   validation still allows one emitter. The soft atmosphere/optical shader has
-  secondary-volume sampling, while inked smoke, heat and absorption-cache shading
-  still use source zero. There is no two-source GPU capture or performance result
+  secondary-volume sampling and heat now have source-local paths; inked smoke
+  has a source-local puff path, while absorption-cache shading still uses source zero. There is no two-source GPU capture or performance result
   yet. The current single-source RGBA capture
   remains pixel-identical, with the 80-byte source config reflected in the known
   fixed-buffer inventory; see [smoke compute evidence](measurements-multi-emitter-smoke-compute.json).
@@ -72,14 +72,25 @@ into a testable two-source runtime without changing the single-source baseline.
   zero now owns the legacy global domain when multiple sources are prepared. The
   post heat pass now carries each source's heat output/cooling/lift and can sample
   the second temperature volume using its source-local shape/distortion settings.
-  Source-count guards leave the one-emitter paths unchanged. Inked smoke,
-  source-specific lighting and cache construction remain
-  incomplete; validation still prevents a live two-source GPU capture.
+  Source-count guards leave the one-emitter paths unchanged. Source-specific
+  lighting and cache construction remain incomplete; validation still prevents a
+  live two-source GPU capture.
   The fixed-tick `profiling-heavy.json` hero capture remains pixel-identical at
   640×360 (SHA-256 `9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48`).
   See [atmosphere evidence](measurements-multi-emitter-atmosphere.json).
   The fixed-tick heat-path parity check is in
   [heat evidence](measurements-multi-emitter-heat.json).
+- Inked smoke now has source-local puff bounds and shading. The tile list
+  reserves 36 candidates per source (72 total), with independent overflow
+  fallback; secondary puffs sample their own smoke field, buoyancy, bubble
+  settings and internal glow. The one-source `profiling-heavy.json` hero capture
+  remains byte-identical (SHA-256 `9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48`).
+  On M1 Max/Metal at 640×360, tile indices use 603,520 bytes, up 132,480 bytes
+  from one-source capacity; total known allocation is 22,951,216 bytes for the
+  multi-source inventory. Validation still allows one emitter, so there is no
+  dual-source visual or performance result. Cache construction and shadows are
+  still primary-source only. See
+  [inked smoke evidence](measurements-multi-emitter-ink.json).
 - One 48×64×48 Rg16Float density/temperature pair occupies 1,179,648 bytes.
   One point-light cubemap set occupies 1,572,864 bytes. The 8 authored point
   lights and 12 derived particle lights are global renderer budgets.
