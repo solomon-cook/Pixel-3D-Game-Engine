@@ -17,8 +17,8 @@ into a testable two-source runtime without changing the single-source baseline.
 - The CPU now has a pure global particle-light selector that merges sampled
   source candidates into the shared 12-light budget by descending power, then
   stable emitter ID and event identity. The renderer does not call it yet.
-- The GPU fire-storage ABI now reserves two contiguous `FireFrame` slots, and
-  the current shaders still read only slot zero. A fixed-tick M1 Max/Metal
+- The GPU fire-storage ABI now reserves two contiguous `FireFrame` slots. A
+  fixed-tick M1 Max/Metal
   comparison is byte-identical to the prior single-frame ABI; the known
   allocation increases by 12,928 bytes. This is capacity groundwork only: the
   renderer still samples, uploads and renders one source. See
@@ -26,9 +26,9 @@ into a testable two-source runtime without changing the single-source baseline.
 - Fire tile construction and flame shading now iterate both frame slots. Tile
   indices encode source slot and primitive index; overflow evaluates each
   source's complete primitive pool. The source-zero capture remains byte-identical
-  on M1 Max/Metal. The renderer still uploads only source zero, and source-specific
-  palette/detail settings, smoke, global particle lights and shadow sets are not
-  implemented. See [fire consumer evidence](measurements-multi-emitter-fire-consumer.json).
+  on M1 Max/Metal. The renderer still uploads only source zero; dual-source smoke,
+  global particle lights and shadow sets are not implemented. See
+  [fire consumer evidence](measurements-multi-emitter-fire-consumer.json).
 - The renderer now owns the two-slot storage value and uploads it as a unit. The
   CPU packer preserves legacy sampling for one source and sorts multi-source
   frames by stable ID; tests cover one-source byte parity and two-source reorder
@@ -38,8 +38,13 @@ into a testable two-source runtime without changing the single-source baseline.
 - Each storage slot now also carries its source origin. The flame detail mask
   uses that origin for slot one while retaining the legacy uniform origin for
   slot zero. The capture remains pixel-identical, and the added origin metadata
-  costs 32 known bytes. Per-source palette and shape settings are still shared
-  through globals and remain unfinished.
+  costs 32 known bytes.
+- Each slot now carries its palette, breakup, shape, pixel-treatment and source
+  intensity values. Flame shading selects the slot-one presentation independently;
+  source zero still uses the legacy globals. The storage grows by another 192
+  known bytes, and the fixed-tick capture remains pixel-identical. The live
+  renderer still fills slot zero only, so this is not dual-source visual
+  acceptance. See [per-source presentation evidence](measurements-multi-emitter-presentation.json).
 - One 48×64×48 Rg16Float density/temperature pair occupies 1,179,648 bytes.
   One point-light cubemap set occupies 1,572,864 bytes. The 8 authored point
   lights and 12 derived particle lights are global renderer budgets.

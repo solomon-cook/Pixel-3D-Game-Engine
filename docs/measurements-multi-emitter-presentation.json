@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "purpose": "Verify per-slot flame presentation metadata and legacy source-zero output.",
+  "host": {
+    "adapter": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "workload": {
+    "scene": "assets/scenes/profiling-heavy.json",
+    "camera": "hero",
+    "seed": 42,
+    "tick": 120,
+    "resolution": [
+      640,
+      360
+    ]
+  },
+  "storage": {
+    "source_slots": 2,
+    "presentation_vec4_per_slot": 6,
+    "additional_known_bytes": 192,
+    "resource_inventory_other_fixed_buffers_bytes": 27464,
+    "known_gpu_allocation_bytes": 22818624
+  },
+  "comparison": {
+    "baseline_pixel_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48",
+    "candidate_pixel_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48",
+    "pixel_identical": true,
+    "capture": "artifacts/multi-emitter-storage-abi/presentation-slots-source-zero.png"
+  },
+  "scope": "CPU tests exercise two profiles and assert stable-ID packing. The live Renderer still populates only source zero, so dual-source GPU presentation is not visually validated."
+}

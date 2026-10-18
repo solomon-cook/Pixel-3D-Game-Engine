@@ -255,6 +255,58 @@ pub struct FireFrame {
 pub struct FireFrameStorage {
     pub sources: [FireFrame; MAX_EMITTERS],
     pub source_origins: [[f32; 4]; MAX_EMITTERS],
+    pub presentations: [FirePresentation; MAX_EMITTERS],
+}
+
+/// Per-emitter flame appearance and activity, stored as six WGSL-compatible
+/// vec4 values. Source zero mirrors Globals for exact v1 shading parity.
+#[repr(C)]
+#[derive(Clone, Copy, Pod, Zeroable)]
+pub struct FirePresentation {
+    pub outer: [f32; 4],
+    pub warm: [f32; 4],
+    pub hot: [f32; 4],
+    pub shape: [f32; 4],
+    pub pixels: [f32; 4],
+    pub controls: [f32; 4],
+}
+
+impl FirePresentation {
+    pub fn from_profile(profile: &EffectProfile, intensity: f32) -> Self {
+        Self {
+            outer: [
+                profile.palette.outer[0],
+                profile.palette.outer[1],
+                profile.palette.outer[2],
+                profile.fire.emission,
+            ],
+            warm: [
+                profile.palette.warm[0],
+                profile.palette.warm[1],
+                profile.palette.warm[2],
+                profile.fire.edge_breakup,
+            ],
+            hot: [
+                profile.palette.hot[0],
+                profile.palette.hot[1],
+                profile.palette.hot[2],
+                profile.fire.tip_breakup,
+            ],
+            shape: [
+                profile.fire.width,
+                profile.fire.height,
+                profile.fire.motion_speed,
+                profile.fire.curl,
+            ],
+            pixels: [
+                u32::from(profile.fire.solid) as f32,
+                profile.fire.color_bands as f32,
+                profile.fire.heat_distortion,
+                profile.fire.heat_distortion_height,
+            ],
+            controls: [intensity.max(0.), 0., 0., 0.],
+        }
+    }
 }
 
 impl FireFrameStorage {
@@ -275,6 +327,7 @@ impl FireFrameStorage {
                 .find(|(source_id, _)| source_id == &id)
                 .expect("sampled emitter has a matching key");
             storage.source_origins[slot] = [key.source[0], key.source[1], key.source[2], 0.];
+            storage.presentations[slot] = FirePresentation::from_profile(&key.profile, key.enabled);
         }
         Ok(storage)
     }
@@ -945,10 +998,11 @@ mod tests {
     fn storage_layout_matches_wgsl_contract() {
         assert_eq!(std::mem::size_of::<FirePrimitive>(), 48);
         assert_eq!(std::mem::size_of::<ParticleLight>(), 48);
+        assert_eq!(std::mem::size_of::<FirePresentation>(), 96);
         assert_eq!(std::mem::size_of::<FireFrame>(), 64 + 12 * 48 + 256 * 48);
         assert_eq!(
             std::mem::size_of::<FireFrameStorage>(),
-            MAX_EMITTERS * (std::mem::size_of::<FireFrame>() + 16)
+            MAX_EMITTERS * (std::mem::size_of::<FireFrame>() + 16 + 96)
         );
     }
     #[test]
@@ -969,6 +1023,7 @@ mod tests {
         let mut second = key();
         second.source = [2.0, 0.0, -0.5];
         second.profile.fire.width *= 0.6;
+        second.profile.palette.outer = [2.8, 0.12, 0.01];
         let sources = vec![("fire-b".into(), second), ("fire-a".into(), first)];
         let forward = FireFrameStorage::sample_emitters(&sources).unwrap();
         let reverse =
@@ -979,6 +1034,12 @@ mod tests {
         assert!(forward.sources[1].counts[0] > 0);
         assert_eq!(forward.source_origins[0], [-1., 0., 0.5, 0.]);
         assert_eq!(forward.source_origins[1], [2., 0., -0.5, 0.]);
+        assert_eq!(forward.presentations[0].shape[0], key().profile.fire.width);
+        assert_eq!(
+            forward.presentations[1].shape[0],
+            key().profile.fire.width * 0.6
+        );
+        assert_eq!(forward.presentations[1].outer[..3], [2.8, 0.12, 0.01]);
     }
     #[test]
     fn seeded_fire_replays_and_is_camera_independent() {

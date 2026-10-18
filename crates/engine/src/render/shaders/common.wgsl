@@ -1,7 +1,8 @@
 struct FirePrimitive {center_radius:vec4<f32>,axis_length:vec4<f32>,heat_kind:vec4<f32>};
 struct ParticleLight {position_range:vec4<f32>,color_power:vec4<f32>,identity:vec4<u32>};
 struct FireFrame {counts:vec4<u32>,bounds_min:vec4<f32>,bounds_max:vec4<f32>,lighting:vec4<u32>,lights:array<ParticleLight,12>,primitives:array<FirePrimitive,256>};
-struct FireFrameStorage {sources:array<FireFrame,2>,source_origins:array<vec4<f32>,2>};
+struct FirePresentation {outer:vec4<f32>,warm:vec4<f32>,hot:vec4<f32>,shape:vec4<f32>,pixels:vec4<f32>,controls:vec4<f32>};
+struct FireFrameStorage {sources:array<FireFrame,2>,source_origins:array<vec4<f32>,2>,presentations:array<FirePresentation,2>};
 @group(0) @binding(1) var<storage,read> fire:FireFrameStorage;
 
 struct PointLight {position_range:vec4<f32>,color_power:vec4<f32>};

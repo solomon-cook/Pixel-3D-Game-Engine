@@ -2,7 +2,10 @@ use crate::{
     assets::{self, Vertex},
     diagnostics::FrameMetrics,
     effects,
-    effects::{FireFrame, FireFrameStorage, FireKey, MAX_FIRE_PRIMITIVES, MAX_PARTICLE_LIGHTS},
+    effects::{
+        FireFrame, FireFrameStorage, FireKey, FirePresentation, MAX_FIRE_PRIMITIVES,
+        MAX_PARTICLE_LIGHTS,
+    },
     platform,
     scene::{Camera, LightKind, Material, Object, Scene},
     simulation,
@@ -2974,6 +2977,7 @@ impl Renderer {
             let upload_started = Instant::now();
             self.fire_storage.sources[0] = render_frame;
             self.fire_storage.source_origins[0] = [origin.x, origin.y, origin.z, 0.];
+            self.fire_storage.presentations[0] = FirePresentation::from_profile(profile, enabled);
             self.queue
                 .write_buffer(&self.fire_buffer, 0, bytemuck::bytes_of(&self.fire_storage));
             self.metrics.cpu_upload_ms += upload_started.elapsed().as_secs_f64() * 1000.;
