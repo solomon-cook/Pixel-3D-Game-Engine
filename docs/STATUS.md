@@ -293,7 +293,10 @@ Reset uploads use the selected texel stride. GPU reset/replay checks passed, and
 fixed-tick smoke/metal captures match the prior format byte-for-byte on this
 M1 Max/Metal adapter. O01 measured smoke compute at about 0.0205 ms median,
 compared with multi-millisecond post and atmosphere/fire stages; current evidence
-does not justify active-region simulation.
+does not justify active-region simulation. The soft-volume route measured 12.919 ms
+median atmosphere/fire stage and 13.583 ms median GPU-render on M1 Max/Metal, with
+mixed paired differences under three alternating 120-second runs; no cost benefit
+or shader rewrite is established. See [soft-volume report](measurements-o01-soft-volume-route.json).
 
 A live M1 Max/Metal wgpu format query reported sampled, storage, render-attachment,
 copy and filtering support for Rg16Float and the probed alternatives. The effect

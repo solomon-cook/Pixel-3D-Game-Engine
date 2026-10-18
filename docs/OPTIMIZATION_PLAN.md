@@ -138,6 +138,14 @@ required before attributing GPU cost. See
 [path counter evidence](measurements-o01-counter-paths.json) and its
 [runner](../scripts/shading_counter_profile_study.py).
 
+The soft-volume style now has three alternating uninstrumented 120-second
+`clearing-orbit` pairs at 640×360 on M1 Max/Metal. Paired atmosphere/fire deltas
+are −0.336/−0.156/+0.136 ms; GPU-render deltas are −0.324/−0.152/+0.179 ms;
+frame-work deltas are −0.413/−0.192/+0.331 ms. The signs vary, so no speedup or
+shader change is justified. See
+[the timing report](measurements-o01-soft-volume-route.json) and its
+[reproducible runner](../scripts/soft_volume_route_study.py).
+
 ## O02 — Cache static shadow maps
 
 **Purpose:** avoid redrawing unchanged shadows while retaining live fire flicker.

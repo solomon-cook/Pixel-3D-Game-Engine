@@ -617,11 +617,16 @@ the path partition equals 230,400 fragments in every 640×360 capture. At the
 bonfire/fire-study checkpoint, inked smoke records 451,096 density samples and
 372,216 direct-absorption samples, while the soft-volume style records 181,010,226
 and 115,967,532 respectively. These counts expose workload scale, not elapsed
-cost. Existing O01 route timings cover the inked heavy scene; a matched sustained
-uninstrumented timing run for the soft-volume style is still required before
-choosing a shader rewrite. See
-[path report](measurements-o01-counter-paths.json) and the updated
-[counter runner](../scripts/shading_counter_profile_study.py).
+cost. A matched uninstrumented 120-second `clearing-orbit` timing study now has
+three alternating pairs for soft-volume on M1 Max/Metal. Median atmosphere/fire
+stage-of-run medians are 12.919 ms baseline and 13.055 ms candidate; paired
+deltas are −0.336/−0.156/+0.136 ms. Whole GPU-render paired deltas are
+−0.324/−0.152/+0.179 ms, and frame-work deltas are −0.413/−0.192/+0.331 ms.
+Run-to-run variation changes the sign, so no speedup or shader rewrite is
+supported. See [path report](measurements-o01-counter-paths.json), the
+[soft-volume timing report](measurements-o01-soft-volume-route.json), and the
+[reproducible timing runner](../scripts/soft_volume_route_study.py), plus the
+updated [counter runner](../scripts/shading_counter_profile_study.py).
 
 Use O01 stage data to split the multi-millisecond atmosphere/fire work by candidate
 category and representative coverage. O01 shows smoke advection near 0.02 ms on the
@@ -633,9 +638,10 @@ views.
 
 **Exit gate:** path-specific operation counts and representative fixed-tick image
 parity are now recorded. Name a measured dominant operation and its scaling
-variable before proposing a shader or algorithm rewrite. Soft-volume style still
-needs uninstrumented per-stage/full-frame timing; any follow-up must include
-quality evidence and a selectable fallback.
+variable before proposing a shader or algorithm rewrite. Soft-volume style has
+uninstrumented sustained timing, but paired variation is larger than a stable
+whole-frame or atmosphere/fire benefit. Any future rewrite needs operation-level
+cost evidence, quality review and a selectable fallback.
 
 ## Wave 5 — Bounded multi-emitter implementation
 

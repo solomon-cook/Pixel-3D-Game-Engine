@@ -353,10 +353,17 @@ parity. At the bonfire/fire-study fixed tick, the soft-volume case records
 181,010,226 density samples and 115,967,532 direct-absorption samples, compared
 with 451,096 and 372,216 for inked smoke. Both render 230,400 volume fragments.
 The counter report normalizes counts by output pixels, but neither those values
-nor the raw counts are timings. Keep shader changes evidence-gated until a matched
-uninstrumented sustained soft-volume route records atmosphere/fire and full-frame
-cost. See [path counter report](measurements-o01-counter-paths.json) and its
-[reproducible runner](../scripts/shading_counter_profile_study.py).
+nor the raw counts are timings. A matched uninstrumented 120-second
+`clearing-orbit` study now records three alternating soft-volume pairs on M1
+Max/Metal. Median atmosphere/fire run medians were 12.919 ms for baseline and
+13.055 ms for candidate; paired deltas were −0.336/−0.156/+0.136 ms. GPU-render
+deltas were −0.324/−0.152/+0.179 ms and frame-work deltas were
+−0.413/−0.192/+0.331 ms. The paired signs vary and the median run-level
+atmosphere/fire cost does not improve, so no speedup or shader rewrite is
+supported. See [path counter report](measurements-o01-counter-paths.json),
+[soft-volume route report](measurements-o01-soft-volume-route.json), the
+[fixed-tick runner](../scripts/shading_counter_profile_study.py) and the
+[sustained timing runner](../scripts/soft_volume_route_study.py).
 
 
 ## Shared geometry and conservative visibility (16 October)
