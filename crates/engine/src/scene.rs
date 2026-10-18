@@ -5,6 +5,19 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashSet, path::Path};
 
+fn ensure_unique_emitter_primary_light(
+    assigned: &mut HashSet<String>,
+    emitter_id: &str,
+    light_id: &str,
+) -> Result<()> {
+    if !assigned.insert(light_id.to_owned()) {
+        bail!(
+            "emitter '{emitter_id}'.light_id: primary point light '{light_id}' is already assigned to another emitter"
+        );
+    }
+    Ok(())
+}
+
 #[derive(Clone, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct Scene {
@@ -560,13 +573,11 @@ impl Scene {
                 bail!("emitter '{}'.light_id: linked point light must coincide with the emitter position", emitter.id);
             }
             let light = linked_light.expect("checked above");
-            if !emitter_primary_lights.insert(light.id.as_str()) {
-                bail!(
-                    "emitter '{}'.light_id: primary point light '{}' is already assigned to another emitter",
-                    emitter.id,
-                    light.id
-                );
-            }
+            ensure_unique_emitter_primary_light(
+                &mut emitter_primary_lights,
+                &emitter.id,
+                &light.id,
+            )?;
         }
         for r in &self.routes {
             if !r.duration_seconds.is_finite() || r.duration_seconds <= 0. || r.keyframes.len() < 2
@@ -627,5 +638,23 @@ pub fn validate_camera(c: &Camera) -> Result<()> {
             bail!("camera '{}'.projection.height: expected 0.1..150", c.id)
         }
         _ => Ok(()),
+    }
+}
+
+#[cfg(test)]
+mod emitter_light_validation_tests {
+    use super::ensure_unique_emitter_primary_light;
+    use std::collections::HashSet;
+
+    #[test]
+    fn emitter_primary_point_lights_have_exclusive_ownership() {
+        let mut assigned = HashSet::new();
+        ensure_unique_emitter_primary_light(&mut assigned, "fire-a", "light-a").unwrap();
+        ensure_unique_emitter_primary_light(&mut assigned, "fire-b", "light-b").unwrap();
+        let error =
+            ensure_unique_emitter_primary_light(&mut assigned, "fire-b", "light-a").unwrap_err();
+        assert!(error
+            .to_string()
+            .contains("already assigned to another emitter"));
     }
 }
