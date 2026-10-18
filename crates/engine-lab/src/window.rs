@@ -1279,6 +1279,23 @@ fn draw_inspector(ctx: &egui::Context, session: &Session, commands: &mut Vec<(&s
             let mut value=initial;
             if ui.checkbox(&mut value,label).changed() {commands.push(("set_parameter",json!({"path":format!("render.experiments.{key}"),"value":value})));}
         }
+        ui.collapsing("Shading operation counters", |ui| {
+            let mut enabled = session.renderer.shading_diagnostics_enabled();
+            if ui.checkbox(&mut enabled, "Run diagnostic counter draws").changed() {
+                commands.push(("set_shading_diagnostics", json!({"enabled":enabled})));
+            }
+            ui.small("Diagnostic draws add scratch targets and perturb timing.");
+            if let Some(counters) = &session.renderer.metrics.shading_counters {
+                ui.monospace(format!("Fire candidates: {} · tests: {}", counters.fire_primitive_candidates, counters.fire_ellipsoid_tests));
+                ui.monospace(format!("Smoke candidates: {} · density samples: {}", counters.smoke_lobe_candidates, counters.smoke_density_samples));
+                ui.monospace(format!("Absorption direct/cache: {}/{}", counters.direct_absorption_samples, counters.cached_absorption_samples));
+                ui.monospace(format!("Shadow sun/fire: {}/{}", counters.sun_shadow_lookups, counters.fire_shadow_lookups));
+                ui.monospace(format!("World lights point/particle: {}/{}", counters.world_point_light_candidates, counters.world_particle_light_candidates));
+                ui.monospace(format!("Optical surfaces: {} · reflection steps: {} · transmission: {}", counters.optical_surface_interactions, counters.optical_reflection_steps, counters.optical_transmission_interactions));
+            } else if enabled {
+                ui.small("Counters appear after the next rendered frame.");
+            }
+        });
         ui.separator();
         ui.horizontal(|ui| {
             if ui.button("Capture").clicked() {commands.push(("capture_frame",json!({"path":format!("artifacts/native-{}.png",session.tick),"scale":3})));}

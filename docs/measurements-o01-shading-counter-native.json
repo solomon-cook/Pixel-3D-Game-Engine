@@ -17,7 +17,7 @@
   },
   "scene": "assets/scenes/profiling-heavy.json",
   "scene_sha256": "f736a0779a868d11c22d761b46a0920eb1b154db6241088c9d09a9fa1ca8a05b",
-  "binary_sha256": "b321f1af49e93fdfa3fc396a795bb081d88411d45c0ca6b845ff89ff9f3ad72a",
+  "binary_sha256": "fc41c8d050ec58d25d4d5bba993f7076a75fe89aab6e7c732d717e43add55f4a",
   "session_source_sha256": "265c3ec5471518a1fbff903f022f043a7ee43daa45a196d8c84525fc90fb9ef8",
   "seed": 42,
   "tick": 120,

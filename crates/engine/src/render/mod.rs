@@ -3167,6 +3167,10 @@ impl Renderer {
         self.metrics.shading_counters = None;
     }
 
+    pub fn shading_diagnostics_enabled(&self) -> bool {
+        self.shading_diagnostics_enabled
+    }
+
     pub fn read_shading_counters(&mut self) -> Result<crate::diagnostics::ShadingCounters> {
         let read = self.device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("shading counter sample readback"),
