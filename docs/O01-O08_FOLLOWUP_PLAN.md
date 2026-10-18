@@ -483,8 +483,11 @@ byte-identical. Scene validation accepts two emitters, and the review exercises
 the dual-source render path. Inked smoke, a source-local absorption-cache
 channel, the opaque-material heat cue's second temperature field, post heat and
 source-specific primary-light shadows are implemented. Focused cache/heat A/B,
-stress and performance review remain open. See
-[heat evidence](measurements-multi-emitter-heat.json).
+maximum-budget stress and sustained performance review remain open. Per-source
+primary-light, sun, caster, material, shader-reload and reset invalidation now
+match forced redraw at fixed tick; see
+[shadow invalidation evidence](measurements-multi-emitter-shadow-invalidation.json)
+and [heat evidence](measurements-multi-emitter-heat.json).
 Source-local inked smoke is implemented with 36 puff candidates per source,
 separate overflow fallback and a 72-entry total tile capacity. GPU validation and
 single-source parity pass on M1 Max/Metal; the expanded tile index buffer uses

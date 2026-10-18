@@ -23,7 +23,10 @@
     "seed": 42,
     "camera": "hero",
     "tick": 120,
-    "resolution": [640, 360],
+    "resolution": [
+      640,
+      360
+    ],
     "scale": 1,
     "cache_enabled": true,
     "cache_resource_bytes": 4096,
@@ -47,5 +50,6 @@
     "The scene validator accepts one emitter, so the source-one cache branch has not been exercised in a dual-source frame.",
     "No source-one image-quality, temporal-error, or performance measurements exist.",
     "Shadow maps remain primary-source only; Windows/DX12 and other-adapter acceptance remain open."
-  ]
+  ],
+  "historical_snapshot_note": "This report records the narrower single-source validation scope at the time it was captured. Current live dual-source implementation evidence is in measurements-multi-emitter-shadows.json; use the linked report for current runtime status."
 }

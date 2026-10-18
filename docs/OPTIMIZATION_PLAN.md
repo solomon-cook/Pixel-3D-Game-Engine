@@ -157,8 +157,12 @@ frusta, and it tests bounds for objects using shadow-participation materials.
 Only dirty map passes and matrix buffers are updated. Sun projection changes dirty
 the sun map; point-light position/range changes dirty the six cube faces. Unknown
 changes, missing bounds, reset, renderer/resource construction and successful
-shader reload retain the full-map fallback. `get_metrics` reports the seven-face
-mask in sun, +X, -X, +Y, -Y, +Z, -Z order.
+shader reload retain the full-map fallback. `get_metrics` reports the sun face
+followed by six cube faces per primary source, with source IDs in
+`shadow_source_ids` order. The bounded two-emitter path now invalidates only the
+moved source's six faces; source-light, sun, caster, material, shader-reload and
+reset captures match forced redraw on M1 Max/Metal. See
+[two-source invalidation evidence](measurements-multi-emitter-shadow-invalidation.json).
 `set_shadow_cache` and benchmark `--force-shadow-redraw` expose the full-redraw
 control. Per-frame metrics and route reports expose hits, misses, resident bytes,
 redrawn map count, CPU shadow encoding and dirty reason. Three alternating

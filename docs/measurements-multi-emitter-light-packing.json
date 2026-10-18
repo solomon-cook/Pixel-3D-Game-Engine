@@ -18,5 +18,6 @@
     "selected_light_identity_matches_global_selector": true,
     "dropped_count_matches_formula": true
   },
-  "scope": "CPU packing tests only. The live Renderer still accepts one source and does not call the multi-source storage packer; no dual-source GPU, visual or performance result is claimed."
+  "scope": "CPU packing tests only. The live Renderer still accepts one source and does not call the multi-source storage packer; no dual-source GPU, visual or performance result is claimed.",
+  "historical_snapshot_note": "This report records the narrower single-source validation scope at the time it was captured. Current live dual-source implementation evidence is in measurements-multi-emitter-shadow-invalidation.json; use the linked report for current runtime status."
 }

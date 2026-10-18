@@ -12,7 +12,13 @@
     "smoke_lobes_per_source": 36,
     "smoke_lobes_total": 72,
     "secondary_source_has_local_domain_and_smoke_sampling": true,
-    "secondary_source_settings": ["buoyancy", "bubble_count", "bubble_scale", "self_shadow", "internal_glow"],
+    "secondary_source_settings": [
+      "buoyancy",
+      "bubble_count",
+      "bubble_scale",
+      "self_shadow",
+      "internal_glow"
+    ],
     "per_source_tile_overflow_fallback": true,
     "live_two_emitter_scene_available": false
   },
@@ -21,7 +27,10 @@
     "seed": 42,
     "camera": "hero",
     "tick": 120,
-    "resolution": [640, 360],
+    "resolution": [
+      640,
+      360
+    ],
     "scale": 1,
     "rgba_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48",
     "baseline_byte_identical": true
@@ -44,5 +53,6 @@
     "Scene validation accepts one emitter, so the second inked source has no live-scene visual review or performance measurement.",
     "Absorption-cache construction and shadow maps remain primary-source only.",
     "Windows/DX12 and another-adapter validation remain open."
-  ]
+  ],
+  "historical_snapshot_note": "This report records the narrower single-source validation scope at the time it was captured. Current live dual-source implementation evidence is in measurements-multi-emitter-shadows.json; use the linked report for current runtime status."
 }

@@ -121,8 +121,11 @@ open; the single-source baseline remains selectable and pixel-identical.
   additional source. M1 Max/Metal validates the cube-array pipeline and preserves
   the single-source capture hash. The live dual-source review reports all 13 maps
   drawn on initialization and stable source ordering under reversed emitter
-  arrays; moving-caster invalidation and sustained review remain open. See
-  [shadow evidence](measurements-multi-emitter-shadows.json).
+  arrays. A source-light edit now dirties only its six cube faces; sun, caster,
+  material, reload and reset edits were compared with forced redraw and all
+  fixed-tick images matched. Sustained moving-caster stress remains open. See
+  [shadow evidence](measurements-multi-emitter-shadows.json) and
+  [invalidation evidence](measurements-multi-emitter-shadow-invalidation.json).
 - One 48×64×48 Rg16Float density/temperature pair occupies 1,179,648 bytes.
   One point-light cubemap set occupies 1,572,864 bytes. The 8 authored point
   lights and 12 derived particle lights are global renderer budgets.

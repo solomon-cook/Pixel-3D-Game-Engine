@@ -359,30 +359,28 @@ validation remains open. Results are in
 [measurements-o03-tile-size-sustained.json](measurements-o03-tile-size-sustained.json);
 raw reports and captures are in ignored `artifacts/o03/`.
 
-Emitter/profile ownership remains one-emitter at runtime. Scene emitters now
-bind their thermal/fire profile by `effect_profile` and their colocated primary
-point light by `light_id`; legacy scenes may omit the light link and use the
-original position match. This removes renderer-side light identity inference
-from migrated scenes, but does not add per-emitter smoke fields, tile lists, or
-fire-light shadow maps. Multi-emitter stress and Windows/DX12 checks remain open.
-The next bounded two-emitter implementation proposal estimates about 2.77 MB
-additional known resources at 640×360 for a second smoke field, point-light
-cubemap and current-size FireFrame, before driver/bind-group costs. See
-[MULTI_EMITTER_PLAN.md](MULTI_EMITTER_PLAN.md). Deterministic CPU `FireFrame`
-sampling now sorts up to two sources by stable ID, hashes event seeds from each
-ID, rejects duplicate IDs/excess sources, and has replay, reorder, event-identity
-and source-independence tests. Scene validation and renderer ownership remain
-single-emitter; this helper is groundwork and is not used by live rendering.
+**Two-emitter implementation update (18 October 2026):** scene validation and
+the live renderer accept up to two emitters with explicit unique primary-light
+IDs. Source-local simulation, shading, heat, ink, absorption, and six-face
+primary-light shadow maps are exercised by fixed-tick Metal captures. Reversing
+emitter order preserves the combined image hashes. Cache-versus-forced captures
+also match after each source light, sun projection, caster, shadow material,
+shader reload and reset change. Moving one fire light now dirties only its six
+cube faces. Maximum-budget stress, sustained performance, focused cache/heat A/B,
+Windows/DX12 and other-adapter checks remain open. The dual-source scene inventory
+reports 25,889,280 known bytes at 640×360; this is not a paired single-source
+delta. See [implementation plan](MULTI_EMITTER_PLAN.md), [two-source review](measurements-multi-emitter-shadows.json)
+and [shadow invalidation evidence](measurements-multi-emitter-shadow-invalidation.json).
 
 `python3 scripts/verify.py --gpu` passed on this host: formatting, Clippy,
-30 workspace tests, scene validation and material/fire GPU checks. The verifier
+40 workspace tests, scene validation and material/fire GPU checks. The verifier
 reports `native: false`; native-window lifecycle and Windows/DX12 rendering remain
 unverified.
 
 ## O02 whole-map shadow cache
 
-The renderer now keeps all seven shadow maps valid across frames with unchanged
-casters, effective shadow transmission, sun projection and fire-light projection.
+The single-source renderer keeps all seven shadow maps valid across frames with
+unchanged casters, effective shadow transmission, sun projection and fire-light projection.
 Camera and light color/power changes retain the maps. Sun projection edits redraw
 the sun map; fire-light position/range edits redraw the point cube. Reset, successful
 shader reload and uncertain key state redraw all seven maps. Cache metrics report

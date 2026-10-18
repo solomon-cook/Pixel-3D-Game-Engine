@@ -8,8 +8,15 @@
   },
   "implementation": {
     "volume_pairs_per_accepted_emitter": 1,
-    "volume_dimensions": [48, 64, 48],
-    "simulation_channels": ["density", "temperature"],
+    "volume_dimensions": [
+      48,
+      64,
+      48
+    ],
+    "simulation_channels": [
+      "density",
+      "temperature"
+    ],
     "stable_source_order": "emitter ID ascending",
     "source_uniform_bytes": 80,
     "reset_clears_every_source": true,
@@ -24,14 +31,21 @@
     "camera": "hero",
     "seed": 42,
     "tick": 120,
-    "resolution": [640, 360],
+    "resolution": [
+      640,
+      360
+    ],
     "pixel_rgba_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48",
     "comparison": "pixel-identical to the established source-zero capture"
   },
   "resource_evidence": {
     "single_source_volume_pair_bytes_rg16float": 1179648,
     "single_source_uniform_bytes": 80,
-    "allocation_estimate_excludes": ["driver alignment", "transient allocations", "opaque timestamp query-set storage"]
+    "allocation_estimate_excludes": [
+      "driver alignment",
+      "transient allocations",
+      "opaque timestamp query-set storage"
+    ]
   },
   "verification": {
     "command": "python3 scripts/verify.py --gpu",
@@ -45,5 +59,6 @@
     "Flame-adjacent atmosphere shading, heat shimmer, optical integration, absorption cache and shadowing remain primary-source only.",
     "No dual-source image or performance claim is made.",
     "Windows/DX12 and other adapters remain unverified."
-  ]
+  ],
+  "historical_snapshot_note": "This report records the narrower single-source validation scope at the time it was captured. Current live dual-source implementation evidence is in measurements-multi-emitter-shadows.json; use the linked report for current runtime status."
 }

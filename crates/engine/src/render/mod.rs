@@ -385,6 +385,25 @@ fn shadow_dirty_reason(previous: Option<&ShadowCacheKey>, next: &ShadowCacheKey)
     }
 }
 
+fn fire_light_dirty_face_mask(
+    previous: &[(String, [f32; 3], f32)],
+    next: &[(String, [f32; 3], f32)],
+) -> Vec<bool> {
+    let source_count = previous.len().max(next.len());
+    let mut dirty = vec![false; source_count * POINT_SHADOW_FACES];
+    if previous.len() != next.len() {
+        dirty.fill(true);
+        return dirty;
+    }
+    for (source_slot, (old, new)) in previous.iter().zip(next).enumerate() {
+        if old != new {
+            let start = source_slot * POINT_SHADOW_FACES;
+            dirty[start..start + POINT_SHADOW_FACES].fill(true);
+        }
+    }
+    dirty
+}
+
 fn shadow_face_mask_for_bounds(bounds: &[Option<assets::Bounds3>], matrices: &[Mat4]) -> Vec<bool> {
     let mut dirty = vec![false; matrices.len()];
     for bound in bounds {
@@ -4013,7 +4032,11 @@ impl Renderer {
                 dirty_faces[0] = true;
             }
             if previous.fire_lights != next.fire_lights {
-                dirty_faces[1..].fill(true);
+                for (dirty, light_dirty) in dirty_faces[1..].iter_mut().zip(
+                    fire_light_dirty_face_mask(&previous.fire_lights, &next.fire_lights),
+                ) {
+                    *dirty |= light_dirty;
+                }
             }
             if previous.casters != next.casters {
                 if only_object_transforms_changed(previous, next) {
@@ -5177,6 +5200,45 @@ mod shadow_cache_tests {
         two_sources.emitters.reverse();
         let reordered = shadow_cache_key(&two_sources).unwrap();
         assert_eq!(key.fire_lights, reordered.fire_lights);
+    }
+
+    #[test]
+    fn changing_one_emitter_light_dirties_only_its_six_shadow_faces() {
+        let mut two_sources = scene();
+        let mut second_emitter = two_sources.emitters[0].clone();
+        second_emitter.id = "zzz-fire".into();
+        second_emitter.light_id = Some("zzz-fire-light".into());
+        second_emitter.position = [3., 0.4, -1.];
+        let mut second_light = two_sources
+            .lights
+            .iter()
+            .find(|light| light.kind == LightKind::Point)
+            .unwrap()
+            .clone();
+        second_light.id = "zzz-fire-light".into();
+        second_light.position = second_emitter.position;
+        two_sources.emitters.push(second_emitter);
+        two_sources.lights.push(second_light);
+
+        let before = shadow_cache_key(&two_sources).unwrap();
+        let watchfire = two_sources
+            .emitters
+            .iter_mut()
+            .find(|emitter| emitter.id == "zzz-fire")
+            .unwrap();
+        watchfire.position[0] += 0.2;
+        let light = two_sources
+            .lights
+            .iter_mut()
+            .find(|light| light.id == "zzz-fire-light")
+            .unwrap();
+        light.position[0] += 0.2;
+        let after = shadow_cache_key(&two_sources).unwrap();
+
+        let mask = fire_light_dirty_face_mask(&before.fire_lights, &after.fire_lights);
+        assert_eq!(mask.len(), POINT_SHADOW_FACES * 2);
+        assert!(mask[..POINT_SHADOW_FACES].iter().all(|dirty| !dirty));
+        assert!(mask[POINT_SHADOW_FACES..].iter().all(|dirty| *dirty));
     }
 
     #[test]
