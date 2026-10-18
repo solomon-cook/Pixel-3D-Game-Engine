@@ -383,7 +383,7 @@ evidence but leaves physical unsupported-adapter and DX12 acceptance open. See
 [offscreen runner](../scripts/rg16_fallback_study.py) and
 [native runner](../scripts/verify_native_rg16_fallback.py).
 
-**Fixed-step submission batching, native timing complete for one route:** a
+**Fixed-step submission batching, native timing measured on two routes:** a
 three-pair 120-second clearing-orbit comparison on M1 Max/Metal measured
 5,175–5,218 frames per run. Median batched-minus-serial changes were +0.0003 ms native CPU
 frame work, +0.016 ms CPU simulation submission, -0.085 fps, +0.00004 ms smoke
@@ -393,6 +393,12 @@ in `measurements-o08-batch-parity.json`. This does not establish performance or
 visual acceptance for other scenes, continuous human review, DX12 or other
 adapters. See [native report](measurements-o08-batch-native.json) and
 [runner](../scripts/simulation_batch_native_study.py).
+
+The same three-pair protocol now covers Material Atelier's `material-orbit`.
+Median batched-minus-serial changes are -0.073 fps and -0.0054 ms native CPU
+frame work, with small GPU-stage reductions and +0.023 ms CPU simulation
+submission; whole-window performance remains effectively unchanged. Evidence is
+in [the native Material Atelier report](measurements-o08-batch-native-materials.json).
 
 Break the umbrella O08 item into decisions for lazy optical allocation, RG16 targets,
 compact HDR, normal/depth reuse and no-copy overlay. For each, record supported

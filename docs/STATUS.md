@@ -31,15 +31,16 @@ median CPU queue submission falls 0.20–0.23 ms per sample. Median frame work
 improves by 0.17–0.24 ms on three workloads but regresses by 0.26 ms on Material
 Atelier. GPU-render median changes are neutral or slower on three workloads and
 frame-work p95 is mixed. The serial path remains selectable with
-`set_simulation_batching` or `--disable-simulation-batching`. A separate
-three-pair native clearing-orbit study measures +0.0003 ms median CPU frame work
-and -0.085 fps for batching, with mixed small GPU-stage changes; this does not
-establish a native performance win. Broader native workloads and other-adapter
-acceptance remain open.
+`set_simulation_batching` or `--disable-simulation-batching`. Three-pair native
+studies on clearing and Material Atelier measure -0.085/-0.073 median FPS and
++0.0003/-0.0054 ms CPU frame work for batching, with small mixed CPU/GPU stage
+changes. Neither shows a native whole-window gain. Profiling-heavy and other-
+adapter acceptance remain open.
 See [parity report](measurements-o08-batch-parity.json),
 [burst report](measurements-o08-batch-submit-cost.json),
 [route report](measurements-o08-batch-route.json),
-[native report](measurements-o08-batch-native.json), and the runners
+[native reports](measurements-o08-batch-native.json,
+measurements-o08-batch-native-materials.json), and the runners
 [parity](../scripts/simulation_batch_parity.py),
 [burst](../scripts/simulation_batch_cost_study.py), and
 [route](../scripts/simulation_batch_route_study.py),

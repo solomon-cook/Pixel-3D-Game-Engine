@@ -603,6 +603,13 @@ and other-adapter/DX12 acceptance remain open. See
 [native report](measurements-o08-batch-native.json) and its
 [runner](../scripts/simulation_batch_native_study.py).
 
+The native study now also covers Material Atelier's 120-second `material-orbit`
+in three alternating pairs. Median batched-minus-serial deltas are -0.073 fps,
+-0.0054 ms native CPU frame work, +0.0227 ms CPU simulation submission,
+-0.00008 ms smoke compute and -0.0070 ms atmosphere/fire. These small changes do
+not show a whole-window gain. See
+[Material Atelier report](measurements-o08-batch-native-materials.json).
+
 **Acceptance:** image/state comparisons survive pause/reset, repeated fixed steps,
 camera moves, resource recreation and invalid shader rollback. Report memory,
 total GPU/CPU time and supported formats on each backend, including any precision
