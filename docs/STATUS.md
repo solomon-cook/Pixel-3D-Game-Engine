@@ -501,8 +501,13 @@ it adds no allocation or dispatch. A separate three-pair, 120-second offscreen
 comparison finds tiled serial frame-work lower by a median 0.715 ms in every pair.
 The reported GPU-render metric is 1.922 ms higher for tiled; tile-build rises
 2.468 ms while atmosphere/fire falls 0.495 ms. GPU intervals may overlap, so this
-is a mixed, workload-specific result rather than a universal speedup. Cache
-temporal quality and other-scene scaling remain open. Native-window fixed-tick
+is a mixed, workload-specific result rather than a universal speedup. An ordinary
+two-emitter review-scene route adds a second operating point: tiled/exhaustive
+images match at tick 300, and three 120-second pairs save 1.199 ms median serial
+frame work and 1.050 ms atmosphere/fire time, with 1.131 ms higher tile-list build
+and 0.038 ms slower total reported GPU-render time. Additional scenes remain to
+be measured. See [review-scene report](measurements-multi-emitter-review-tile-sustained.json).
+Native-window fixed-tick
 captures now match exhaustive shading across six cameras, source isolation and
 reversed emitter order. A three-pair native maximum-budget tiled/exhaustive study
 shows a median 0.393 ms atmosphere/fire GPU-stage reduction, with mixed whole-window
@@ -513,6 +518,7 @@ DX12 and other-adapter acceptance remain open. See [native report](measurements-
 [performance runner](../scripts/two_emitter_sustained_study.py),
 [native tiled report](measurements-multi-emitter-tile-native.json),
 [native tiled runner](../scripts/two_emitter_tile_native_study.py),
+[review-scene sustained report](measurements-multi-emitter-review-tile-sustained.json),
 [scene](../assets/scenes/two-emitter-overflow-stress.json) and
 [runner](../scripts/two_emitter_overflow_study.py).
 

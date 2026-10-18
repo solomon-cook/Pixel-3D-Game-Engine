@@ -644,10 +644,18 @@ plus [per-source origin](measurements-multi-emitter-source-origins.json),
 [atmosphere evidence](measurements-multi-emitter-atmosphere.json) and
 [heat evidence](measurements-multi-emitter-heat.json).
 
+A second sustained comparison now covers the ordinary two-emitter review scene
+on the same 120-second orbit. Across three alternating 120-second offscreen pairs,
+tiled and exhaustive fixed-tick captures match exactly. Tiled rendering saves a
+median 1.199 ms serial frame work and 1.050 ms atmosphere/fire GPU time, while
+adding 1.131 ms tile-list build time; total reported GPU render is 0.038 ms slower.
+The maximum-budget stress scene still shows a higher reported GPU-render metric
+with tiling, so these results define two measured operating points, not a
+universal speedup. See [review-scene report](measurements-multi-emitter-review-tile-sustained.json)
+and [runner](../scripts/two_emitter_sustained_study.py).
+
 **Exit gate:** source ownership, deterministic replay, fixed-tick overflow and
-reset/edit checks pass on Metal for the reviewed scenes. The maximum-budget
-sustained route shows a serial frame-work gain alongside a higher reported
-GPU-render metric, so do not generalize it to other workloads. Cache temporal
+reset/edit checks pass on Metal for the reviewed scenes. Cache temporal
 quality now includes a full 120-second offscreen route with exact direct/cache
 image parity; native fixed-tick cache captures match at six poses, and three
 120-second native pairs show no robust whole-window gain. Continuous native

@@ -37,21 +37,27 @@ and [runner](../scripts/two_emitter_absorption_sustained_study.py).
 - Scene validation accepts one or two emitters and requires explicit unique
   primary-light IDs for dual-source scenes. Per-emitter smoke simulation,
   atmosphere/optical, ink, absorption, opaque heat, authored primary-light and
-  geometry shadow paths are connected. The new review scene exercises these
-  paths on M1 Max/Metal. Cache-enabled fixed-tick review is complete. Maximum-
-  budget tiled/exhaustive parity and sustained offscreen and native performance
-  are recorded. Native timing shows a GPU-stage reduction without a clear
-  whole-window gain. Temporal samples cover both cache sizes and full
-  8³/16³-cache routes, while
-  continuous native playback, other-scene performance and adapter gates remain
-  open.
+  geometry shadow paths are connected. The review and maximum-budget scenes both
+  exercise these paths on M1 Max/Metal. Cache-enabled fixed-tick review is
+  complete. Tiled/exhaustive parity and sustained timing are recorded on both
+  scenes: the maximum-budget scene has a serial-work reduction with a higher
+  reported GPU-render metric; the review scene has a 1.20 ms median serial-work
+  reduction, a 1.05 ms atmosphere/fire stage reduction and nearly flat reported
+  GPU-render time. Native maximum-budget timing shows a GPU-stage reduction
+  without a clear whole-window gain. Temporal samples cover both cache sizes and
+  full 8³/16³-cache routes. Continuous native playback, additional-scene scaling
+  and adapter gates remain open.
 - Each `FireFrame` owns a 256-primitive pool; up to 12 derived particle lights
   are shared globally. O03 tile construction now includes both sources, and
   overflow falls back to exhaustive evaluation. Maximum-budget parity, forced
   fallback and three-pair offscreen and native sustained routes are recorded.
   Native tiling lowers median atmosphere/fire GPU time by 0.393 ms, while the
   median FPS delta is only -0.231 and the pair results are mixed; no whole-window
-  win is established. Other-scene scaling and portability evidence remain open.
+  win is established. A separate ordinary review-scene route has a smaller GPU-stage
+  reduction and nearly flat whole-render GPU time, alongside a serial frame-work
+  gain. See [review-scene report](measurements-multi-emitter-review-tile-sustained.json)
+  and [runner](../scripts/two_emitter_sustained_study.py). Further scene scaling
+  and portability evidence remain open.
 - The CPU storage packer now merges sampled source candidates into the shared
   12-light budget by descending power, then stable emitter ID and event identity.
   It stores the selected lights in source zero's shared-light slot and reports
@@ -91,7 +97,9 @@ and [runner](../scripts/two_emitter_absorption_sustained_study.py).
   scene validation now accepts two emitters, and the keyed upload path has been
   exercised by the live two-source review capture. Source-specific shadow maps
   were also rendered for both lights. A maximum-budget CPU/GPU route comparison is
-  recorded; other-scene scaling and overload/lifecycle stress remain open. The existing
+  measured on both the ordinary review scene and the maximum-budget stress scene;
+  results differ by metric and workload. Additional-scene scaling and overload/
+  lifecycle stress remain open. The existing
   single-source profiling-heavy fixed-tick RGBA capture remains byte-identical
   on M1 Max/Metal (SHA-256 `9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48`).
 - Smoke compute now allocates a separate ping-pong density/temperature pair and

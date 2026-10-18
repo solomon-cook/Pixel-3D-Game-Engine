@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Measure tiled versus exhaustive rendering on the maximum-budget two-emitter route."""
+"""Measure tiled versus exhaustive rendering on a two-emitter scene and route."""
 
 from __future__ import annotations
 
@@ -96,6 +96,8 @@ def main() -> int:
     parser.add_argument("--pairs", type=int, default=3)
     parser.add_argument("--duration", type=float, default=120.0)
     parser.add_argument("--warmup", type=float, default=10.0)
+    parser.add_argument("--camera", default="stress-close")
+    parser.add_argument("--route", default="clearing-orbit")
     parser.add_argument("--output", type=Path, default=ROOT / "artifacts/two-emitter-sustained")
     parser.add_argument("--report", type=Path, default=ROOT / "docs/measurements-multi-emitter-sustained.json")
     parser.add_argument("--summarize-existing", action="store_true", help="rebuild the report from existing pair reports")
@@ -105,6 +107,13 @@ def main() -> int:
 
     binary, scene = args.binary.resolve(), args.scene.resolve()
     output, report_path = args.output.resolve(), args.report.resolve()
+    scene_data = json.loads(scene.read_text())
+    if len(scene_data.get("emitters", [])) != 2:
+        parser.error("selected scene must contain exactly two emitters")
+    if not any(item.get("id") == args.camera for item in scene_data.get("cameras", [])):
+        parser.error(f"selected scene has no camera {args.camera}")
+    if not any(item.get("id") == args.route for item in scene_data.get("routes", [])):
+        parser.error(f"selected scene has no route {args.route}")
     if not binary.is_file():
         subprocess.run(["cargo", "build", "--release", "-p", "engine-lab"], cwd=ROOT, check=True)
     output.mkdir(parents=True, exist_ok=True)
@@ -134,7 +143,7 @@ def main() -> int:
             log_file = output / f"pair-{pair_index:02d}-{variant}.log"
             command = [
                 str(binary), "benchmark", "--scene", str(scene), "--seed", "42",
-                "--camera", "stress-close", "--route", "clearing-orbit",
+                "--camera", args.camera, "--route", args.route,
                 "--duration", str(args.duration), "--warmup", str(args.warmup),
                 "--resolution", "640x360", "--mode", "serial", "--output", str(report_file),
             ]
@@ -180,10 +189,20 @@ def main() -> int:
     atmosphere_delta_key = "exhaustive_minus_tiled.gpu_stages.atmosphere_fire.median_ms"
     frame_work_deltas = [pair["deltas"][frame_work_delta_key] for pair in pairs]
     first = json.loads((output / "pair-01-tiled.json").read_text())
+    parity = {}
+    for variant in ("tiled", "exhaustive"):
+        path = output / f"capture-{variant}.png"
+        command = [str(binary), "capture", "--scene", str(scene), "--seed", "42",
+                   "--camera", args.camera, "--tick", "300", "--resolution", "640x360",
+                   "--scale", "1", "--output", str(path),]
+        if variant == "exhaustive": command.append("--disable-tile-lists")
+        subprocess.run(command, cwd=ROOT, check=True, stdout=subprocess.DEVNULL)
+        parity[variant] = {"image": path_reference(path), "sha256": sha256(path)}
+    parity["images_match"] = parity["tiled"]["sha256"] == parity["exhaustive"]["sha256"]
     report = {
         "version": 1,
         "date": "2026-10-18",
-        "workstream": "maximum-budget two-emitter tiled versus exhaustive sustained rendering",
+        "workstream": "two-emitter tiled versus exhaustive sustained rendering",
         "host": {
             "gpu": first["capabilities"].get("name"),
             "backend": first["capabilities"].get("backend"),
@@ -194,9 +213,9 @@ def main() -> int:
         "scene_sha256": sha256(scene),
         "binary_sha256": sha256(binary),
         "source_sha256": {path: sha256(ROOT / path) for path in SOURCE_PATHS},
-        "route": "clearing-orbit",
+        "route": args.route,
         "seed": 42,
-        "camera_start": "stress-close",
+        "camera_start": args.camera,
         "resolution": [640, 360],
         "budgets": {
             "emitters": first["workload_counts"].get("emitters"),
@@ -208,6 +227,7 @@ def main() -> int:
         "duration_seconds_per_run": args.duration,
         "warmup_seconds_per_run": args.warmup,
         "pairs": pairs,
+        "fixed_tick_capture_parity": parity,
         "summary": summary,
         "paired_delta_summary": paired_delta_summary,
         "interpretation": {
@@ -219,7 +239,7 @@ def main() -> int:
             "note": "The serial offscreen frame-work measure favors tiled in all three pairs. The reported GPU-render metric adds pass intervals that can overlap; tile build is higher and atmosphere/fire is lower. Keep this as workload-specific evidence, not a universal renderer win.",
         },
         "aggregation_policy": first.get("aggregation_policy"),
-        "scope": "Offscreen M1 Max/Metal workload comparison. Fixed-tick tiled/exhaustive image parity is independently covered by measurements-multi-emitter-overflow.json.",
+        "scope": "Offscreen M1 Max/Metal workload comparison. This report includes same-scene tick-300 tiled/exhaustive image hashes in addition to performance pairs.",
         "limitations": [
             "No native-window presentation, DX12, other-adapter, or continuous human playback evidence.",
             "Route timing does not establish behavior for other authored multi-emitter scenes or workloads.",

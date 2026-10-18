@@ -1,0 +1,1125 @@
+{
+  "version": 1,
+  "date": "2026-10-18",
+  "workstream": "two-emitter tiled versus exhaustive sustained rendering",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal",
+    "os": "macOS-27.0.1-arm64-arm-64bit",
+    "native_window": false
+  },
+  "scene": "assets/scenes/two-emitter-review.json",
+  "scene_sha256": "9ca7aee40dac7a9cde4010f6f90c2623e441c8e0c9a1f19ff2a9c570c1082892",
+  "binary_sha256": "cceaa3c520243f31b3a2febe7c0ee778fe1039f9735c48e69452d042458de157",
+  "source_sha256": {
+    "crates/engine/src/render/mod.rs": "211bf4155a039927a310cd886ce3598cc3a6d78cabdc010030e2c1b607d78446",
+    "crates/engine/src/render/shaders/tile_build.wgsl": "4daa532de312a10fd68fd88f891fd0bfbd692b99cfc067bb5cdc50319a99387e",
+    "crates/engine/src/render/shaders/volume.wgsl": "972f211c4544ae063b2c070f27f950e95216163f314fc6271c87f06105e03484",
+    "scripts/two_emitter_sustained_study.py": "3408de49964888706c678d39be2ecda1ee3342f471d9b17e390d79bbdbd5f37f"
+  },
+  "route": "clearing-orbit",
+  "seed": 42,
+  "camera_start": "dual-wide",
+  "resolution": [
+    640,
+    360
+  ],
+  "budgets": {
+    "emitters": 2,
+    "authored_point_lights": 2,
+    "derived_particle_lights": 12,
+    "tile_list_capacity_bytes": 603520
+  },
+  "mode": "serial",
+  "duration_seconds_per_run": 120.0,
+  "warmup_seconds_per_run": 10.0,
+  "pairs": [
+    {
+      "pair": 1,
+      "order": [
+        "tiled",
+        "exhaustive"
+      ],
+      "deltas": {
+        "exhaustive_minus_tiled.gpu_render.median_ms": -0.037999000000000116,
+        "exhaustive_minus_tiled.frame_work.median_ms": 1.1767909999999997,
+        "exhaustive_minus_tiled.gpu_stages.atmosphere_fire.median_ms": 1.050084,
+        "exhaustive_minus_tiled.gpu_stages.tile_list_build.median_ms": -1.1309589999999998,
+        "exhaustive_minus_tiled.cpu_tile_list_encode.median_ms": 0.0054590000000000055,
+        "exhaustive_minus_tiled.simulation_cpu.median_ms": 0.024582999999999966
+      },
+      "tiled": {
+        "gpu_render": {
+          "median_ms": 3.947916,
+          "p95_ms": 4.976625,
+          "samples": 7200
+        },
+        "frame_work": {
+          "median_ms": 6.271875,
+          "p95_ms": 10.623417,
+          "samples": 7200
+        },
+        "gpu_stages": {
+          "atmosphere_fire": {
+            "median_ms": 2.5016249999999998,
+            "p95_ms": 2.949084,
+            "samples": 7200
+          },
+          "opaque_geometry": {
+            "median_ms": 1.969917,
+            "p95_ms": 2.290458,
+            "samples": 7200
+          },
+          "optical_resolve": {
+            "median_ms": null,
+            "p95_ms": null,
+            "samples": 0
+          },
+          "post": {
+            "median_ms": 2.578375,
+            "p95_ms": 3.42975,
+            "samples": 7200
+          },
+          "shadow_maps": {
+            "median_ms": null,
+            "p95_ms": null,
+            "samples": 0
+          },
+          "smoke_absorption_cache": {
+            "median_ms": null,
+            "p95_ms": null,
+            "samples": 0
+          },
+          "smoke_compute": {
+            "median_ms": 0.03075,
+            "p95_ms": 0.034042,
+            "samples": 7200
+          },
+          "tile_list_build": {
+            "median_ms": 1.1484999999999999,
+            "p95_ms": 1.27775,
+            "samples": 7200
+          }
+        },
+        "cpu_tile_list_encode": {
+          "median_ms": 0.077708,
+          "p95_ms": 0.268166,
+          "samples": 7200
+        },
+        "simulation_cpu": {
+          "median_ms": 0.48658399999999996,
+          "p95_ms": 1.387333,
+          "samples": 7200
+        },
+        "tile_lists": {
+          "capacity_bytes": 603520,
+          "cpu_encode_ms": {
+            "median_ms": 0.077708,
+            "p95_ms": 0.268166,
+            "samples": 7200
+          },
+          "enabled": true,
+          "force_overflow": false,
+          "gpu_build": {
+            "median_ms": 1.1484999999999999,
+            "p95_ms": 1.27775,
+            "samples": 7200
+          },
+          "note": "Stats are asynchronous and frame-tagged. Oversized categories and forced overflow use exhaustive shader evaluation.",
+          "overflow_by_category": {
+            "fire_primitives": {
+              "candidate_memberships": 2991937,
+              "fallback_rate": 0.00047660024154589373,
+              "max_candidates_per_tile": 115,
+              "overflow_tiles": 3157
+            },
+            "particle_lights": {
+              "candidate_memberships": 1901840,
+              "fallback_rate": 0.0,
+              "max_candidates_per_tile": 12,
+              "overflow_tiles": 0
+            },
+            "point_lights": {
+              "candidate_memberships": 13248000,
+              "fallback_rate": 0.0,
+              "max_candidates_per_tile": 2,
+              "overflow_tiles": 0
+            },
+            "smoke_lobes": {
+              "candidate_memberships": 10163806,
+              "fallback_rate": 0.0,
+              "max_candidates_per_tile": 38,
+              "overflow_tiles": 0
+            }
+          },
+          "stats_frames": 7200,
+          "tile_size": 16
+        },
+        "workload_counts": {
+          "authored_lights": 3,
+          "draw_calls_per_frame": 45.0,
+          "effect_draw_calls_per_frame": 1,
+          "emitters": 2,
+          "fire_primitives_last_frame": 162,
+          "materials": 11,
+          "objects": 276,
+          "opaque_geometry_draw_calls_per_frame": 43.0,
+          "optical_draw_calls_per_frame": 0,
+          "particle_lights_last_frame": 12,
+          "post_draw_calls_per_frame": 1,
+          "shadow_draw_calls_per_frame": 0.0,
+          "shadow_draw_calls_when_redrawn": 0.0,
+          "shared_mesh_count": 68,
+          "unshared_vertex_count": 175662,
+          "vertices": 143454
+        },
+        "timing_coverage": {
+          "gpu_timestamps_supported": true,
+          "gpu_timing_requested": true,
+          "late_samples": 0,
+          "rendered_frames": 7200,
+          "skipped_compute_samples": 0,
+          "skipped_samples": 0,
+          "smoke_compute_samples": 7200,
+          "timed_frames": 7200,
+          "unavailable_reason": null
+        },
+        "route_seconds": 120.0,
+        "wall_seconds": 48.7875385
+      },
+      "exhaustive": {
+        "gpu_render": {
+          "median_ms": 3.909917,
+          "p95_ms": 4.713208,
+          "samples": 7200
+        },
+        "frame_work": {
+          "median_ms": 7.448665999999999,
+          "p95_ms": 12.309458000000001,
+          "samples": 7200
+        },
+        "gpu_stages": {
+          "atmosphere_fire": {
+            "median_ms": 3.551709,
+            "p95_ms": 4.262333,
+            "samples": 7200
+          },
+          "opaque_geometry": {
+            "median_ms": 2.616583,
+            "p95_ms": 3.294542,
+            "samples": 7200
+          },
+          "optical_resolve": {
+            "median_ms": null,
+            "p95_ms": null,
+            "samples": 0
+          },
+          "post": {
+            "median_ms": 3.6640409999999997,
+            "p95_ms": 4.416417,
+            "samples": 7200
+          },
+          "shadow_maps": {
+            "median_ms": null,
+            "p95_ms": null,
+            "samples": 0
+          },
+          "smoke_absorption_cache": {
+            "median_ms": null,
+            "p95_ms": null,
+            "samples": 0
+          },
+          "smoke_compute": {
+            "median_ms": 0.030958,
+            "p95_ms": 0.036625,
+            "samples": 7200
+          },
+          "tile_list_build": {
+            "median_ms": 0.017540999999999998,
+            "p95_ms": 0.024832999999999997,
+            "samples": 7200
+          }
+        },
+        "cpu_tile_list_encode": {
+          "median_ms": 0.083167,
+          "p95_ms": 0.30779100000000004,
+          "samples": 7200
+        },
+        "simulation_cpu": {
+          "median_ms": 0.5111669999999999,
+          "p95_ms": 1.5591249999999999,
+          "samples": 7200
+        },
+        "tile_lists": {
+          "capacity_bytes": 603520,
+          "cpu_encode_ms": {
+            "median_ms": 0.083167,
+            "p95_ms": 0.30779100000000004,
+            "samples": 7200
+          },
+          "enabled": false,
+          "force_overflow": false,
+          "gpu_build": {
+            "median_ms": 0.017540999999999998,
+            "p95_ms": 0.024832999999999997,
+            "samples": 7200
+          },
+          "note": "Stats are asynchronous and frame-tagged. Oversized categories and forced overflow use exhaustive shader evaluation.",
+          "overflow_by_category": {
+            "fire_primitives": {
+              "candidate_memberships": 0,
+              "fallback_rate": 1.0,
+              "max_candidates_per_tile": 0,
+              "overflow_tiles": 6624000
+            },
+            "particle_lights": {
+              "candidate_memberships": 0,
+              "fallback_rate": 1.0,
+              "max_candidates_per_tile": 0,
+              "overflow_tiles": 6624000
+            },
+            "point_lights": {
+              "candidate_memberships": 0,
+              "fallback_rate": 1.0,
+              "max_candidates_per_tile": 0,
+              "overflow_tiles": 6624000
+            },
+            "smoke_lobes": {
+              "candidate_memberships": 0,
+              "fallback_rate": 1.0,
+              "max_candidates_per_tile": 0,
+              "overflow_tiles": 6624000
+            }
+          },
+          "stats_frames": 7200,
+          "tile_size": 16
+        },
+        "workload_counts": {
+          "authored_lights": 3,
+          "draw_calls_per_frame": 45.0,
+          "effect_draw_calls_per_frame": 1,
+          "emitters": 2,
+          "fire_primitives_last_frame": 162,
+          "materials": 11,
+          "objects": 276,
+          "opaque_geometry_draw_calls_per_frame": 43.0,
+          "optical_draw_calls_per_frame": 0,
+          "particle_lights_last_frame": 12,
+          "post_draw_calls_per_frame": 1,
+          "shadow_draw_calls_per_frame": 0.0,
+          "shadow_draw_calls_when_redrawn": 0.0,
+          "shared_mesh_count": 68,
+          "unshared_vertex_count": 175662,
+          "vertices": 143454
+        },
+        "timing_coverage": {
+          "gpu_timestamps_supported": true,
+          "gpu_timing_requested": true,
+          "late_samples": 0,
+          "rendered_frames": 7200,
+          "skipped_compute_samples": 0,
+          "skipped_samples": 0,
+          "smoke_compute_samples": 7200,
+          "timed_frames": 7200,
+          "unavailable_reason": null
+        },
+        "route_seconds": 120.0,
+        "wall_seconds": 56.654493375
+      },
+      "reports": {
+        "tiled": {
+          "path": "artifacts/multi-emitter/review-tile-sustained/pair-01-tiled.json",
+          "sha256": "32d2e0f090ba9db43857ef609dcf50c522d9e0ade5336c4dee3999bcfc444a44"
+        },
+        "exhaustive": {
+          "path": "artifacts/multi-emitter/review-tile-sustained/pair-01-exhaustive.json",
+          "sha256": "9e1053e00d8476d66e6ce671ffb107fbbf6468a0110dd1d73ca393af5f5bcd81"
+        }
+      }
+    },
+    {
+      "pair": 2,
+      "order": [
+        "exhaustive",
+        "tiled"
+      ],
+      "deltas": {
+        "exhaustive_minus_tiled.gpu_render.median_ms": -0.028418000000000276,
+        "exhaustive_minus_tiled.frame_work.median_ms": 1.199167,
+        "exhaustive_minus_tiled.gpu_stages.atmosphere_fire.median_ms": 1.0619170000000002,
+        "exhaustive_minus_tiled.gpu_stages.tile_list_build.median_ms": -1.131083,
+        "exhaustive_minus_tiled.cpu_tile_list_encode.median_ms": 0.00991700000000001,
+        "exhaustive_minus_tiled.simulation_cpu.median_ms": 0.02729100000000001
+      },
+      "tiled": {
+        "gpu_render": {
+          "median_ms": 3.943834,
+          "p95_ms": 4.926876,
+          "samples": 7200
+        },
+        "frame_work": {
+          "median_ms": 6.29625,
+          "p95_ms": 10.796625,
+          "samples": 7200
+        },
+        "gpu_stages": {
+          "atmosphere_fire": {
+            "median_ms": 2.4936659999999997,
+            "p95_ms": 2.9362909999999998,
+            "samples": 7200
+          },
+          "opaque_geometry": {
+            "median_ms": 1.9690409999999998,
+            "p95_ms": 2.2857089999999998,
+            "samples": 7200
+          },
+          "optical_resolve": {
+            "median_ms": null,
+            "p95_ms": null,
+            "samples": 0
+          },
+          "post": {
+            "median_ms": 2.5724169999999997,
+            "p95_ms": 3.345167,
+            "samples": 7200
+          },
+          "shadow_maps": {
+            "median_ms": null,
+            "p95_ms": null,
+            "samples": 0
+          },
+          "smoke_absorption_cache": {
+            "median_ms": null,
+            "p95_ms": null,
+            "samples": 0
+          },
+          "smoke_compute": {
+            "median_ms": 0.030959,
+            "p95_ms": 0.036375,
+            "samples": 7200
+          },
+          "tile_list_build": {
+            "median_ms": 1.148625,
+            "p95_ms": 1.2560829999999998,
+            "samples": 7200
+          }
+        },
+        "cpu_tile_list_encode": {
+          "median_ms": 0.077375,
+          "p95_ms": 0.266167,
+          "samples": 7200
+        },
+        "simulation_cpu": {
+          "median_ms": 0.492334,
+          "p95_ms": 1.438083,
+          "samples": 7200
+        },
+        "tile_lists": {
+          "capacity_bytes": 603520,
+          "cpu_encode_ms": {
+            "median_ms": 0.077375,
+            "p95_ms": 0.266167,
+            "samples": 7200
+          },
+          "enabled": true,
+          "force_overflow": false,
+          "gpu_build": {
+            "median_ms": 1.148625,
+            "p95_ms": 1.2560829999999998,
+            "samples": 7200
+          },
+          "note": "Stats are asynchronous and frame-tagged. Oversized categories and forced overflow use exhaustive shader evaluation.",
+          "overflow_by_category": {
+            "fire_primitives": {
+              "candidate_memberships": 2991937,
+              "fallback_rate": 0.00047660024154589373,
+              "max_candidates_per_tile": 115,
+              "overflow_tiles": 3157
+            },
+            "particle_lights": {
+              "candidate_memberships": 1901840,
+              "fallback_rate": 0.0,
+              "max_candidates_per_tile": 12,
+              "overflow_tiles": 0
+            },
+            "point_lights": {
+              "candidate_memberships": 13248000,
+              "fallback_rate": 0.0,
+              "max_candidates_per_tile": 2,
+              "overflow_tiles": 0
+            },
+            "smoke_lobes": {
+              "candidate_memberships": 10163806,
+              "fallback_rate": 0.0,
+              "max_candidates_per_tile": 38,
+              "overflow_tiles": 0
+            }
+          },
+          "stats_frames": 7200,
+          "tile_size": 16
+        },
+        "workload_counts": {
+          "authored_lights": 3,
+          "draw_calls_per_frame": 45.0,
+          "effect_draw_calls_per_frame": 1,
+          "emitters": 2,
+          "fire_primitives_last_frame": 162,
+          "materials": 11,
+          "objects": 276,
+          "opaque_geometry_draw_calls_per_frame": 43.0,
+          "optical_draw_calls_per_frame": 0,
+          "particle_lights_last_frame": 12,
+          "post_draw_calls_per_frame": 1,
+          "shadow_draw_calls_per_frame": 0.0,
+          "shadow_draw_calls_when_redrawn": 0.0,
+          "shared_mesh_count": 68,
+          "unshared_vertex_count": 175662,
+          "vertices": 143454
+        },
+        "timing_coverage": {
+          "gpu_timestamps_supported": true,
+          "gpu_timing_requested": true,
+          "late_samples": 0,
+          "rendered_frames": 7200,
+          "skipped_compute_samples": 0,
+          "skipped_samples": 0,
+          "smoke_compute_samples": 7200,
+          "timed_frames": 7200,
+          "unavailable_reason": null
+        },
+        "route_seconds": 120.0,
+        "wall_seconds": 49.15734
+      },
+      "exhaustive": {
+        "gpu_render": {
+          "median_ms": 3.9154159999999996,
+          "p95_ms": 4.770542,
+          "samples": 7200
+        },
+        "frame_work": {
+          "median_ms": 7.495417,
+          "p95_ms": 12.695708999999999,
+          "samples": 7200
+        },
+        "gpu_stages": {
+          "atmosphere_fire": {
+            "median_ms": 3.555583,
+            "p95_ms": 4.290417,
+            "samples": 7200
+          },
+          "opaque_geometry": {
+            "median_ms": 2.6127499999999997,
+            "p95_ms": 3.294666,
+            "samples": 7200
+          },
+          "optical_resolve": {
+            "median_ms": null,
+            "p95_ms": null,
+            "samples": 0
+          },
+          "post": {
+            "median_ms": 3.6628749999999997,
+            "p95_ms": 4.4596659999999995,
+            "samples": 7200
+          },
+          "shadow_maps": {
+            "median_ms": null,
+            "p95_ms": null,
+            "samples": 0
+          },
+          "smoke_absorption_cache": {
+            "median_ms": null,
+            "p95_ms": null,
+            "samples": 0
+          },
+          "smoke_compute": {
+            "median_ms": 0.031,
+            "p95_ms": 0.034208,
+            "samples": 7200
+          },
+          "tile_list_build": {
+            "median_ms": 0.017542,
+            "p95_ms": 0.025833,
+            "samples": 7200
+          }
+        },
+        "cpu_tile_list_encode": {
+          "median_ms": 0.08729200000000001,
+          "p95_ms": 0.306708,
+          "samples": 7200
+        },
+        "simulation_cpu": {
+          "median_ms": 0.519625,
+          "p95_ms": 1.5541669999999999,
+          "samples": 7200
+        },
+        "tile_lists": {
+          "capacity_bytes": 603520,
+          "cpu_encode_ms": {
+            "median_ms": 0.08729200000000001,
+            "p95_ms": 0.306708,
+            "samples": 7200
+          },
+          "enabled": false,
+          "force_overflow": false,
+          "gpu_build": {
+            "median_ms": 0.017542,
+            "p95_ms": 0.025833,
+            "samples": 7200
+          },
+          "note": "Stats are asynchronous and frame-tagged. Oversized categories and forced overflow use exhaustive shader evaluation.",
+          "overflow_by_category": {
+            "fire_primitives": {
+              "candidate_memberships": 0,
+              "fallback_rate": 1.0,
+              "max_candidates_per_tile": 0,
+              "overflow_tiles": 6624000
+            },
+            "particle_lights": {
+              "candidate_memberships": 0,
+              "fallback_rate": 1.0,
+              "max_candidates_per_tile": 0,
+              "overflow_tiles": 6624000
+            },
+            "point_lights": {
+              "candidate_memberships": 0,
+              "fallback_rate": 1.0,
+              "max_candidates_per_tile": 0,
+              "overflow_tiles": 6624000
+            },
+            "smoke_lobes": {
+              "candidate_memberships": 0,
+              "fallback_rate": 1.0,
+              "max_candidates_per_tile": 0,
+              "overflow_tiles": 6624000
+            }
+          },
+          "stats_frames": 7200,
+          "tile_size": 16
+        },
+        "workload_counts": {
+          "authored_lights": 3,
+          "draw_calls_per_frame": 45.0,
+          "effect_draw_calls_per_frame": 1,
+          "emitters": 2,
+          "fire_primitives_last_frame": 162,
+          "materials": 11,
+          "objects": 276,
+          "opaque_geometry_draw_calls_per_frame": 43.0,
+          "optical_draw_calls_per_frame": 0,
+          "particle_lights_last_frame": 12,
+          "post_draw_calls_per_frame": 1,
+          "shadow_draw_calls_per_frame": 0.0,
+          "shadow_draw_calls_when_redrawn": 0.0,
+          "shared_mesh_count": 68,
+          "unshared_vertex_count": 175662,
+          "vertices": 143454
+        },
+        "timing_coverage": {
+          "gpu_timestamps_supported": true,
+          "gpu_timing_requested": true,
+          "late_samples": 0,
+          "rendered_frames": 7200,
+          "skipped_compute_samples": 0,
+          "skipped_samples": 0,
+          "smoke_compute_samples": 7200,
+          "timed_frames": 7200,
+          "unavailable_reason": null
+        },
+        "route_seconds": 120.0,
+        "wall_seconds": 57.406741
+      },
+      "reports": {
+        "tiled": {
+          "path": "artifacts/multi-emitter/review-tile-sustained/pair-02-tiled.json",
+          "sha256": "e04b494e611e9d0b2f9e545197def3185dcdf54f7849c3982ef7b46103e9da64"
+        },
+        "exhaustive": {
+          "path": "artifacts/multi-emitter/review-tile-sustained/pair-02-exhaustive.json",
+          "sha256": "6b90a49562579ea186d408c9346252eaaa69be04e362330c9981d120f459f7ef"
+        }
+      }
+    },
+    {
+      "pair": 3,
+      "order": [
+        "tiled",
+        "exhaustive"
+      ],
+      "deltas": {
+        "exhaustive_minus_tiled.gpu_render.median_ms": -0.042000999999999955,
+        "exhaustive_minus_tiled.frame_work.median_ms": 1.257708,
+        "exhaustive_minus_tiled.gpu_stages.atmosphere_fire.median_ms": 1.039041,
+        "exhaustive_minus_tiled.gpu_stages.tile_list_build.median_ms": -1.1308749999999999,
+        "exhaustive_minus_tiled.cpu_tile_list_encode.median_ms": 0.007751000000000008,
+        "exhaustive_minus_tiled.simulation_cpu.median_ms": 0.03349999999999992
+      },
+      "tiled": {
+        "gpu_render": {
+          "median_ms": 3.946293,
+          "p95_ms": 4.995458999999999,
+          "samples": 7200
+        },
+        "frame_work": {
+          "median_ms": 6.245167,
+          "p95_ms": 10.819375,
+          "samples": 7200
+        },
+        "gpu_stages": {
+          "atmosphere_fire": {
+            "median_ms": 2.4990419999999998,
+            "p95_ms": 2.957791,
+            "samples": 7200
+          },
+          "opaque_geometry": {
+            "median_ms": 1.9680419999999998,
+            "p95_ms": 2.291083,
+            "samples": 7200
+          },
+          "optical_resolve": {
+            "median_ms": null,
+            "p95_ms": null,
+            "samples": 0
+          },
+          "post": {
+            "median_ms": 2.5785839999999998,
+            "p95_ms": 3.469791,
+            "samples": 7200
+          },
+          "shadow_maps": {
+            "median_ms": null,
+            "p95_ms": null,
+            "samples": 0
+          },
+          "smoke_absorption_cache": {
+            "median_ms": null,
+            "p95_ms": null,
+            "samples": 0
+          },
+          "smoke_compute": {
+            "median_ms": 0.030958,
+            "p95_ms": 0.033875,
+            "samples": 7200
+          },
+          "tile_list_build": {
+            "median_ms": 1.1484999999999999,
+            "p95_ms": 1.2552919999999999,
+            "samples": 7200
+          }
+        },
+        "cpu_tile_list_encode": {
+          "median_ms": 0.077291,
+          "p95_ms": 0.24975000000000003,
+          "samples": 7200
+        },
+        "simulation_cpu": {
+          "median_ms": 0.48500000000000004,
+          "p95_ms": 1.398583,
+          "samples": 7200
+        },
+        "tile_lists": {
+          "capacity_bytes": 603520,
+          "cpu_encode_ms": {
+            "median_ms": 0.077291,
+            "p95_ms": 0.24975000000000003,
+            "samples": 7200
+          },
+          "enabled": true,
+          "force_overflow": false,
+          "gpu_build": {
+            "median_ms": 1.1484999999999999,
+            "p95_ms": 1.2552919999999999,
+            "samples": 7200
+          },
+          "note": "Stats are asynchronous and frame-tagged. Oversized categories and forced overflow use exhaustive shader evaluation.",
+          "overflow_by_category": {
+            "fire_primitives": {
+              "candidate_memberships": 2991937,
+              "fallback_rate": 0.00047660024154589373,
+              "max_candidates_per_tile": 115,
+              "overflow_tiles": 3157
+            },
+            "particle_lights": {
+              "candidate_memberships": 1901840,
+              "fallback_rate": 0.0,
+              "max_candidates_per_tile": 12,
+              "overflow_tiles": 0
+            },
+            "point_lights": {
+              "candidate_memberships": 13248000,
+              "fallback_rate": 0.0,
+              "max_candidates_per_tile": 2,
+              "overflow_tiles": 0
+            },
+            "smoke_lobes": {
+              "candidate_memberships": 10163806,
+              "fallback_rate": 0.0,
+              "max_candidates_per_tile": 38,
+              "overflow_tiles": 0
+            }
+          },
+          "stats_frames": 7200,
+          "tile_size": 16
+        },
+        "workload_counts": {
+          "authored_lights": 3,
+          "draw_calls_per_frame": 45.0,
+          "effect_draw_calls_per_frame": 1,
+          "emitters": 2,
+          "fire_primitives_last_frame": 162,
+          "materials": 11,
+          "objects": 276,
+          "opaque_geometry_draw_calls_per_frame": 43.0,
+          "optical_draw_calls_per_frame": 0,
+          "particle_lights_last_frame": 12,
+          "post_draw_calls_per_frame": 1,
+          "shadow_draw_calls_per_frame": 0.0,
+          "shadow_draw_calls_when_redrawn": 0.0,
+          "shared_mesh_count": 68,
+          "unshared_vertex_count": 175662,
+          "vertices": 143454
+        },
+        "timing_coverage": {
+          "gpu_timestamps_supported": true,
+          "gpu_timing_requested": true,
+          "late_samples": 0,
+          "rendered_frames": 7200,
+          "skipped_compute_samples": 0,
+          "skipped_samples": 0,
+          "smoke_compute_samples": 7200,
+          "timed_frames": 7200,
+          "unavailable_reason": null
+        },
+        "route_seconds": 120.0,
+        "wall_seconds": 48.738747042
+      },
+      "exhaustive": {
+        "gpu_render": {
+          "median_ms": 3.904292,
+          "p95_ms": 4.7632069999999995,
+          "samples": 7200
+        },
+        "frame_work": {
+          "median_ms": 7.502875,
+          "p95_ms": 12.648291,
+          "samples": 7200
+        },
+        "gpu_stages": {
+          "atmosphere_fire": {
+            "median_ms": 3.538083,
+            "p95_ms": 4.274541,
+            "samples": 7200
+          },
+          "opaque_geometry": {
+            "median_ms": 2.6058339999999998,
+            "p95_ms": 3.2932919999999997,
+            "samples": 7200
+          },
+          "optical_resolve": {
+            "median_ms": null,
+            "p95_ms": null,
+            "samples": 0
+          },
+          "post": {
+            "median_ms": 3.650375,
+            "p95_ms": 4.43975,
+            "samples": 7200
+          },
+          "shadow_maps": {
+            "median_ms": null,
+            "p95_ms": null,
+            "samples": 0
+          },
+          "smoke_absorption_cache": {
+            "median_ms": null,
+            "p95_ms": null,
+            "samples": 0
+          },
+          "smoke_compute": {
+            "median_ms": 0.030958,
+            "p95_ms": 0.0345,
+            "samples": 7200
+          },
+          "tile_list_build": {
+            "median_ms": 0.017625,
+            "p95_ms": 0.025292,
+            "samples": 7200
+          }
+        },
+        "cpu_tile_list_encode": {
+          "median_ms": 0.085042,
+          "p95_ms": 0.296167,
+          "samples": 7200
+        },
+        "simulation_cpu": {
+          "median_ms": 0.5185,
+          "p95_ms": 1.664584,
+          "samples": 7200
+        },
+        "tile_lists": {
+          "capacity_bytes": 603520,
+          "cpu_encode_ms": {
+            "median_ms": 0.085042,
+            "p95_ms": 0.296167,
+            "samples": 7200
+          },
+          "enabled": false,
+          "force_overflow": false,
+          "gpu_build": {
+            "median_ms": 0.017625,
+            "p95_ms": 0.025292,
+            "samples": 7200
+          },
+          "note": "Stats are asynchronous and frame-tagged. Oversized categories and forced overflow use exhaustive shader evaluation.",
+          "overflow_by_category": {
+            "fire_primitives": {
+              "candidate_memberships": 0,
+              "fallback_rate": 1.0,
+              "max_candidates_per_tile": 0,
+              "overflow_tiles": 6624000
+            },
+            "particle_lights": {
+              "candidate_memberships": 0,
+              "fallback_rate": 1.0,
+              "max_candidates_per_tile": 0,
+              "overflow_tiles": 6624000
+            },
+            "point_lights": {
+              "candidate_memberships": 0,
+              "fallback_rate": 1.0,
+              "max_candidates_per_tile": 0,
+              "overflow_tiles": 6624000
+            },
+            "smoke_lobes": {
+              "candidate_memberships": 0,
+              "fallback_rate": 1.0,
+              "max_candidates_per_tile": 0,
+              "overflow_tiles": 6624000
+            }
+          },
+          "stats_frames": 7200,
+          "tile_size": 16
+        },
+        "workload_counts": {
+          "authored_lights": 3,
+          "draw_calls_per_frame": 45.0,
+          "effect_draw_calls_per_frame": 1,
+          "emitters": 2,
+          "fire_primitives_last_frame": 162,
+          "materials": 11,
+          "objects": 276,
+          "opaque_geometry_draw_calls_per_frame": 43.0,
+          "optical_draw_calls_per_frame": 0,
+          "particle_lights_last_frame": 12,
+          "post_draw_calls_per_frame": 1,
+          "shadow_draw_calls_per_frame": 0.0,
+          "shadow_draw_calls_when_redrawn": 0.0,
+          "shared_mesh_count": 68,
+          "unshared_vertex_count": 175662,
+          "vertices": 143454
+        },
+        "timing_coverage": {
+          "gpu_timestamps_supported": true,
+          "gpu_timing_requested": true,
+          "late_samples": 0,
+          "rendered_frames": 7200,
+          "skipped_compute_samples": 0,
+          "skipped_samples": 0,
+          "smoke_compute_samples": 7200,
+          "timed_frames": 7200,
+          "unavailable_reason": null
+        },
+        "route_seconds": 120.0,
+        "wall_seconds": 57.313704333
+      },
+      "reports": {
+        "tiled": {
+          "path": "artifacts/multi-emitter/review-tile-sustained/pair-03-tiled.json",
+          "sha256": "9dea9db3495e9622921daf5cb2353e513103f145d3aceb0db415df3d27091b81"
+        },
+        "exhaustive": {
+          "path": "artifacts/multi-emitter/review-tile-sustained/pair-03-exhaustive.json",
+          "sha256": "7813e927084c9c557d62b0d39a210f5f1caec9e05badb320390c8eced7f1193d"
+        }
+      }
+    }
+  ],
+  "fixed_tick_capture_parity": {
+    "tiled": {
+      "image": "artifacts/multi-emitter/review-tile-sustained/capture-tiled.png",
+      "sha256": "0db2cc541fa4f4a739714b9c0f201729d6096499273d24a72f5e03b13f957b03"
+    },
+    "exhaustive": {
+      "image": "artifacts/multi-emitter/review-tile-sustained/capture-exhaustive.png",
+      "sha256": "0db2cc541fa4f4a739714b9c0f201729d6096499273d24a72f5e03b13f957b03"
+    },
+    "images_match": true
+  },
+  "summary": {
+    "tiled": {
+      "gpu_render.median_ms": {
+        "median_of_pair_medians": 3.946293,
+        "pair_values": [
+          3.947916,
+          3.943834,
+          3.946293
+        ]
+      },
+      "frame_work.median_ms": {
+        "median_of_pair_medians": 6.271875,
+        "pair_values": [
+          6.271875,
+          6.29625,
+          6.245167
+        ]
+      },
+      "gpu_stages.atmosphere_fire.median_ms": {
+        "median_of_pair_medians": 2.4990419999999998,
+        "pair_values": [
+          2.5016249999999998,
+          2.4936659999999997,
+          2.4990419999999998
+        ]
+      },
+      "gpu_stages.tile_list_build.median_ms": {
+        "median_of_pair_medians": 1.1484999999999999,
+        "pair_values": [
+          1.1484999999999999,
+          1.148625,
+          1.1484999999999999
+        ]
+      },
+      "cpu_tile_list_encode.median_ms": {
+        "median_of_pair_medians": 0.077375,
+        "pair_values": [
+          0.077708,
+          0.077375,
+          0.077291
+        ]
+      },
+      "simulation_cpu.median_ms": {
+        "median_of_pair_medians": 0.48658399999999996,
+        "pair_values": [
+          0.48658399999999996,
+          0.492334,
+          0.48500000000000004
+        ]
+      }
+    },
+    "exhaustive": {
+      "gpu_render.median_ms": {
+        "median_of_pair_medians": 3.909917,
+        "pair_values": [
+          3.909917,
+          3.9154159999999996,
+          3.904292
+        ]
+      },
+      "frame_work.median_ms": {
+        "median_of_pair_medians": 7.495417,
+        "pair_values": [
+          7.448665999999999,
+          7.495417,
+          7.502875
+        ]
+      },
+      "gpu_stages.atmosphere_fire.median_ms": {
+        "median_of_pair_medians": 3.551709,
+        "pair_values": [
+          3.551709,
+          3.555583,
+          3.538083
+        ]
+      },
+      "gpu_stages.tile_list_build.median_ms": {
+        "median_of_pair_medians": 0.017542,
+        "pair_values": [
+          0.017540999999999998,
+          0.017542,
+          0.017625
+        ]
+      },
+      "cpu_tile_list_encode.median_ms": {
+        "median_of_pair_medians": 0.085042,
+        "pair_values": [
+          0.083167,
+          0.08729200000000001,
+          0.085042
+        ]
+      },
+      "simulation_cpu.median_ms": {
+        "median_of_pair_medians": 0.5185,
+        "pair_values": [
+          0.5111669999999999,
+          0.519625,
+          0.5185
+        ]
+      }
+    }
+  },
+  "paired_delta_summary": {
+    "exhaustive_minus_tiled.gpu_render.median_ms": {
+      "median": -0.037999000000000116,
+      "pair_values": [
+        -0.037999000000000116,
+        -0.028418000000000276,
+        -0.042000999999999955
+      ]
+    },
+    "exhaustive_minus_tiled.frame_work.median_ms": {
+      "median": 1.199167,
+      "pair_values": [
+        1.1767909999999997,
+        1.199167,
+        1.257708
+      ]
+    },
+    "exhaustive_minus_tiled.gpu_stages.atmosphere_fire.median_ms": {
+      "median": 1.050084,
+      "pair_values": [
+        1.050084,
+        1.0619170000000002,
+        1.039041
+      ]
+    },
+    "exhaustive_minus_tiled.gpu_stages.tile_list_build.median_ms": {
+      "median": -1.1309589999999998,
+      "pair_values": [
+        -1.1309589999999998,
+        -1.131083,
+        -1.1308749999999999
+      ]
+    },
+    "exhaustive_minus_tiled.cpu_tile_list_encode.median_ms": {
+      "median": 0.007751000000000008,
+      "pair_values": [
+        0.0054590000000000055,
+        0.00991700000000001,
+        0.007751000000000008
+      ]
+    },
+    "exhaustive_minus_tiled.simulation_cpu.median_ms": {
+      "median": 0.02729100000000001,
+      "pair_values": [
+        0.024582999999999966,
+        0.02729100000000001,
+        0.03349999999999992
+      ]
+    }
+  },
+  "interpretation": {
+    "frame_work_improved_in_every_pair": true,
+    "median_frame_work_saved_ms": 1.199167,
+    "median_reported_gpu_render_delta_exhaustive_minus_tiled_ms": -0.037999000000000116,
+    "median_tile_list_build_delta_exhaustive_minus_tiled_ms": -1.1309589999999998,
+    "median_atmosphere_fire_delta_exhaustive_minus_tiled_ms": 1.050084,
+    "note": "The serial offscreen frame-work measure favors tiled in all three pairs. The reported GPU-render metric adds pass intervals that can overlap; tile build is higher and atmosphere/fire is lower. Keep this as workload-specific evidence, not a universal renderer win."
+  },
+  "aggregation_policy": "GPU pass intervals can overlap on the backend; do not sum stage distributions. gpu_render is the end-to-end shadow-to-post interval.",
+  "scope": "Offscreen M1 Max/Metal workload comparison. This report includes same-scene tick-300 tiled/exhaustive image hashes in addition to performance pairs.",
+  "limitations": [
+    "No native-window presentation, DX12, other-adapter, or continuous human playback evidence.",
+    "Route timing does not establish behavior for other authored multi-emitter scenes or workloads.",
+    "GPU stage intervals can overlap; do not sum stage distributions into a total."
+  ]
+}
