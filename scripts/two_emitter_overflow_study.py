@@ -80,6 +80,57 @@ def capture(binary: Path, scene: Path, output: Path, camera: str, mode: str) -> 
     }
 
 
+class ServeSession:
+    def __init__(self, binary: Path, scene: Path, output: Path):
+        self.process = subprocess.Popen(
+            [str(binary), "serve", "--scene", str(scene), "--camera", "stress-close", "--seed", "42"],
+            cwd=ROOT, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True,
+        )
+        self.request_id = 0
+        self.output = output
+        output.mkdir(parents=True, exist_ok=True)
+
+    def request(self, method: str, **params):
+        self.request_id += 1
+        assert self.process.stdin and self.process.stdout
+        self.process.stdin.write(json.dumps({"id": self.request_id, "method": method, "params": params}) + "\n")
+        self.process.stdin.flush()
+        response = json.loads(self.process.stdout.readline())
+        if response.get("id") != self.request_id or "error" in response:
+            raise RuntimeError(response)
+        return response["result"]
+
+    def compare_modes(self, label: str) -> dict:
+        variants = {}
+        for name, enabled in (("tiled", True), ("exhaustive", False)):
+            self.request("set_tile_lists", enabled=enabled)
+            image = self.output / f"{label}-{name}.png"
+            response = self.request("capture_frame", path=str(image.resolve()), scale=1)
+            metadata = json.loads(Path(response["metadata"]).read_text())
+            variants[name] = {
+                "image": str(image.relative_to(ROOT)) if image.is_relative_to(ROOT) else str(image),
+                "sha256": sha256(image),
+                "tick": response["tick"],
+                "tile_lists_enabled": metadata["capabilities"]["tile_lists"]["enabled"],
+                "tile_overflow_tiles": metadata["metrics"]["tile_overflow_tiles"],
+                "fire_counts": self.request("inspect_effects")["counts"],
+            }
+        return {
+            "variants": variants,
+            "exact_match": variants["tiled"]["sha256"] == variants["exhaustive"]["sha256"],
+            "same_tick": variants["tiled"]["tick"] == variants["exhaustive"]["tick"],
+            "same_fire_counts": variants["tiled"]["fire_counts"] == variants["exhaustive"]["fire_counts"],
+            "requested_modes_applied": variants["tiled"]["tile_lists_enabled"] and not variants["exhaustive"]["tile_lists_enabled"],
+        }
+
+    def close(self):
+        if self.process.stdin:
+            self.process.stdin.close()
+        self.process.wait(timeout=60)
+        if self.process.returncode:
+            raise RuntimeError(f"serve exited {self.process.returncode}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--binary", type=Path, default=ROOT / "target/debug/engine-lab")
@@ -142,6 +193,26 @@ def main() -> int:
             "image_error": image_error(Path(captures["exhaustive"]["image"]), Path(captures["tiled"]["image"])),
             "exact_match": captures["tiled"]["sha256"] == captures["exhaustive"]["sha256"],
         }
+
+    live_session = ServeSession(binary, scene, output / "live-session")
+    live_results = {}
+    try:
+        live_session.request("step", ticks=120)
+        live_results["moving_effect_tick_120"] = live_session.compare_modes("moving-effect-tick-120")
+        live_session.request("step", ticks=180)
+        live_results["moving_effect_tick_300"] = live_session.compare_modes("moving-effect-tick-300")
+        live_session.request("set_parameter", path="emitters.campfire.intensity", value=0.55)
+        live_results["paused_emitter_edit_tick_300"] = live_session.compare_modes("paused-edit-tick-300")
+    finally:
+        live_session.close()
+    live_motion_changed = (
+        live_results["moving_effect_tick_120"]["variants"]["tiled"]["sha256"]
+        != live_results["moving_effect_tick_300"]["variants"]["tiled"]["sha256"]
+    )
+    paused_edit_changed = (
+        live_results["moving_effect_tick_300"]["variants"]["tiled"]["sha256"]
+        != live_results["paused_emitter_edit_tick_300"]["variants"]["tiled"]["sha256"]
+    )
 
     stress_camera = "stress-close"
     forced = capture(binary, scene, output, stress_camera, "forced-fallback")
@@ -207,10 +278,14 @@ def main() -> int:
 
     all_camera_matches = all(result["exact_match"] for result in camera_results.values())
     all_projection_matches = all(result["exact_match"] for result in projection_results.values())
+    all_live_matches = all(
+        result["exact_match"] and result["same_tick"] and result["same_fire_counts"] and result["requested_modes_applied"]
+        for result in live_results.values()
+    )
     isolated_matches = all(result["exact_match"] for result in isolated_results.values())
     forced_matches = forced["sha256"] == expected["sha256"]
     order_matches = reversed_capture["sha256"] == tiled_reference["sha256"]
-    all_correctness_checks = all((all_camera_matches, all_projection_matches, isolated_matches, forced_matches, order_matches, source_zero_matches))
+    all_correctness_checks = all((all_camera_matches, all_projection_matches, all_live_matches, live_motion_changed, paused_edit_changed, isolated_matches, forced_matches, order_matches, source_zero_matches))
     report = {
         "date": "2026-10-18",
         "workstream": "bounded two-emitter maximum-budget tile-list correctness",
@@ -230,6 +305,7 @@ def main() -> int:
         "camera_matrix": camera_results,
         "projection_stress_scenes": projection_scenes,
         "projection_stress_matrix": projection_results,
+        "live_state_matrix": live_results,
         "source_isolation": isolated_results,
         "forced_fallback": {"capture": forced, "matches_exhaustive": forced_matches},
         "natural_overflow": {
@@ -250,6 +326,9 @@ def main() -> int:
         "comparisons": {
             "all_tiled_cameras_match_exhaustive": all_camera_matches,
             "camera_inside_and_near_plane_match_exhaustive": all_projection_matches,
+            "moving_and_paused_edit_states_match_exhaustive": all_live_matches,
+            "moving_effect_changes_between_ticks": live_motion_changed,
+            "paused_emitter_edit_changes_output_at_same_tick": paused_edit_changed,
             "source_isolation_matches_exhaustive": isolated_matches,
             "forced_fallback_matches_exhaustive": forced_matches,
             "natural_fire_overflow_reached": natural_fire_overflow,

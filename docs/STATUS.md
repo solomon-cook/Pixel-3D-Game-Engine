@@ -511,7 +511,12 @@ The two-emitter maximum-budget correctness runner now generates separate
 camera-inside-plume and near-plane-intersection scenes. Both tiled images match
 exhaustive output exactly; the inside-plume view overflows the fire list in all
 920 tiles. These are adversarial correctness captures, not art-review evidence.
-See [the report](measurements-multi-emitter-overflow.json).
+The paused live-session matrix also matches tiled/exhaustive output at ticks 120
+and 300, and after an emitter intensity edit at tick 300. The moving frames differ
+from one another; the edit changes the image without advancing the tick. Fire
+overflow occurs in 74–75 tiles. These checks exercise deterministic movement and
+edit state, not continuous playback acceptance. See
+[the report](measurements-multi-emitter-overflow.json).
 Multi-emitter ownership, Windows/DX12 and other GPU vendors remain open. The
 three-pair 120-second stress-scene orbit now records natural fire overflows at
 1.95% of tile-frame samples (maximum occupancy 144) and zero smoke/light

@@ -81,6 +81,16 @@ crowding, and does another tile size improve the total cost?
    `projection_stress_scenes` and `projection_stress_matrix` fields in the
    maximum-budget report.
 
+   The same runner now uses one paused serve session to compare tiled and
+   exhaustive output after fixed steps to ticks 120 and 300, then after changing
+   the campfire intensity at tick 300 without advancing simulation. All three
+   tiled/exhaustive pairs match in pixels, tick and fire counts; the tick-120 and
+   tick-300 images differ, and the paused edit changes the tick-300 image. Fire
+   overflow is reached in 74–75 tiles in these states. This closes the planned
+   moving-effect and paused-edit correctness probes on M1 Max/Metal, not
+   continuous playback or visual acceptance. Results are in
+   `live_state_matrix` in [the report](measurements-multi-emitter-overflow.json).
+
 The native-window gate now has three alternating 120-second tiled/exhaustive
 pairs after ten-second warm-ups on M1 Max/Metal. Tiling lowers the median GPU
 atmosphere/fire stage by 1.187–1.216 ms per pair, while native FPS and full-frame

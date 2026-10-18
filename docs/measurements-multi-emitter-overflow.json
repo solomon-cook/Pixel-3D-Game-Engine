@@ -1172,6 +1172,140 @@
       "exact_match": true
     }
   },
+  "live_state_matrix": {
+    "moving_effect_tick_120": {
+      "variants": {
+        "tiled": {
+          "image": "artifacts/two-emitter-overflow/live-session/moving-effect-tick-120-tiled.png",
+          "sha256": "81570f3a704e6667f205c8e3e5066c4110dab2d815d5ce05593ac2cdb0d97d93",
+          "tick": 120,
+          "tile_lists_enabled": true,
+          "tile_overflow_tiles": [
+            75,
+            0,
+            0,
+            0
+          ],
+          "fire_counts": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "exhaustive": {
+          "image": "artifacts/two-emitter-overflow/live-session/moving-effect-tick-120-exhaustive.png",
+          "sha256": "81570f3a704e6667f205c8e3e5066c4110dab2d815d5ce05593ac2cdb0d97d93",
+          "tick": 120,
+          "tile_lists_enabled": false,
+          "tile_overflow_tiles": [
+            920,
+            920,
+            920,
+            920
+          ],
+          "fire_counts": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "exact_match": true,
+      "same_tick": true,
+      "same_fire_counts": true,
+      "requested_modes_applied": true
+    },
+    "moving_effect_tick_300": {
+      "variants": {
+        "tiled": {
+          "image": "artifacts/two-emitter-overflow/live-session/moving-effect-tick-300-tiled.png",
+          "sha256": "79b74585c7deb6125e8abb472e9f11907b921adf417c3898275992f9dc321ff4",
+          "tick": 300,
+          "tile_lists_enabled": true,
+          "tile_overflow_tiles": [
+            74,
+            0,
+            0,
+            0
+          ],
+          "fire_counts": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "exhaustive": {
+          "image": "artifacts/two-emitter-overflow/live-session/moving-effect-tick-300-exhaustive.png",
+          "sha256": "79b74585c7deb6125e8abb472e9f11907b921adf417c3898275992f9dc321ff4",
+          "tick": 300,
+          "tile_lists_enabled": false,
+          "tile_overflow_tiles": [
+            74,
+            0,
+            0,
+            0
+          ],
+          "fire_counts": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "exact_match": true,
+      "same_tick": true,
+      "same_fire_counts": true,
+      "requested_modes_applied": true
+    },
+    "paused_emitter_edit_tick_300": {
+      "variants": {
+        "tiled": {
+          "image": "artifacts/two-emitter-overflow/live-session/paused-edit-tick-300-tiled.png",
+          "sha256": "93ae81b08971641623de8ebf2a9461a67457c6352b3ee575e7076295b7849e6f",
+          "tick": 300,
+          "tile_lists_enabled": true,
+          "tile_overflow_tiles": [
+            74,
+            0,
+            0,
+            0
+          ],
+          "fire_counts": [
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "exhaustive": {
+          "image": "artifacts/two-emitter-overflow/live-session/paused-edit-tick-300-exhaustive.png",
+          "sha256": "93ae81b08971641623de8ebf2a9461a67457c6352b3ee575e7076295b7849e6f",
+          "tick": 300,
+          "tile_lists_enabled": false,
+          "tile_overflow_tiles": [
+            920,
+            920,
+            920,
+            920
+          ],
+          "fire_counts": [
+            0,
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "exact_match": true,
+      "same_tick": true,
+      "same_fire_counts": true,
+      "requested_modes_applied": true
+    }
+  },
   "source_isolation": {
     "campfire": {
       "tiled": {
@@ -1557,6 +1691,9 @@
   "comparisons": {
     "all_tiled_cameras_match_exhaustive": true,
     "camera_inside_and_near_plane_match_exhaustive": true,
+    "moving_and_paused_edit_states_match_exhaustive": true,
+    "moving_effect_changes_between_ticks": true,
+    "paused_emitter_edit_changes_output_at_same_tick": true,
     "source_isolation_matches_exhaustive": true,
     "forced_fallback_matches_exhaustive": true,
     "natural_fire_overflow_reached": true,
