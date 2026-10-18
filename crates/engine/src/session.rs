@@ -55,16 +55,29 @@ impl Session {
         }
     }
     pub fn step(&mut self, count: u32) {
+        self.step_batched(count, true);
+    }
+    pub fn step_unbatched(&mut self, count: u32) {
+        self.step_batched(count, false);
+    }
+    fn step_batched(&mut self, count: u32, batching: bool) {
         let mut remaining = count;
         while remaining > 0 {
-            let batch_count = remaining.min(crate::render::SIMULATION_BATCH_CAPACITY as u32);
-            let ticks = (1..=batch_count)
-                .map(|offset| self.tick + offset as u64)
-                .collect::<Vec<_>>();
-            self.renderer
-                .simulate_batch(&self.scene, &self.camera, &ticks, self.seed);
-            self.tick += batch_count as u64;
-            remaining -= batch_count;
+            if batching {
+                let batch_count = remaining.min(crate::render::SIMULATION_BATCH_CAPACITY as u32);
+                let ticks = (1..=batch_count)
+                    .map(|offset| self.tick + offset as u64)
+                    .collect::<Vec<_>>();
+                self.renderer
+                    .simulate_batch(&self.scene, &self.camera, &ticks, self.seed);
+                self.tick += batch_count as u64;
+                remaining -= batch_count;
+            } else {
+                self.tick += 1;
+                self.renderer
+                    .simulate(&self.scene, &self.camera, self.tick, self.seed);
+                remaining -= 1;
+            }
         }
     }
     pub fn render(&mut self) {

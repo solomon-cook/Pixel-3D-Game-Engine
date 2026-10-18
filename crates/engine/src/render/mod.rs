@@ -138,7 +138,7 @@ struct SmokeSimulationConfig {
     wind_time: [f32; 4],
 }
 
-pub(crate) const SIMULATION_BATCH_CAPACITY: usize = COMPUTE_TIMING_SLOTS;
+pub const SIMULATION_BATCH_CAPACITY: usize = COMPUTE_TIMING_SLOTS;
 const SMOKE_CONFIG_STRIDE: u64 = (std::mem::size_of::<SmokeSimulationConfig>() as u64 + 255) & !255;
 
 struct Pipelines {

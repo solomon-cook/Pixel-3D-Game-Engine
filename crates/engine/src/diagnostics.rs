@@ -171,12 +171,14 @@ mod tests {
     fn begin_frame_resets_frame_spans_but_keeps_cumulative_query_counts() {
         let mut metrics = FrameMetrics {
             cpu_steps_this_frame: 3,
+            cpu_simulation_submissions_this_frame: 2,
             cpu_simulation_submit_ms: 1.5,
             gpu_samples_skipped: 2,
             ..Default::default()
         };
         metrics.begin_frame();
         assert_eq!(metrics.cpu_steps_this_frame, 0);
+        assert_eq!(metrics.cpu_simulation_submissions_this_frame, 0);
         assert_eq!(metrics.cpu_simulation_submit_ms, 0.);
         assert_eq!(metrics.gpu_samples_skipped, 2);
         let value = serde_json::to_value(metrics).unwrap();

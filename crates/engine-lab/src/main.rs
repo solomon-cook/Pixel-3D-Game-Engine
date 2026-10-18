@@ -71,7 +71,7 @@ enum Command {
         #[arg(long, default_value_t = 4)]
         scale: u32,
     },
-    /// Sample a moving route at 60 Hz offscreen, without screenshots/UI/vsync.
+    /// Sample a moving route offscreen, without screenshots/UI/vsync.
     Benchmark {
         #[command(flatten)]
         options: Options,
@@ -99,6 +99,12 @@ enum Command {
         /// Sample shading counters at three fixed checkpoints; timing data is diagnostic only.
         #[arg(long)]
         shading_counter_sampling: bool,
+        /// Fixed simulation ticks advanced per rendered route sample (1..60).
+        #[arg(long, default_value_t = 1)]
+        simulation_steps_per_frame: u32,
+        /// Use one compute queue submission per fixed tick as the batching baseline.
+        #[arg(long)]
+        disable_simulation_batching: bool,
         /// Move a scene object around the primary fire light during the route.
         #[arg(long)]
         moving_caster: Option<String>,
@@ -166,6 +172,8 @@ struct BenchmarkSettings {
     object_culling_enabled: bool,
     instancing_enabled: bool,
     shading_counter_sampling: bool,
+    simulation_steps_per_frame: u32,
+    simulation_batching_enabled: bool,
 }
 #[derive(Clone, Copy)]
 pub(crate) struct CasterMotion<'a> {
@@ -273,6 +281,8 @@ fn start() -> Result<()> {
             disable_object_culling,
             disable_instancing,
             shading_counter_sampling,
+            simulation_steps_per_frame,
+            disable_simulation_batching,
             moving_caster,
             caster_orbit_radius,
             caster_orbit_period,
@@ -291,6 +301,8 @@ fn start() -> Result<()> {
                 object_culling_enabled: !disable_object_culling,
                 instancing_enabled: !disable_instancing,
                 shading_counter_sampling,
+                simulation_steps_per_frame,
+                simulation_batching_enabled: !disable_simulation_batching,
             },
             BenchmarkRoute {
                 id: &route,
@@ -484,6 +496,9 @@ fn benchmark(
     {
         bail!("duration: expected 0.1..600 seconds; warmup: expected 0..120 seconds");
     }
+    if !(1..=60).contains(&settings.simulation_steps_per_frame) {
+        bail!("simulation-steps-per-frame: expected 1..60");
+    }
     let caster_motion = benchmark_route.caster_motion;
     if !caster_motion.radius.is_finite()
         || !(0.1..=100.).contains(&caster_motion.radius)
@@ -530,24 +545,32 @@ fn benchmark(
         .first()
         .map(|emitter| [emitter.position[0], emitter.position[2]])
         .unwrap_or([0., 0.]);
-    let warmup_frames = (warmup * 60.) as u32;
-    for tick in 0..warmup_frames {
+    let steps_per_frame = settings.simulation_steps_per_frame;
+    let warmup_ticks = (warmup * 60.).ceil() as u32;
+    let warmup_frames = warmup_ticks.div_ceil(steps_per_frame);
+    for _ in 0..warmup_frames {
+        let route_tick = session.tick as u32;
         update_benchmark_caster(
             &mut session,
             moving_caster.as_ref(),
-            tick,
+            route_tick,
             caster_motion,
             orbit_center,
         )?;
-        session.camera = route.camera_at(tick as f32 / 60., &base);
+        session.camera = route.camera_at(route_tick as f32 / 60., &base);
         session.begin_measurement_frame();
-        session.step(1);
+        if settings.simulation_batching_enabled {
+            session.step(steps_per_frame);
+        } else {
+            session.step_unbatched(steps_per_frame);
+        }
         session.render();
         session.renderer.poll_timing(true);
         session.renderer.take_gpu_timing_samples();
         session.renderer.take_gpu_compute_timing_samples();
     }
-    let count = (duration * 60.).ceil() as u32;
+    let duration_ticks = (duration * 60.).ceil() as u32;
+    let count = duration_ticks.div_ceil(steps_per_frame);
     let counter_sample_frames = if settings.shading_counter_sampling && count > 0 {
         [0, count / 2, count - 1]
             .into_iter()
@@ -563,9 +586,9 @@ fn benchmark(
     for frame in 0..count {
         let started = Instant::now();
         let route_frame = if moving_caster.is_some() {
-            warmup_frames + frame
+            warmup_ticks + frame * steps_per_frame
         } else {
-            frame
+            frame * steps_per_frame
         };
         let caster_position = update_benchmark_caster(
             &mut session,
@@ -579,7 +602,11 @@ fn benchmark(
         let capture_counters = counter_sample_frames.contains(&frame);
         session.renderer.set_shading_diagnostics(capture_counters);
         let sim = Instant::now();
-        session.step(1);
+        if settings.simulation_batching_enabled {
+            session.step(steps_per_frame);
+        } else {
+            session.step_unbatched(steps_per_frame);
+        }
         let simulation_cpu_ms = sim.elapsed().as_secs_f64() * 1000.;
         session.render();
         if capture_counters {
@@ -600,6 +627,10 @@ fn benchmark(
         let metrics = &session.renderer.metrics;
         samples.push(json!({
             "frame":frame,
+            "route_tick":route_frame,
+            "camera_position":session.camera.position,
+            "camera_target":session.camera.target,
+            "simulation_steps_requested":steps_per_frame,
             "moving_caster_position":caster_position,
             "render_frame":metrics.frame,
             "tick":session.tick,
@@ -609,6 +640,7 @@ fn benchmark(
             "cpu_simulation_encode_ms":metrics.cpu_simulation_encode_ms,
             "cpu_queue_submit_ms":metrics.cpu_queue_submit_ms,
             "cpu_steps":metrics.cpu_steps_this_frame,
+            "cpu_simulation_submissions":metrics.cpu_simulation_submissions_this_frame,
             "cpu_encode_ms":metrics.cpu_encode_ms,
             "cpu_tile_list_encode_ms":metrics.cpu_tile_list_encode_ms,
             "geometry_rendering":{
@@ -856,7 +888,7 @@ fn benchmark(
     });
     let report = json!({
         "version":2,
-        "scope":if mode == "serial" {"serial offscreen latency benchmark; includes CPU simulation/submission and waits for GPU completion each frame; excludes native presentation, inspector and vsync"} else {"buffered offscreen throughput benchmark; queues frames without a per-frame GPU wait, then waits once to drain; excludes native presentation, inspector and vsync"},
+        "scope":if mode == "serial" {"serial offscreen latency benchmark; includes CPU simulation/submission and waits for GPU completion each rendered sample; excludes native presentation, inspector and vsync"} else {"buffered offscreen throughput benchmark; queues rendered samples without a per-sample GPU wait, then waits once to drain; excludes native presentation, inspector and vsync"},
         "aggregation_policy":"GPU pass intervals can overlap on the backend; do not sum stage distributions. gpu_render is the end-to-end shadow-to-post interval.",
         "mode":mode,
         "gpu_timing_enabled":gpu_timing_enabled,
@@ -880,8 +912,16 @@ fn benchmark(
             "sample_hz":60,
             "note":"Deterministic circular transform updates use the shared Session operation before each route frame."
         })),
-        "sample_hz":60,
+        "sample_hz":60. / steps_per_frame as f64,
         "warmup_seconds":warmup,
+        "warmup_simulation_ticks":warmup_frames * steps_per_frame,
+        "duration_simulation_ticks":count * steps_per_frame,
+        "simulation_steps_per_frame":steps_per_frame,
+        "simulation_batching_enabled":settings.simulation_batching_enabled,
+        "simulation_submissions_per_sample":if settings.simulation_batching_enabled {steps_per_frame.div_ceil(render::SIMULATION_BATCH_CAPACITY as u32)} else {steps_per_frame},
+        "rendered_samples":count,
+        "simulation_ticks_per_second_submitted":(count * steps_per_frame) as f64 / submission_wall_seconds,
+        "simulation_ticks_per_second_drained":(count * steps_per_frame) as f64 / wall_seconds,
         "renderer_setup_seconds":setup_seconds,
         "submission_wall_seconds":submission_wall_seconds,
         "wall_seconds":wall_seconds,
