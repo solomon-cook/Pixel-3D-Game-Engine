@@ -427,9 +427,19 @@ projected flame. Repeated captures are stable within each pipeline, so this is a
 diagnostic-variant output difference, not replay noise. Counter values remain
 useful as operation counts, but exact image parity is not universal and the
 instrumented shader must not be used for visual acceptance. The optical
-camera-motion route and additional optical material coverage remain open. See
+camera-motion counter route is now complete on M1 Max/Metal: three sparse
+samples from a 120-second `materials.json` `material-orbit` report 211,446–311,506
+optical surface interactions and 8,839–21,180 successful transmission
+interactions. A separate uninstrumented run of the identical scene hash, route,
+seed and duration measured a 2.076 ms median optical-resolve stage and 2.828 ms
+median GPU render. Counter-run timings remain disabled and unusable. Fixing this
+route exposed stale counter-injection patterns that no longer matched the live
+WGSL; optical surface and transmission hooks now count current shader paths.
+Additional optical material coverage remains open. See
 [profile/view counter evidence](measurements-o01-counter-profile-scope.json) and
-its [capture runner](../scripts/shading_counter_profile_study.py).
+its [capture runner](../scripts/shading_counter_profile_study.py), plus the
+[optical route report](measurements-o01-optical-counter-route.json) and
+[reproducible runner](../scripts/shading_counter_optical_route.py).
 
 Use O01 stage data to split the multi-millisecond atmosphere/fire work by candidate
 category and representative coverage. O01 shows smoke advection near 0.02 ms on the

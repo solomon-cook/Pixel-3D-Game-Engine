@@ -1,0 +1,196 @@
+{
+  "version": 1,
+  "purpose": "Sparse shader operation counts during a moving optical-material camera route; this instrumented run is not performance evidence.",
+  "host": {
+    "adapter": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "workload": {
+    "scene": "assets/scenes/materials.json",
+    "scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
+    "seed": 42,
+    "route": "material-orbit",
+    "route_duration_seconds": 120.0,
+    "warmup_seconds": 10.0,
+    "sample_rate_hz": 60,
+    "resolution": [
+      640,
+      360
+    ],
+    "workload_counts": {
+      "authored_lights": 4,
+      "draw_calls_per_frame": 36.0,
+      "effect_draw_calls_per_frame": 1,
+      "emitters": 1,
+      "fire_primitives_last_frame": 40,
+      "materials": 12,
+      "objects": 37,
+      "opaque_geometry_draw_calls_per_frame": 33.0,
+      "optical_draw_calls_per_frame": 1,
+      "particle_lights_last_frame": 10,
+      "post_draw_calls_per_frame": 1,
+      "shadow_draw_calls_per_frame": 0.0,
+      "shadow_draw_calls_when_redrawn": 0.0,
+      "shared_mesh_count": 13,
+      "unshared_vertex_count": 18396,
+      "vertices": 17532
+    }
+  },
+  "timing_scope": {
+    "gpu_timing_enabled": false,
+    "performance_data_usable": false,
+    "reason": "Counter route sampling uses atomic instrumentation at selected frames and omits GPU timestamps; do not use this report for timing conclusions.",
+    "reference": {
+      "report": "artifacts/o01/optical-motion-unstaged-timing.json",
+      "scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
+      "route": "material-orbit",
+      "duration_seconds": 120.0,
+      "warmup_seconds": 10.0,
+      "optical_resolve_median_ms": 2.0757499999999998,
+      "gpu_render_median_ms": 2.8275829999999997,
+      "frame_work_median_ms": 4.315833,
+      "note": "Separate uninstrumented benchmark launched with the same scene, route, seed, duration and warm-up; not timing from the atomic counter run."
+    }
+  },
+  "counter_samples": [
+    {
+      "camera": {
+        "position": [
+          8.0,
+          7.599999904632568,
+          14.0
+        ],
+        "target": [
+          -0.4000000059604645,
+          1.0,
+          0.0
+        ]
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 24720,
+        "fire_bounds_tests": 66746,
+        "fire_ellipsoid_tests": 5535,
+        "fire_primitive_candidates": 66746,
+        "fire_shadow_lookups": 489097,
+        "optical_reflection_refinement_steps": 106280,
+        "optical_reflection_steps": 3072528,
+        "optical_surface_interactions": 211446,
+        "optical_transmission_interactions": 8844,
+        "particle_light_candidates": 8472,
+        "point_light_candidates": 3648,
+        "smoke_bubble_intersection_tests": 39736,
+        "smoke_density_samples": 88019,
+        "smoke_lobe_candidates": 250178,
+        "smoke_parent_bounds_tests": 250178,
+        "sun_shadow_lookups": 487881,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 198080,
+        "world_point_light_candidates": 1445667,
+        "world_shading_invocations": 481889
+      },
+      "frame": 0,
+      "moving_caster_position": null,
+      "route_frame": 0,
+      "tick": 601
+    },
+    {
+      "camera": {
+        "position": [
+          -4.0,
+          3.5,
+          10.0
+        ],
+        "target": [
+          -0.4000000059604645,
+          1.0,
+          0.0
+        ]
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 205393,
+        "fire_bounds_tests": 180372,
+        "fire_ellipsoid_tests": 36387,
+        "fire_primitive_candidates": 180372,
+        "fire_shadow_lookups": 784775,
+        "optical_reflection_refinement_steps": 193280,
+        "optical_reflection_steps": 4095596,
+        "optical_surface_interactions": 311506,
+        "optical_transmission_interactions": 21180,
+        "particle_light_candidates": 72743,
+        "point_light_candidates": 31449,
+        "smoke_bubble_intersection_tests": 294633,
+        "smoke_density_samples": 344822,
+        "smoke_lobe_candidates": 328486,
+        "smoke_parent_bounds_tests": 328486,
+        "sun_shadow_lookups": 774292,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 478340,
+        "world_point_light_candidates": 2285220,
+        "world_shading_invocations": 761740
+      },
+      "frame": 3600,
+      "moving_caster_position": null,
+      "route_frame": 3600,
+      "tick": 4201
+    },
+    {
+      "camera": {
+        "position": [
+          7.9988884925842285,
+          7.5982770919799805,
+          13.998332977294922
+        ],
+        "target": [
+          -0.4000000059604645,
+          1.0,
+          0.0
+        ]
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 26709,
+        "fire_bounds_tests": 61527,
+        "fire_ellipsoid_tests": 5250,
+        "fire_primitive_candidates": 61527,
+        "fire_shadow_lookups": 489436,
+        "optical_reflection_refinement_steps": 106196,
+        "optical_reflection_steps": 3073321,
+        "optical_surface_interactions": 211496,
+        "optical_transmission_interactions": 8839,
+        "particle_light_candidates": 11926,
+        "point_light_candidates": 4380,
+        "smoke_bubble_intersection_tests": 39516,
+        "smoke_density_samples": 90150,
+        "smoke_lobe_candidates": 252098,
+        "smoke_parent_bounds_tests": 252098,
+        "sun_shadow_lookups": 487976,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 198576,
+        "world_point_light_candidates": 1445946,
+        "world_shading_invocations": 481982
+      },
+      "frame": 7199,
+      "moving_caster_position": null,
+      "route_frame": 7199,
+      "tick": 7800
+    }
+  ],
+  "counter_instrumentation": {
+    "renderer_source_sha256": "98c8475a599df7f1940de7d99d4305011b546b110e8ebd599281f2ea92c23fe3",
+    "optical_shader_sha256": "2a946bc823df1a588046155d2d66c78aca8d33f246aa73e25c9a2aef8b5453ad",
+    "binary_sha256": "65c2e2a1c871f9a9067317566da6499bec8c1e28f9c6ce0a80fe63dff81193f6",
+    "raw_report": "artifacts/o01/optical-motion-shading-counters-fixed.json",
+    "raw_report_sha256": "aee42adc7f6d71247fcb6e38a2a2ef6c842b3d0ee6a069f8529466dc2257e5c6"
+  },
+  "limitations": [
+    "Three sparse samples characterize operation counts, not every route frame.",
+    "Instrumented GPU timings are disabled and must not be used for performance conclusions.",
+    "M1 Max/Metal only; native-window, Windows/DX12 and other adapters remain unverified."
+  ]
+}

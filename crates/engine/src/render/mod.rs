@@ -2205,6 +2205,10 @@ impl Renderer {
         ));
         let diagnostic_optical_source = optical_source
             .replace(
+                "if optical_strength(m)<=0. {discard;}",
+                "if optical_strength(m)<=0. {discard;} diag_add(18u);",
+            )
+            .replace(
                 "if f32(i)>=g.presentation.z {break;}",
                 "if f32(i)>=g.presentation.z {break;} diag_add(19u);",
             )
@@ -2213,12 +2217,8 @@ impl Renderer {
                 "for(var refine=0;refine<4;refine++) { diag_add(20u);",
             )
             .replace(
-                "if transmission(m)>0. && !front {discard;}",
-                "if transmission(m)>0. && !front {discard;} diag_add(18u);",
-            )
-            .replace(
-                "if transmission(m)>0. {\n        let direction=",
-                "if transmission(m)>0. {\n        diag_add(21u);\n        let direction=",
+                "if transmission(m)>0. && dot(transmitted_direction,transmitted_direction)>=0.000001 {",
+                "if transmission(m)>0. && dot(transmitted_direction,transmitted_direction)>=0.000001 { diag_add(21u);",
             );
         let diagnostic_optical_volume = diagnostic_volume.replace("@group(2)", "@group(3)");
         let diagnostic_optical_module = shader(
