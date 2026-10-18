@@ -238,21 +238,22 @@ ms. This rules out active-region solver work as the next step. O03/O04/O06 probe
 show sensitivity to candidate work, retained primitives and optical reuse, but do
 not isolate exact per-pixel operation costs.
 
-**Counter implementation partial:** `engine-lab capture --shading-counters` now
-selects an isolated instrumented volumetric pipeline and serializes fire primitive,
-smoke lobe/bubble, density/absorption, light-candidate and volumetric shadow
-lookup counts. The baseline pipeline produces byte-identical pixels at the same
-fixed tick. A first M1 Max/Metal capture is recorded in
+**Counter implementation: instrumented paths complete on M1 Max/Metal.**
+`engine-lab capture --shading-counters` selects isolated diagnostic variants for
+world, volumetric and optical passes and serializes fire primitive, smoke
+lobe/bubble, density/absorption, light-candidate, shadow, reflection and
+transmission counts. Baseline, diagnostic and optical no-copy paths produced
+byte-identical pixels at matched fixed ticks. Captures are recorded in
 [measurements-o01-shading-counters.json](measurements-o01-shading-counters.json).
 Atomic counter captures are diagnostic only; their timings are not comparable.
-Opaque-world shader operations and optical reflection/transmission interactions
-remain uninstrumented, as do motion-route and other-adapter checks.
+Continuous moving-route and native-window checks, plus other-adapter validation,
+remain open.
 
 Use O01 stage data to split the multi-millisecond atmosphere/fire work by candidate
 category and representative coverage. O01 shows smoke advection near 0.02 ms on the
 measured M1 Max scene, so do not pursue active-region solver work without new data.
-Complete counters for opaque-world and optical interactions, then compare
-instrumented and uninstrumented costs. Use O03 lists and O04 detail as independent
+Use the counters to compare instrumented and uninstrumented costs on moving routes.
+Use O03 lists and O04 detail as independent
 switches to identify which operations dominate. Keep fixed pixel density and capture
 matched close, distant and crowded views.
 

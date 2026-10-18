@@ -39,11 +39,10 @@ Detailed steps, dependencies and acceptance criteria live in
   [O01-O08_FOLLOWUP_PLAN.md](docs/O01-O08_FOLLOWUP_PLAN.md) before promoting
   opt-in approximations or expanding the emitter cap.
 
-  O01 operation counters now have an opt-in, byte-identical volumetric capture
-  path and an initial M1 Max/Metal report in
+  O01 operation counters now cover world, volume and optical paths with
+  byte-identical fixed-tick captures; M1 Max/Metal results are in
   [measurements-o01-shading-counters.json](docs/measurements-o01-shading-counters.json).
-  Opaque-world and optical-operation counters, temporal checks and other adapters
-  remain open.
+  Moving-route, native-window and other-adapter counter validation remains open.
 
 - [x] Simulation-driven surface heat cue — implemented and reviewed at fixed ticks across four named cameras. Readability is projection-dependent and the measured GPU-render increase is small; keep it opt-in, with authored-scene promotion gated on O08 and broader visual/DX12 acceptance. Evidence: [measurements-heat-cue.json](docs/measurements-heat-cue.json).
 - [x] Bind emitters to their thermal/fire profile and primary point light by stable IDs; legacy scenes retain positional light binding. Multi-fire stress tests and per-emitter simulation/render ownership remain open.

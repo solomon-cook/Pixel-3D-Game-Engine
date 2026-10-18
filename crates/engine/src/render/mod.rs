@@ -126,12 +126,20 @@ struct TileConfigGpu {
 struct Pipelines {
     mesh: wgpu::RenderPipeline,
     mesh_baked: wgpu::RenderPipeline,
+    mesh_diagnostic: wgpu::RenderPipeline,
+    mesh_baked_diagnostic: wgpu::RenderPipeline,
     optical: wgpu::RenderPipeline,
     optical_baked: wgpu::RenderPipeline,
+    optical_diagnostic: wgpu::RenderPipeline,
+    optical_baked_diagnostic: wgpu::RenderPipeline,
     optical_overlay: wgpu::RenderPipeline,
     optical_overlay_baked: wgpu::RenderPipeline,
     optical_overlay_alpha: wgpu::RenderPipeline,
     optical_overlay_alpha_baked: wgpu::RenderPipeline,
+    optical_overlay_diagnostic: wgpu::RenderPipeline,
+    optical_overlay_baked_diagnostic: wgpu::RenderPipeline,
+    optical_overlay_alpha_diagnostic: wgpu::RenderPipeline,
+    optical_overlay_alpha_baked_diagnostic: wgpu::RenderPipeline,
     volume: wgpu::RenderPipeline,
     volume_diagnostic: wgpu::RenderPipeline,
     post: wgpu::RenderPipeline,
@@ -843,7 +851,24 @@ impl Renderer {
                         min_binding_size: None,
                     },
                 ),
+                binding(
+                    2,
+                    wgpu::ShaderStages::FRAGMENT,
+                    wgpu::BindingType::Buffer {
+                        ty: wgpu::BufferBindingType::Storage { read_only: false },
+                        has_dynamic_offset: false,
+                        min_binding_size: None,
+                    },
+                ),
             ],
+        });
+        let shading_diagnostic_buffer = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("opt-in shading diagnostic counters"),
+            size: 22 * 4,
+            usage: wgpu::BufferUsages::STORAGE
+                | wgpu::BufferUsages::COPY_SRC
+                | wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
         });
         let fire_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("bounded fire primitives"),
@@ -858,7 +883,11 @@ impl Renderer {
         let globals = group(
             &device,
             &global_layout,
-            &[uniform.as_entire_binding(), fire_buffer.as_entire_binding()],
+            &[
+                uniform.as_entire_binding(),
+                fire_buffer.as_entire_binding(),
+                shading_diagnostic_buffer.as_entire_binding(),
+            ],
         );
         let material_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
             label: Some("live material table"),
@@ -1314,16 +1343,7 @@ impl Renderer {
                         wgpu::TextureSampleType::Float { filterable: true },
                     ),
                 ),
-                binding(4, wgpu::ShaderStages::FRAGMENT, storage(false)),
             ],
-        });
-        let shading_diagnostic_buffer = device.create_buffer(&wgpu::BufferDescriptor {
-            label: Some("opt-in shading diagnostic counters"),
-            size: 14 * 4,
-            usage: wgpu::BufferUsages::STORAGE
-                | wgpu::BufferUsages::COPY_SRC
-                | wgpu::BufferUsages::COPY_DST,
-            mapped_at_creation: false,
         });
         let volume_groups = std::array::from_fn(|i| {
             group(
@@ -1336,7 +1356,6 @@ impl Renderer {
                     wgpu::BindingResource::TextureView(
                         absorption_view.as_ref().unwrap_or(&smoke_views[i]),
                     ),
-                    shading_diagnostic_buffer.as_entire_binding(),
                 ],
             )
         });
@@ -1765,7 +1784,7 @@ impl Renderer {
         let fixed_buffer_bytes = std::mem::size_of::<Globals>() as u64
             + std::mem::size_of::<FireFrame>() as u64
             + 7 * 64
-            + 14 * std::mem::size_of::<u32>() as u64;
+            + 22 * std::mem::size_of::<u32>() as u64;
         let format_support = [
             wgpu::TextureFormat::Rgba16Float,
             wgpu::TextureFormat::Rg16Float,
@@ -1829,7 +1848,7 @@ impl Renderer {
             "tile_stats_buffer_bytes":tile_stats_buffer_bytes,
             "tile_config_bytes":tile_config_bytes,
             "tile_stats_readback_bytes":tile_stats_readback_bytes,
-            "shading_diagnostic_counter_bytes":14 * std::mem::size_of::<u32>() as u64,
+            "shading_diagnostic_counter_bytes":22 * std::mem::size_of::<u32>() as u64,
             "gpu_timestamp_staging_bytes":timing_staging_bytes,
             "gpu_timestamp_query_set_count":if timestamp { TIMING_SLOTS + COMPUTE_TIMING_SLOTS } else { 0 },
             "tile_count":tile_count,
@@ -2127,10 +2146,21 @@ impl Renderer {
                 volume_source.replace("@group(2) @binding(8)", "@group(2) @binding(3)")
             ),
         );
-        let diagnostic_preamble = "@group(2) @binding(4) var<storage, read_write> shading_diag: array<atomic<u32>,14>; fn diag_add(i:u32) { atomicAdd(&shading_diag[i],1u); }";
+        let diagnostic_preamble = "@group(0) @binding(2) var<storage, read_write> shading_diag: array<atomic<u32>,22>; fn diag_add(i:u32) { atomicAdd(&shading_diag[i],1u); }";
         let diagnostic_world = world
             .replace("return textureSampleCompareLevel(sun_shadow,shadow_sampler,uv,q.z/q.w-0.0015);", "diag_add(9u); return textureSampleCompareLevel(sun_shadow,shadow_sampler,uv,q.z/q.w-0.0015);")
-            .replace("return textureSampleCompareLevel(point_shadow,shadow_sampler,d,depth-0.004);", "diag_add(10u); return textureSampleCompareLevel(point_shadow,shadow_sampler,d,depth-0.004);");
+            .replace("return textureSampleCompareLevel(point_shadow,shadow_sampler,d,depth-0.004);", "diag_add(10u); return textureSampleCompareLevel(point_shadow,shadow_sampler,d,depth-0.004);")
+            .replace("fn shade_surface(v:Varying,tile:u32)->Output {", "fn shade_surface(v:Varying,tile:u32)->Output { diag_add(14u);")
+            .replace("for(var candidate=0u;candidate<8u;candidate++) {if candidate>=point_count {break;}", "for(var candidate=0u;candidate<8u;candidate++) {if candidate>=point_count {break;} diag_add(15u);")
+            .replace("for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;}", "for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;} diag_add(16u);")
+            .replace("let temperature=clamp(textureSampleLevel(heat_volume,heat_sampler,heat_uv,0.).y,0.,1.);", "diag_add(17u); let temperature=clamp(textureSampleLevel(heat_volume,heat_sampler,heat_uv,0.).y,0.,1.);");
+        let diagnostic_mesh_module = shader(
+            device,
+            "instrumented opaque world",
+            format!(
+                "{common}\n{tile_common}\n{tile_group2}\n{diagnostic_preamble}\n{diagnostic_world}"
+            ),
+        );
         let diagnostic_fire = fire_source
             .replace("if candidate>=candidate_count {break;}", "if candidate>=candidate_count {break;} diag_add(0u);")
             .replace("if along+bound<0. || along-bound>limit || length(ro+direction*max(along,0.))>bound {continue;}", "diag_add(1u); if along+bound<0. || along-bound>limit || length(ro+direction*max(along,0.))>bound {continue;}")
@@ -2152,6 +2182,31 @@ impl Renderer {
             "{common}\n{tile_common}\n{tile_group3}\n{diagnostic_preamble}\n{diagnostic_world}\n{diagnostic_fire}\n{}",
             diagnostic_volume.replace("@group(2) @binding(8)", "@group(2) @binding(3)")
         ));
+        let diagnostic_optical_source = optical_source
+            .replace(
+                "if f32(i)>=g.presentation.z {break;}",
+                "if f32(i)>=g.presentation.z {break;} diag_add(19u);",
+            )
+            .replace(
+                "for(var refine=0;refine<4;refine++) {",
+                "for(var refine=0;refine<4;refine++) { diag_add(20u);",
+            )
+            .replace(
+                "if transmission(m)>0. && !front {discard;}",
+                "if transmission(m)>0. && !front {discard;} diag_add(18u);",
+            )
+            .replace(
+                "if transmission(m)>0. {\n        let direction=",
+                "if transmission(m)>0. {\n        diag_add(21u);\n        let direction=",
+            );
+        let diagnostic_optical_volume = diagnostic_volume.replace("@group(2)", "@group(3)");
+        let diagnostic_optical_module = shader(
+            device,
+            "instrumented optical surfaces",
+            format!(
+                "{common}\n{tile_common}\n{tile_group3_optical}\n{diagnostic_preamble}\n{diagnostic_world}\n{diagnostic_fire}\n{diagnostic_optical_volume}\n{diagnostic_optical_source}"
+            ),
+        );
         let tile_build_module = shader(
             device,
             "effect tile-list builder",
@@ -2278,6 +2333,34 @@ impl Renderer {
             true,
             false,
         );
+        let mesh_diagnostic = render(
+            "instrumented world",
+            &diagnostic_mesh_module,
+            &mesh_layout,
+            "vs",
+            Some("fs"),
+            &[
+                color_target(hdr_color_format, None),
+                color_target(HDR, None),
+            ],
+            true,
+            true,
+            true,
+        );
+        let mesh_baked_diagnostic = render(
+            "instrumented world baked reference",
+            &diagnostic_mesh_module,
+            &mesh_layout,
+            "vs_baked",
+            Some("fs"),
+            &[
+                color_target(hdr_color_format, None),
+                color_target(HDR, None),
+            ],
+            true,
+            true,
+            false,
+        );
         let optical = render(
             "optical surfaces",
             &optical_module,
@@ -2292,6 +2375,28 @@ impl Renderer {
         let optical_baked = render(
             "optical surfaces baked reference",
             &optical_module,
+            &optical_layout,
+            "optical_vs_baked",
+            Some("optical_fs"),
+            &[color_target(hdr_color_format, None)],
+            true,
+            true,
+            false,
+        );
+        let optical_diagnostic = render(
+            "instrumented optical surfaces",
+            &diagnostic_optical_module,
+            &optical_layout,
+            "optical_vs",
+            Some("optical_fs"),
+            &[color_target(hdr_color_format, None)],
+            true,
+            true,
+            true,
+        );
+        let optical_baked_diagnostic = render(
+            "instrumented optical surfaces baked reference",
+            &diagnostic_optical_module,
             &optical_layout,
             "optical_vs_baked",
             Some("optical_fs"),
@@ -2342,6 +2447,56 @@ impl Renderer {
         let optical_overlay_alpha_baked = render(
             "optical surfaces no-copy alpha coverage baked reference",
             &optical_module,
+            &optical_layout,
+            "optical_vs_baked",
+            Some("optical_overlay_alpha_fs"),
+            &[color_target(HDR, None)],
+            true,
+            true,
+            false,
+        );
+        let optical_overlay_diagnostic = render(
+            "instrumented optical no-copy overlay",
+            &diagnostic_optical_module,
+            &optical_layout,
+            "optical_vs",
+            Some("optical_overlay_fs"),
+            &[
+                color_target(hdr_color_format, None),
+                color_target(wgpu::TextureFormat::R8Unorm, None),
+            ],
+            true,
+            true,
+            true,
+        );
+        let optical_overlay_baked_diagnostic = render(
+            "instrumented optical no-copy overlay baked reference",
+            &diagnostic_optical_module,
+            &optical_layout,
+            "optical_vs_baked",
+            Some("optical_overlay_fs"),
+            &[
+                color_target(hdr_color_format, None),
+                color_target(wgpu::TextureFormat::R8Unorm, None),
+            ],
+            true,
+            true,
+            false,
+        );
+        let optical_overlay_alpha_diagnostic = render(
+            "instrumented optical no-copy alpha coverage",
+            &diagnostic_optical_module,
+            &optical_layout,
+            "optical_vs",
+            Some("optical_overlay_alpha_fs"),
+            &[color_target(HDR, None)],
+            true,
+            true,
+            true,
+        );
+        let optical_overlay_alpha_baked_diagnostic = render(
+            "instrumented optical no-copy alpha coverage baked reference",
+            &diagnostic_optical_module,
             &optical_layout,
             "optical_vs_baked",
             Some("optical_overlay_alpha_fs"),
@@ -2480,12 +2635,20 @@ impl Renderer {
         Ok(Pipelines {
             mesh,
             mesh_baked,
+            mesh_diagnostic,
+            mesh_baked_diagnostic,
             optical,
             optical_baked,
+            optical_diagnostic,
+            optical_baked_diagnostic,
             optical_overlay,
             optical_overlay_baked,
             optical_overlay_alpha,
             optical_overlay_alpha_baked,
+            optical_overlay_diagnostic,
+            optical_overlay_baked_diagnostic,
+            optical_overlay_alpha_diagnostic,
+            optical_overlay_alpha_baked_diagnostic,
             volume,
             volume_diagnostic,
             post,
@@ -3168,7 +3331,6 @@ impl Renderer {
                         wgpu::BindingResource::TextureView(&smoke_views[i]),
                         wgpu::BindingResource::Sampler(&self.optical_sampler),
                         wgpu::BindingResource::TextureView(&view),
-                        self.shading_diagnostic_buffer.as_entire_binding(),
                     ],
                 )
             });
@@ -3230,7 +3392,6 @@ impl Renderer {
                         wgpu::BindingResource::Sampler(&self.optical_sampler),
                         // This slot is unused by direct sampling; bind an existing volume.
                         wgpu::BindingResource::TextureView(&smoke_views[i]),
-                        self.shading_diagnostic_buffer.as_entire_binding(),
                     ],
                 )
             });
@@ -3290,7 +3451,7 @@ impl Renderer {
         self.poll_timing(false);
         if self.shading_diagnostics_enabled {
             self.queue
-                .write_buffer(&self.shading_diagnostic_buffer, 0, &[0; 14 * 4]);
+                .write_buffer(&self.shading_diagnostic_buffer, 0, &[0; 22 * 4]);
             self.metrics.shading_counters = None;
         }
         self.ensure_absorption_cache(scene.render.experiments.smoke_absorption_cache);
@@ -3696,7 +3857,13 @@ impl Renderer {
                 }),
                 occlusion_query_set: None,
             });
-            pass.set_pipeline(if self.geometry_instancing_enabled {
+            pass.set_pipeline(if self.shading_diagnostics_enabled {
+                if self.geometry_instancing_enabled {
+                    &self.pipelines.mesh_diagnostic
+                } else {
+                    &self.pipelines.mesh_baked_diagnostic
+                }
+            } else if self.geometry_instancing_enabled {
                 &self.pipelines.mesh
             } else {
                 &self.pipelines.mesh_baked
@@ -3833,7 +4000,25 @@ impl Renderer {
                 }),
                 occlusion_query_set: None,
             });
-            pass.set_pipeline(if self.optical_no_copy_enabled {
+            pass.set_pipeline(if self.shading_diagnostics_enabled {
+                if self.optical_no_copy_enabled {
+                    if self.geometry_instancing_enabled {
+                        if self.optical_mask_required {
+                            &self.pipelines.optical_overlay_diagnostic
+                        } else {
+                            &self.pipelines.optical_overlay_alpha_diagnostic
+                        }
+                    } else if self.optical_mask_required {
+                        &self.pipelines.optical_overlay_baked_diagnostic
+                    } else {
+                        &self.pipelines.optical_overlay_alpha_baked_diagnostic
+                    }
+                } else if self.geometry_instancing_enabled {
+                    &self.pipelines.optical_diagnostic
+                } else {
+                    &self.pipelines.optical_baked_diagnostic
+                }
+            } else if self.optical_no_copy_enabled {
                 if self.geometry_instancing_enabled {
                     if self.optical_mask_required {
                         &self.pipelines.optical_overlay
@@ -3988,13 +4173,13 @@ impl Renderer {
         let diagnostic_read = self.shading_diagnostics_enabled.then(|| {
             self.device.create_buffer(&wgpu::BufferDescriptor {
                 label: Some("shading counter readback"),
-                size: 14 * 4,
+                size: 22 * 4,
                 usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
                 mapped_at_creation: false,
             })
         });
         if let Some(read) = &diagnostic_read {
-            encoder.copy_buffer_to_buffer(&self.shading_diagnostic_buffer, 0, read, 0, 14 * 4);
+            encoder.copy_buffer_to_buffer(&self.shading_diagnostic_buffer, 0, read, 0, 22 * 4);
         }
         encoder.copy_texture_to_buffer(
             wgpu::TexelCopyTextureInfo {
@@ -4051,6 +4236,14 @@ impl Renderer {
                 point_light_candidates: c(11),
                 particle_light_candidates: c(12),
                 camera_to_flame_absorption_samples: c(13),
+                world_shading_invocations: c(14),
+                world_point_light_candidates: c(15),
+                world_particle_light_candidates: c(16),
+                world_heat_samples: c(17),
+                optical_surface_interactions: c(18),
+                optical_reflection_steps: c(19),
+                optical_reflection_refinement_steps: c(20),
+                optical_transmission_interactions: c(21),
             });
             drop(bytes);
             read.unmap();

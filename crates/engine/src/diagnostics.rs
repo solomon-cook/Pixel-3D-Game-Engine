@@ -95,6 +95,14 @@ pub struct ShadingCounters {
     pub point_light_candidates: u32,
     pub particle_light_candidates: u32,
     pub camera_to_flame_absorption_samples: u32,
+    pub world_shading_invocations: u32,
+    pub world_point_light_candidates: u32,
+    pub world_particle_light_candidates: u32,
+    pub world_heat_samples: u32,
+    pub optical_surface_interactions: u32,
+    pub optical_reflection_steps: u32,
+    pub optical_reflection_refinement_steps: u32,
+    pub optical_transmission_interactions: u32,
 }
 
 impl FrameMetrics {

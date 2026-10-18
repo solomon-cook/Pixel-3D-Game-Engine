@@ -102,11 +102,11 @@ present and vsync spans in a native window. `assets/scenes/profiling-heavy.json`
 provides the single-plume, eight-point-light workload; it keeps the chosen 640×360
 grid and clearing route.
 
-`capture --shading-counters` selects a separate instrumented volumetric shader
-for one fixed-tick capture and writes executed fire, smoke, absorption, light
-candidate and volumetric shadow lookup counts into the JSON sidecar. Atomic
-counters perturb the diagnostic capture and are not performance timings. They do
-not yet count opaque-world or optical-pass work.
+`capture --shading-counters` selects instrumented world, volumetric and optical
+pipelines for one fixed-tick capture. The JSON sidecar reports fire, smoke,
+absorption, light candidate, shadow, reflection and transmission operation
+counts. Atomic counters perturb the diagnostic capture and are not performance
+timings.
 
 `--compact-hdr` opts into an `Rg11b10Ufloat` HDR color target when the active adapter
 supports filtered sampling, render targets, copies and the required render feature.
