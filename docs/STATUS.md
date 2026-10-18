@@ -198,7 +198,9 @@ Pure capability-selection tests cover the required usages/features and the
 Rgba16Float fallback path. The diagnostic `--force-rg16-fallback` option also
 forces that branch on a capable adapter. On M1 Max/Metal, fallback texture and
 pipeline creation succeeded and two fixed-tick scenes matched the native RG16
-images byte-for-byte; known allocation rises by 2,101,248 bytes at 640×360.
+images byte-for-byte. A 120-frame, 20 fps moving fire-camera route also matched
+byte-for-byte at every sampled tick from 120 through 477. Known allocation rises
+by 2,101,248 bytes at 640×360.
 This exercises fallback rendering but does not replace physical validation on an
 adapter without these capabilities or Windows/DX12 checks. See
 [fallback evidence](measurements-o08-rg16-fallback.json) and

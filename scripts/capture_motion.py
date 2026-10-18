@@ -39,6 +39,7 @@ def main():
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--profile', default='effect-campfire')
     parser.add_argument('--experiments', help='comma-separated renderer experiments')
+    parser.add_argument('--force-rg16-fallback', action='store_true', help='force the RGBA16F effect-target fallback')
     parser.add_argument('--route', help='camera route ID from the scene; updates the camera at every frame')
     parser.add_argument('--route-start', type=float, default=0, help='camera-route time in seconds at frame zero')
     parser.add_argument('--start-tick', type=int, default=300)
@@ -68,6 +69,8 @@ def main():
         command.extend(['--effect-profile', args.profile])
     if args.experiments:
         command.extend(['--experiments', args.experiments])
+    if args.force_rg16_fallback:
+        command.append('--force-rg16-fallback')
     process = subprocess.Popen(command, cwd=ROOT, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
     counter = 0
 
@@ -104,6 +107,7 @@ def main():
             'seed': args.seed,
             'profile': args.profile,
             'experiments': args.experiments,
+            'force_rg16_fallback': args.force_rg16_fallback,
             'route': args.route,
             'route_start_seconds': args.route_start if route else None,
             'start_tick': args.start_tick,
