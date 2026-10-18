@@ -464,15 +464,18 @@ disabled-by-default experiments. No-copy now also has three alternating native
 Platform, continuous-temporal and broader-pass acceptance stays open as
 summarized in that record.
 
-The dirty render-Globals upload now also has native-window timing on M1
-Max/Metal: three alternating 120-second clearing-orbit pairs with ten-second
-warm-ups and >99% render and smoke-compute timestamp coverage. The optimized
-path removes about 1.379 Globals writes and 1,169 upload bytes per rendered
-frame. Paired FPS and GPU-stage results vary in sign, so the work remains a
-verified traffic reduction without a whole-window speedup claim. More workloads
-and Windows/DX12 or other-adapter checks remain open. See
-[native report](measurements-o08-globals-upload-native.json) and
-[runner](../scripts/globals_upload_native_study.py).
+The dirty render-Globals upload now has three alternating native 120-second
+pairs on both clearing and profiling-heavy routes on M1 Max/Metal. Each uses
+ten-second warm-ups and >99% render and smoke-compute timestamp coverage measured
+against actual fixed ticks. The profiling-heavy route removes about 1.38 Globals
+writes and 1,173 upload bytes per rendered frame; optimized-minus-legacy paired
+median FPS is -0.070, CPU-frame +0.001 ms, CPU-upload +0.004 ms and
+atmosphere/fire GPU -0.014 ms. Together with the clearing route's mixed timing,
+this supports a traffic reduction without a whole-window speedup claim. Material
+Atelier, two-emitter, Windows/DX12 and other-adapter checks remain open. See
+[clearing report](measurements-o08-globals-upload-native.json),
+[profiling-heavy report](measurements-o08-globals-upload-native-profiling-heavy.json)
+and [runner](../scripts/globals_upload_native_study.py).
 
 **Lazy snapshot native lifecycle complete on M1 Max/Metal:** a paused shared
 Session edits an optical material while the camera faces away, then captures

@@ -857,15 +857,19 @@ multi-workload and cross-adapter checks remain open. See
 `artifacts/o08-globals-upload-study/`.
 
 **Native-window follow-up:** three alternating 120-second optimized/legacy
-pairs on M1 Max/Metal, with ten-second warm-ups and >99% render and
-smoke-compute timestamp coverage, measure optimized-minus-legacy paired medians
-of +0.124 FPS, -0.045 ms CPU native frame, -0.006 ms CPU upload and +0.006 ms
-atmosphere/fire GPU time. Per-frame counters show about 1.379 fewer Globals
-writes and 1,169 fewer uploaded bytes; native frames batch varying numbers of
-fixed steps. FPS and GPU-stage deltas vary in sign, so no whole-window gain is
-claimed. Additional workloads and non-Metal acceptance remain open. See the
-[native report](measurements-o08-globals-upload-native.json) and
-[runner](../scripts/globals_upload_native_study.py).
+pairs on M1 Max/Metal now cover clearing and profiling-heavy routes, with
+ten-second warm-ups and >99% render and smoke-compute timestamp coverage. Compute
+coverage is divided by actual fixed ticks, not the nominal 7,200 ticks. Clearing
+paired medians remain +0.124 FPS, -0.045 ms CPU native frame, -0.006 ms CPU
+upload and +0.006 ms atmosphere/fire GPU time. Profiling-heavy medians are
+-0.070 FPS, +0.001 ms CPU native frame, +0.004 ms CPU upload and -0.014 ms
+atmosphere/fire GPU. Its counters show about 1.38 fewer Globals writes and 1,173
+fewer uploaded bytes per rendered frame. Timing effects differ by route; this
+remains a traffic reduction without a general throughput claim. Material Atelier,
+two-emitter and non-Metal acceptance remain open. See the
+[clearing report](measurements-o08-globals-upload-native.json),
+[profiling-heavy report](measurements-o08-globals-upload-native-profiling-heavy.json)
+and [runner](../scripts/globals_upload_native_study.py).
 
 **Smoke compute bind-group layout (18 October 2026):** the advection WGSL
 bindings now occupy group 0, and the compute pipeline layout contains only the

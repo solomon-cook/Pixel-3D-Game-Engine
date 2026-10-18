@@ -16,9 +16,8 @@ SOURCES = (
     "crates/engine-lab/src/main.rs",
     "crates/engine-lab/src/window.rs",
     "crates/engine/src/render/mod.rs",
-    "crates/engine-lab/src/window.rs",
-    "crates/engine/src/render/shaders/fire_projected_bounds.wgsl",
-    "scripts/fire_bounds_native_study.py",
+    "crates/engine/src/render/shaders/smoke.wgsl",
+    "scripts/globals_upload_native_study.py",
 )
 
 
@@ -42,7 +41,7 @@ def metric(run: dict, path: tuple[str, ...]) -> dict:
     return {}
 
 
-def validate_timing_coverage(run: dict) -> None:
+def validate_timing_coverage(run: dict) -> float:
     coverage = run.get("timing_coverage", {})
     rendered = coverage.get("rendered_frames", 0)
     timed = coverage.get("timed_render_frames", 0)
@@ -51,9 +50,13 @@ def validate_timing_coverage(run: dict) -> None:
     if not rendered or timed / rendered < 0.99:
         raise RuntimeError(f"native GPU timing coverage below 99%: {timed}/{rendered}")
     compute = coverage.get("smoke_compute_samples", 0)
-    expected_compute = round(run.get("route_seconds", 0) * 60)
+    # Some workloads do not complete the ideal 60 ticks/s under native load.
+    # Timestamp coverage should be measured against submitted simulation ticks,
+    # the events that can actually produce smoke-compute samples.
+    expected_compute = run.get("simulation_accounting", {}).get("fixed_ticks", 0)
     if not expected_compute or compute / expected_compute < 0.99:
         raise RuntimeError(f"native smoke-compute timing coverage below 99%: {compute}/{expected_compute}")
+    return compute / expected_compute
 
 
 def mean_sample(run: dict, key: str) -> float | None:
@@ -85,6 +88,7 @@ def main() -> int:
     output.mkdir(parents=True, exist_ok=True)
 
     pairs = []
+    resumed_reports = []
     for pair in range(1, args.pairs + 1):
         order = ("optimized", "legacy") if pair % 2 else ("legacy", "optimized")
         runs = {}
@@ -97,7 +101,9 @@ def main() -> int:
             ]
             if variant == "legacy":
                 command.append("--legacy-smoke-globals-upload")
-            if not (args.resume and report.is_file()):
+            if args.resume and report.is_file():
+                resumed_reports.append(report.name)
+            else:
                 with (output / f"pair-{pair:02d}-{variant}.log").open("w") as log:
                     subprocess.run(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, check=True)
             run = json.loads(report.read_text())
@@ -105,8 +111,9 @@ def main() -> int:
                 raise RuntimeError(f"{variant} run reports the wrong Globals upload setting")
             if run.get("tile_lists_enabled") is not True:
                 raise RuntimeError(f"{variant} run did not use tile lists")
-            validate_timing_coverage(run)
+            compute_coverage = validate_timing_coverage(run)
             runs[variant] = run
+            runs[f"{variant}_compute_coverage"] = compute_coverage
         baseline, candidate = runs["legacy"], runs["optimized"]
         pairs.append({
             "pair": pair,
@@ -131,6 +138,8 @@ def main() -> int:
                 "cpu_native_frame": metric(baseline, ("cpu_native_frame",)),
                 "gpu_atmosphere_fire": metric(baseline, ("gpu_stages", "atmosphere_fire")),
                 "timing_coverage": baseline["timing_coverage"],
+                "fixed_ticks": baseline["simulation_accounting"]["fixed_ticks"],
+                "smoke_compute_timestamp_coverage": runs["legacy_compute_coverage"],
                 "cpu_upload": metric(baseline, ("cpu_upload",)),
                 "mean_globals_uploads_per_frame": mean_sample(baseline, "globals_uploads"),
                 "mean_globals_upload_bytes_per_frame": mean_sample(baseline, "globals_upload_bytes"),
@@ -142,6 +151,8 @@ def main() -> int:
                 "cpu_native_frame": metric(candidate, ("cpu_native_frame",)),
                 "gpu_atmosphere_fire": metric(candidate, ("gpu_stages", "atmosphere_fire")),
                 "timing_coverage": candidate["timing_coverage"],
+                "fixed_ticks": candidate["simulation_accounting"]["fixed_ticks"],
+                "smoke_compute_timestamp_coverage": runs["optimized_compute_coverage"],
                 "cpu_upload": metric(candidate, ("cpu_upload",)),
                 "mean_globals_uploads_per_frame": mean_sample(candidate, "globals_uploads"),
                 "mean_globals_upload_bytes_per_frame": mean_sample(candidate, "globals_upload_bytes"),
@@ -178,6 +189,8 @@ def main() -> int:
         "resolution": first_run["capabilities"].get("resolution"),
         "duration_seconds_per_run": args.duration,
         "warmup_seconds": args.warmup,
+        "native_reports_resumed": bool(resumed_reports),
+        "resumed_report_files": resumed_reports,
         "git_revision": subprocess.run(
             ["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, text=True, stdout=subprocess.PIPE
         ).stdout.strip(),
