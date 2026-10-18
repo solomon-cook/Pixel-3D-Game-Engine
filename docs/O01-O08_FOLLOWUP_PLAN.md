@@ -378,8 +378,8 @@ format support and shader/pipeline creation failure.
 ### 7. O08 individual candidate decisions
 
 **Complete on M1 Max/Metal:** independent dispositions for lazy optical allocation,
-normal/depth reuse, Rg16Float targets, compact HDR and no-copy overlay are recorded
-in [DECISIONS_O08.md](DECISIONS_O08.md). The memory-saving implemented paths are
+normal/depth reuse, Rg16Float targets, compact HDR, no-copy overlay and dirty
+fixed-step uploads are recorded in [DECISIONS_O08.md](DECISIONS_O08.md). The memory-saving implemented paths are
 retained with capability gates; compact HDR and no-copy remain independent,
 disabled-by-default experiments. No-copy now also has three alternating native
 120-second pairs on the mixed optical route. Optical-resolve deltas are mixed
@@ -417,6 +417,16 @@ These corrected studies replace earlier native results: the native loop used to
 call `Session.step(1)` per tick and never invoked the batching path. It now groups
 all fixed ticks accumulated for a rendered frame and still applies caster motion
 at each tick. The serial mode remains the reference path.
+
+**Dirty upload follow-up (18 October 2026):** the render `Globals` uniform is
+not consumed by `smoke.wgsl`; fixed-step inputs are read from the per-source
+group-1 configuration buffer. `update_globals` now returns after the simulation
+config write instead of queuing an unused render-uniform write. Tick-120 output
+matches byte-for-byte, and three alternating 120-second clearing-orbit pairs
+measure one fewer 848-byte write per simulation tick. CPU-upload spans improve
+consistently, but whole-frame and GPU-render deltas are small and mixed. Treat
+this as a verified traffic reduction without a throughput claim. See
+[the report](measurements-o08-globals-upload.json).
 
 Break the umbrella O08 item into decisions for lazy optical allocation, RG16 targets,
 compact HDR, normal/depth reuse and no-copy overlay. For each, record supported
