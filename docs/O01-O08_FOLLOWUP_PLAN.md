@@ -629,6 +629,16 @@ supported. See [path report](measurements-o01-counter-paths.json), the
 [reproducible timing runner](../scripts/soft_volume_route_study.py), plus the
 updated [counter runner](../scripts/shading_counter_profile_study.py).
 
+An additional O03 isolation run used the same soft-volume route and three
+alternating 120-second pairs, with tile lists enabled as baseline and exhaustive
+evaluation as candidate. Exhaustive-minus-tiled paired medians were +2.610 ms
+frame work, +2.202 ms GPU render, +2.570 ms atmosphere/fire and −0.327 ms
+tile-list build time. Fixed tick 120, seed 42 and 640×360 output matched
+pixel-for-pixel. This supports tile lists for this soft-volume workload on M1
+Max/Metal. It does not establish native-window or other-adapter performance. See
+[the comparison report](measurements-o01-soft-volume-tile-lists.json); the
+runner now exposes `--candidate-disable-tile-lists` and captures parity.
+
 Use O01 stage data to split the multi-millisecond atmosphere/fire work by candidate
 category and representative coverage. O01 shows smoke advection near 0.02 ms on the
 measured M1 Max scene, so do not pursue active-region solver work without new data.

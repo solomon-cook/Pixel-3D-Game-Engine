@@ -365,6 +365,14 @@ supported. See [path counter report](measurements-o01-counter-paths.json),
 [fixed-tick runner](../scripts/shading_counter_profile_study.py) and the
 [sustained timing runner](../scripts/soft_volume_route_study.py).
 
+The O01 soft-volume route also isolates O03 tile-list cost using three
+alternating 120-second tiled-versus-exhaustive pairs. On M1 Max/Metal,
+exhaustive-minus-tiled paired medians were +2.610 ms frame work, +2.202 ms
+GPU-render and +2.570 ms atmosphere/fire; tile-list build time decreased by
+0.327 ms when disabled. Fixed tick 120 at seed 42 matched pixel-for-pixel at
+640×360. This supports the tiled path on this workload, not a general adapter or
+native-window claim. See [tile-list comparison](measurements-o01-soft-volume-tile-lists.json).
+
 
 ## Shared geometry and conservative visibility (16 October)
 

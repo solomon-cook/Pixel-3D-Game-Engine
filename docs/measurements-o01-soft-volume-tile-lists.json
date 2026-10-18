@@ -1,0 +1,416 @@
+{
+  "version": 1,
+  "study": "O01 uninstrumented soft-volume route timing",
+  "scene": "assets/scenes/profiling-heavy.json",
+  "scene_sha256": "f736a0779a868d11c22d761b46a0920eb1b154db6241088c9d09a9fa1ca8a05b",
+  "generated_scene_sha256": "db9f8e90f00bf77dfc43ae7c9ab03022f2edb431685aa71dd18921989dc3df12",
+  "style": "volume",
+  "route": "clearing-orbit",
+  "duration_seconds": 120.0,
+  "warmup_seconds": 10.0,
+  "pairs": 3,
+  "seed": 42,
+  "resolution": [
+    640,
+    360
+  ],
+  "host": {
+    "adapter": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "git_revision": "b6156f7122e384aecc669bcdf9aa4695ef071221",
+  "binary_sha256": "044a56abf5514add0b5a64020c1750f8ab69b12e2d52152fca6f00be29583bcf",
+  "runner_sha256": "cdedf2dcb25baf76ef436c7f2b1ca688db9f1c14f87ca9fcf8383183c18d3cd0",
+  "source_fingerprints": {
+    "engine_rust": "a05d7a050b600f5e41d219445c895ba891923a299f465591aa7bd97920239fb8",
+    "engine_lab_rust": "8c879d68fcbf4886b45c0b4f3a95e2014b3cd5ac7729bf47a1e0a490c1d5fbc6",
+    "renderer_shaders": "5107659b5c8acb4a03572e1dd99bedb8b58a37d29d76fef6c16d195fd411b964"
+  },
+  "instrumentation_enabled": false,
+  "candidate_disable_tile_lists": true,
+  "comparison_report": "artifacts/o01-soft-volume-tile-lists/paired-runs/comparison.json",
+  "comparison": {
+    "frame_work": {
+      "baseline_run_medians_ms": [
+        17.049959,
+        18.002167,
+        18.050917
+      ],
+      "candidate_run_medians_ms": [
+        20.257291,
+        20.611667,
+        20.349916
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        3.2073319999999974,
+        2.6095000000000006,
+        2.298999000000002
+      ],
+      "paired_delta_median_ms": 2.6095000000000006,
+      "paired_delta_p95_ms": 3.2073319999999974,
+      "baseline_median_of_run_medians_ms": 18.002167,
+      "candidate_median_of_run_medians_ms": 20.349916
+    },
+    "cpu_encode": {
+      "baseline_run_medians_ms": [
+        0.802626,
+        0.880166,
+        0.9203339999999999
+      ],
+      "candidate_run_medians_ms": [
+        0.9190419999999999,
+        0.978959,
+        0.941083
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        0.11641599999999996,
+        0.09879300000000002,
+        0.02074900000000013
+      ],
+      "paired_delta_median_ms": 0.09879300000000002,
+      "paired_delta_p95_ms": 0.11641599999999996,
+      "baseline_median_of_run_medians_ms": 0.880166,
+      "candidate_median_of_run_medians_ms": 0.941083
+    },
+    "cpu_tile_list_encode": {
+      "baseline_run_medians_ms": [
+        0.084708,
+        0.093458,
+        0.099666
+      ],
+      "candidate_run_medians_ms": [
+        0.100833,
+        0.106167,
+        0.101084
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        0.016125,
+        0.012708999999999998,
+        0.0014179999999999887
+      ],
+      "paired_delta_median_ms": 0.012708999999999998,
+      "paired_delta_p95_ms": 0.016125,
+      "baseline_median_of_run_medians_ms": 0.093458,
+      "candidate_median_of_run_medians_ms": 0.101084
+    },
+    "cpu_shadow_encode": {
+      "baseline_run_medians_ms": [
+        0.000125,
+        0.000125,
+        0.000166
+      ],
+      "candidate_run_medians_ms": [
+        0.000166,
+        0.000166,
+        0.000166
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        4.0999999999999994e-05,
+        4.0999999999999994e-05,
+        0.0
+      ],
+      "paired_delta_median_ms": 4.0999999999999994e-05,
+      "paired_delta_p95_ms": 4.0999999999999994e-05,
+      "baseline_median_of_run_medians_ms": 0.000125,
+      "candidate_median_of_run_medians_ms": 0.000166
+    },
+    "cpu_upload": {
+      "baseline_run_medians_ms": [
+        0.3225,
+        0.346834,
+        0.356832
+      ],
+      "candidate_run_medians_ms": [
+        0.36437499999999995,
+        0.370541,
+        0.35504199999999997
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        0.04187499999999994,
+        0.023707000000000034,
+        -0.0017900000000000138
+      ],
+      "paired_delta_median_ms": 0.023707000000000034,
+      "paired_delta_p95_ms": 0.04187499999999994,
+      "baseline_median_of_run_medians_ms": 0.346834,
+      "candidate_median_of_run_medians_ms": 0.36437499999999995
+    },
+    "simulation_cpu": {
+      "baseline_run_medians_ms": [
+        0.45858299999999996,
+        0.488083,
+        0.5005419999999999
+      ],
+      "candidate_run_medians_ms": [
+        0.511083,
+        0.5217499999999999,
+        0.5018330000000001
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        0.05249999999999999,
+        0.03366699999999995,
+        0.0012910000000001531
+      ],
+      "paired_delta_median_ms": 0.03366699999999995,
+      "paired_delta_p95_ms": 0.05249999999999999,
+      "baseline_median_of_run_medians_ms": 0.488083,
+      "candidate_median_of_run_medians_ms": 0.511083
+    },
+    "simulation_encode_cpu": {
+      "baseline_run_medians_ms": [
+        0.402124,
+        0.423876,
+        0.43474999999999997
+      ],
+      "candidate_run_medians_ms": [
+        0.443416,
+        0.454125,
+        0.436042
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        0.041291999999999995,
+        0.030249000000000026,
+        0.0012920000000000154
+      ],
+      "paired_delta_median_ms": 0.030249000000000026,
+      "paired_delta_p95_ms": 0.041291999999999995,
+      "baseline_median_of_run_medians_ms": 0.423876,
+      "candidate_median_of_run_medians_ms": 0.443416
+    },
+    "queue_submit_cpu": {
+      "baseline_run_medians_ms": [
+        0.150541,
+        0.161124,
+        0.16841699999999998
+      ],
+      "candidate_run_medians_ms": [
+        0.16841699999999998,
+        0.17250000000000001,
+        0.167209
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        0.017875999999999975,
+        0.011376000000000025,
+        -0.0012079999999999869
+      ],
+      "paired_delta_median_ms": 0.011376000000000025,
+      "paired_delta_p95_ms": 0.017875999999999975,
+      "baseline_median_of_run_medians_ms": 0.161124,
+      "candidate_median_of_run_medians_ms": 0.16841699999999998
+    },
+    "gpu_render": {
+      "baseline_run_medians_ms": [
+        13.126375,
+        14.031167,
+        14.181748999999998
+      ],
+      "candidate_run_medians_ms": [
+        16.017582,
+        16.233331999999997,
+        16.107958
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        2.8912070000000014,
+        2.2021649999999973,
+        1.9262090000000018
+      ],
+      "paired_delta_median_ms": 2.2021649999999973,
+      "paired_delta_p95_ms": 2.8912070000000014,
+      "baseline_median_of_run_medians_ms": 14.031167,
+      "candidate_median_of_run_medians_ms": 16.107958
+    },
+    "gpu_stages.atmosphere_fire": {
+      "baseline_run_medians_ms": [
+        12.480084,
+        13.33775,
+        13.42925
+      ],
+      "candidate_run_medians_ms": [
+        15.689542,
+        15.90775,
+        15.770334
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        3.2094579999999997,
+        2.5700000000000003,
+        2.3410840000000004
+      ],
+      "paired_delta_median_ms": 2.5700000000000003,
+      "paired_delta_p95_ms": 3.2094579999999997,
+      "baseline_median_of_run_medians_ms": 13.33775,
+      "candidate_median_of_run_medians_ms": 15.770334
+    },
+    "gpu_stages.opaque_geometry": {
+      "baseline_run_medians_ms": [
+        1.414625,
+        1.4529999999999998,
+        1.475542
+      ],
+      "candidate_run_medians_ms": [
+        1.891791,
+        1.90825,
+        1.8858329999999999
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        0.477166,
+        0.45525000000000015,
+        0.41029099999999996
+      ],
+      "paired_delta_median_ms": 0.45525000000000015,
+      "paired_delta_p95_ms": 0.477166,
+      "baseline_median_of_run_medians_ms": 1.4529999999999998,
+      "candidate_median_of_run_medians_ms": 1.891791
+    },
+    "gpu_stages.optical_resolve": {
+      "baseline_run_medians_ms": [
+        null,
+        null,
+        null
+      ],
+      "candidate_run_medians_ms": [
+        null,
+        null,
+        null
+      ],
+      "paired_candidate_minus_baseline_ms": [],
+      "paired_delta_median_ms": null,
+      "paired_delta_p95_ms": null,
+      "baseline_median_of_run_medians_ms": null,
+      "candidate_median_of_run_medians_ms": null
+    },
+    "gpu_stages.post": {
+      "baseline_run_medians_ms": [
+        12.54225,
+        13.417,
+        13.519874999999999
+      ],
+      "candidate_run_medians_ms": [
+        15.781708,
+        15.992042,
+        15.85
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        3.239458000000001,
+        2.575042,
+        2.3301250000000007
+      ],
+      "paired_delta_median_ms": 2.575042,
+      "paired_delta_p95_ms": 3.239458000000001,
+      "baseline_median_of_run_medians_ms": 13.417,
+      "candidate_median_of_run_medians_ms": 15.85
+    },
+    "gpu_stages.shadow_maps": {
+      "baseline_run_medians_ms": [
+        null,
+        null,
+        null
+      ],
+      "candidate_run_medians_ms": [
+        null,
+        null,
+        null
+      ],
+      "paired_candidate_minus_baseline_ms": [],
+      "paired_delta_median_ms": null,
+      "paired_delta_p95_ms": null,
+      "baseline_median_of_run_medians_ms": null,
+      "candidate_median_of_run_medians_ms": null
+    },
+    "gpu_stages.smoke_absorption_cache": {
+      "baseline_run_medians_ms": [
+        null,
+        null,
+        null
+      ],
+      "candidate_run_medians_ms": [
+        null,
+        null,
+        null
+      ],
+      "paired_candidate_minus_baseline_ms": [],
+      "paired_delta_median_ms": null,
+      "paired_delta_p95_ms": null,
+      "baseline_median_of_run_medians_ms": null,
+      "candidate_median_of_run_medians_ms": null
+    },
+    "gpu_stages.smoke_compute": {
+      "baseline_run_medians_ms": [
+        0.013542,
+        0.014375,
+        0.014583
+      ],
+      "candidate_run_medians_ms": [
+        0.013041,
+        0.013,
+        0.012917
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        -0.0005009999999999997,
+        -0.0013750000000000012,
+        -0.0016660000000000008
+      ],
+      "paired_delta_median_ms": -0.0013750000000000012,
+      "paired_delta_p95_ms": -0.0005009999999999997,
+      "baseline_median_of_run_medians_ms": 0.014375,
+      "candidate_median_of_run_medians_ms": 0.013
+    },
+    "gpu_stages.tile_list_build": {
+      "baseline_run_medians_ms": [
+        0.334167,
+        0.33949999999999997,
+        0.360459
+      ],
+      "candidate_run_medians_ms": [
+        0.012832999999999999,
+        0.012917,
+        0.01275
+      ],
+      "paired_candidate_minus_baseline_ms": [
+        -0.321334,
+        -0.32658299999999996,
+        -0.347709
+      ],
+      "paired_delta_median_ms": -0.32658299999999996,
+      "paired_delta_p95_ms": -0.321334,
+      "baseline_median_of_run_medians_ms": 0.33949999999999997,
+      "candidate_median_of_run_medians_ms": 0.012832999999999999
+    }
+  },
+  "fixed_tick_tile_parity": {
+    "tick": 120,
+    "seed": 42,
+    "resolution": [
+      640,
+      360
+    ],
+    "pixel_identical": true,
+    "variants": {
+      "tiled": {
+        "image": "artifacts/o01-soft-volume-tile-lists/fixed-tick-parity/tiled.png",
+        "pixel_sha256": "8e0a3a03e9eb02c1fc9695a390155cc45e956e7fe7c03dee547c13a0e8e2d789",
+        "resolution": [
+          640,
+          360
+        ],
+        "adapter": "Apple M1 Max",
+        "backend": "Metal",
+        "tile_lists_enabled": true
+      },
+      "exhaustive": {
+        "image": "artifacts/o01-soft-volume-tile-lists/fixed-tick-parity/exhaustive.png",
+        "pixel_sha256": "8e0a3a03e9eb02c1fc9695a390155cc45e956e7fe7c03dee547c13a0e8e2d789",
+        "resolution": [
+          640,
+          360
+        ],
+        "adapter": "Apple M1 Max",
+        "backend": "Metal",
+        "tile_lists_enabled": false
+      }
+    }
+  },
+  "measurement_overhead": null,
+  "scope": "Uninstrumented O01 GPU stage and whole-frame timings for the soft-volume style. Same-scene paired deltas are run-variance controls unless candidate_disable_tile_lists is true, in which case they compare tiled candidates with exhaustive evaluation. M1 Max/Metal only.",
+  "reproduction": "python3 scripts/soft_volume_route_study.py --output artifacts/o01-soft-volume-tile-lists --report docs/measurements-o01-soft-volume-tile-lists.json --duration 120 --warmup 10 --pairs 3 --route clearing-orbit --seed 42 --candidate-disable-tile-lists"
+}

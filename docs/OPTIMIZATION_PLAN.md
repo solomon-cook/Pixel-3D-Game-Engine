@@ -146,6 +146,16 @@ shader change is justified. See
 [the timing report](measurements-o01-soft-volume-route.json) and its
 [reproducible runner](../scripts/soft_volume_route_study.py).
 
+To isolate O03 on this workload, the same runner compared tile lists against
+exhaustive evaluation over three alternating 120-second pairs. On M1 Max/Metal,
+exhaustive-minus-tiled paired medians were +2.610 ms frame work, +2.202 ms GPU
+render and +2.570 ms atmosphere/fire; tile-list build time fell by 0.327 ms when
+lists were disabled. Fixed tick 120 at seed 42 remained pixel-identical at
+640×360. This supports O03 for the measured soft-volume scene, while the earlier
+route variation study remains evidence against attributing that gain to a shader
+change. Native playback and other adapters remain unverified. See
+[tile-list comparison](measurements-o01-soft-volume-tile-lists.json).
+
 ## O02 — Cache static shadow maps
 
 **Purpose:** avoid redrawing unchanged shadows while retaining live fire flicker.

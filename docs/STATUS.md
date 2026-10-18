@@ -297,6 +297,12 @@ does not justify active-region simulation. The soft-volume route measured 12.919
 median atmosphere/fire stage and 13.583 ms median GPU-render on M1 Max/Metal, with
 mixed paired differences under three alternating 120-second runs; no cost benefit
 or shader rewrite is established. See [soft-volume report](measurements-o01-soft-volume-route.json).
+An O03 tiled-versus-exhaustive comparison on the same route then found +2.610 ms
+paired median frame work, +2.202 ms GPU-render and +2.570 ms atmosphere/fire
+when tile lists were disabled; tick-120 output matched exactly. This supports
+tile lists for this measured M1 Max/Metal soft-volume workload. Native playback
+and other adapters remain open. See
+[the comparison report](measurements-o01-soft-volume-tile-lists.json).
 
 A live M1 Max/Metal wgpu format query reported sampled, storage, render-attachment,
 copy and filtering support for Rg16Float and the probed alternatives. The effect
