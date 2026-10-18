@@ -76,6 +76,28 @@ def verify(binary):
         finally:
             process.stdin.close();process.wait(timeout=30)
         assert process.returncode==0
+        # The O08 startup-only no-copy mode must preserve visible optical
+        # output while replacing the snapshot with its output target.
+        for camera in ('hero','metal-close','glass-close'):
+            captures=[]
+            metadata=[]
+            for mode,extra in [('snapshot',[]),('no-copy',['--optical-no-copy'])]:
+                image=temp/f'{camera}-{mode}.png'
+                subprocess.run([
+                    str(binary),'capture','--scene',str(ROOT/'assets/scenes/materials.json'),
+                    '--camera',camera,'--seed','42','--tick','120','--scale','1',
+                    '--output',str(image),*extra,
+                ],cwd=ROOT,check=True,capture_output=True,text=True)
+                captures.append(image.read_bytes())
+                metadata.append(json.loads(image.with_suffix('.json').read_text()))
+            assert captures[0]==captures[1],f'{camera}: optical no-copy changed fixed-tick image'
+            direct_inventory=metadata[0]['capabilities']['resource_inventory']
+            no_copy_inventory=metadata[1]['capabilities']['resource_inventory']
+            assert direct_inventory['optical_no_copy_enabled'] is False
+            assert no_copy_inventory['optical_no_copy_enabled'] is True
+            assert direct_inventory['optical_snapshot_bytes']>0,f'{camera}: reference snapshot was not allocated'
+            assert no_copy_inventory['optical_snapshot_bytes']==0,f'{camera}: no-copy path retained the snapshot'
+            assert no_copy_inventory['optical_output_bytes']>0,f'{camera}: no-copy output was not allocated'
     print(json.dumps(dict(material_gpu_verified=True)))
 
 

@@ -726,6 +726,13 @@ smoke view reached 30/255 in sparse pixels. The variant remains opt-in; motion,
 timing, DX12 and other-adapter fallback/rendering checks remain open. See
 [measurements-o08.json](measurements-o08.json).
 
+The standard material GPU verifier now checks the O08 optical no-copy startup
+option at fixed tick 120 in hero, metal-close and glass-close views. Each image
+must match the snapshot-copy path byte-for-byte; metadata must show a snapshot
+allocation only for the reference and a nonzero optical output target for the
+candidate. This guards the selected RGBA16F path on the tested adapter and does
+not replace compact-HDR, physical fallback or cross-adapter acceptance.
+
 ## Delivery order and promotion
 
 | Wave | Work | Exit evidence |
