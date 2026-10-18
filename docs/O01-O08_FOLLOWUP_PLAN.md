@@ -237,19 +237,28 @@ acceptance remain open. See
    166→165. Keep LOD opt-in; the benefit depends on projected profile size.
    Full reports and run hashes are in
    [measurements-o04-sustained-profiles.json](measurements-o04-sustained-profiles.json).
-5. Keep the feature opt-in until continuous visual review passes and portability
-   checks pass. The native Mac remained locked during this turn, so continuous
-   playback remains an unverified visual acceptance gate.
+5. **Native-window measurement complete on M1 Max/Metal:** three alternating
+   120-second campfire orbit pairs show a paired median −0.057 ms atmosphere/fire
+   GPU-stage delta and effectively flat native FPS (−0.001). Median retained
+   primitives move 81→70 and rendered segments 6→4; projected-detail CPU cost
+   rises by 0.00008 ms. This is not a whole-window performance win. The runner
+   records tier occupancy, projected size, CPU cost, GPU stages and native frame
+   metrics in [measurements-o04-native.json](measurements-o04-native.json).
+   Keep the feature opt-in until continuous visual review and portability checks
+   pass.
 
 **Remaining exit gate:** repeatable transitions and a measured small M1 Max/Metal
 win are documented. Quiet and bonfire profiles now cross their applicable bands;
 per-frame full primitive, ember and particle-light counts match the baseline.
 Sustained profile-specific timing is recorded on M1 Max/Metal. Continuous
-playback review, native-window timing, and Windows/DX12 or other GPU qualification
-remain open. Fewer primitives alone are not a frame-win claim. See
+playback review and Windows/DX12 or other GPU qualification remain open. Native
+timing is measured, but fewer primitives and a small stage-level change are not a
+whole-window frame-win claim. See
 [measurements-o04-motion-review.json](measurements-o04-motion-review.json),
 [transition temporal report](measurements-o04-transition-temporal.json) and
-[measurements-o04-sustained-profiles.json](measurements-o04-sustained-profiles.json).
+[measurements-o04-sustained-profiles.json](measurements-o04-sustained-profiles.json),
+[native report](measurements-o04-native.json) and
+[native runner](../scripts/projected_detail_native_study.py).
 
 ### 4. O05 smoke absorption cache
 

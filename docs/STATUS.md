@@ -92,10 +92,17 @@ holds at every sample. Continuous playback acceptance remains open. See
 An in-app browser spot review viewed the campfire baseline and LOD GIFs side by
 side across several seconds; no obvious silhouette break or fire/smoke
 separation appeared in the sampled frames. This does not close full-duration
-human review. Native-window and portability evidence also remain open; see
+human review. A three-pair native-window campfire orbit now lowers the
+atmosphere/fire GPU-stage median by 0.057 ms, with effectively flat paired FPS
+(−0.001); the retained-primitive median moves 81→70 and the projected-detail
+calculation adds about 0.00008 ms CPU. This does not establish a whole-window
+win. Keep LOD disabled by default; continuous human review and portability
+remain open. See
 [measurements-o04.json](measurements-o04.json),
 [measurements-o04-motion-review.json](measurements-o04-motion-review.json) and
-[measurements-o04-sustained-profiles.json](measurements-o04-sustained-profiles.json).
+[measurements-o04-sustained-profiles.json](measurements-o04-sustained-profiles.json),
+[native report](measurements-o04-native.json) and
+[native runner](../scripts/projected_detail_native_study.py).
 
 O05 has an opt-in primary fire-light absorption cache at 8³ or 16³. It rebuilds
 after smoke simulation updates or scene/shader/reset changes, and skips repeated

@@ -913,6 +913,16 @@ impl Native {
                     "shadow_dirty_faces":metrics.shadow_dirty_faces,
                     "shadow_dirty_reason":metrics.shadow_dirty_reason,
                     "fire_primitives":metrics.fire_primitives,
+                    "projected_detail":{
+                        "enabled":metrics.projected_detail_lod_enabled,
+                        "cpu_ms":metrics.projected_detail_cpu_ms,
+                        "height_px":metrics.projected_fire_height_px,
+                        "tier":metrics.fire_lod_level,
+                        "segments_full":metrics.fire_segments_full,
+                        "segments_rendered":metrics.fire_segments_rendered,
+                        "primitives_full":metrics.fire_primitives_full,
+                        "primitives_rendered":metrics.fire_primitives_rendered
+                    },
                     "particle_lights":metrics.particle_lights
                 }));
             }
@@ -1156,6 +1166,23 @@ fn native_benchmark_report(
         "cpu_surface_acquire":summarize_frames("cpu_surface_acquire_ms"),
         "cpu_present_encode":summarize_frames("cpu_present_encode_ms"),
         "cpu_present_submit":summarize_frames("cpu_present_submit_ms"),
+        "projected_detail":{
+            "enabled":session.scene.render.experiments.projected_detail_lod,
+            "cpu_ms":{
+                "median_ms":diagnostics::percentile(&benchmark.samples.iter().filter_map(|sample|sample["projected_detail"]["cpu_ms"].as_f64()).collect::<Vec<_>>(),0.5),
+                "p95_ms":diagnostics::percentile(&benchmark.samples.iter().filter_map(|sample|sample["projected_detail"]["cpu_ms"].as_f64()).collect::<Vec<_>>(),0.95),
+                "samples":benchmark.samples.iter().filter(|sample|sample["projected_detail"]["cpu_ms"].is_number()).count()
+            },
+            "projected_height_px":{
+                "median":diagnostics::percentile(&benchmark.samples.iter().filter_map(|sample|sample["projected_detail"]["height_px"].as_f64()).collect::<Vec<_>>(),0.5),
+                "p95":diagnostics::percentile(&benchmark.samples.iter().filter_map(|sample|sample["projected_detail"]["height_px"].as_f64()).collect::<Vec<_>>(),0.95)
+            },
+            "tier_frames":([0u64,1,2].map(|tier|benchmark.samples.iter().filter(|sample|sample["projected_detail"]["tier"].as_u64()==Some(tier)).count())),
+            "segments_full_median":diagnostics::percentile(&benchmark.samples.iter().filter_map(|sample|sample["projected_detail"]["segments_full"].as_f64()).collect::<Vec<_>>(),0.5),
+            "segments_rendered_median":diagnostics::percentile(&benchmark.samples.iter().filter_map(|sample|sample["projected_detail"]["segments_rendered"].as_f64()).collect::<Vec<_>>(),0.5),
+            "primitives_full_median":diagnostics::percentile(&benchmark.samples.iter().filter_map(|sample|sample["projected_detail"]["primitives_full"].as_f64()).collect::<Vec<_>>(),0.5),
+            "primitives_rendered_median":diagnostics::percentile(&benchmark.samples.iter().filter_map(|sample|sample["projected_detail"]["primitives_rendered"].as_f64()).collect::<Vec<_>>(),0.5)
+        },
         "gpu_stages":gpu_stages,
         "gpu_timing_samples":measured_gpu_samples,
         "gpu_smoke_compute_samples":measured_gpu_compute_samples,

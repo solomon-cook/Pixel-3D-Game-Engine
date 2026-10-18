@@ -408,8 +408,15 @@ returning at 48/24 px. This first slice reduces tongue segments only; it preserv
 the deterministic full frame for bounds, particle births and emitted lights, and
 does not adapt smoke, branches, reflections, pixel size or simulation. The toggle
 defaults off. See [measurements-o04.json](measurements-o04.json) for captures and
-paired M1 Max timings. Slow orbit/popping review and target-platform qualification
-remain open; the current cost data does not justify enabling it by default.
+paired M1 Max timings. A native-window three-pair campfire orbit lowers the
+atmosphere/fire GPU-stage median by 0.041–0.062 ms (paired median 0.057 ms),
+while native FPS is effectively flat (paired median −0.001 fps). Median retained
+primitives move from 81 to 70, with four rendered segments instead of six; the
+LOD calculation itself adds about 0.00008 ms median CPU time. This is a small
+stage-level saving, not a whole-window win. The candidate remains opt-in pending
+continuous playback review and target-platform qualification. See
+[native report](measurements-o04-native.json) and
+[reproducible runner](../scripts/projected_detail_native_study.py).
 
 ## O05 — Reuse smoke transmittance and illumination work
 

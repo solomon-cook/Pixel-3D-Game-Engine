@@ -786,6 +786,16 @@ transition sizes are in [measurements-o04-motion-review.json](measurements-o04-m
 the generated frame sequences and preview files are under ignored
 `artifacts/o04/continuous-motion/`.
 
+The native-window follow-up adds three alternating 120-second campfire orbit
+pairs on M1 Max/Metal. Projected-detail LOD reduces median retained primitives
+from 81 to 70 and the atmosphere/fire GPU stage by 0.057 ms; the per-pair GPU
+stage deltas are −0.057/−0.062/−0.041 ms. Native FPS deltas are −0.102/+0.056/
+−0.001, with a paired median effectively flat at −0.001 fps. LOD CPU work adds
+0.00008 ms median. This does not establish a whole-window gain or visual
+acceptance; retain the disabled default. See
+[native report](measurements-o04-native.json) and
+[runner](../scripts/projected_detail_native_study.py).
+
 ## O05 absorption-cache temporal and pause/resume review (18 October)
 
 At medium smoke scale, direct sampling and the 16³ cache were captured at
