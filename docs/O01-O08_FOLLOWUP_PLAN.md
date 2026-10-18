@@ -160,10 +160,15 @@ alone are not a frame-win claim. See [measurements-o04-motion-review.json](measu
    bit-identical while paused for two wall-clock seconds. During the two-second
    resume, they advanced 121 and 120 ticks under host scheduling, then were
    stepped to tick 540 and matched fire state exactly. The full
-   movie still needs human playback review. The 8³ temporal route, other-adapter
+   movie still needs human playback review. The matched 8³ temporal route now
+   covers the same 400 ticks at medium smoke: mean frame RGB MAE is 0.285/255,
+   p95 0.426/255, maximum channel difference 39/255, and mean temporal-change
+   magnitude error 0.183/255; exact tick and effect-count parity holds. This is
+   larger error than 16³ and has no total-cost benefit claim. Other-adapter
    acceptance and more resume durations remain open. See
-   [measurements-o05-temporal.json](measurements-o05-temporal.json) and
-   [measurements-o05-pause-resume.json](measurements-o05-pause-resume.json).
+   [16³ temporal](measurements-o05-temporal.json),
+   [8³ temporal](measurements-o05-temporal-cache8.json) and
+   [pause/resume](measurements-o05-pause-resume.json).
 
 **Exit gate:** a workload range where total frame cost improves and motion quality
 passes. If cache maintenance remains more expensive than direct samples, leave it

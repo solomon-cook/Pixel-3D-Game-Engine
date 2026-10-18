@@ -24,10 +24,11 @@ def rgb_mae(image: Image.Image) -> tuple[float, int]:
     return mean, maximum
 
 
-def summarize(output: Path, binary: Path, frames: int, stride: int, start_tick: int) -> dict:
+def summarize(output: Path, binary: Path, frames: int, stride: int, start_tick: int, cache_resolution: int) -> dict:
     direct_path = output / "scenes/medium/direct.json"
-    cache_path = output / "scenes/medium/cache16.json"
-    direct_dir, cache_dir = output / "direct", output / "cache16"
+    cache_name = f"cache{cache_resolution}"
+    cache_path = output / f"scenes/medium/{cache_name}.json"
+    direct_dir, cache_dir = output / "direct", output / cache_name
     common = [
         "python3", str(ROOT / "scripts/capture_motion.py"), "--binary", str(binary),
         "--camera", "absorption-study", "--route", "absorption-cache-orbit",
@@ -75,8 +76,8 @@ def summarize(output: Path, binary: Path, frames: int, stride: int, start_tick: 
     p95_index = lambda values: int(0.95 * (len(values) - 1))
     return {
         "date": "2026-10-18",
-        "workstream": "O05 direct versus cached absorption temporal comparison",
-        "method": "Matched fixed-tick route frames compare direct sampling and the 16-cubed cache. Temporal change magnitude compares absolute per-channel RGB movement between adjacent frames; it does not represent motion direction or replace playback review.",
+        "workstream": f"O05 direct versus {cache_resolution}-cubed cached absorption temporal comparison",
+        "method": f"Matched fixed-tick route frames compare direct sampling and the {cache_resolution}-cubed cache. Temporal change magnitude compares absolute per-channel RGB movement between adjacent frames; it does not represent motion direction or replace playback review.",
         "host": {"device": "Apple M1 Max", "backend": "Metal"},
         "resolution": [640, 360],
         "seed": 42,
@@ -85,7 +86,7 @@ def summarize(output: Path, binary: Path, frames: int, stride: int, start_tick: 
         "frames": frames,
         "fps": direct["fps"],
         "route": direct["route"],
-        "cache_resolution": [16, 16, 16],
+        "cache_resolution": [cache_resolution] * 3,
         "direct_scene_sha256": sha256(direct_path),
         "cached_scene_sha256": sha256(cache_path),
         "binary_sha256": direct["binary_sha256"],
@@ -111,16 +112,18 @@ def main() -> int:
     parser.add_argument("--frames", type=int, default=400)
     parser.add_argument("--stride", type=int, default=3)
     parser.add_argument("--start-tick", type=int, default=300)
+    parser.add_argument("--cache-resolution", type=int, choices=(8, 16), default=16)
     parser.add_argument("--report", type=Path, help="report destination; defaults to output/temporal-report.json")
     args = parser.parse_args()
     if not 2 <= args.frames <= 600 or not 1 <= args.stride <= 60 or not 0 <= args.start_tick <= 36000:
         parser.error("frames must be 2..600, stride 1..60, and start-tick 0..36000")
     binary, output = args.binary.resolve(), args.output.resolve()
+    cache_name = f"cache{args.cache_resolution}"
     if not binary.is_file():
         subprocess.run(["cargo", "build", "--release", "-p", "engine-lab"], cwd=ROOT, check=True)
     output.mkdir(parents=True, exist_ok=True)
     make_scenes(output, json.loads(SOURCE.read_text()))
-    report, contact = summarize(output, binary, args.frames, args.stride, args.start_tick)
+    report, contact = summarize(output, binary, args.frames, args.stride, args.start_tick, args.cache_resolution)
     (output / "temporal-report.json").write_text(json.dumps(report, indent=2) + "\n")
     sheet = Image.new("RGB", (970, 185 * len(contact)), (22, 22, 22))
     for row, (index, direct, cached, difference) in enumerate(contact):
@@ -131,18 +134,18 @@ def main() -> int:
         sheet.paste(direct, (0, y + 5))
         sheet.paste(cached, (325, y + 5))
         sheet.paste(difference, (650, y + 5))
-        ImageDraw.Draw(sheet).text((2, y), f"frame {index}: direct | 16^3 | 5x difference", fill="white")
+        ImageDraw.Draw(sheet).text((2, y), f"frame {index}: direct | {args.cache_resolution}^3 | 5x difference", fill="white")
     sheet.save(output / "temporal-contact.png")
     report["limitations"] = [
         "Headless Apple M1 Max/Metal only; native-window and Windows/DX12 rendering are not covered.",
-        "This run measures the 16-cubed cache at the medium-smoke scale; it does not establish a faster total-render range.",
+        f"This run measures the {args.cache_resolution}-cubed cache at the medium-smoke scale; it does not establish a faster total-render range.",
         "Paused wall-clock and resumed wall-clock behavior are not included in this route capture.",
         "The contact sheet is sampled visual evidence; full continuous human playback review remains open.",
     ]
     report["artifacts"] = {}
     for label, path in (
         ("direct_sequence", output / "direct/sequence.json"),
-        ("cache16_sequence", output / "cache16/sequence.json"),
+        (f"{cache_name}_sequence", output / f"{cache_name}/sequence.json"),
         ("contact_sheet", output / "temporal-contact.png"),
     ):
         report["artifacts"][label] = {"path": str(path.relative_to(ROOT)), "sha256": sha256(path)}

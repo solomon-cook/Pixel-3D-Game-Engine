@@ -683,14 +683,22 @@ change direction and is not a substitute for continuous playback review; sampled
 contact sheets show small smoke-region differences. No total-render win follows
 from this quality study, and the cache remains disabled by default.
 
+The same route at 8³ also held tick/camera and fire/effect-count parity over 400
+frames. Mean frame RGB MAE was 0.285/255 (p95 0.426/255, maximum channel
+difference 39/255), and mean frame-to-frame change-magnitude error was
+0.183/255. The contact sheet shows differences mainly in the smoke volume, with
+no claim of continuous playback acceptance. The 16³ cache is closer to direct
+sampling on this route. No temporal result establishes a total-render win; see
+[measurements-o05-temporal-cache8.json](measurements-o05-temporal-cache8.json).
+
 A native `run --agent-stdio` M1 Max/Metal check held each variant at tick 300 for
 two wall-clock seconds: tick and image hash stayed unchanged. Each variant then
 advanced for two wall-clock seconds (121 direct ticks, 120 cached ticks), was
 paused, and stepped to tick 540; fire state matched exactly there. This validates
 paused freshness and post-resume cache consistency for the tested duration, not
-other devices or continuous user-facing playback. The 8³ temporal route, longer
-motion review, refresh-policy hypothesis, Windows/DX12 and other adapters remain
-open. Reproduction scripts are `scripts/absorption_cache_temporal_study.py` and
+other devices or continuous user-facing playback. Longer motion review,
+Windows/DX12 and other adapters remain open. Reproduction scripts are
+`scripts/absorption_cache_temporal_study.py` and
 `scripts/absorption_cache_pause_resume_study.py`; reports are linked from TODO
 and STATUS.
 

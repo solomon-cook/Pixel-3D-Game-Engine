@@ -22,6 +22,7 @@ fallbacks. Other memory layout work remains proposed. Measurements are recorded 
 [docs/measurements-o04.json](docs/measurements-o04.json) and
 [docs/measurements-o05.json](docs/measurements-o05.json),
 [docs/measurements-o05-temporal.json](docs/measurements-o05-temporal.json),
+[docs/measurements-o05-temporal-cache8.json](docs/measurements-o05-temporal-cache8.json),
 [docs/measurements-o05-pause-resume.json](docs/measurements-o05-pause-resume.json),
 [docs/measurements-o06.json](docs/measurements-o06.json) and
 [docs/measurements-o06-camera-stress.json](docs/measurements-o06-camera-stress.json),

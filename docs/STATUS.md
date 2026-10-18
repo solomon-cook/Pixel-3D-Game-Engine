@@ -57,8 +57,12 @@ scheduling, then matched fire state after alignment to fixed tick 540. See
 [temporal](measurements-o05-temporal.json) and
 [pause/resume](measurements-o05-pause-resume.json) reports. The refresh-policy
 study is in [measurements-o05-refresh-policy.json](measurements-o05-refresh-policy.json).
-Continuous human playback review, 8³ temporal coverage, Windows/DX12 and other-GPU
-qualification remain open. Both cache sizes passed 13 discrete
+The matching 8³ 400-frame route has mean RGB MAE 0.285/255, p95 0.426/255,
+maximum channel difference 39/255 and mean temporal-change magnitude error
+0.183/255, with exact tick/effect-count parity; 16³ remains closer to direct.
+See [measurements-o05-temporal-cache8.json](measurements-o05-temporal-cache8.json).
+Continuous human playback review, Windows/DX12 and other-GPU qualification remain
+open. Both cache sizes passed 13 discrete
 direct/cache checkpoints spanning paused density edits, primary-light changes,
 flicker, moving embers, shader reload and reset, with exact fire-state parity;
 see [invalidation study](measurements-o05-invalidation.json).

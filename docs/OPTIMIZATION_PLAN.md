@@ -351,8 +351,13 @@ and re-enable. A protocol study confirms byte-identical repeated paused output,
 expected build/skip counts, and zero residency while disabled; see
 [measurements-o05-refresh-policy.json](measurements-o05-refresh-policy.json).
 This does not improve a moving route where each simulation step dirties the cache.
-Human review of continuous playback, 8³ temporal coverage, native-window performance
-acceptance and non-Metal qualification remain open.
+The matching 8³ temporal study recorded mean frame RGB MAE 0.285/255, p95
+0.426/255, maximum channel difference 39/255 and mean temporal-change magnitude
+error 0.183/255, with exact tick/effect-count parity. The 16³ cache is closer to
+direct sampling; neither variant has a demonstrated total-render win. See
+[measurements-o05-temporal-cache8.json](measurements-o05-temporal-cache8.json).
+Human review of continuous playback, native-window performance acceptance and
+non-Metal qualification remain open.
 See [measurements-o05.json](measurements-o05.json) and
 [measurements-o05-size-study.json](measurements-o05-size-study.json).
 
