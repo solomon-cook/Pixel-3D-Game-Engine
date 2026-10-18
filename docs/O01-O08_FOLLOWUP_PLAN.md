@@ -59,6 +59,19 @@ crowding, and does another tile size improve the total cost?
    exhaustive option and existing ordering until image parity and fallback
    behavior pass on each backend.
 
+7. **Complete for current validated budgets on M1 Max/Metal:** the refreshed
+   two-emitter stress report records each category's capacity, candidate
+   memberships, maximum occupancy and overflow count. At tick 300, fire tiles
+   overflow naturally; smoke and both light categories do not, because each
+   category's maximum accepted candidate count is at or below its tile-list
+   capacity. Forced overflow reaches all four fallback paths, and all tiled,
+   exhaustive, source-isolation and reversed-order images match exactly. Natural
+   smoke/light overflow is therefore unreachable without raising validated
+   runtime budgets; do not treat forced fallback as evidence of such an input.
+   See [maximum-budget report](measurements-multi-emitter-overflow.json) and
+   [study runner](../scripts/two_emitter_overflow_study.py). DX12 and other
+   adapter validation remain open.
+
 The native-window gate now has three alternating 120-second tiled/exhaustive
 pairs after ten-second warm-ups on M1 Max/Metal. Tiling lowers the median GPU
 atmosphere/fire stage by 1.187–1.216 ms per pair, while native FPS and full-frame

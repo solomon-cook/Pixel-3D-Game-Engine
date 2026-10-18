@@ -43,13 +43,51 @@
               0,
               0,
               0
+            ],
+            "tile_candidates": [
+              4962,
+              1832,
+              7360,
+              869
+            ],
+            "tile_max_occupancy": [
+              199,
+              24,
+              8,
+              12
             ]
+          },
+          "tile_categories": {
+            "fire_primitives": {
+              "capacity": 64,
+              "candidate_memberships": 4962,
+              "overflow_tiles": 29,
+              "max_occupancy": 199
+            },
+            "smoke_lobes": {
+              "capacity": 72,
+              "candidate_memberships": 1832,
+              "overflow_tiles": 0,
+              "max_occupancy": 24
+            },
+            "point_lights": {
+              "capacity": 8,
+              "candidate_memberships": 7360,
+              "overflow_tiles": 0,
+              "max_occupancy": 8
+            },
+            "particle_lights": {
+              "capacity": 12,
+              "candidate_memberships": 869,
+              "overflow_tiles": 0,
+              "max_occupancy": 12
+            }
           },
           "device": "Apple M1 Max",
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25889280,
+          "known_gpu_allocation_bytes": 25892192,
           "tile_list_bytes": 603520
         },
         "exhaustive": {
@@ -64,13 +102,51 @@
               920,
               920,
               920
+            ],
+            "tile_candidates": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              0,
+              0,
+              0,
+              0
             ]
+          },
+          "tile_categories": {
+            "fire_primitives": {
+              "capacity": 64,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "smoke_lobes": {
+              "capacity": 72,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "point_lights": {
+              "capacity": 8,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "particle_lights": {
+              "capacity": 12,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            }
           },
           "device": "Apple M1 Max",
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25889280,
+          "known_gpu_allocation_bytes": 25892192,
           "tile_list_bytes": 603520
         }
       },
@@ -104,13 +180,51 @@
               0,
               0,
               0
+            ],
+            "tile_candidates": [
+              12763,
+              3076,
+              7360,
+              2632
+            ],
+            "tile_max_occupancy": [
+              160,
+              29,
+              8,
+              11
             ]
+          },
+          "tile_categories": {
+            "fire_primitives": {
+              "capacity": 64,
+              "candidate_memberships": 12763,
+              "overflow_tiles": 82,
+              "max_occupancy": 160
+            },
+            "smoke_lobes": {
+              "capacity": 72,
+              "candidate_memberships": 3076,
+              "overflow_tiles": 0,
+              "max_occupancy": 29
+            },
+            "point_lights": {
+              "capacity": 8,
+              "candidate_memberships": 7360,
+              "overflow_tiles": 0,
+              "max_occupancy": 8
+            },
+            "particle_lights": {
+              "capacity": 12,
+              "candidate_memberships": 2632,
+              "overflow_tiles": 0,
+              "max_occupancy": 11
+            }
           },
           "device": "Apple M1 Max",
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25889280,
+          "known_gpu_allocation_bytes": 25892192,
           "tile_list_bytes": 603520
         },
         "exhaustive": {
@@ -125,13 +239,51 @@
               920,
               920,
               920
+            ],
+            "tile_candidates": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              0,
+              0,
+              0,
+              0
             ]
+          },
+          "tile_categories": {
+            "fire_primitives": {
+              "capacity": 64,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "smoke_lobes": {
+              "capacity": 72,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "point_lights": {
+              "capacity": 8,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "particle_lights": {
+              "capacity": 12,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            }
           },
           "device": "Apple M1 Max",
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25889280,
+          "known_gpu_allocation_bytes": 25892192,
           "tile_list_bytes": 603520
         }
       },
@@ -165,13 +317,51 @@
               0,
               0,
               0
+            ],
+            "tile_candidates": [
+              3306,
+              1117,
+              7222,
+              552
+            ],
+            "tile_max_occupancy": [
+              231,
+              35,
+              8,
+              12
             ]
+          },
+          "tile_categories": {
+            "fire_primitives": {
+              "capacity": 64,
+              "candidate_memberships": 3306,
+              "overflow_tiles": 19,
+              "max_occupancy": 231
+            },
+            "smoke_lobes": {
+              "capacity": 72,
+              "candidate_memberships": 1117,
+              "overflow_tiles": 0,
+              "max_occupancy": 35
+            },
+            "point_lights": {
+              "capacity": 8,
+              "candidate_memberships": 7222,
+              "overflow_tiles": 0,
+              "max_occupancy": 8
+            },
+            "particle_lights": {
+              "capacity": 12,
+              "candidate_memberships": 552,
+              "overflow_tiles": 0,
+              "max_occupancy": 12
+            }
           },
           "device": "Apple M1 Max",
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25889280,
+          "known_gpu_allocation_bytes": 25892192,
           "tile_list_bytes": 603520
         },
         "exhaustive": {
@@ -186,13 +376,51 @@
               920,
               920,
               920
+            ],
+            "tile_candidates": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              0,
+              0,
+              0,
+              0
             ]
+          },
+          "tile_categories": {
+            "fire_primitives": {
+              "capacity": 64,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "smoke_lobes": {
+              "capacity": 72,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "point_lights": {
+              "capacity": 8,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "particle_lights": {
+              "capacity": 12,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            }
           },
           "device": "Apple M1 Max",
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25889280,
+          "known_gpu_allocation_bytes": 25892192,
           "tile_list_bytes": 603520
         }
       },
@@ -226,13 +454,51 @@
               0,
               0,
               0
+            ],
+            "tile_candidates": [
+              28370,
+              1712,
+              7360,
+              5055
+            ],
+            "tile_max_occupancy": [
+              148,
+              18,
+              8,
+              11
             ]
+          },
+          "tile_categories": {
+            "fire_primitives": {
+              "capacity": 64,
+              "candidate_memberships": 28370,
+              "overflow_tiles": 171,
+              "max_occupancy": 148
+            },
+            "smoke_lobes": {
+              "capacity": 72,
+              "candidate_memberships": 1712,
+              "overflow_tiles": 0,
+              "max_occupancy": 18
+            },
+            "point_lights": {
+              "capacity": 8,
+              "candidate_memberships": 7360,
+              "overflow_tiles": 0,
+              "max_occupancy": 8
+            },
+            "particle_lights": {
+              "capacity": 12,
+              "candidate_memberships": 5055,
+              "overflow_tiles": 0,
+              "max_occupancy": 11
+            }
           },
           "device": "Apple M1 Max",
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25889280,
+          "known_gpu_allocation_bytes": 25892192,
           "tile_list_bytes": 603520
         },
         "exhaustive": {
@@ -247,13 +513,51 @@
               920,
               920,
               920
+            ],
+            "tile_candidates": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              0,
+              0,
+              0,
+              0
             ]
+          },
+          "tile_categories": {
+            "fire_primitives": {
+              "capacity": 64,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "smoke_lobes": {
+              "capacity": 72,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "point_lights": {
+              "capacity": 8,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "particle_lights": {
+              "capacity": 12,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            }
           },
           "device": "Apple M1 Max",
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25889280,
+          "known_gpu_allocation_bytes": 25892192,
           "tile_list_bytes": 603520
         }
       },
@@ -287,13 +591,51 @@
               0,
               0,
               0
+            ],
+            "tile_candidates": [
+              2720,
+              802,
+              6624,
+              432
+            ],
+            "tile_max_occupancy": [
+              245,
+              31,
+              8,
+              12
             ]
+          },
+          "tile_categories": {
+            "fire_primitives": {
+              "capacity": 64,
+              "candidate_memberships": 2720,
+              "overflow_tiles": 16,
+              "max_occupancy": 245
+            },
+            "smoke_lobes": {
+              "capacity": 72,
+              "candidate_memberships": 802,
+              "overflow_tiles": 0,
+              "max_occupancy": 31
+            },
+            "point_lights": {
+              "capacity": 8,
+              "candidate_memberships": 6624,
+              "overflow_tiles": 0,
+              "max_occupancy": 8
+            },
+            "particle_lights": {
+              "capacity": 12,
+              "candidate_memberships": 432,
+              "overflow_tiles": 0,
+              "max_occupancy": 12
+            }
           },
           "device": "Apple M1 Max",
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25889280,
+          "known_gpu_allocation_bytes": 25892192,
           "tile_list_bytes": 603520
         },
         "exhaustive": {
@@ -308,13 +650,51 @@
               920,
               920,
               920
+            ],
+            "tile_candidates": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              0,
+              0,
+              0,
+              0
             ]
+          },
+          "tile_categories": {
+            "fire_primitives": {
+              "capacity": 64,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "smoke_lobes": {
+              "capacity": 72,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "point_lights": {
+              "capacity": 8,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "particle_lights": {
+              "capacity": 12,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            }
           },
           "device": "Apple M1 Max",
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25889280,
+          "known_gpu_allocation_bytes": 25892192,
           "tile_list_bytes": 603520
         }
       },
@@ -348,13 +728,51 @@
               0,
               0,
               0
+            ],
+            "tile_candidates": [
+              14561,
+              1279,
+              7360,
+              3236
+            ],
+            "tile_max_occupancy": [
+              148,
+              17,
+              8,
+              11
             ]
+          },
+          "tile_categories": {
+            "fire_primitives": {
+              "capacity": 64,
+              "candidate_memberships": 14561,
+              "overflow_tiles": 74,
+              "max_occupancy": 148
+            },
+            "smoke_lobes": {
+              "capacity": 72,
+              "candidate_memberships": 1279,
+              "overflow_tiles": 0,
+              "max_occupancy": 17
+            },
+            "point_lights": {
+              "capacity": 8,
+              "candidate_memberships": 7360,
+              "overflow_tiles": 0,
+              "max_occupancy": 8
+            },
+            "particle_lights": {
+              "capacity": 12,
+              "candidate_memberships": 3236,
+              "overflow_tiles": 0,
+              "max_occupancy": 11
+            }
           },
           "device": "Apple M1 Max",
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25889280,
+          "known_gpu_allocation_bytes": 25892192,
           "tile_list_bytes": 603520
         },
         "exhaustive": {
@@ -369,13 +787,51 @@
               920,
               920,
               920
+            ],
+            "tile_candidates": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              0,
+              0,
+              0,
+              0
             ]
+          },
+          "tile_categories": {
+            "fire_primitives": {
+              "capacity": 64,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "smoke_lobes": {
+              "capacity": 72,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "point_lights": {
+              "capacity": 8,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            },
+            "particle_lights": {
+              "capacity": 12,
+              "candidate_memberships": 0,
+              "overflow_tiles": 920,
+              "max_occupancy": 0
+            }
           },
           "device": "Apple M1 Max",
           "backend": "Metal",
           "max_point_lights": 8,
           "max_particle_lights": 12,
-          "known_gpu_allocation_bytes": 25889280,
+          "known_gpu_allocation_bytes": 25892192,
           "tile_list_bytes": 603520
         }
       },
@@ -410,13 +866,51 @@
             0,
             0,
             0
+          ],
+          "tile_candidates": [
+            7554,
+            1279,
+            6440,
+            2684
+          ],
+          "tile_max_occupancy": [
+            74,
+            17,
+            7,
+            12
           ]
+        },
+        "tile_categories": {
+          "fire_primitives": {
+            "capacity": 64,
+            "candidate_memberships": 7554,
+            "overflow_tiles": 17,
+            "max_occupancy": 74
+          },
+          "smoke_lobes": {
+            "capacity": 72,
+            "candidate_memberships": 1279,
+            "overflow_tiles": 0,
+            "max_occupancy": 17
+          },
+          "point_lights": {
+            "capacity": 8,
+            "candidate_memberships": 6440,
+            "overflow_tiles": 0,
+            "max_occupancy": 7
+          },
+          "particle_lights": {
+            "capacity": 12,
+            "candidate_memberships": 2684,
+            "overflow_tiles": 0,
+            "max_occupancy": 12
+          }
         },
         "device": "Apple M1 Max",
         "backend": "Metal",
         "max_point_lights": 8,
         "max_particle_lights": 12,
-        "known_gpu_allocation_bytes": 25889280,
+        "known_gpu_allocation_bytes": 25892192,
         "tile_list_bytes": 603520
       },
       "exhaustive": {
@@ -431,13 +925,51 @@
             0,
             0,
             0
+          ],
+          "tile_candidates": [
+            7554,
+            1279,
+            6440,
+            2684
+          ],
+          "tile_max_occupancy": [
+            74,
+            17,
+            7,
+            12
           ]
+        },
+        "tile_categories": {
+          "fire_primitives": {
+            "capacity": 64,
+            "candidate_memberships": 7554,
+            "overflow_tiles": 17,
+            "max_occupancy": 74
+          },
+          "smoke_lobes": {
+            "capacity": 72,
+            "candidate_memberships": 1279,
+            "overflow_tiles": 0,
+            "max_occupancy": 17
+          },
+          "point_lights": {
+            "capacity": 8,
+            "candidate_memberships": 6440,
+            "overflow_tiles": 0,
+            "max_occupancy": 7
+          },
+          "particle_lights": {
+            "capacity": 12,
+            "candidate_memberships": 2684,
+            "overflow_tiles": 0,
+            "max_occupancy": 12
+          }
         },
         "device": "Apple M1 Max",
         "backend": "Metal",
         "max_point_lights": 8,
         "max_particle_lights": 12,
-        "known_gpu_allocation_bytes": 25889280,
+        "known_gpu_allocation_bytes": 25892192,
         "tile_list_bytes": 603520
       },
       "exact_match": true
@@ -455,13 +987,51 @@
             0,
             0,
             0
+          ],
+          "tile_candidates": [
+            7007,
+            1279,
+            6440,
+            2563
+          ],
+          "tile_max_occupancy": [
+            82,
+            17,
+            7,
+            11
           ]
+        },
+        "tile_categories": {
+          "fire_primitives": {
+            "capacity": 64,
+            "candidate_memberships": 7007,
+            "overflow_tiles": 24,
+            "max_occupancy": 82
+          },
+          "smoke_lobes": {
+            "capacity": 72,
+            "candidate_memberships": 1279,
+            "overflow_tiles": 0,
+            "max_occupancy": 17
+          },
+          "point_lights": {
+            "capacity": 8,
+            "candidate_memberships": 6440,
+            "overflow_tiles": 0,
+            "max_occupancy": 7
+          },
+          "particle_lights": {
+            "capacity": 12,
+            "candidate_memberships": 2563,
+            "overflow_tiles": 0,
+            "max_occupancy": 11
+          }
         },
         "device": "Apple M1 Max",
         "backend": "Metal",
         "max_point_lights": 8,
         "max_particle_lights": 12,
-        "known_gpu_allocation_bytes": 25889280,
+        "known_gpu_allocation_bytes": 25892192,
         "tile_list_bytes": 603520
       },
       "exhaustive": {
@@ -476,13 +1046,51 @@
             0,
             0,
             0
+          ],
+          "tile_candidates": [
+            7007,
+            1279,
+            6440,
+            2563
+          ],
+          "tile_max_occupancy": [
+            82,
+            17,
+            7,
+            11
           ]
+        },
+        "tile_categories": {
+          "fire_primitives": {
+            "capacity": 64,
+            "candidate_memberships": 7007,
+            "overflow_tiles": 24,
+            "max_occupancy": 82
+          },
+          "smoke_lobes": {
+            "capacity": 72,
+            "candidate_memberships": 1279,
+            "overflow_tiles": 0,
+            "max_occupancy": 17
+          },
+          "point_lights": {
+            "capacity": 8,
+            "candidate_memberships": 6440,
+            "overflow_tiles": 0,
+            "max_occupancy": 7
+          },
+          "particle_lights": {
+            "capacity": 12,
+            "candidate_memberships": 2563,
+            "overflow_tiles": 0,
+            "max_occupancy": 11
+          }
         },
         "device": "Apple M1 Max",
         "backend": "Metal",
         "max_point_lights": 8,
         "max_particle_lights": 12,
-        "known_gpu_allocation_bytes": 25889280,
+        "known_gpu_allocation_bytes": 25892192,
         "tile_list_bytes": 603520
       },
       "exact_match": true
@@ -501,16 +1109,59 @@
           920,
           920,
           920
+        ],
+        "tile_candidates": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "tile_max_occupancy": [
+          0,
+          0,
+          0,
+          0
         ]
+      },
+      "tile_categories": {
+        "fire_primitives": {
+          "capacity": 64,
+          "candidate_memberships": 0,
+          "overflow_tiles": 920,
+          "max_occupancy": 0
+        },
+        "smoke_lobes": {
+          "capacity": 72,
+          "candidate_memberships": 0,
+          "overflow_tiles": 920,
+          "max_occupancy": 0
+        },
+        "point_lights": {
+          "capacity": 8,
+          "candidate_memberships": 0,
+          "overflow_tiles": 920,
+          "max_occupancy": 0
+        },
+        "particle_lights": {
+          "capacity": 12,
+          "candidate_memberships": 0,
+          "overflow_tiles": 920,
+          "max_occupancy": 0
+        }
       },
       "device": "Apple M1 Max",
       "backend": "Metal",
       "max_point_lights": 8,
       "max_particle_lights": 12,
-      "known_gpu_allocation_bytes": 25889280,
+      "known_gpu_allocation_bytes": 25892192,
       "tile_list_bytes": 603520
     },
     "matches_exhaustive": true
+  },
+  "natural_overflow": {
+    "fire_category_overflows": true,
+    "non_fire_categories_overflow": false,
+    "interpretation": "Fire exceeds the 64-entry tile capacity; smoke and both light inputs are capped at or below their per-tile candidate capacities, so their natural overflow requires a runtime budget change. The forced-overflow mode independently verifies every category fallback."
   },
   "reversed_emitter_order": {
     "capture": {
@@ -525,13 +1176,51 @@
           0,
           0,
           0
+        ],
+        "tile_candidates": [
+          14561,
+          1279,
+          7360,
+          3236
+        ],
+        "tile_max_occupancy": [
+          148,
+          17,
+          8,
+          11
         ]
+      },
+      "tile_categories": {
+        "fire_primitives": {
+          "capacity": 64,
+          "candidate_memberships": 14561,
+          "overflow_tiles": 74,
+          "max_occupancy": 148
+        },
+        "smoke_lobes": {
+          "capacity": 72,
+          "candidate_memberships": 1279,
+          "overflow_tiles": 0,
+          "max_occupancy": 17
+        },
+        "point_lights": {
+          "capacity": 8,
+          "candidate_memberships": 7360,
+          "overflow_tiles": 0,
+          "max_occupancy": 8
+        },
+        "particle_lights": {
+          "capacity": 12,
+          "candidate_memberships": 3236,
+          "overflow_tiles": 0,
+          "max_occupancy": 11
+        }
       },
       "device": "Apple M1 Max",
       "backend": "Metal",
       "max_point_lights": 8,
       "max_particle_lights": 12,
-      "known_gpu_allocation_bytes": 25889280,
+      "known_gpu_allocation_bytes": 25892192,
       "tile_list_bytes": 603520
     },
     "matches_tiled": true
@@ -549,12 +1238,16 @@
     "all_tiled_cameras_match_exhaustive": true,
     "source_isolation_matches_exhaustive": true,
     "forced_fallback_matches_exhaustive": true,
+    "natural_fire_overflow_reached": true,
+    "natural_nonfire_overflow_absent_within_caps": true,
+    "forced_fallback_reaches_every_category": true,
     "reversed_emitter_order_matches": true,
     "source_zero_baseline_matches": true
   },
   "result": "passed",
   "limitations": [
     "Fixed-tick still captures on M1 Max/Metal; no temporal, native-window, DX12, or other-adapter acceptance.",
-    "Derived particle-light selection is capped at 12; 38 additional candidates are reported dropped in this scene."
+    "Derived particle-light selection is capped at 12; 38 additional candidates are reported dropped in this scene.",
+    "Natural smoke, authored point-light and particle-light tile overflow cannot occur under current validated per-frame budgets: their maximum candidate counts match or stay below list capacities. Forced-overflow mode exercises their conservative fallback paths."
   ]
 }

@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCENE = ROOT / "assets/scenes/two-emitter-overflow-stress.json"
 SOURCE_ZERO_SCENE = ROOT / "assets/scenes/profiling-heavy.json"
 SOURCE_ZERO_RGBA_SHA256 = "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48"
+TILE_CATEGORIES = ("fire_primitives", "smoke_lobes", "point_lights", "particle_lights")
 
 
 def sha256(path: Path) -> str:
@@ -39,6 +40,7 @@ def capture(binary: Path, scene: Path, output: Path, camera: str, mode: str) -> 
     metadata = json.loads(metadata_path.read_text())
     metrics = metadata["metrics"]
     capabilities = metadata["capabilities"]
+    capacities = capabilities["tile_lists"]["capacities"]
     try:
         image_reference = str(image.relative_to(ROOT))
     except ValueError:
@@ -51,6 +53,20 @@ def capture(binary: Path, scene: Path, output: Path, camera: str, mode: str) -> 
             "particle_lights": metrics.get("particle_lights"),
             "particle_lights_dropped": metrics.get("particle_lights_dropped"),
             "tile_overflow_tiles": metrics.get("tile_overflow_tiles"),
+            "tile_candidates": metrics.get("tile_candidates"),
+            "tile_max_occupancy": metrics.get("tile_max_occupancy"),
+        },
+        "tile_categories": {
+            name: {
+                "capacity": capacities[key],
+                "candidate_memberships": metrics["tile_candidates"][index],
+                "overflow_tiles": metrics["tile_overflow_tiles"][index],
+                "max_occupancy": metrics["tile_max_occupancy"][index],
+            }
+            for index, (name, key) in enumerate(zip(
+                TILE_CATEGORIES,
+                ("fire_primitives", "smoke_lobes_total", "point_lights", "particle_lights"),
+            ))
         },
         "device": capabilities.get("name"),
         "backend": capabilities.get("backend"),
@@ -89,6 +105,20 @@ def main() -> int:
     stress_camera = "stress-close"
     forced = capture(binary, scene, output, stress_camera, "forced-fallback")
     expected = camera_results[stress_camera]["captures"]["exhaustive"]
+    natural_overflow = camera_results[stress_camera]["captures"]["tiled"]["tile_categories"]
+    natural_fire_overflow = natural_overflow["fire_primitives"]["overflow_tiles"] > 0
+    natural_nonfire_overflow = any(
+        natural_overflow[name]["overflow_tiles"] > 0 for name in TILE_CATEGORIES[1:]
+    )
+    forced_all_categories = all(
+        forced["tile_categories"][name]["overflow_tiles"] > 0 for name in TILE_CATEGORIES
+    )
+    if not natural_fire_overflow:
+        raise SystemExit("stress-close scene did not naturally overflow fire primitive tiles")
+    if natural_nonfire_overflow:
+        raise SystemExit("unexpected natural non-fire tile overflow; investigate changed budgets")
+    if not forced_all_categories:
+        raise SystemExit("forced-overflow diagnostic did not reach every tile category")
 
     scenes_dir = output / "scenes"
     scenes_dir.mkdir(parents=True, exist_ok=True)
@@ -155,6 +185,11 @@ def main() -> int:
         "camera_matrix": camera_results,
         "source_isolation": isolated_results,
         "forced_fallback": {"capture": forced, "matches_exhaustive": forced_matches},
+        "natural_overflow": {
+            "fire_category_overflows": natural_fire_overflow,
+            "non_fire_categories_overflow": natural_nonfire_overflow,
+            "interpretation": "Fire exceeds the 64-entry tile capacity; smoke and both light inputs are capped at or below their per-tile candidate capacities, so their natural overflow requires a runtime budget change. The forced-overflow mode independently verifies every category fallback.",
+        },
         "reversed_emitter_order": {"capture": reversed_capture, "matches_tiled": order_matches},
         "source_zero_baseline": {
             "scene": str(SOURCE_ZERO_SCENE.relative_to(ROOT)),
@@ -169,6 +204,9 @@ def main() -> int:
             "all_tiled_cameras_match_exhaustive": all_camera_matches,
             "source_isolation_matches_exhaustive": isolated_matches,
             "forced_fallback_matches_exhaustive": forced_matches,
+            "natural_fire_overflow_reached": natural_fire_overflow,
+            "natural_nonfire_overflow_absent_within_caps": not natural_nonfire_overflow,
+            "forced_fallback_reaches_every_category": forced_all_categories,
             "reversed_emitter_order_matches": order_matches,
             "source_zero_baseline_matches": source_zero_matches,
         },
@@ -176,6 +214,7 @@ def main() -> int:
         "limitations": [
             "Fixed-tick still captures on M1 Max/Metal; no temporal, native-window, DX12, or other-adapter acceptance.",
             "Derived particle-light selection is capped at 12; 38 additional candidates are reported dropped in this scene.",
+            "Natural smoke, authored point-light and particle-light tile overflow cannot occur under current validated per-frame budgets: their maximum candidate counts match or stay below list capacities. Forced-overflow mode exercises their conservative fallback paths.",
         ],
     }
     report_path.write_text(json.dumps(report, indent=2) + "\n")

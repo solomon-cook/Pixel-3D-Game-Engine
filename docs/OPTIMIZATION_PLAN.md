@@ -260,6 +260,18 @@ not natural-overflow acceptance or a promotion decision. Full values, hashes and
 limits are in [measurements-o03-overflow.json](measurements-o03-overflow.json);
 raw reports and captures are under ignored `artifacts/o03/`.
 
+The maximum-budget two-emitter study now names every tile category and records
+candidate memberships, capacities, occupancy and overflow. At tick 300, the
+stress-close view naturally overflows fire tiles while smoke, point-light and
+particle-light tiles remain within their configured capacities. Those three
+candidate domains are capped at or below their list capacity by the validated
+runtime budgets; forced overflow separately confirms all four fallback paths,
+and tiled output remains byte-identical to exhaustive output. Natural overflow
+for those capped domains would require a deliberate budget change, not denser
+camera framing. The exact limitation and assertions are recorded in
+[measurements-multi-emitter-overflow.json](measurements-multi-emitter-overflow.json)
+and its [reproducible study](../scripts/two_emitter_overflow_study.py).
+
 ## O04 — Detail based on projected pixel contribution
 
 **Purpose:** spend geometry and shading effort where the chosen pixel grid can
