@@ -629,10 +629,16 @@ plus [per-source origin](measurements-multi-emitter-source-origins.json),
 reset/edit checks pass on Metal for the reviewed scenes. The maximum-budget
 sustained route shows a serial frame-work gain alongside a higher reported
 GPU-render metric, so do not generalize it to other workloads. Cache temporal
-quality and resource recreation, native sustained performance, DX12 and
-another-adapter acceptance remain open. Fixed-tick native tiled/exhaustive output
-matches across six cameras, source isolation and reversed emitter order. Keep the
-cap at two until the remaining correctness, memory and performance budgets pass.
+quality now includes a full 120-second offscreen route with exact direct/cache
+image parity; native fixed-tick cache captures match at six poses, and three
+120-second native pairs show no robust whole-window gain. Continuous native
+playback, broader resource recreation stress, DX12 and another-adapter
+acceptance remain open. A dual-emitter native surface resize/restore study
+preserves the fixed-tick image and renderer inventory; minimize was not observed
+by the host. See [lifecycle report](measurements-multi-emitter-native-lifecycle.json)
+and [runner](../scripts/two_emitter_native_lifecycle_study.py). Fixed-tick native tiled/exhaustive output matches across
+six cameras, source isolation and reversed emitter order. Keep the cap at two
+until the remaining correctness, memory and performance budgets pass.
 
 **Maximum-budget ink-smoke parity: corrected and verified on M1 Max/Metal.** The
 reproducible route initially differed from exhaustive output in 9,616 of 230,400

@@ -1,0 +1,779 @@
+{
+  "version": 1,
+  "date": "2026-10-18",
+  "study": "dual-emitter native surface resize and minimize/restore lifecycle",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": true,
+    "initial_window": {
+      "fullscreen": false,
+      "minimized": false,
+      "physical_size": [
+        2560,
+        1600
+      ],
+      "scale_factor": 2.0
+    }
+  },
+  "source_revision": "cda8465c31faea43ce5460be455b43cd41f591cd",
+  "scene": "assets/scenes/two-emitter-review.json",
+  "scene_sha256": "9ca7aee40dac7a9cde4010f6f90c2623e441c8e0c9a1f19ff2a9c570c1082892",
+  "binary_sha256": "cceaa3c520243f31b3a2febe7c0ee778fe1039f9735c48e69452d042458de157",
+  "source_ids": [
+    "campfire",
+    "watchfire"
+  ],
+  "seed": 42,
+  "window_states": {
+    "before": {
+      "fullscreen": false,
+      "minimized": false,
+      "physical_size": [
+        2560,
+        1600
+      ],
+      "scale_factor": 2.0
+    },
+    "resized": {
+      "fullscreen": false,
+      "minimized": false,
+      "physical_size": [
+        2000,
+        1400
+      ],
+      "scale_factor": 2.0
+    },
+    "restored": {
+      "fullscreen": false,
+      "minimized": false,
+      "physical_size": [
+        2000,
+        1400
+      ],
+      "scale_factor": 2.0
+    },
+    "minimize_request": {
+      "fullscreen": false,
+      "minimized": false,
+      "physical_size": [
+        2000,
+        1400
+      ],
+      "scale_factor": 2.0
+    },
+    "original_size": {
+      "fullscreen": false,
+      "minimized": false,
+      "physical_size": [
+        2560,
+        1600
+      ],
+      "scale_factor": 2.0
+    }
+  },
+  "stages": {
+    "before": {
+      "image": "artifacts/multi-emitter/native-lifecycle/before.png",
+      "sha256": "5537bbde1423bf94c2b932e8de8c9166019d0a87333f4afbe9f8036b92f6774a",
+      "tick": 120,
+      "camera": {
+        "id": "hero",
+        "position": [
+          5.800000190734863,
+          3.200000047683716,
+          7.199999809265137
+        ],
+        "projection": {
+          "fov_degrees": 52.0,
+          "kind": "perspective"
+        },
+        "target": [
+          0.0,
+          2.6500000953674316,
+          0.0
+        ]
+      },
+      "resolution": null,
+      "device": "Apple M1 Max",
+      "backend": "Metal",
+      "resource_inventory": {
+        "atlas_layers": 1,
+        "compact_hdr_supported": true,
+        "effect_depth_bytes": 921600,
+        "effect_depth_format": "Rg16Float",
+        "estimate_kind": "known resource buffer/texture sizes; excludes driver alignment, transient capture/surface buffers, pipelines, bind groups and opaque timestamp query-set storage",
+        "format_support": [
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rgba16Float",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rg16Float",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "R32Float",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rg32Float",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rg11b10Ufloat",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rgba8Unorm",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "R8Unorm",
+            "storage_write_only": true
+          }
+        ],
+        "geometry_bounded_object_count": 276,
+        "geometry_buffer_bytes": 8607240,
+        "geometry_draw_range_count": 276,
+        "geometry_object_count": 276,
+        "geometry_uncullable_object_count": 0,
+        "gpu_timestamp_query_set_count": 9,
+        "gpu_timestamp_staging_bytes": 864,
+        "hdr_color_format": "Rgba16Float",
+        "hdr_color_requested_compact": false,
+        "instance_transform_buffer_bytes": 432768,
+        "known_gpu_allocation_bytes": 25889280,
+        "material_atlas_bytes": 65536,
+        "material_buffer_bytes": 960,
+        "optical_mask_bytes": 0,
+        "optical_mask_format": "R8Unorm",
+        "optical_mask_required": false,
+        "optical_no_copy_enabled": false,
+        "optical_no_copy_requested": false,
+        "optical_no_copy_supported": true,
+        "optical_output_bytes": 0,
+        "optical_snapshot_bytes": 0,
+        "other_fixed_buffers_bytes": 27656,
+        "render_targets_bytes": 6451200,
+        "resolution": [
+          640,
+          360
+        ],
+        "rg11b10_renderable_feature_available": true,
+        "rg16_fallback_forced": false,
+        "shading_diagnostic_counter_bytes": 88,
+        "shading_diagnostic_targets_bytes": 0,
+        "shading_diagnostic_targets_reservation_bytes": 4608000,
+        "shadow_map_count": 13,
+        "shadow_maps_bytes": 7340032,
+        "shared_mesh_count": 68,
+        "smoke_absorption_cache_bytes": 0,
+        "smoke_grid": [
+          48,
+          64,
+          48
+        ],
+        "smoke_rg16_storage_enabled": true,
+        "smoke_volume_format": "Rg16Float",
+        "smoke_volumes_bytes": 2359296,
+        "tile_config_bytes": 16,
+        "tile_count": 920,
+        "tile_list_bytes": 603520,
+        "tile_stats_buffer_bytes": 48,
+        "tile_stats_bytes": 192,
+        "tile_stats_readback_bytes": 144,
+        "unshared_geometry_bytes": 10539720,
+        "unshared_vertex_buffer_bytes": 0,
+        "unshared_vertex_cpu_bytes": 10539720,
+        "vertices": 143454
+      }
+    },
+    "resized": {
+      "image": "artifacts/multi-emitter/native-lifecycle/resized.png",
+      "sha256": "5537bbde1423bf94c2b932e8de8c9166019d0a87333f4afbe9f8036b92f6774a",
+      "tick": 120,
+      "camera": {
+        "id": "hero",
+        "position": [
+          5.800000190734863,
+          3.200000047683716,
+          7.199999809265137
+        ],
+        "projection": {
+          "fov_degrees": 52.0,
+          "kind": "perspective"
+        },
+        "target": [
+          0.0,
+          2.6500000953674316,
+          0.0
+        ]
+      },
+      "resolution": null,
+      "device": "Apple M1 Max",
+      "backend": "Metal",
+      "resource_inventory": {
+        "atlas_layers": 1,
+        "compact_hdr_supported": true,
+        "effect_depth_bytes": 921600,
+        "effect_depth_format": "Rg16Float",
+        "estimate_kind": "known resource buffer/texture sizes; excludes driver alignment, transient capture/surface buffers, pipelines, bind groups and opaque timestamp query-set storage",
+        "format_support": [
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rgba16Float",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rg16Float",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "R32Float",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rg32Float",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rg11b10Ufloat",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rgba8Unorm",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "R8Unorm",
+            "storage_write_only": true
+          }
+        ],
+        "geometry_bounded_object_count": 276,
+        "geometry_buffer_bytes": 8607240,
+        "geometry_draw_range_count": 276,
+        "geometry_object_count": 276,
+        "geometry_uncullable_object_count": 0,
+        "gpu_timestamp_query_set_count": 9,
+        "gpu_timestamp_staging_bytes": 864,
+        "hdr_color_format": "Rgba16Float",
+        "hdr_color_requested_compact": false,
+        "instance_transform_buffer_bytes": 432768,
+        "known_gpu_allocation_bytes": 25889280,
+        "material_atlas_bytes": 65536,
+        "material_buffer_bytes": 960,
+        "optical_mask_bytes": 0,
+        "optical_mask_format": "R8Unorm",
+        "optical_mask_required": false,
+        "optical_no_copy_enabled": false,
+        "optical_no_copy_requested": false,
+        "optical_no_copy_supported": true,
+        "optical_output_bytes": 0,
+        "optical_snapshot_bytes": 0,
+        "other_fixed_buffers_bytes": 27656,
+        "render_targets_bytes": 6451200,
+        "resolution": [
+          640,
+          360
+        ],
+        "rg11b10_renderable_feature_available": true,
+        "rg16_fallback_forced": false,
+        "shading_diagnostic_counter_bytes": 88,
+        "shading_diagnostic_targets_bytes": 0,
+        "shading_diagnostic_targets_reservation_bytes": 4608000,
+        "shadow_map_count": 13,
+        "shadow_maps_bytes": 7340032,
+        "shared_mesh_count": 68,
+        "smoke_absorption_cache_bytes": 0,
+        "smoke_grid": [
+          48,
+          64,
+          48
+        ],
+        "smoke_rg16_storage_enabled": true,
+        "smoke_volume_format": "Rg16Float",
+        "smoke_volumes_bytes": 2359296,
+        "tile_config_bytes": 16,
+        "tile_count": 920,
+        "tile_list_bytes": 603520,
+        "tile_stats_buffer_bytes": 48,
+        "tile_stats_bytes": 192,
+        "tile_stats_readback_bytes": 144,
+        "unshared_geometry_bytes": 10539720,
+        "unshared_vertex_buffer_bytes": 0,
+        "unshared_vertex_cpu_bytes": 10539720,
+        "vertices": 143454
+      }
+    },
+    "restored": {
+      "image": "artifacts/multi-emitter/native-lifecycle/restored.png",
+      "sha256": "5537bbde1423bf94c2b932e8de8c9166019d0a87333f4afbe9f8036b92f6774a",
+      "tick": 120,
+      "camera": {
+        "id": "hero",
+        "position": [
+          5.800000190734863,
+          3.200000047683716,
+          7.199999809265137
+        ],
+        "projection": {
+          "fov_degrees": 52.0,
+          "kind": "perspective"
+        },
+        "target": [
+          0.0,
+          2.6500000953674316,
+          0.0
+        ]
+      },
+      "resolution": null,
+      "device": "Apple M1 Max",
+      "backend": "Metal",
+      "resource_inventory": {
+        "atlas_layers": 1,
+        "compact_hdr_supported": true,
+        "effect_depth_bytes": 921600,
+        "effect_depth_format": "Rg16Float",
+        "estimate_kind": "known resource buffer/texture sizes; excludes driver alignment, transient capture/surface buffers, pipelines, bind groups and opaque timestamp query-set storage",
+        "format_support": [
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rgba16Float",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rg16Float",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "R32Float",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rg32Float",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rg11b10Ufloat",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rgba8Unorm",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "R8Unorm",
+            "storage_write_only": true
+          }
+        ],
+        "geometry_bounded_object_count": 276,
+        "geometry_buffer_bytes": 8607240,
+        "geometry_draw_range_count": 276,
+        "geometry_object_count": 276,
+        "geometry_uncullable_object_count": 0,
+        "gpu_timestamp_query_set_count": 9,
+        "gpu_timestamp_staging_bytes": 864,
+        "hdr_color_format": "Rgba16Float",
+        "hdr_color_requested_compact": false,
+        "instance_transform_buffer_bytes": 432768,
+        "known_gpu_allocation_bytes": 25889280,
+        "material_atlas_bytes": 65536,
+        "material_buffer_bytes": 960,
+        "optical_mask_bytes": 0,
+        "optical_mask_format": "R8Unorm",
+        "optical_mask_required": false,
+        "optical_no_copy_enabled": false,
+        "optical_no_copy_requested": false,
+        "optical_no_copy_supported": true,
+        "optical_output_bytes": 0,
+        "optical_snapshot_bytes": 0,
+        "other_fixed_buffers_bytes": 27656,
+        "render_targets_bytes": 6451200,
+        "resolution": [
+          640,
+          360
+        ],
+        "rg11b10_renderable_feature_available": true,
+        "rg16_fallback_forced": false,
+        "shading_diagnostic_counter_bytes": 88,
+        "shading_diagnostic_targets_bytes": 0,
+        "shading_diagnostic_targets_reservation_bytes": 4608000,
+        "shadow_map_count": 13,
+        "shadow_maps_bytes": 7340032,
+        "shared_mesh_count": 68,
+        "smoke_absorption_cache_bytes": 0,
+        "smoke_grid": [
+          48,
+          64,
+          48
+        ],
+        "smoke_rg16_storage_enabled": true,
+        "smoke_volume_format": "Rg16Float",
+        "smoke_volumes_bytes": 2359296,
+        "tile_config_bytes": 16,
+        "tile_count": 920,
+        "tile_list_bytes": 603520,
+        "tile_stats_buffer_bytes": 48,
+        "tile_stats_bytes": 192,
+        "tile_stats_readback_bytes": 144,
+        "unshared_geometry_bytes": 10539720,
+        "unshared_vertex_buffer_bytes": 0,
+        "unshared_vertex_cpu_bytes": 10539720,
+        "vertices": 143454
+      }
+    },
+    "original_size": {
+      "image": "artifacts/multi-emitter/native-lifecycle/original-size.png",
+      "sha256": "5537bbde1423bf94c2b932e8de8c9166019d0a87333f4afbe9f8036b92f6774a",
+      "tick": 120,
+      "camera": {
+        "id": "hero",
+        "position": [
+          5.800000190734863,
+          3.200000047683716,
+          7.199999809265137
+        ],
+        "projection": {
+          "fov_degrees": 52.0,
+          "kind": "perspective"
+        },
+        "target": [
+          0.0,
+          2.6500000953674316,
+          0.0
+        ]
+      },
+      "resolution": null,
+      "device": "Apple M1 Max",
+      "backend": "Metal",
+      "resource_inventory": {
+        "atlas_layers": 1,
+        "compact_hdr_supported": true,
+        "effect_depth_bytes": 921600,
+        "effect_depth_format": "Rg16Float",
+        "estimate_kind": "known resource buffer/texture sizes; excludes driver alignment, transient capture/surface buffers, pipelines, bind groups and opaque timestamp query-set storage",
+        "format_support": [
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rgba16Float",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rg16Float",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "R32Float",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rg32Float",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rg11b10Ufloat",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "Rgba8Unorm",
+            "storage_write_only": true
+          },
+          {
+            "allowed_usages": {
+              "copy_dst": true,
+              "copy_src": true,
+              "render_attachment": true,
+              "storage_binding": true,
+              "texture_binding": true
+            },
+            "filterable": true,
+            "format": "R8Unorm",
+            "storage_write_only": true
+          }
+        ],
+        "geometry_bounded_object_count": 276,
+        "geometry_buffer_bytes": 8607240,
+        "geometry_draw_range_count": 276,
+        "geometry_object_count": 276,
+        "geometry_uncullable_object_count": 0,
+        "gpu_timestamp_query_set_count": 9,
+        "gpu_timestamp_staging_bytes": 864,
+        "hdr_color_format": "Rgba16Float",
+        "hdr_color_requested_compact": false,
+        "instance_transform_buffer_bytes": 432768,
+        "known_gpu_allocation_bytes": 25889280,
+        "material_atlas_bytes": 65536,
+        "material_buffer_bytes": 960,
+        "optical_mask_bytes": 0,
+        "optical_mask_format": "R8Unorm",
+        "optical_mask_required": false,
+        "optical_no_copy_enabled": false,
+        "optical_no_copy_requested": false,
+        "optical_no_copy_supported": true,
+        "optical_output_bytes": 0,
+        "optical_snapshot_bytes": 0,
+        "other_fixed_buffers_bytes": 27656,
+        "render_targets_bytes": 6451200,
+        "resolution": [
+          640,
+          360
+        ],
+        "rg11b10_renderable_feature_available": true,
+        "rg16_fallback_forced": false,
+        "shading_diagnostic_counter_bytes": 88,
+        "shading_diagnostic_targets_bytes": 0,
+        "shading_diagnostic_targets_reservation_bytes": 4608000,
+        "shadow_map_count": 13,
+        "shadow_maps_bytes": 7340032,
+        "shared_mesh_count": 68,
+        "smoke_absorption_cache_bytes": 0,
+        "smoke_grid": [
+          48,
+          64,
+          48
+        ],
+        "smoke_rg16_storage_enabled": true,
+        "smoke_volume_format": "Rg16Float",
+        "smoke_volumes_bytes": 2359296,
+        "tile_config_bytes": 16,
+        "tile_count": 920,
+        "tile_list_bytes": 603520,
+        "tile_stats_buffer_bytes": 48,
+        "tile_stats_bytes": 192,
+        "tile_stats_readback_bytes": 144,
+        "unshared_geometry_bytes": 10539720,
+        "unshared_vertex_buffer_bytes": 0,
+        "unshared_vertex_cpu_bytes": 10539720,
+        "vertices": 143454
+      }
+    }
+  },
+  "checks": {
+    "native_resize_observed": true,
+    "minimize_request_registered": false,
+    "same_fixed_tick": true,
+    "same_camera": true,
+    "renderer_resource_inventory_stable": true,
+    "image_restored_after_surface_changes": true
+  },
+  "limitations": [
+    "One M1 Max/Metal native window; resize and restore are covered, but the native host did not report minimized=true after the minimize request, so minimize handling is unverified.",
+    "This exercises surface resize, not GPU device loss or full device recreation.",
+    "Windows/DX12 and other-adapter acceptance remain unverified."
+  ],
+  "all_checks_passed": true
+}

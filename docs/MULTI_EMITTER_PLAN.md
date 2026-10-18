@@ -7,7 +7,10 @@ Metal reviews. Maximum-budget correctness and a three-pair sustained offscreen
 route are recorded; fixed-camera temporal evidence covers both 8³ and 16³
 absorption-cache variants. A three-pair, 120-second-per-run comparison on the
 dual-emitter review scene shows no total-render gain for either cache size;
-continuous playback, native-window and portability gates remain open. The
+the full 120-second 8³-cache route is now pixel-identical to direct integration,
+and native-window cache toggles match at six route poses. Three paired
+120-second native runs show mixed component deltas and no robust whole-window
+gain. Continuous native playback and portability gates remain open. The
 single-source baseline remains selectable and pixel-identical.
 
 The opt-in 8³ source-local absorption cache also has a matched 120-frame, 20 fps
@@ -36,8 +39,9 @@ and [runner](../scripts/two_emitter_absorption_sustained_study.py).
   geometry shadow paths are connected. The new review scene exercises these
   paths on M1 Max/Metal. Cache-enabled fixed-tick review is complete. Maximum-
   budget tiled/exhaustive parity and sustained offscreen performance are recorded;
-  temporal samples cover both cache sizes, while continuous playback, other-scene
-  performance and adapter gates remain open.
+  temporal samples cover both cache sizes and the full 8³-cache route, while
+  continuous native playback, other-scene performance and adapter gates remain
+  open.
 - Each `FireFrame` owns a 256-primitive pool; up to 12 derived particle lights
   are shared globally. O03 tile construction now includes both sources, and
   overflow falls back to exhaustive evaluation. Maximum-budget parity, forced
@@ -236,5 +240,13 @@ must remain correct under that load.
 The bounded runtime, fixed-tick visual result and one maximum-budget sustained
 route are measured on M1 Max/Metal. Serial frame-work improves for that route
 while the reported GPU-render metric worsens; this is not a universal performance
-claim. Native-window behavior, broader workload scaling, cross-adapter correctness
-and target-hardware support remain unverified.
+claim. Native fixed-tick cache and tiled/exhaustive captures are recorded, as is
+a three-pair native cache timing study. A native surface resize/restore study
+preserves the fixed-tick dual-emitter image and renderer resource inventory; the
+host did not register minimize, so that path remains unverified. See
+[native lifecycle evidence](measurements-multi-emitter-native-lifecycle.json) and
+[runner](../scripts/two_emitter_native_lifecycle_study.py). Continuous native
+playback, broader workload scaling, cross-adapter correctness and target-hardware
+support remain unverified. Gate 4's reset/replay, paused-edit and shader-reload
+checks have focused dual-source shadow invalidation evidence, while broader
+resource recreation and device-loss behavior remain open.
