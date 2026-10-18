@@ -345,8 +345,14 @@ GPU replay confirmed 0/4096/0 cache bytes and identical disabled output before a
 after. Fixed-tick temporal error and a two-second native-window pause/resume
 parity check are recorded in [measurements-o05-temporal.json](measurements-o05-temporal.json)
 and [measurements-o05-pause-resume.json](measurements-o05-pause-resume.json).
-Human review of continuous playback, 8³ temporal coverage, refresh-policy comparison,
-native-window performance acceptance and non-Metal qualification remain open.
+The dirty-input policy reuses the field across unchanged paused renders and rebuilds
+after fixed simulation updates, successful parameter edits, reset, shader reload
+and re-enable. A protocol study confirms byte-identical repeated paused output,
+expected build/skip counts, and zero residency while disabled; see
+[measurements-o05-refresh-policy.json](measurements-o05-refresh-policy.json).
+This does not improve a moving route where each simulation step dirties the cache.
+Human review of continuous playback, 8³ temporal coverage, native-window performance
+acceptance and non-Metal qualification remain open.
 See [measurements-o05.json](measurements-o05.json) and
 [measurements-o05-size-study.json](measurements-o05-size-study.json).
 

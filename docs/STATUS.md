@@ -34,8 +34,11 @@ It remains disabled by default pending those gates and portability evidence; see
 [measurements-o04.json](measurements-o04.json) and
 [measurements-o04-motion-review.json](measurements-o04-motion-review.json).
 
-O05 has an opt-in primary fire-light absorption cache at 8³ or 16³, rebuilt each
-render. The disabled path allocates no cache field and does no build pass; a live
+O05 has an opt-in primary fire-light absorption cache at 8³ or 16³. It rebuilds
+after smoke simulation updates or scene/shader/reset changes, and skips repeated
+renders when inputs are unchanged. A paused serve study confirms identical
+repeated images and a rebuild after each tested dirty event; disabling releases
+the cache field. The disabled path allocates no cache field and does no build pass; a live
 off/on/off Metal capture reports 0/4096/0 cache bytes and reproduces the same
 disabled image. A sustained three-scale study compares direct, 8³ and 16³ at
 640×360 using three paired 120-second orbit runs per tier. At all scales 16³ is
@@ -52,9 +55,10 @@ identical images and fixed ticks during a two-second pause; during a two-second
 resume the direct and cached sessions advanced 121 and 120 ticks under host
 scheduling, then matched fire state after alignment to fixed tick 540. See
 [temporal](measurements-o05-temporal.json) and
-[pause/resume](measurements-o05-pause-resume.json) reports. Continuous human
-playback review, 8³ temporal coverage, refresh-policy comparison, Windows/DX12
-and other-GPU qualification remain open. Both cache sizes passed 13 discrete
+[pause/resume](measurements-o05-pause-resume.json) reports. The refresh-policy
+study is in [measurements-o05-refresh-policy.json](measurements-o05-refresh-policy.json).
+Continuous human playback review, 8³ temporal coverage, Windows/DX12 and other-GPU
+qualification remain open. Both cache sizes passed 13 discrete
 direct/cache checkpoints spanning paused density edits, primary-light changes,
 flicker, moving embers, shader reload and reset, with exact fire-state parity;
 see [invalidation study](measurements-o05-invalidation.json).

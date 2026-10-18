@@ -675,6 +675,23 @@ open. Reproduction scripts are `scripts/absorption_cache_temporal_study.py` and
 `scripts/absorption_cache_pause_resume_study.py`; reports are linked from TODO
 and STATUS.
 
+## O05 dirty-input refresh policy (18 October)
+
+A 16³ cache study at 640×360 steps the clearing scene to tick 300 and then
+captures unchanged paused output, a linked primary-light edit, another simulation
+step, shader reload, reset/replay, disable and re-enable. All nine assertions
+passed: the unchanged paused image hash stayed identical while build count held
+and skip count increased; each dirty event caused a build; disabling released the
+32,768-byte field, and re-enabling rebuilt it. `get_metrics` exposes cumulative
+`absorption_cache_builds` and `absorption_cache_skips` for this comparison.
+
+This removes redundant work for repeated renders of a paused state. In a moving
+route, each fixed simulation step still dirties the cache, so this result does not
+reverse the earlier total-render slowdown or justify enabling the cache by
+default. Evidence is in
+[measurements-o05-refresh-policy.json](measurements-o05-refresh-policy.json);
+the reproducible study is `scripts/absorption_cache_refresh_study.py`.
+
 ## O06 camera-inside and near-plane follow-up (18 October)
 
 The optical pass previously discarded transmissive backfaces, so an inside-glass

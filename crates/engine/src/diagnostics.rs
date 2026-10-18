@@ -34,6 +34,9 @@ pub struct FrameMetrics {
     pub gpu_tile_list_ms: Option<f64>,
     pub gpu_absorption_cache_ms: Option<f64>,
     pub cpu_absorption_cache_ms: f64,
+    /// Cumulative builds/skips since this renderer was created.
+    pub absorption_cache_builds: u64,
+    pub absorption_cache_skips: u64,
     pub smoke_absorption_cache_enabled: bool,
     pub cpu_upload_ms: f64,
     pub cpu_queue_submit_ms: f64,

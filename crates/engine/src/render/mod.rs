@@ -231,6 +231,7 @@ pub struct Renderer {
     absorption_layout: wgpu::BindGroupLayout,
     absorption_groups: Option<[wgpu::BindGroup; 2]>,
     absorption_cache_active: bool,
+    absorption_cache_dirty: bool,
     hdr_texture: wgpu::Texture,
     hdr_color_format: wgpu::TextureFormat,
     effect_depth_format: wgpu::TextureFormat,
@@ -1908,6 +1909,7 @@ impl Renderer {
             absorption_layout,
             absorption_groups,
             absorption_cache_active: absorption_cache_enabled,
+            absorption_cache_dirty: true,
             hdr_texture,
             hdr_color_format,
             volume_groups,
@@ -3119,6 +3121,7 @@ impl Renderer {
     }
     pub fn reset_smoke(&mut self) {
         self.invalidate_shadow_cache("reset");
+        self.absorption_cache_dirty = true;
         let bytes_per_voxel = if self.smoke_volume_format == wgpu::TextureFormat::Rg16Float {
             4
         } else {
@@ -3201,6 +3204,7 @@ impl Renderer {
             slot.pending = Some(receiver);
         }
         self.smoke_index = 1 - self.smoke_index;
+        self.absorption_cache_dirty = true;
         let simulation_cpu_ms = started.elapsed().as_secs_f64() * 1000.;
         self.metrics.cpu_simulation_submit_ms += simulation_cpu_ms;
         self.metrics.cpu_simulation_encode_ms += (simulation_cpu_ms - submit_ms).max(0.);
@@ -3494,6 +3498,11 @@ impl Renderer {
             self.resource_inventory["smoke_absorption_cache_bytes"] = 0.into();
         }
         self.absorption_cache_active = enabled;
+        self.absorption_cache_dirty = true;
+    }
+
+    pub fn invalidate_absorption_cache(&mut self) {
+        self.absorption_cache_dirty = true;
     }
 
     pub fn render(&mut self, scene: &Scene, camera: &Camera, tick: u64, seed: u32) {
@@ -3783,7 +3792,10 @@ impl Renderer {
         self.metrics.smoke_absorption_cache_enabled =
             scene.render.experiments.smoke_absorption_cache;
         self.metrics.gpu_absorption_cache_ms = None;
-        if scene.render.experiments.smoke_absorption_cache {
+        let absorption_cache_build =
+            scene.render.experiments.smoke_absorption_cache && self.absorption_cache_dirty;
+        if absorption_cache_build {
+            self.metrics.absorption_cache_builds += 1;
             let absorption_encode_started = Instant::now();
             let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
                 label: Some("coarse fire-light smoke absorption"),
@@ -3813,6 +3825,9 @@ impl Renderer {
                 absorption_encode_started.elapsed().as_secs_f64() * 1000.;
         } else {
             self.metrics.cpu_absorption_cache_ms = 0.;
+            if scene.render.experiments.smoke_absorption_cache {
+                self.metrics.absorption_cache_skips += 1;
+            }
         }
         let shadow_encode_started = Instant::now();
         if shadow_redrawn {
@@ -4148,6 +4163,9 @@ impl Renderer {
         let submit_started = Instant::now();
         self.queue.submit([command_buffer]);
         let submit_ms = submit_started.elapsed().as_secs_f64() * 1000.;
+        if absorption_cache_build {
+            self.absorption_cache_dirty = false;
+        }
         if let Some(index) = tile_stats_slot {
             let slot = &mut self.tile_stats_readbacks[index];
             let (sender, receiver) = mpsc::channel();
@@ -4170,7 +4188,7 @@ impl Renderer {
             slot.frame = self.metrics.frame + 1;
             slot.optical = optical_active;
             slot.shadow_rendered = shadow_redrawn;
-            slot.absorption_cache = scene.render.experiments.smoke_absorption_cache;
+            slot.absorption_cache = absorption_cache_build;
             slot.submitted_at = Some(Instant::now());
             slot.pending = Some(receiver);
         }

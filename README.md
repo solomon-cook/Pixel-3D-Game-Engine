@@ -199,9 +199,11 @@ and `internal_glow` (0..4, default 0) adds emission from within the plume.
 The experimental `render.experiments.smoke_absorption_cache` option caches
 optical depth for the primary authored fire light. Choose
 `render.absorption_cache_resolution` as 8 or 16 (default 8); the cache rebuilds
-each rendered frame, while particle lights and fallback points keep direct
-sampling. It is off by default and has not shown a GPU-time reduction on the
-measured Metal workload. See [O05 measurements](docs/measurements-o05.json).
+after smoke simulation updates and relevant state changes, then reuses its field
+for repeated renders of an unchanged state. Particle lights and fallback points
+keep direct sampling. It is off by default and has not shown a GPU-time reduction
+on the measured moving Metal workload. See [O05 measurements](docs/measurements-o05.json)
+and the [refresh-policy study](docs/measurements-o05-refresh-policy.json).
 
 The experimental `render.experiments.optical_surface_reuse` option reuses opaque
 reflector shading from the matching scene snapshot. It retains direct shading for

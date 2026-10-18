@@ -129,8 +129,13 @@ alone are not a frame-win claim. See [measurements-o04-motion-review.json](measu
    Total GPU render medians were slower for all six cache comparisons, so no
    useful total-cost range has been established. This result does not qualify
    other GPUs or native-window rendering.
-3. Test cache refresh choices tied to fixed simulation updates against rebuilding
-   each render. This is a hypothesis to measure, not a behavior to assume.
+3. **Complete on M1 Max/Metal:** refresh the cache after simulation updates,
+   successful scene edits, reset, shader reload and re-enable; skip rebuilds for
+   repeated renders with unchanged inputs. A paused serve study confirms identical
+   repeated images, build counts at each dirty event, and zero residency when
+   disabled. This saves redundant paused-state work; a moving scene still rebuilds
+   after each fixed simulation step and no moving-route speedup is claimed. See
+   [measurements-o05-refresh-policy.json](measurements-o05-refresh-policy.json).
 4. **Partially complete:** for both cache sizes, compare direct/cached captures
    through paused density edits, rapid edits, linked primary-light motion/range,
    flicker, paused captures, four moving-ember checkpoints, shader reload and reset.

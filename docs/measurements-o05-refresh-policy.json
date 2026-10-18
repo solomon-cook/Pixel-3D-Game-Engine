@@ -1,0 +1,169 @@
+{
+  "workstream": "O05 dirty-input absorption-cache refresh policy",
+  "date": "2026-10-18",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal"
+  },
+  "scene": "assets/scenes/clearing.json",
+  "scene_sha256": "6396d55cd7f5def9f5a5ee3fd0cc1eb78303465f9ba7a50e119144eb85b45527",
+  "camera": "smoke-close",
+  "seed": 42,
+  "resolution": [
+    640,
+    360
+  ],
+  "cache_resolution": [
+    16,
+    16,
+    16
+  ],
+  "method": "One paused serve session steps to tick 300, then captures after an unchanged render, primary-light edit, simulation step, shader reload, reset/replay, disable and re-enable. Build/skip counters and cache residency are read after each capture.",
+  "checkpoints": {
+    "first_render_after_300_ticks": {
+      "render_frame": 1,
+      "absorption_cache_builds": 1,
+      "absorption_cache_skips": 0,
+      "cpu_absorption_cache_ms": 0.116,
+      "cache_bytes": 32768,
+      "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o05/refresh-policy/captures/first_render.png",
+      "image_sha256": "01b37a143d91311a57da10553fca12b4128c8141ed1dd3d334700a3b473a8f7e",
+      "fire_counts": [
+        75,
+        60,
+        3,
+        12
+      ],
+      "particle_light_count": 12
+    },
+    "unchanged_paused_render": {
+      "render_frame": 3,
+      "absorption_cache_builds": 1,
+      "absorption_cache_skips": 2,
+      "cpu_absorption_cache_ms": 0.0,
+      "cache_bytes": 32768,
+      "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o05/refresh-policy/captures/unchanged_paused.png",
+      "image_sha256": "01b37a143d91311a57da10553fca12b4128c8141ed1dd3d334700a3b473a8f7e",
+      "fire_counts": [
+        75,
+        60,
+        3,
+        12
+      ],
+      "particle_light_count": 12
+    },
+    "light_edit_same_tick": {
+      "render_frame": 5,
+      "absorption_cache_builds": 2,
+      "absorption_cache_skips": 3,
+      "cpu_absorption_cache_ms": 0.022958,
+      "cache_bytes": 32768,
+      "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o05/refresh-policy/captures/light_edit.png",
+      "image_sha256": "49a7b6dd2b21bd2fa36ceaf43dd55970497e3e81982354689dcb7f68ed03a7d0",
+      "fire_counts": [
+        75,
+        60,
+        3,
+        12
+      ],
+      "particle_light_count": 12
+    },
+    "simulation_step": {
+      "render_frame": 7,
+      "absorption_cache_builds": 3,
+      "absorption_cache_skips": 4,
+      "cpu_absorption_cache_ms": 0.016583999999999998,
+      "cache_bytes": 32768,
+      "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o05/refresh-policy/captures/simulation_step.png",
+      "image_sha256": "eb811a23b7339c3eb130ecd27f95cde9c24b28f442a6984cab81bbd81f7a457c",
+      "fire_counts": [
+        75,
+        60,
+        3,
+        12
+      ],
+      "particle_light_count": 12
+    },
+    "shader_reload": {
+      "render_frame": 9,
+      "absorption_cache_builds": 4,
+      "absorption_cache_skips": 5,
+      "cpu_absorption_cache_ms": 0.019625,
+      "cache_bytes": 32768,
+      "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o05/refresh-policy/captures/shader_reload.png",
+      "image_sha256": "eb811a23b7339c3eb130ecd27f95cde9c24b28f442a6984cab81bbd81f7a457c",
+      "fire_counts": [
+        75,
+        60,
+        3,
+        12
+      ],
+      "particle_light_count": 12
+    },
+    "reset_and_replay": {
+      "render_frame": 11,
+      "absorption_cache_builds": 5,
+      "absorption_cache_skips": 6,
+      "cpu_absorption_cache_ms": 0.018334,
+      "cache_bytes": 32768,
+      "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o05/refresh-policy/captures/reset_replay.png",
+      "image_sha256": "64ad5ea8bf0960779066ed0e8a65853fb6de5a9194fd4e6c8e0a7f88d3cdf54b",
+      "fire_counts": [
+        75,
+        60,
+        3,
+        12
+      ],
+      "particle_light_count": 12
+    },
+    "disabled": {
+      "render_frame": 13,
+      "absorption_cache_builds": 5,
+      "absorption_cache_skips": 7,
+      "cpu_absorption_cache_ms": 0.0,
+      "cache_bytes": 0,
+      "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o05/refresh-policy/captures/disabled.png",
+      "image_sha256": "43cbfe382405d20c7eae5a8db0d5fbae81a0febd493cac84b3bb13031b6972c3",
+      "fire_counts": [
+        75,
+        60,
+        3,
+        12
+      ],
+      "particle_light_count": 12
+    },
+    "re_enabled": {
+      "render_frame": 15,
+      "absorption_cache_builds": 6,
+      "absorption_cache_skips": 7,
+      "cpu_absorption_cache_ms": 0.015125,
+      "cache_bytes": 32768,
+      "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o05/refresh-policy/captures/re_enabled.png",
+      "image_sha256": "64ad5ea8bf0960779066ed0e8a65853fb6de5a9194fd4e6c8e0a7f88d3cdf54b",
+      "fire_counts": [
+        75,
+        60,
+        3,
+        12
+      ],
+      "particle_light_count": 12
+    }
+  },
+  "expectations": {
+    "unchanged_paused_render_skips_build": true,
+    "light_edit_builds": true,
+    "simulation_step_builds": true,
+    "shader_reload_builds": true,
+    "reset_builds": true,
+    "disabled_has_no_cache": true,
+    "re_enable_builds": true,
+    "fire_counts_stable_for_paused_reuse": true,
+    "paused_image_is_identical": true
+  },
+  "all_expectations_passed": true,
+  "limitations": [
+    "Headless serve on M1 Max/Metal only; no native-window or cross-adapter performance claim",
+    "Repeated-render reuse primarily benefits unchanged states such as paused inspection; a moving scene still requires a cache build after each simulation tick",
+    "This study measures build/skip correctness, not a whole-frame speedup"
+  ]
+}
