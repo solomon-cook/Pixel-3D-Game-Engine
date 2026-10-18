@@ -369,17 +369,19 @@ shader reload and reset change. Moving one fire light now dirties only its six
 cube faces. The 8³ absorption cache was also toggled on/off/on at four fixed-tick
 cameras: it used the existing 4,096-byte field, released it while disabled and
 restored the exact direct image. Cache error was small in the sampled stills, but
-this does not establish temporal quality or performance. Maximum-budget stress,
-sustained performance, Windows/DX12 and other-adapter checks remain open. A
-focused opaque-heat A/B exposed a correctness gap: with only `watchfire` enabled
-and `earth.heat_response` changed from 0 to 0.8, all five fixed-tick captures
-were pixel-identical. The shader counter confirms the opaque heat sampling
-branch ran, while a single-emitter control changed pixels. Treat secondary
-opaque heat as unverified until its sampled temperature is traced and the A/B
-shows a visible contribution. The reproducible runner is
-[`two_emitter_heat_response_study.py`](../scripts/two_emitter_heat_response_study.py);
-captures and report are local under ignored `artifacts/`. The dual-source scene
-inventory reports 25,889,280 known bytes at
+this does not establish temporal quality or performance. A focused A/B found and
+fixed the source-local opaque-heat gap: low terrain fell below the volume bounds
+after the surface offset, so the shader skipped temperature samples. Sampling
+now uses stable source origins and clamps only the sample height to the source's
+lower heat slice; x/z bounds remain enforced. With only `watchfire` enabled,
+seed 42/tick 300, and `earth.heat_response` 0 versus 0.8, all six views changed
+168–5,695 pixels. The ground-focused view shows the clearest ring cue; wide views
+show subtle differences. This is fixed-tick contribution evidence, not temporal
+quality or performance evidence. Maximum-budget stress, sustained performance,
+Windows/DX12 and other-adapter checks remain open. See
+[`two_emitter_heat_response_study.py`](../scripts/two_emitter_heat_response_study.py)
+and [opaque heat evidence](measurements-multi-emitter-opaque-heat.json). The
+dual-source scene inventory reports 25,889,280 known bytes at
 640×360; this is not a paired single-source delta. See [implementation plan](MULTI_EMITTER_PLAN.md),
 [two-source review](measurements-multi-emitter-shadows.json), [shadow invalidation evidence](measurements-multi-emitter-shadow-invalidation.json)
 and [cache evidence](measurements-multi-emitter-absorption-cache.json).

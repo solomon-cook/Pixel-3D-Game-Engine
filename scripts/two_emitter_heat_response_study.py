@@ -16,7 +16,14 @@ from absorption_cache_study import image_error
 
 ROOT = Path(__file__).resolve().parents[1]
 SCENE = ROOT / "assets/scenes/two-emitter-review.json"
-CAMERAS = ("hero", "smoke-close", "orthographic", "dual-wide", "watchfire-study")
+CAMERAS = (
+    "hero",
+    "smoke-close",
+    "orthographic",
+    "dual-wide",
+    "watchfire-study",
+    "heat-ground-study",
+)
 SEED = 42
 TICK = 300
 HEAT_RESPONSE = 0.8
@@ -36,6 +43,14 @@ def make_variant(source: dict, heat_response: float) -> dict:
             "id": "watchfire-study",
             "position": [-0.6, 1.35, 3.0],
             "target": [-3.0, 1.05, 0.0],
+            "projection": {"kind": "perspective", "fov_degrees": 48.0},
+        }
+    )
+    scene["cameras"].append(
+        {
+            "id": "heat-ground-study",
+            "position": [-1.2, 1.8, 2.2],
+            "target": [-3.0, 0.0, 0.0],
             "projection": {"kind": "perspective", "fov_degrees": 48.0},
         }
     )
@@ -119,9 +134,47 @@ def main() -> int:
             "changed": off["sha256"] != on["sha256"],
         }
 
+    reversed_scene = make_variant(source, HEAT_RESPONSE)
+    reversed_scene["emitters"].reverse()
+    reversed_scene_path = output / "heat-on-reversed-order.json"
+    reversed_scene_path.write_text(json.dumps(reversed_scene, indent=2) + "\n")
+    subprocess.run(
+        [str(binary), "validate", str(reversed_scene_path)],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    )
+    reversed_capture = output / "heat-on-reversed-order.png"
+    subprocess.run(
+        [
+            str(binary),
+            "capture",
+            "--scene",
+            str(reversed_scene_path),
+            "--seed",
+            str(SEED),
+            "--camera",
+            "heat-ground-study",
+            "--tick",
+            str(TICK),
+            "--resolution",
+            "640x360",
+            "--scale",
+            "1",
+            "--output",
+            str(reversed_capture.resolve()),
+        ],
+        cwd=ROOT,
+        check=True,
+        stdout=subprocess.DEVNULL,
+    )
+    reversed_order_matches = (
+        digest(reversed_capture) == captures["heat-on"]["heat-ground-study"]["sha256"]
+    )
+
     report = {
         "date": "2026-10-18",
-        "scope": "Focused source-one opaque heat-response A/B with the primary emitter disabled while retaining both stable source slots",
+        "scope": "Focused source-one opaque heat-response A/B after source-relative low-terrain sampling, with the primary emitter disabled while retaining both stable source slots",
         "host": {"gpu": "Apple M1 Max", "backend": "Metal", "native_window": False},
         "base_scene": str(SCENE.relative_to(ROOT)),
         "base_scene_sha256": digest(SCENE),
@@ -137,6 +190,14 @@ def main() -> int:
         "resolution": [640, 360],
         "views": view_results,
         "all_views_changed": all(view["changed"] for view in view_results.values()),
+        "visible_gate_camera": "heat-ground-study",
+        "visible_gate_changed": view_results["heat-ground-study"]["changed"],
+        "reversed_emitter_order": {
+            "camera": "heat-ground-study",
+            "original_sha256": captures["heat-on"]["heat-ground-study"]["sha256"],
+            "reversed_sha256": digest(reversed_capture),
+            "matches": reversed_order_matches,
+        },
         "visual_review": "pending",
         "limitations": [
             "Fixed-tick source-isolated A/B only; no continuous motion or temporal error analysis.",
@@ -147,7 +208,7 @@ def main() -> int:
     report_path = output / "report.json"
     report_path.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({"report": str(report_path), "all_views_changed": report["all_views_changed"]}))
-    return 0 if report["all_views_changed"] else 1
+    return 0 if report["visible_gate_changed"] and reversed_order_matches else 1
 
 
 if __name__ == "__main__":

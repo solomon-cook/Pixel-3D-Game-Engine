@@ -111,9 +111,13 @@ open; the single-source baseline remains selectable and pixel-identical.
   and [cache review](measurements-multi-emitter-absorption-cache.json).
 - Opaque materials with `heat_response` now sample source one's local temperature
   field alongside the legacy primary volume and use the stronger local heat
-  sample. The new binding adds no texture allocation. A source-zero fixed-tick
-  capture remains byte-identical; source-one heat still needs a focused A/B image
-  review. See
+  sample. Both source-local sample coordinates now come from stable source
+  origins, and terrain below the smoke volume uses the source's lower heat slice
+  instead of being rejected as out of bounds. The new binding adds no texture
+  allocation. The source-zero fixed-tick capture remains byte-identical. A
+  six-camera source-one A/B now changes 168–5,695 pixels per view, with the
+  clearest cue in the ground-focused camera; continuous temporal and performance
+  review remain open. See
   [opaque heat evidence](measurements-multi-emitter-opaque-heat.json).
 - Each source primary light now owns six cube-array shadow faces in stable emitter
   ID order. Shadow matrices, caster culling, dirty-face invalidation and opaque,

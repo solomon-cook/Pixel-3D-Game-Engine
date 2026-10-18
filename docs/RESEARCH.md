@@ -734,3 +734,25 @@ direct/reuse discrepancy. This is fixed-tick offscreen Metal evidence only;
 continuous motion, native-window performance and other adapters remain open.
 Reproduce with `scripts/optical_camera_stress_study.py`; report:
 [measurements-o06-camera-stress.json](measurements-o06-camera-stress.json).
+
+## Opaque heat cue over low terrain (18 October)
+
+The two-source opaque heat A/B initially produced identical images with the
+secondary emitter enabled. The cause was geometric: near watchfire the review
+terrain is below y=-0.6, while the cue samples only 0.45 units above the surface;
+that sample fell below the source-local volume, so the shader correctly rejected
+it as out of bounds. A flat-field synthetic check showed the secondary binding
+and sampled channel were live. The correction derives each source volume from its
+stable source origin and clamps only the sampled height to origin.y-0.1 when the
+surface sample falls lower; horizontal bounds and the original flat-ground sample
+are preserved. This adds no texture allocation.
+
+At seed 42/tick 300 on M1 Max/Metal, the isolated watchfire A/B changed pixels in
+all six views (168–5,695 pixels). Visual inspection found the clearest stepped
+ring in the ground-focused view; the broad views show small changes. This verifies
+fixed-tick contribution, not temporal smoothness, gameplay readability across
+motion, performance, or DX12. Captures and report are in ignored
+`artifacts/two-emitter-heat-response/`; reproducible inputs are in
+[`two_emitter_heat_response_study.py`](../scripts/two_emitter_heat_response_study.py),
+with the versioned summary in
+[`measurements-multi-emitter-opaque-heat.json`](measurements-multi-emitter-opaque-heat.json).

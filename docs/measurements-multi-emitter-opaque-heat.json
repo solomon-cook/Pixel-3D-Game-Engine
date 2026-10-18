@@ -1,47 +1,179 @@
 {
   "date": "2026-10-18",
-  "scope": "Source-local opaque-material heat-response sampling and single-source regression evidence",
+  "scope": "Focused source-one opaque heat-response A/B after source-relative low-terrain sampling, with the primary emitter disabled while retaining both stable source slots",
   "host": {
     "gpu": "Apple M1 Max",
     "backend": "Metal",
-    "device_type": "IntegratedGpu",
-    "windows_dx12_verified": false
+    "native_window": false
   },
+  "scene": "assets/scenes/two-emitter-review.json",
+  "scene_sha256": "9ca7aee40dac7a9cde4010f6f90c2623e441c8e0c9a1f19ff2a9c570c1082892",
+  "source_ids": [
+    "campfire",
+    "watchfire"
+  ],
+  "enabled_emitters": [
+    "watchfire"
+  ],
+  "disabled_emitters": [
+    "campfire"
+  ],
+  "material": "earth",
+  "heat_response_off": 0.0,
+  "heat_response_on": 0.8,
+  "seed": 42,
+  "tick": 300,
+  "resolution": [
+    640,
+    360
+  ],
   "implementation": {
-    "material_gate": "Only materials with heat_response greater than zero enter the heat cue",
-    "source_zero": "Existing global volume domain and temperature field",
-    "source_one": "Second source's local domain, sampled from its density/temperature volume",
-    "combination": "Use the stronger temperature sample before existing stepped response",
-    "binding": "Second smoke volume added to the existing tile-list bind group",
+    "sample_domain": "Both volumes use stable source origins, with the existing 6x8x6 local domain when two source slots are active.",
+    "low_terrain_behavior": "For multi-source scenes, if the surface sample is below source origin y - 0.1, sample at that lower heat slice; preserve x/z bounds.",
+    "single_source_compatibility": "The legacy primary sampling expression remains selected when the secondary slot is absent.",
     "additional_texture_allocation_bytes": 0,
-    "secondary_source_live_scene_available": false
+    "root_cause": "Review terrain near watchfire is below y=-0.6. The previous surface offset placed the heat sample below the volume, so the shader rejected it."
   },
-  "single_source_capture": {
-    "scene": "assets/scenes/profiling-heavy.json",
-    "seed": 42,
+  "single_source_parity": {
+    "scene": "assets/scenes/clearing.json",
     "camera": "hero",
-    "tick": 120,
+    "seed": 42,
+    "tick": 300,
     "resolution": [
       640,
       360
     ],
-    "scale": 1,
-    "cache_enabled": true,
-    "rgba_sha256": "8c6080e1d3b47aa27f161b1325ff666ba30b63b9b90cd58f21f6ebce921543d2",
-    "pre_change_same_mode_rgba_sha256": "8c6080e1d3b47aa27f161b1325ff666ba30b63b9b90cd58f21f6ebce921543d2",
+    "baseline_revision": "1c780bb",
+    "heat_response_0_sha256_before": "2dff062612f8b8ab832c331d0a207e8af26362f6e308e6d3098861f93915da68",
+    "heat_response_0_sha256_after": "2dff062612f8b8ab832c331d0a207e8af26362f6e308e6d3098861f93915da68",
+    "heat_response_0_8_sha256_before": "46651f3db40b206d23982b8a32e5b0d02d900c3a881229c37e70fe8d2adf3438",
+    "heat_response_0_8_sha256_after": "46651f3db40b206d23982c331d0a207e8af26362f6e308e6d3098861f93915da68",
+    "byte_identical": true
+  },
+  "pre_fix_result": {
+    "five_original_cameras_changed_pixels": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "ground_focused_camera_changed_pixels": 0,
+    "synthetic_secondary_volume_control_changed_pixels": 9913
+  },
+  "views": {
+    "hero": {
+      "heat_off_sha256": "78a3aa03f3959a885743380dc9b8c8c6bf9893fb2c7236b2ebf5fda0e25b65f8",
+      "heat_on_sha256": "9aaa45d460bd72c84b0213848e7afde3c616e9a58feee271c93cef8118c0f094",
+      "changed_pixel_count": 238,
+      "pixel_count": 230400,
+      "mean_absolute_rgb_error_0_255": [
+        0.019635416666666666,
+        0.03207899305555555,
+        0.004618055555555556
+      ],
+      "maximum_absolute_rgb_error_0_255": [
+        66,
+        118,
+        22
+      ]
+    },
+    "smoke-close": {
+      "heat_off_sha256": "63aefa51e9d735c9aab506abe34764d674685ede7de229a731645180f37ef04a",
+      "heat_on_sha256": "7faee107452450ec8a884844266ab13d174e61fbcf2d4812dae76bddaadf0908",
+      "changed_pixel_count": 694,
+      "pixel_count": 230400,
+      "mean_absolute_rgb_error_0_255": [
+        0.08046875,
+        0.12491753472222222,
+        0.021375868055555556
+      ],
+      "maximum_absolute_rgb_error_0_255": [
+        66,
+        114,
+        23
+      ]
+    },
+    "orthographic": {
+      "heat_off_sha256": "3efa45333f4b5a76cc1aa1ce2d765b74f76426d2f873667b1118b91a355266aa",
+      "heat_on_sha256": "69781685c06b690342685594d4a1e49ca6ea86d2f4462202dfd705daa6d19283",
+      "changed_pixel_count": 292,
+      "pixel_count": 230400,
+      "mean_absolute_rgb_error_0_255": [
+        0.02851128472222222,
+        0.04513454861111111,
+        0.006966145833333334
+      ],
+      "maximum_absolute_rgb_error_0_255": [
+        66,
+        117,
+        24
+      ]
+    },
+    "dual-wide": {
+      "heat_off_sha256": "6c35549ccb779018c9c76db12c0d60f39213f1ba185cef360f2dddf7c31d0af3",
+      "heat_on_sha256": "08ad3be70907151efa16ea0aec236667f05b6b89d81d70fb99b21d44d942e596",
+      "changed_pixel_count": 168,
+      "pixel_count": 230400,
+      "mean_absolute_rgb_error_0_255": [
+        0.014153645833333334,
+        0.02125,
+        0.003611111111111111
+      ],
+      "maximum_absolute_rgb_error_0_255": [
+        66,
+        117,
+        22
+      ]
+    },
+    "watchfire-study": {
+      "heat_off_sha256": "c48bb90a965fb5966876a6bbd9a7206fe1d8c1c5403e55cbd0fcbe46c100a9a1",
+      "heat_on_sha256": "5c45915f01f3837bd0d9663e2a7925638755679f640b936f81e62225dcac76b3",
+      "changed_pixel_count": 2111,
+      "pixel_count": 230400,
+      "mean_absolute_rgb_error_0_255": [
+        0.2402907986111111,
+        0.31894965277777776,
+        0.06258246527777778
+      ],
+      "maximum_absolute_rgb_error_0_255": [
+        67,
+        118,
+        25
+      ]
+    },
+    "heat-ground-study": {
+      "heat_off_sha256": "55f9ca48f9a0acd20bd52f85e862bccfb316b53104a498e6058d9e7a8ed06e8d",
+      "heat_on_sha256": "e70543a261bac42ff6a829b6d339dd2e4628f95ce444cf3574962ec7a7caec95",
+      "changed_pixel_count": 5695,
+      "pixel_count": 230400,
+      "mean_absolute_rgb_error_0_255": [
+        0.6111545138888889,
+        0.8326128472222222,
+        0.17060329861111112
+      ],
+      "maximum_absolute_rgb_error_0_255": [
+        66,
+        118,
+        25
+      ]
+    }
+  },
+  "all_views_changed": true,
+  "visible_gate_camera": "heat-ground-study",
+  "visible_gate_changed": true,
+  "reversed_emitter_order": {
+    "camera": "heat-ground-study",
+    "original_sha256": "e70543a261bac42ff6a829b6d339dd2e4628f95ce444cf3574962ec7a7caec95",
+    "reversed_sha256": "e70543a261bac42ff6a829b6d339dd2e4628f95ce444cf3574962ec7a7caec95",
     "matches": true
   },
-  "validation": {
-    "command": "python3 scripts/verify.py --gpu",
-    "result": "passed",
-    "unit_tests": 37,
-    "backend": "Metal",
-    "native": false
-  },
-  "acceptance_gaps": [
-    "The scene validator accepts one emitter, so the source-one opaque heat sample has not been exercised in a dual-source frame.",
-    "No source-one visual, temporal or performance measurements exist.",
-    "Primary-light geometry shadow maps remain single-source; Windows/DX12 and other-adapter acceptance remain open."
-  ],
-  "historical_snapshot_note": "This report records the narrower single-source validation scope at the time it was captured. Current live dual-source implementation evidence is in measurements-multi-emitter-shadows.json; use the linked report for current runtime status."
+  "visual_review": "Inspected six-camera contact sheet. Ground-focused view shows a stepped ring around watchfire; hero, smoke-close and orthographic views show subtle marks; dual-wide remains subtle at thumbnail scale.",
+  "capture_runner": "scripts/two_emitter_heat_response_study.py",
+  "raw_capture_report": "artifacts/two-emitter-heat-response/report.json",
+  "limitations": [
+    "Fixed-tick source-isolated A/B only; no continuous motion or temporal error analysis.",
+    "Changing heat_response enables the cue across the ground material, so the result establishes contribution/readability, not physical temperature accuracy.",
+    "Headless M1 Max/Metal only; no performance conclusion, Windows/DX12 or other-adapter validation."
+  ]
 }

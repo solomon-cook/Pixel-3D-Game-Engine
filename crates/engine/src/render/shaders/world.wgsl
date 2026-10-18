@@ -44,6 +44,13 @@ fn surface_view(v:Varying)->vec3<f32> {
 fn surface_albedo(v:Varying,m:Material)->vec3<f32> {
     return v.color*m.color_emission.rgb*textureSampleLevel(atlas,atlas_sampler,v.uv,i32(v.texture),0.).rgb;
 }
+fn heat_sample_uv(position:vec3<f32>,origin:vec3<f32>)->vec3<f32> {
+    // Keep low terrain in the source's lower temperature slice. Without this
+    // floor, valleys below origin.y - 0.6 fall outside the volume entirely.
+    let sample_position=vec3(position.x,max(position.y,origin.y-0.1),position.z);
+    let volume_min=origin+vec3(-3.,-0.6,-3.);
+    return (sample_position-volume_min)/vec3(6.,8.,6.);
+}
 fn scattered(m:Material,n:vec3<f32>,l:vec3<f32>)->vec3<f32> {
     // Authorable thin-body approximation: wrap around the terminator and
     // transmit backlight through an optical thickness. No diffusion solver.
@@ -119,15 +126,17 @@ fn shade_surface(v:Varying,tile:u32)->Output {
     let m=materials[v.material];
     if m.optical.w>0. {
         let heat_position=v.position+vec3(0.,0.45,0.);
-        let heat_uv=(heat_position-g.volume_min.xyz)/(g.volume_max.xyz-g.volume_min.xyz);
+        var heat_uv=(heat_position-g.volume_min.xyz)/(g.volume_max.xyz-g.volume_min.xyz);
+        if fire.source_origins[1].w>0.5 {
+            heat_uv=heat_sample_uv(heat_position,fire.source_origins[0].xyz);
+        }
         var temperature=0.;
         if all(heat_uv>=vec3(0.)) && all(heat_uv<=vec3(1.)) {
             temperature=clamp(textureSampleLevel(heat_volume,heat_sampler,heat_uv,0.).y,0.,1.);
         }
         if fire.source_origins[1].w>0.5 {
             let secondary_origin=fire.source_origins[1].xyz;
-            let secondary_min=secondary_origin+vec3(-3.,-0.6,-3.);
-            let secondary_uv=(heat_position-secondary_min)/vec3(6.,8.,6.);
+            let secondary_uv=heat_sample_uv(heat_position,secondary_origin);
             if all(secondary_uv>=vec3(0.)) && all(secondary_uv<=vec3(1.)) {
                 temperature=max(temperature,clamp(textureSampleLevel(secondary_heat_volume,heat_sampler,secondary_uv,0.).y,0.,1.));
             }
