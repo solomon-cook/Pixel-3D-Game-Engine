@@ -258,9 +258,18 @@ is 0.342/255 (p95 frame mean 0.373/255, maximum channel error 29/255); mean
 temporal-change-magnitude error is 0.418/255 (p95 frame mean 0.455/255, maximum
 channel error 29/255). This adds one route, not a perceptual acceptance threshold.
 Native-window and human playback review, other workloads and fallback/DX12
-validation remain open. See
+validation remain open. Additional 120-frame, 20 fps comparisons now cover
+clearing, the heavy plume/eight-light workload, and Material Atelier. Mean frame
+errors are 0.341/0.384/0.372 per 255; mean temporal-change-magnitude errors are
+0.190/0.212/0.043 per 255, with maximum channel errors of 31/27/10. A sampled
+three-workload contact sheet looked close, but does not establish continuous
+human acceptance. These results show route-dependent error and do not establish a
+perceptual threshold. See
 [compact-HDR temporal evidence](measurements-o08-compact-hdr-temporal.json) and
 the [reproducible capture/analysis runner](../scripts/compact_hdr_temporal_study.py).
+Additional workload evidence and its runner are in
+[measurements-o08-compact-hdr-workloads.json](measurements-o08-compact-hdr-workloads.json)
+and [compact_hdr_workload_study.py](../scripts/compact_hdr_workload_study.py).
 
 **Exit gate:** select a combination only when it improves a declared target (memory,
 traffic or runtime) without violating image/temporal tolerances. Logical byte savings

@@ -1,0 +1,128 @@
+{
+  "version": 1,
+  "purpose": "Additional compact-HDR temporal coverage on three O01-O08 workloads; no promotion decision is inferred.",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal"
+  },
+  "workloads": {
+    "clearing": {
+      "source_scene": "assets/scenes/clearing.json",
+      "camera": "fire-study",
+      "route": "clearing-orbit",
+      "seed": 42,
+      "start_tick": 300,
+      "route_start_seconds": 8.0,
+      "frame_count": 120,
+      "frame_stride_ticks": 3,
+      "capture_rate_hz": 20.0,
+      "resolution": [
+        640,
+        360
+      ],
+      "baseline_format": "Rgba16Float",
+      "candidate_format": "Rg11b10Ufloat",
+      "compact_hdr_supported": true,
+      "scene_variant_only_difference": "render.compact_hdr",
+      "scene_sha256": {
+        "baseline": "f394cd24ddce1d5ed75a3200a542d11c35733785a3e51bf5346c97f2fac45ef3",
+        "candidate": "7b7f9227dd61ce4668035af896b9784a6305846b8259245e14986d1fde897ed9"
+      },
+      "binary_sha256": "eafa08fe20bb9650a572a4c278ef93257cebbe42e9ad30c1cc0d02a16a1b4255",
+      "capture_script_sha256": "194f006a85642827caf26ebde77a880f2eb728e5fbae002920e277d68c6d3aca",
+      "frame_error_rgb_255": {
+        "mean_of_frame_means": 0.34103651861496903,
+        "p95_frame_mean": 0.363634693287037,
+        "max_frame_mean": 0.3667317708333333,
+        "max_channel_error": 31
+      },
+      "temporal_change_magnitude_error_rgb_255": {
+        "mean_of_frame_means": 0.18964372033535634,
+        "p95_frame_mean": 0.2070334201388889,
+        "max_frame_mean": 0.21057436342592592,
+        "max_channel_error": 31
+      }
+    },
+    "profiling-heavy": {
+      "source_scene": "assets/scenes/profiling-heavy.json",
+      "camera": "smoke-close",
+      "route": "clearing-orbit",
+      "seed": 42,
+      "start_tick": 300,
+      "route_start_seconds": 8.0,
+      "frame_count": 120,
+      "frame_stride_ticks": 3,
+      "capture_rate_hz": 20.0,
+      "resolution": [
+        640,
+        360
+      ],
+      "baseline_format": "Rgba16Float",
+      "candidate_format": "Rg11b10Ufloat",
+      "compact_hdr_supported": true,
+      "scene_variant_only_difference": "render.compact_hdr",
+      "scene_sha256": {
+        "baseline": "25c3ccb6178719ad26d4d4e8f63773cbf3149191ad8b45e1bc3ac8577ac314f8",
+        "candidate": "c58b0eedcb899159e4c4c1bac26d92635bbdcd871664dc230e4ebb0e604d6d5e"
+      },
+      "binary_sha256": "eafa08fe20bb9650a572a4c278ef93257cebbe42e9ad30c1cc0d02a16a1b4255",
+      "capture_script_sha256": "194f006a85642827caf26ebde77a880f2eb728e5fbae002920e277d68c6d3aca",
+      "frame_error_rgb_255": {
+        "mean_of_frame_means": 0.3840656828703703,
+        "p95_frame_mean": 0.39593677662037036,
+        "max_frame_mean": 0.4015118634259259,
+        "max_channel_error": 27
+      },
+      "temporal_change_magnitude_error_rgb_255": {
+        "mean_of_frame_means": 0.2116242365001556,
+        "p95_frame_mean": 0.22160517939814814,
+        "max_frame_mean": 0.22624855324074075,
+        "max_channel_error": 27
+      }
+    },
+    "materials": {
+      "source_scene": "assets/scenes/materials.json",
+      "camera": "glass-close",
+      "route": "material-orbit",
+      "seed": 42,
+      "start_tick": 300,
+      "route_start_seconds": 8.0,
+      "frame_count": 120,
+      "frame_stride_ticks": 3,
+      "capture_rate_hz": 20.0,
+      "resolution": [
+        640,
+        360
+      ],
+      "baseline_format": "Rgba16Float",
+      "candidate_format": "Rg11b10Ufloat",
+      "compact_hdr_supported": true,
+      "scene_variant_only_difference": "render.compact_hdr",
+      "scene_sha256": {
+        "baseline": "7ed219c0d0369220eb81a955483492409325c9084cf9cb59e97c752e11d47024",
+        "candidate": "5ed86c784f74a8c9b250827b54eaf61a2e487e9bdf61615ee28d6ab30acd65bd"
+      },
+      "binary_sha256": "eafa08fe20bb9650a572a4c278ef93257cebbe42e9ad30c1cc0d02a16a1b4255",
+      "capture_script_sha256": "194f006a85642827caf26ebde77a880f2eb728e5fbae002920e277d68c6d3aca",
+      "frame_error_rgb_255": {
+        "mean_of_frame_means": 0.371938777970679,
+        "p95_frame_mean": 0.380705078125,
+        "max_frame_mean": 0.3817361111111111,
+        "max_channel_error": 10
+      },
+      "temporal_change_magnitude_error_rgb_255": {
+        "mean_of_frame_means": 0.04309573655851229,
+        "p95_frame_mean": 0.047854166666666656,
+        "max_frame_mean": 0.04966001157407407,
+        "max_channel_error": 10
+      }
+    }
+  },
+  "limitations": [
+    "Offscreen M1 Max/Metal only; no native-window, DX12, other-adapter, physical fallback or human playback acceptance.",
+    "Temporal metric compares per-pixel absolute frame-to-frame change magnitudes and is not a perceptual threshold.",
+    "Capture timing is not performance evidence; no timing comparison was run."
+  ],
+  "runner_sha256": "3b3dffe0609f87a53be53b1ee5fab64703e5e5a711d931907a8e3376e8bea914",
+  "shared_analysis_helper_sha256": "a87daa817751eb11512be119049872495cea3f842f8e771fb4562c2101e3010d"
+}

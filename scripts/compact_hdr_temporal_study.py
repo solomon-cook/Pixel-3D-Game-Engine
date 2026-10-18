@@ -39,11 +39,20 @@ def frame_error(base: Image.Image, candidate: Image.Image) -> tuple[float, int]:
     return sum(ImageStat.Stat(difference).mean) / 3, max(high for _, high in difference.getextrema())
 
 
-def run_motion(binary: Path, scene: Path, output: Path, frames: int, stride: int, route_start: float) -> None:
+def run_motion(
+    binary: Path,
+    scene: Path,
+    output: Path,
+    frames: int,
+    stride: int,
+    route_start: float,
+    camera: str = "mixed-close",
+    route: str = "mixed-smoke-material-orbit",
+) -> None:
     subprocess.run([
         sys.executable, str(ROOT / "scripts/capture_motion.py"),
-        "--binary", str(binary), "--scene", str(scene), "--camera", "mixed-close",
-        "--seed", "42", "--profile", "", "--route", "mixed-smoke-material-orbit",
+        "--binary", str(binary), "--scene", str(scene), "--camera", camera,
+        "--seed", "42", "--profile", "", "--route", route,
         "--route-start", str(route_start), "--start-tick", "300", "--frames", str(frames),
         "--stride", str(stride), "--output", str(output),
     ], cwd=ROOT, check=True)

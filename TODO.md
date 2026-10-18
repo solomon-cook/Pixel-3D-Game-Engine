@@ -29,7 +29,7 @@ Detailed steps, dependencies and acceptance criteria live in
 
   RG16 format-selection logic now has adapter-independent tests for usage/feature gating and the RGBA16F fallback. This does not replace physical fallback rendering or Windows/DX12 acceptance.
 
-  Compact HDR now has one quantified 240-frame, 20 fps high-dynamic orbit comparison: mean frame error 0.342/255 and temporal-change-magnitude error 0.418/255, with maximum channel error 29/255. It remains experimental; more workloads, human playback, native-window, fallback and DX12 checks remain open. Evidence: [measurements-o08-compact-hdr-temporal.json](docs/measurements-o08-compact-hdr-temporal.json), runner: [compact_hdr_temporal_study.py](scripts/compact_hdr_temporal_study.py).
+  Compact HDR now has one 240-frame high-dynamic comparison and three more 120-frame routes (clearing, heavy plume/eight lights and materials). Their mean temporal-change errors were 0.418/0.190/0.212/0.043 per 255 respectively. It remains experimental; human playback, native-window, fallback and DX12 checks remain open. Evidence: [single-route report](docs/measurements-o08-compact-hdr-temporal.json), [multi-workload report](docs/measurements-o08-compact-hdr-workloads.json), runner: [compact_hdr_workload_study.py](scripts/compact_hdr_workload_study.py).
 
   Optical no-copy now also has three alternating 120-second native-window pairs on the M1 Max/Metal. GPU resolve and whole-window FPS deltas are mixed, and median full native CPU-frame work is 0.028 ms higher for the candidate; keep the path experimental. Evidence: [native no-copy study](docs/measurements-o08-native-no-copy.json). Other-adapter, physical fallback and DX12 validation remain open.
 

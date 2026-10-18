@@ -236,9 +236,14 @@ seed/tick/camera sequence. Mean frame error is 0.342/255, p95 frame mean
 0.373/255, and maximum channel error 29/255. Mean per-frame temporal-change-
 magnitude error is 0.418/255, p95 0.455/255, with maximum channel error 29/255.
 This is one offscreen M1 Max/Metal route, not perceptual or human playback
-acceptance. Keep the format experimental; more workloads, native-window,
-physical fallback and DX12 checks remain open. See
-[compact-HDR temporal evidence](measurements-o08-compact-hdr-temporal.json).
+acceptance. Three additional 120-frame, 20 fps routes now cover clearing, the
+heavy plume/eight-light workload and Material Atelier. Their mean frame errors
+were 0.341/0.384/0.372 per 255; temporal-change-magnitude errors were
+0.190/0.212/0.043 per 255, with maximum channel errors 31/27/10. Sampled frames
+look close, but continuous human playback acceptance remains open. Keep the format
+experimental; native-window, physical fallback and DX12 checks remain open. See
+[single-route evidence](measurements-o08-compact-hdr-temporal.json) and
+[multi-workload evidence](measurements-o08-compact-hdr-workloads.json).
 
 The experimental `--optical-no-copy` overlay path keeps the source HDR immutable,
 draws optical results to a separate color target plus R8Unorm coverage mask, and

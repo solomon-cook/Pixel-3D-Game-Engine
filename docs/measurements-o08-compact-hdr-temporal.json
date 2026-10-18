@@ -17,7 +17,7 @@
     "binary_sha256": "eafa08fe20bb9650a572a4c278ef93257cebbe42e9ad30c1cc0d02a16a1b4255",
     "candidate_binary_sha256": "eafa08fe20bb9650a572a4c278ef93257cebbe42e9ad30c1cc0d02a16a1b4255",
     "capture_script_sha256": "194f006a85642827caf26ebde77a880f2eb728e5fbae002920e277d68c6d3aca",
-    "study_script_sha256": "8e90194a236a7800dcd1f1f5a4786f9f3e6ff00ff3de5cd8de1488bb4203792e",
+    "study_script_sha256": "a87daa817751eb11512be119049872495cea3f842f8e771fb4562c2101e3010d",
     "baseline_hdr_format": "Rgba16Float",
     "candidate_hdr_format": "Rg11b10Ufloat",
     "compact_hdr_supported": true
