@@ -102,9 +102,6 @@ enum Command {
         /// Fixed simulation ticks advanced per rendered route sample (1..60).
         #[arg(long, default_value_t = 1)]
         simulation_steps_per_frame: u32,
-        /// Use one compute queue submission per fixed tick as the batching baseline.
-        #[arg(long)]
-        disable_simulation_batching: bool,
         /// Move a scene object around the primary fire light during the route.
         #[arg(long)]
         moving_caster: Option<String>,
@@ -215,6 +212,9 @@ pub struct Options {
     /// Force the RGBA16F effect-target fallback to validate it on capable adapters.
     #[arg(long)]
     pub force_rg16_fallback: bool,
+    /// Use one smoke compute queue submission per fixed tick instead of batching.
+    #[arg(long)]
+    pub disable_simulation_batching: bool,
     #[arg(long)]
     pub shaders: Option<PathBuf>,
 }
@@ -282,7 +282,6 @@ fn start() -> Result<()> {
             disable_instancing,
             shading_counter_sampling,
             simulation_steps_per_frame,
-            disable_simulation_batching,
             moving_caster,
             caster_orbit_radius,
             caster_orbit_period,
@@ -302,7 +301,7 @@ fn start() -> Result<()> {
                 instancing_enabled: !disable_instancing,
                 shading_counter_sampling,
                 simulation_steps_per_frame,
-                simulation_batching_enabled: !disable_simulation_batching,
+                simulation_batching_enabled: !options.disable_simulation_batching,
             },
             BenchmarkRoute {
                 id: &route,
@@ -452,6 +451,7 @@ fn headless_with_timing(options: &Options, enable_timestamps: bool) -> Result<Se
         options.force_rg16_fallback,
     ))?;
     let mut session = Session::new(scene, path, renderer, options.seed);
+    session.set_simulation_batching(!options.disable_simulation_batching);
     session.execute("set_camera", json!({"id":options.camera}))?;
     Ok(session)
 }

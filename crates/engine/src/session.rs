@@ -37,6 +37,7 @@ pub struct Session {
     pub tick: u64,
     pub seed: u32,
     pub paused: bool,
+    pub simulation_batching_enabled: bool,
     pub scene_path: PathBuf,
     pub last_error: Option<String>,
 }
@@ -50,15 +51,19 @@ impl Session {
             tick: 0,
             seed,
             paused: false,
+            simulation_batching_enabled: true,
             scene_path,
             last_error: None,
         }
     }
     pub fn step(&mut self, count: u32) {
-        self.step_batched(count, true);
+        self.step_batched(count, self.simulation_batching_enabled);
     }
     pub fn step_unbatched(&mut self, count: u32) {
         self.step_batched(count, false);
+    }
+    pub fn set_simulation_batching(&mut self, enabled: bool) {
+        self.simulation_batching_enabled = enabled;
     }
     fn step_batched(&mut self, count: u32, batching: bool) {
         let mut remaining = count;
@@ -169,7 +174,7 @@ impl Session {
             "get_metrics" => {
                 self.renderer.poll_timing(false);
                 Ok(
-                    json!({"frame":self.renderer.metrics,"capabilities":self.renderer.capabilities(),"tick":self.tick}),
+                    json!({"frame":self.renderer.metrics,"capabilities":self.renderer.capabilities(),"tick":self.tick,"simulation_batching_enabled":self.simulation_batching_enabled}),
                 )
             }
             "get_errors" => Ok(json!({"last_error":self.last_error})),
@@ -339,6 +344,16 @@ impl Session {
                 self.renderer
                     .set_geometry_rendering(p.culling, p.instancing);
                 Ok(json!({"culling":p.culling,"instancing":p.instancing}))
+            }
+            "set_simulation_batching" => {
+                #[derive(Deserialize)]
+                #[serde(deny_unknown_fields)]
+                struct P {
+                    enabled: bool,
+                }
+                let p: P = serde_json::from_value(params)?;
+                self.set_simulation_batching(p.enabled);
+                Ok(json!({"enabled":self.simulation_batching_enabled}))
             }
             "capture_frame" => {
                 #[derive(Deserialize)]
@@ -530,6 +545,7 @@ pub fn description() -> Value {
         "set_shadow_cache":{"force_redraw":"boolean; true redraws every shadow map on every frame for comparison"},
         "set_tile_lists":{"enabled":"boolean; false uses exhaustive candidate evaluation for the correctness baseline","force_overflow":"optional boolean; forces exhaustive fallback for every tile to validate overflow behavior"},
         "set_shading_diagnostics":{"enabled":"boolean; enables companion instrumented draws and exposes counters in capture_frame/get_metrics; adds diagnostic scratch targets and perturbs timing"},
+        "set_simulation_batching":{"enabled":"boolean; true batches up to six fixed smoke ticks per queue submission; false uses one submission per tick"},
         "set_geometry_rendering":{"culling":"boolean; false draws every object in every applicable pass","instancing":"boolean; false issues one object draw for comparison"},
         "capture_frame":{"path":"PNG output path","scale":"integer 1..8, default 4"},"reload_shaders":{}},
         "notes":["Start --agent-stdio paused for deterministic control. step advances even when paused.","get_metrics includes CPU simulation submission, renderer encoding/uploads, fixed-step counts, object-culling/instancing counts and CPU time, tile-list encoding/capacity and per-pass GPU timestamps when supported; timestamps are asynchronous and identify their source frame. Absorption-cache build/skip counters are cumulative for the session.","Use set_shading_diagnostics on a paused native session to enable companion instrumented draws; capture_frame then records shading_counters in get_metrics and capture metadata. Atomic instrumentation perturbs timing and is diagnostic only; disable it after sampling to release scratch targets.","Object culling tests bounds independently against the active camera and each shadow frustum; unknown bounds remain visible. Shadow casters outside the camera can still render into visible light maps.","Tile lists preserve original candidate order. Per-category overflow and forced-overflow mode use exhaustive evaluation for that category.","Shadow cache hits, redraws, dirty reasons and shadow_dirty_faces are reported per frame. The mask starts with the sun face, then has six cube faces for each source ID in shadow_source_ids order. Tracked transform and shadow-participation changes redraw affected faces by conservative bounds; uncertain changes redraw all maps. Camera and light color/power do not invalidate shadow maps.","Native get_metrics also reports UI, surface acquisition, presentation encoding/submission and full-frame CPU spans; these overlap and must not be summed.","render.compact_hdr or --compact-hdr selects the experimental Rg11b10Ufloat HDR color target at startup when adapter features allow it; the default is Rgba16Float and unsupported adapters retain the default.","render.optical_no_copy or --optical-no-copy selects the experimental optical overlay path and skips the HDR snapshot copy; RGBA16F uses alpha coverage while compact HDR uses an R8 mask, and the option remains disabled by default.","Shader and effect mutations preserve smoke history; reset before A/B captures.","Topology, assets, resolution and HDR target format are startup settings. Restart to change them.","No floating point GPU bit-identity is promised between vendors."]})

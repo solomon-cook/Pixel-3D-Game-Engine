@@ -29,6 +29,7 @@ def main():
     run(binary,"validate","assets/scenes/materials.json")
     description = json.loads(subprocess.check_output([binary, "describe"], cwd=ROOT))
     assert description["protocol_version"] == 1
+    assert "set_simulation_batching" in description["commands"]
     if args.gpu:
         with tempfile.TemporaryDirectory(prefix="pixel-engine-check-") as temporary:
             temp = Path(temporary)
@@ -63,6 +64,14 @@ def main():
                 request("step", ticks=120)
                 request("capture_frame", path=str(temp / "replay.png"), scale=1)
                 assert (temp / "first.png").read_bytes() == (temp / "replay.png").read_bytes(), "same-device replay changed"
+                assert request("set_simulation_batching", enabled=False)["result"]["enabled"] is False
+                assert request("get_metrics")["result"]["simulation_batching_enabled"] is False
+                request("reset", seed=42)
+                request("step", ticks=120)
+                request("capture_frame", path=str(temp / "unbatched.png"), scale=1)
+                assert (temp / "first.png").read_bytes() == (temp / "unbatched.png").read_bytes(), "serial-submit baseline changed image"
+                assert request("set_simulation_batching", enabled=True)["result"]["enabled"] is True
+                assert "error" in request("set_simulation_batching", enabled=True, unknown=True)
                 # Shared smoke occlusion and internal emission must be visible,
                 # reversible authoring operations at an identical simulation tick.
                 request("set_camera", id="smoke-close")

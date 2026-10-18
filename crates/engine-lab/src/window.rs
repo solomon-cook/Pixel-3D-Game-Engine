@@ -382,6 +382,7 @@ impl App {
         let egui_renderer =
             egui_wgpu::Renderer::new(&renderer.device, config.format, None, 1, false);
         let mut session = Session::new(scene, path, renderer, self.options.seed);
+        session.set_simulation_batching(!self.options.disable_simulation_batching);
         session.paused = self.agent || self.paused;
         session.execute("set_camera", json!({"id":self.options.camera}))?;
         diagnostics::log("ready", session.renderer.capabilities());

@@ -575,6 +575,23 @@ render throughput, moving-route frame cost or GPU completion latency. See
 [reproducible runner](../scripts/simulation_batch_cost_study.py). Continuous-route,
 native-window and other-adapter acceptance remain open.
 
+The route benchmark now accepts fixed simulation steps per rendered sample and
+keeps an independently selectable one-submit-per-tick baseline, also exposed as
+`--disable-simulation-batching` and the shared Session command
+`set_simulation_batching`. Four workloads have three alternating 120-second
+moving-route pairs after ten-second warm-ups at six ticks per sample (10 Hz);
+baseline and candidate tick/camera fingerprints match for every sample. Median
+queue-submit CPU fell by 0.20–0.23 ms/sample across all four workloads. Median
+full frame work improved by 0.17–0.24 ms for clearing, profiling-heavy and
+two-emitter review, but regressed by 0.26 ms on Material Atelier. GPU-render
+medians rose by 0.01–0.11 ms on three workloads and were mixed on profiling-heavy;
+frame-work p95 also regressed on Material Atelier and was mixed on the heavy scene.
+Keep the serial path available: batching reduces CPU submission cost, but its
+full-frame benefit depends on the workload and is not a universal rendering or
+native FPS gain. See
+[route report](measurements-o08-batch-route.json) and its
+[runner](../scripts/simulation_batch_route_study.py).
+
 **Acceptance:** image/state comparisons survive pause/reset, repeated fixed steps,
 camera moves, resource recreation and invalid shader rollback. Report memory,
 total GPU/CPU time and supported formats on each backend, including any precision

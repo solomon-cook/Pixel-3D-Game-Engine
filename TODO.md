@@ -38,9 +38,14 @@ Detailed steps, dependencies and acceptance criteria live in
   Fixed-step submission batching now has same-device image parity and three paired
   catch-up burst measurements on M1 Max/Metal. The burst reduces host request and
   queue-submit CPU time for the tested 120-second fixed-step backlog, but this does
-  not establish moving-route or native-frame gains. See
+  not establish moving-route or native-frame gains. A matched 120-second 10 Hz
+  route comparison shows lower median CPU submission cost across four workloads,
+  but Material Atelier frame work regresses and GPU/p95 results are mixed. The
+  serial baseline remains selectable through Session and CLI controls. Native-window
+  and other-adapter gates remain open. See
   [batch parity](docs/measurements-o08-batch-parity.json),
-  [burst cost](docs/measurements-o08-batch-submit-cost.json) and the
+  [burst cost](docs/measurements-o08-batch-submit-cost.json),
+  [route study](docs/measurements-o08-batch-route.json) and the
   [follow-up plan](docs/OPTIMIZATION_PLAN.md#o08--reduce-memory-traffic-and-unnecessary-gpu-work).
 
 ## Later scaling research

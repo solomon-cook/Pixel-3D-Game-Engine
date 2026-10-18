@@ -24,11 +24,21 @@ four different request partitions. One 120-tick request now reports 20 compute
 submissions instead of 120. Three alternating 10-second-warm-up/120-second
 fixed-step catch-up pairs show 293/318 ms lower median host request latency on
 clearing/two-emitter review, with no rendering during the measured burst. This is
-not frame-throughput evidence. Continuous-route, native-window and broader platform
-acceptance remain open. See [parity report](measurements-o08-batch-parity.json),
-[burst report](measurements-o08-batch-submit-cost.json), and the runners
-[parity](../scripts/simulation_batch_parity.py) and
-[burst](../scripts/simulation_batch_cost_study.py).
+not frame-throughput evidence. A separate three-pair 120-second moving-route
+comparison at six ticks per 10 Hz sample covers clearing, profiling-heavy,
+Material Atelier and two-emitter review. Route/tick fingerprints match exactly;
+median CPU queue submission falls 0.20–0.23 ms per sample. Median frame work
+improves by 0.17–0.24 ms on three workloads but regresses by 0.26 ms on Material
+Atelier. GPU-render median changes are neutral or slower on three workloads and
+frame-work p95 is mixed. The serial path remains selectable with
+`set_simulation_batching` or `--disable-simulation-batching`. Native-window and
+broader platform acceptance remain open.
+See [parity report](measurements-o08-batch-parity.json),
+[burst report](measurements-o08-batch-submit-cost.json),
+[route report](measurements-o08-batch-route.json), and the runners
+[parity](../scripts/simulation_batch_parity.py),
+[burst](../scripts/simulation_batch_cost_study.py), and
+[route](../scripts/simulation_batch_route_study.py).
 
 O04's opt-in projected fire-segment LOD is implemented at 40/20 px with 48/24 px
 hysteresis. In the 120-second 640×360 clearing orbit, including a close-smoke
