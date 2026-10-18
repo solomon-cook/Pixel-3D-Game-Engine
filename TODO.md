@@ -41,11 +41,15 @@ Detailed steps, dependencies and acceptance criteria live in
   not establish moving-route or native-frame gains. A matched 120-second 10 Hz
   route comparison shows lower median CPU submission cost across four workloads,
   but Material Atelier frame work regresses and GPU/p95 results are mixed. The
-  serial baseline remains selectable through Session and CLI controls. Native-window
-  and other-adapter gates remain open. See
+  serial baseline remains selectable through Session and CLI controls. A three-pair
+  native clearing-orbit comparison shows near-zero median full-frame CPU change
+  (+0.0003 ms) and slightly lower FPS (-0.085), with mixed small GPU deltas; it
+  does not establish a native performance win. Broader native workloads and
+  other-adapter gates remain open. See
   [batch parity](docs/measurements-o08-batch-parity.json),
   [burst cost](docs/measurements-o08-batch-submit-cost.json),
-  [route study](docs/measurements-o08-batch-route.json) and the
+  [route study](docs/measurements-o08-batch-route.json),
+  [native study](docs/measurements-o08-batch-native.json) and the
   [follow-up plan](docs/OPTIMIZATION_PLAN.md#o08--reduce-memory-traffic-and-unnecessary-gpu-work).
 
 ## Later scaling research

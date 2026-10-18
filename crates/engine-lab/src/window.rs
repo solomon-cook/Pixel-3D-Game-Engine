@@ -1098,6 +1098,7 @@ fn native_benchmark_report(
         "route":benchmark.route,
         "route_seconds":benchmark.config.duration,
         "warmup_seconds":benchmark.config.warmup,
+        "simulation_batching_enabled":session.simulation_batching_enabled,
         "setup_seconds":benchmark.setup_seconds,
         "actual_measured_seconds":actual_seconds,
         "frames_per_second":if actual_seconds > 0. {benchmark.samples.len() as f64 / actual_seconds} else {0.},

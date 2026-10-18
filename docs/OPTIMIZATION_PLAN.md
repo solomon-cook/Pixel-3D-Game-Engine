@@ -592,6 +592,17 @@ native FPS gain. See
 [route report](measurements-o08-batch-route.json) and its
 [runner](../scripts/simulation_batch_route_study.py).
 
+A separate three-pair native-window clearing-orbit comparison on M1 Max/Metal
+records 5,175–5,218 rendered frames per 120-second run. Median paired batched-minus-
+serial deltas are +0.0003 ms native CPU frame work, +0.016 ms CPU simulation
+submission, -0.085 fps, +0.00004 ms smoke compute and -0.0034 ms atmosphere/fire.
+These are effectively flat whole-window results with mixed small stage changes;
+they do not establish a native performance win. Fixed-tick parity remains covered
+by the separate image study. Broader native workloads, continuous visual review
+and other-adapter/DX12 acceptance remain open. See
+[native report](measurements-o08-batch-native.json) and its
+[runner](../scripts/simulation_batch_native_study.py).
+
 **Acceptance:** image/state comparisons survive pause/reset, repeated fixed steps,
 camera moves, resource recreation and invalid shader rollback. Report memory,
 total GPU/CPU time and supported formats on each backend, including any precision

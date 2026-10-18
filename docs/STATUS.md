@@ -31,14 +31,19 @@ median CPU queue submission falls 0.20–0.23 ms per sample. Median frame work
 improves by 0.17–0.24 ms on three workloads but regresses by 0.26 ms on Material
 Atelier. GPU-render median changes are neutral or slower on three workloads and
 frame-work p95 is mixed. The serial path remains selectable with
-`set_simulation_batching` or `--disable-simulation-batching`. Native-window and
-broader platform acceptance remain open.
+`set_simulation_batching` or `--disable-simulation-batching`. A separate
+three-pair native clearing-orbit study measures +0.0003 ms median CPU frame work
+and -0.085 fps for batching, with mixed small GPU-stage changes; this does not
+establish a native performance win. Broader native workloads and other-adapter
+acceptance remain open.
 See [parity report](measurements-o08-batch-parity.json),
 [burst report](measurements-o08-batch-submit-cost.json),
-[route report](measurements-o08-batch-route.json), and the runners
+[route report](measurements-o08-batch-route.json),
+[native report](measurements-o08-batch-native.json), and the runners
 [parity](../scripts/simulation_batch_parity.py),
 [burst](../scripts/simulation_batch_cost_study.py), and
-[route](../scripts/simulation_batch_route_study.py).
+[route](../scripts/simulation_batch_route_study.py),
+[native](../scripts/simulation_batch_native_study.py).
 
 O04's opt-in projected fire-segment LOD is implemented at 40/20 px with 48/24 px
 hysteresis. In the 120-second 640×360 clearing orbit, including a close-smoke
