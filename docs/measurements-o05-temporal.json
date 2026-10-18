@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-18",
+  "workstream": "O05 direct versus cached absorption temporal comparison",
+  "method": "Matched fixed-tick route frames compare direct sampling and the 16-cubed cache. Temporal change magnitude compares absolute per-channel RGB movement between adjacent frames; it does not represent motion direction or replace playback review.",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal"
+  },
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "start_tick": 300,
+  "end_tick": 1497,
+  "frames": 400,
+  "fps": 20.0,
+  "route": "absorption-cache-orbit",
+  "cache_resolution": [
+    16,
+    16,
+    16
+  ],
+  "direct_scene_sha256": "8c8e452998490b9c13107fd9e6d98f36ae65bc8fab1814ffe53ed219ea86a5f2",
+  "cached_scene_sha256": "614e3fa36a06032354ce88d699fa324df85b22c7e8b6a871b593641f5ae17155",
+  "binary_sha256": "e18956da749438f3d4ce0d2706497adc61670b8e2b15d4d65edc0b0f191ec9a4",
+  "capture_script_sha256": "194f006a85642827caf26ebde77a880f2eb728e5fbae002920e277d68c6d3aca",
+  "fire_and_effect_count_fields_match_every_frame": true,
+  "frame_rgb_mae_mean": 0.09600249565972223,
+  "frame_rgb_mae_median": 0.09004846643518519,
+  "frame_rgb_mae_p95": 0.17692708333333335,
+  "frame_rgb_mae_max": 0.2043287037037037,
+  "max_channel_difference": 19,
+  "temporal_change_magnitude_rgb_mae_mean": 0.1040299170959807,
+  "temporal_change_magnitude_rgb_mae_median": 0.09729021990740741,
+  "temporal_change_magnitude_rgb_mae_p95": 0.1676953125,
+  "visual_review": "See temporal-contact.png for sampled frames. This report does not claim continuous human playback acceptance.",
+  "source_scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+  "limitations": [
+    "Headless Apple M1 Max/Metal only; native-window and Windows/DX12 rendering are not covered.",
+    "This run measures the 16-cubed cache at the medium-smoke scale; it does not establish a faster total-render range.",
+    "Paused wall-clock and resumed wall-clock behavior are not included in this route capture.",
+    "The contact sheet is sampled visual evidence; full continuous human playback review remains open."
+  ],
+  "artifacts": {
+    "direct_sequence": {
+      "path": "artifacts/o05/continuous/direct/sequence.json",
+      "sha256": "b257b0927caa83b56a0757657a9e465f5b43fc183ba7e613361ec8b565c03e7f"
+    },
+    "cache16_sequence": {
+      "path": "artifacts/o05/continuous/cache16/sequence.json",
+      "sha256": "e0cd9348713c064f53a4f330b18b0bf947e89facf2646169eb07ed2db46520f7"
+    },
+    "contact_sheet": {
+      "path": "artifacts/o05/continuous/temporal-contact.png",
+      "sha256": "69b3adbe14e105404f2df8a7498035119205b5c132029f945e9b0fa37bedb3cd"
+    }
+  }
+}

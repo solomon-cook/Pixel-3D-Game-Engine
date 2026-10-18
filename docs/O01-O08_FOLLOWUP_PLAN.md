@@ -136,8 +136,16 @@ alone are not a frame-win claim. See [measurements-o04-motion-review.json](measu
    flicker, paused captures, four moving-ember checkpoints, shader reload and reset.
    Fire state matches at all 13 checkpoints per size; see
    [measurements-o05-invalidation.json](measurements-o05-invalidation.json).
-   Remaining: continuous temporal image error and wall-clock pause/resume checks,
-   plus a longer human motion review of lit rims, soot folds and contacts.
+   The 16³ cache now has a matched 400-frame 20 fps temporal comparison at the
+   medium-smoke scale, including frame and temporal-change-magnitude RGB error.
+   A native `run --agent-stdio` check confirms direct and 16³ captures stay
+   bit-identical while paused for two wall-clock seconds. During the two-second
+   resume, they advanced 121 and 120 ticks under host scheduling, then were
+   stepped to tick 540 and matched fire state exactly. The full
+   movie still needs human playback review. The 8³ temporal route, other-adapter
+   acceptance and more resume durations remain open. See
+   [measurements-o05-temporal.json](measurements-o05-temporal.json) and
+   [measurements-o05-pause-resume.json](measurements-o05-pause-resume.json).
 
 **Exit gate:** a workload range where total frame cost improves and motion quality
 passes. If cache maintenance remains more expensive than direct samples, leave it

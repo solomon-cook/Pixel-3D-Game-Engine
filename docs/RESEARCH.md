@@ -650,3 +650,25 @@ profiles. The feature remains opt-in. Commands, hashes, tier occupancy and
 transition sizes are in [measurements-o04-motion-review.json](measurements-o04-motion-review.json);
 the generated frame sequences and preview files are under ignored
 `artifacts/o04/continuous-motion/`.
+
+## O05 absorption-cache temporal and pause/resume review (18 October)
+
+At medium smoke scale, direct sampling and the 16³ cache were captured at
+640×360, seed 42, ticks 300–1497, on the same 20-second orbit at 20 fps. Exact
+tick/camera and fire/effect-count parity held over 400 frames. Mean frame RGB
+MAE was 0.096/255 (p95 0.177/255, maximum channel difference 19/255). Mean error
+in per-channel frame-to-frame change magnitude was 0.104/255. The metric omits
+change direction and is not a substitute for continuous playback review; sampled
+contact sheets show small smoke-region differences. No total-render win follows
+from this quality study, and the cache remains disabled by default.
+
+A native `run --agent-stdio` M1 Max/Metal check held each variant at tick 300 for
+two wall-clock seconds: tick and image hash stayed unchanged. Each variant then
+advanced for two wall-clock seconds (121 direct ticks, 120 cached ticks), was
+paused, and stepped to tick 540; fire state matched exactly there. This validates
+paused freshness and post-resume cache consistency for the tested duration, not
+other devices or continuous user-facing playback. The 8³ temporal route, longer
+motion review, refresh-policy hypothesis, Windows/DX12 and other adapters remain
+open. Reproduction scripts are `scripts/absorption_cache_temporal_study.py` and
+`scripts/absorption_cache_pause_resume_study.py`; reports are linked from TODO
+and STATUS.
