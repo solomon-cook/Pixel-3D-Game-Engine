@@ -32,6 +32,8 @@ fallbacks. Other memory layout work remains proposed. Measurements are recorded 
 [docs/measurements-multi-emitter-review-tile-sustained.json](docs/measurements-multi-emitter-review-tile-sustained.json),
 [docs/measurements-multi-emitter-heat-response-temporal.json](docs/measurements-multi-emitter-heat-response-temporal.json),
 [docs/measurements-multi-emitter-heat-response-ground-orbit.json](docs/measurements-multi-emitter-heat-response-ground-orbit.json),
+[docs/measurements-multi-emitter-heat-response-native.json](docs/measurements-multi-emitter-heat-response-native.json),
+[docs/measurements-multi-emitter-heat-response-native-contact.png](docs/measurements-multi-emitter-heat-response-native-contact.png),
 [docs/measurements-multi-emitter-heat-response-ground-orbit-contact.png](docs/measurements-multi-emitter-heat-response-ground-orbit-contact.png),
 [docs/measurements-multi-emitter-heat-response-temporal-contact.png](docs/measurements-multi-emitter-heat-response-temporal-contact.png),
 [docs/measurements-multi-emitter-absorption-native.json](docs/measurements-multi-emitter-absorption-native.json),

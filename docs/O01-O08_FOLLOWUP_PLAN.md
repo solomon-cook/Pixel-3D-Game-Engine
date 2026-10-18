@@ -630,9 +630,19 @@ wide-route contact sheet was inspected; mean A/B difference there is 0.0084/255.
 A second 120-second route orbits the watchfire with the ground in view. Across
 2,400 frames, mean A/B MAE is 0.7705/255 (9,331 changed pixels on average), and
 temporal-change difference MAE is 0.0435/255. The inspected contact sheet shows
-the heat ring at each of five sampled checkpoints. Human continuous playback,
-native viewing and performance review remain open. See the [focused-route report](measurements-multi-emitter-heat-response-ground-orbit.json), [contact sheet](measurements-multi-emitter-heat-response-ground-orbit-contact.png), [wide-route report](measurements-multi-emitter-heat-response-temporal.json) and [runner](../scripts/two_emitter_heat_response_temporal_study.py), plus the fixed-tick
-[opaque heat evidence](measurements-multi-emitter-opaque-heat.json).
+the heat ring at each of five sampled checkpoints. A native-window fixed-tick A/B
+now repeats those five focused poses at tick 300 in one paused session; heat-on
+changes 5,776–7,715 pixels per pose, and the inspected native contact sheet shows
+the ring in every heat-on sample. This confirms same-session native image
+contribution, not continuous playback or an owner visual-acceptance decision. No
+performance conclusion is drawn. See the [native report](measurements-multi-emitter-heat-response-native.json),
+[native contact sheet](measurements-multi-emitter-heat-response-native-contact.png)
+and [native runner](../scripts/two_emitter_heat_response_native_study.py), plus the
+[focused-route report](measurements-multi-emitter-heat-response-ground-orbit.json),
+[offscreen contact sheet](measurements-multi-emitter-heat-response-ground-orbit-contact.png),
+[wide-route report](measurements-multi-emitter-heat-response-temporal.json),
+[still A/B evidence](measurements-multi-emitter-opaque-heat.json) and
+[offscreen runner](../scripts/two_emitter_heat_response_temporal_study.py).
 `Renderer::update_globals` has a keyed two-source sampling and upload branch with
 independent projected-detail tiers. The two-source fixed-tick capture matrix now
 covers each source alone, both together and reversed scene emitter order across
