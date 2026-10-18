@@ -531,6 +531,11 @@ impl Scene {
                 );
             }
         }
+        // A primary point light belongs to one emitter. Keep this invariant
+        // explicit before the renderer grows beyond its current single-source
+        // contract; otherwise a future second source could silently share the
+        // first source's shadow map and flicker state.
+        let mut emitter_primary_lights = HashSet::new();
         for emitter in &self.emitters {
             if let Some(light_id) = &emitter.light_id {
                 if !self
@@ -553,6 +558,14 @@ impl Scene {
             }
             if linked_light.is_some_and(|light| light.position != emitter.position) {
                 bail!("emitter '{}'.light_id: linked point light must coincide with the emitter position", emitter.id);
+            }
+            let light = linked_light.expect("checked above");
+            if !emitter_primary_lights.insert(light.id.as_str()) {
+                bail!(
+                    "emitter '{}'.light_id: primary point light '{}' is already assigned to another emitter",
+                    emitter.id,
+                    light.id
+                );
             }
         }
         for r in &self.routes {
