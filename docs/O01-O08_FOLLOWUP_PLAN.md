@@ -464,6 +464,16 @@ disabled-by-default experiments. No-copy now also has three alternating native
 Platform, continuous-temporal and broader-pass acceptance stays open as
 summarized in that record.
 
+The dirty render-Globals upload now also has native-window timing on M1
+Max/Metal: three alternating 120-second clearing-orbit pairs with ten-second
+warm-ups and >99% render and smoke-compute timestamp coverage. The optimized
+path removes about 1.379 Globals writes and 1,169 upload bytes per rendered
+frame. Paired FPS and GPU-stage results vary in sign, so the work remains a
+verified traffic reduction without a whole-window speedup claim. More workloads
+and Windows/DX12 or other-adapter checks remain open. See
+[native report](measurements-o08-globals-upload-native.json) and
+[runner](../scripts/globals_upload_native_study.py).
+
 **Lazy snapshot native lifecycle complete on M1 Max/Metal:** a paused shared
 Session edits an optical material while the camera faces away, then captures
 away/visible/away/visible. Snapshot residency stays at zero until nine optical

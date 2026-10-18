@@ -66,6 +66,7 @@ struct NativeBenchmarkConfig {
     precompute_fire_bounds: bool,
     object_culling_enabled: bool,
     instancing_enabled: bool,
+    legacy_smoke_globals_upload: bool,
     moving_caster: Option<String>,
     caster_orbit_radius: f32,
     caster_orbit_period: f32,
@@ -81,6 +82,7 @@ pub struct NativeBenchmarkSettings {
     pub precompute_fire_bounds: bool,
     pub object_culling_enabled: bool,
     pub instancing_enabled: bool,
+    pub legacy_smoke_globals_upload: bool,
     pub moving_caster: Option<String>,
     pub caster_orbit_radius: f32,
     pub caster_orbit_period: f32,
@@ -272,6 +274,7 @@ pub fn benchmark_native(options: Options, settings: NativeBenchmarkSettings) -> 
             precompute_fire_bounds: settings.precompute_fire_bounds,
             object_culling_enabled: settings.object_culling_enabled,
             instancing_enabled: settings.instancing_enabled,
+            legacy_smoke_globals_upload: settings.legacy_smoke_globals_upload,
             moving_caster: settings.moving_caster,
             caster_orbit_radius: settings.caster_orbit_radius,
             caster_orbit_period: settings.caster_orbit_period,
@@ -399,6 +402,9 @@ impl App {
             session
                 .renderer
                 .set_fire_bounds_precompute(config.precompute_fire_bounds);
+            session
+                .renderer
+                .set_legacy_smoke_globals_upload_for_benchmark(config.legacy_smoke_globals_upload);
             session
                 .renderer
                 .set_geometry_rendering(config.object_culling_enabled, config.instancing_enabled);
@@ -1146,6 +1152,7 @@ fn native_benchmark_report(
         "vsync":present_mode == wgpu::PresentMode::AutoVsync || present_mode == wgpu::PresentMode::Fifo,
         "tile_lists_enabled":benchmark.config.tile_lists_enabled,
         "fire_bounds_precompute":benchmark.config.precompute_fire_bounds,
+        "legacy_smoke_globals_upload":benchmark.config.legacy_smoke_globals_upload,
         "force_shadow_redraw":benchmark.config.force_shadow_redraw,
         "geometry_rendering":{"culling":benchmark.config.object_culling_enabled,"instancing":benchmark.config.instancing_enabled},
         "moving_caster":benchmark.moving_caster.as_ref().map(|(id, _)| json!({"object":id,"radius":benchmark.config.caster_orbit_radius,"period_seconds":benchmark.config.caster_orbit_period,"orbit_center_xz":benchmark.orbit_center_xz,"sample_hz":60})),
@@ -1158,6 +1165,7 @@ fn native_benchmark_report(
         "queue_latency":{"value_ms":null,"reason":"GPU timestamps are not calibrated to the host clock; queue/readback completion delay is reported separately"},
         "gpu_readback_latency":{"render_stages":timing_summary(&render_readback),"presentation_ui":timing_summary(&presentation_readback),"meaning":"host submit-to-map-completion delay including queueing, GPU work, and polling; not pure queue latency"},
         "cpu_native_frame":summarize_frames("cpu_native_frame_ms"),
+        "cpu_upload":summarize_frames("cpu_upload_calls_ms"),
         "cpu_renderer_encode":summarize_frames("cpu_renderer_encode_ms"),
         "cpu_simulation_submit":summarize_frames("cpu_simulation_submit_ms"),
         "cpu_simulation_encode":summarize_frames("cpu_simulation_encode_ms"),

@@ -856,6 +856,17 @@ multi-workload and cross-adapter checks remain open. See
 [upload report](measurements-o08-globals-upload.json) and ignored raw runs in
 `artifacts/o08-globals-upload-study/`.
 
+**Native-window follow-up:** three alternating 120-second optimized/legacy
+pairs on M1 Max/Metal, with ten-second warm-ups and >99% render and
+smoke-compute timestamp coverage, measure optimized-minus-legacy paired medians
+of +0.124 FPS, -0.045 ms CPU native frame, -0.006 ms CPU upload and +0.006 ms
+atmosphere/fire GPU time. Per-frame counters show about 1.379 fewer Globals
+writes and 1,169 fewer uploaded bytes; native frames batch varying numbers of
+fixed steps. FPS and GPU-stage deltas vary in sign, so no whole-window gain is
+claimed. Additional workloads and non-Metal acceptance remain open. See the
+[native report](measurements-o08-globals-upload-native.json) and
+[runner](../scripts/globals_upload_native_study.py).
+
 **Smoke compute bind-group layout (18 October 2026):** the advection WGSL
 bindings now occupy group 0, and the compute pipeline layout contains only the
 source-local smoke resources. Each simulation compute pass therefore binds its

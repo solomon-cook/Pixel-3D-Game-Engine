@@ -395,10 +395,24 @@ bytes per 7,200-step run) and lower median CPU-upload time by 0.012–0.053 ms.
 Whole-frame deltas are mixed (-0.062/+0.087/-0.158 ms), and GPU-render deltas
 remain near zero (-0.004/-0.018/+0.003 ms); this is an upload reduction, not an
 established throughput gain. Baseline/candidate tick-120 images match
-byte-for-byte. Native-window, additional-workload and cross-adapter acceptance
-remain open. See [measurement report](measurements-o08-globals-upload.json);
+byte-for-byte. Additional-workload and cross-adapter acceptance remain open.
+The native-window clearing route is measured separately below. See
+[measurement report](measurements-o08-globals-upload.json);
 the per-frame upload counters are included in `describe`, `get_metrics`, route
 benchmarks and native benchmark samples.
+
+The native-window comparison is now complete for the clearing orbit on M1
+Max/Metal: three alternating 120-second optimized/legacy pairs, ten-second
+warm-ups, and above 99% render and smoke-compute timestamp coverage. Paired
+optimized-minus-legacy medians are +0.124 FPS, -0.045 ms CPU native frame,
+-0.006 ms CPU upload and +0.006 ms atmosphere/fire GPU time. FPS and GPU-stage
+deltas vary in sign, so this does not establish a whole-window speedup. Frame
+counters show about 1.379 fewer `Globals` writes and 1,169 fewer uploaded bytes
+per rendered frame; native frames batch differing numbers of fixed simulation
+steps, so this is distinct from the 848-byte per-step offscreen result. Further
+workloads and Windows/DX12 or other-adapter validation remain open. See the
+[native report](measurements-o08-globals-upload-native.json) and
+[reproducible study](../scripts/globals_upload_native_study.py).
 
 O08 also retargets smoke compute resources from group 1 to group 0 and removes
 the unused render Globals group from the advection pipeline layout. This reduces

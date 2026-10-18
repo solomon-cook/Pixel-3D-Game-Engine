@@ -326,6 +326,7 @@ pub struct Renderer {
     tile_force_overflow: bool,
     tile_lists_enabled: bool,
     fire_bounds_precompute_enabled: bool,
+    legacy_smoke_globals_upload: bool,
     pipelines: Pipelines,
     timing: Option<Timing>,
     completed_gpu_timings: VecDeque<GpuTimingSample>,
@@ -2290,6 +2291,7 @@ impl Renderer {
             tile_force_overflow: false,
             tile_lists_enabled: true,
             fire_bounds_precompute_enabled: false,
+            legacy_smoke_globals_upload: false,
             pipelines,
             timing,
             completed_gpu_timings: VecDeque::new(),
@@ -3231,6 +3233,11 @@ impl Renderer {
         self.update_tile_config();
     }
 
+    /// Restore the redundant render-uniform upload during smoke simulation for native benchmarks.
+    pub fn set_legacy_smoke_globals_upload_for_benchmark(&mut self, enabled: bool) {
+        self.legacy_smoke_globals_upload = enabled;
+    }
+
     fn update_tile_config(&self) {
         let config = TileConfigGpu {
             force_overflow: [
@@ -3714,10 +3721,12 @@ impl Renderer {
             }
             self.metrics.cpu_upload_ms +=
                 smoke_config_upload_started.elapsed().as_secs_f64() * 1000.;
-            // The smoke compute shader reads this tick's inputs from the
-            // source-local config buffer (group 1). It has no Globals bindings,
-            // so updating the render uniform here only queues an unused write.
-            return;
+            if !self.legacy_smoke_globals_upload {
+                // The smoke compute shader reads this tick's inputs from the
+                // source-local config buffer (group 1). It has no Globals bindings,
+                // so updating the render uniform here only queues an unused write.
+                return;
+            }
         }
         let mut point_lights = [PointLightGpu::zeroed(); 8];
         let mut primary_lights = scene.emitters.iter().collect::<Vec<_>>();

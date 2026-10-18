@@ -1,0 +1,298 @@
+{
+  "workstream": "O08 native-window smoke Globals upload cleanup",
+  "host": {
+    "adapter": "Apple M1 Max",
+    "backend": "Metal",
+    "os": "macOS-27.0.1-arm64-arm-64bit"
+  },
+  "scene": "assets/scenes/clearing.json",
+  "scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+  "camera": "hero",
+  "route": "clearing-orbit",
+  "seed": 42,
+  "resolution": [
+    640,
+    360
+  ],
+  "duration_seconds_per_run": 120.0,
+  "warmup_seconds": 10.0,
+  "git_revision": "9c317ea7dd9f7200f7a32a0be785505c13618ca3",
+  "binary_sha256": "b2cccd2cfb0fb87fae6aa2e523b72ae3d6bb4bcc19ce9f2d79067b4975044e56",
+  "source_sha256": {
+    "crates/engine-lab/src/main.rs": "a38f37d207ccdbb034bf692a0f1a91cf894d2afbc7595c21bc980ce1045d8651",
+    "crates/engine-lab/src/window.rs": "3469f40b07464487e6b604e377844401991d51fecf7731513a100e2f9520a924",
+    "crates/engine/src/render/mod.rs": "c71b166859165caea46003ad216c0efe01de74fc169acb7939dcabbcac465d58",
+    "crates/engine/src/render/shaders/fire_projected_bounds.wgsl": "434872cd5bf189c6b747036e73f75742f271a951765a15e652baa0f0c1aa9f61",
+    "scripts/fire_bounds_native_study.py": "40bf55d5f0b4fcbb42ed972228c4b7cfe277c48e59090cebbb46e4e59c199b61"
+  },
+  "pairs": [
+    {
+      "pair": 1,
+      "order": [
+        "optimized",
+        "legacy"
+      ],
+      "deltas_optimized_minus_legacy": {
+        "frames_per_second": 0.23827045560436488,
+        "cpu_native_frame_ms": -0.044500000000001094,
+        "cpu_upload_ms": -0.0064589999999999925,
+        "gpu_atmosphere_fire_ms": 0.005541999999999936,
+        "globals_uploads_per_frame": -1.375883814255685,
+        "globals_upload_bytes_per_frame": -1166.7494744888209
+      },
+      "legacy": {
+        "frames_per_second": 43.60938274479536,
+        "cpu_native_frame": {
+          "median_ms": 8.610417,
+          "p95_ms": 70.377,
+          "samples": 5233
+        },
+        "gpu_atmosphere_fire": {
+          "median_ms": 1.742583,
+          "p95_ms": 2.301583,
+          "samples": 5233
+        },
+        "timing_coverage": {
+          "counter_scope": "skipped and late counters are cumulative for the native session, including warm-up",
+          "gpu_presentation_ui_reason": null,
+          "gpu_timestamps_supported": true,
+          "late_render_samples": 1280,
+          "native_presentation_ui_samples": 5230,
+          "rendered_frames": 5233,
+          "skipped_compute_samples": 3,
+          "skipped_native_presentation_ui_samples": 3,
+          "skipped_render_samples": 0,
+          "smoke_compute_samples": 7197,
+          "timed_render_frames": 5233
+        },
+        "cpu_upload": {
+          "median_ms": 0.225209,
+          "p95_ms": 2.003501,
+          "samples": 5233
+        },
+        "mean_globals_uploads_per_frame": 2.375883814255685,
+        "mean_globals_upload_bytes_per_frame": 2014.7494744888209,
+        "report": "pair-01-legacy.engine.json",
+        "report_sha256": "22b10fdd798a2c77a5ef8f0a3f08b0afc07b4710e7dbdf73cdea2d001bdd04c0"
+      },
+      "optimized": {
+        "frames_per_second": 43.847653200399726,
+        "cpu_native_frame": {
+          "median_ms": 8.565916999999999,
+          "p95_ms": 70.11358299999999,
+          "samples": 5260
+        },
+        "gpu_atmosphere_fire": {
+          "median_ms": 1.748125,
+          "p95_ms": 2.4786669999999997,
+          "samples": 5260
+        },
+        "timing_coverage": {
+          "counter_scope": "skipped and late counters are cumulative for the native session, including warm-up",
+          "gpu_presentation_ui_reason": null,
+          "gpu_timestamps_supported": true,
+          "late_render_samples": 1329,
+          "native_presentation_ui_samples": 5258,
+          "rendered_frames": 5260,
+          "skipped_compute_samples": 6,
+          "skipped_native_presentation_ui_samples": 2,
+          "skipped_render_samples": 0,
+          "smoke_compute_samples": 7191,
+          "timed_render_frames": 5260
+        },
+        "cpu_upload": {
+          "median_ms": 0.21875,
+          "p95_ms": 1.9935,
+          "samples": 5260
+        },
+        "mean_globals_uploads_per_frame": 1,
+        "mean_globals_upload_bytes_per_frame": 848,
+        "report": "pair-01-optimized.engine.json",
+        "report_sha256": "356b545a765caf0fd6994e5eae82f7077b0b41a51432ccaa7228de0145bd9930"
+      }
+    },
+    {
+      "pair": 2,
+      "order": [
+        "legacy",
+        "optimized"
+      ],
+      "deltas_optimized_minus_legacy": {
+        "frames_per_second": 0.1239284235192315,
+        "cpu_native_frame_ms": -0.03558299999999903,
+        "cpu_upload_ms": 0.0010819999999999719,
+        "gpu_atmosphere_fire_ms": -0.006833000000000089,
+        "globals_uploads_per_frame": -1.3803222094361334,
+        "globals_upload_bytes_per_frame": -1170.5132336018412
+      },
+      "legacy": {
+        "frames_per_second": 43.46323950616822,
+        "cpu_native_frame": {
+          "median_ms": 8.599957999999999,
+          "p95_ms": 70.09691699999999,
+          "samples": 5214
+        },
+        "gpu_atmosphere_fire": {
+          "median_ms": 1.741542,
+          "p95_ms": 2.289917,
+          "samples": 5213
+        },
+        "timing_coverage": {
+          "counter_scope": "skipped and late counters are cumulative for the native session, including warm-up",
+          "gpu_presentation_ui_reason": null,
+          "gpu_timestamps_supported": true,
+          "late_render_samples": 1279,
+          "native_presentation_ui_samples": 5212,
+          "rendered_frames": 5214,
+          "skipped_compute_samples": 2,
+          "skipped_native_presentation_ui_samples": 2,
+          "skipped_render_samples": 1,
+          "smoke_compute_samples": 7195,
+          "timed_render_frames": 5213
+        },
+        "cpu_upload": {
+          "median_ms": 0.237292,
+          "p95_ms": 1.9391250000000002,
+          "samples": 5214
+        },
+        "mean_globals_uploads_per_frame": 2.3803222094361334,
+        "mean_globals_upload_bytes_per_frame": 2018.5132336018412,
+        "report": "pair-02-legacy.engine.json",
+        "report_sha256": "55d637e0bf3cd929d506109e9561606707e2feac02cd6f66139eb54bd3afb564"
+      },
+      "optimized": {
+        "frames_per_second": 43.58716792968745,
+        "cpu_native_frame": {
+          "median_ms": 8.564375,
+          "p95_ms": 70.11916699999999,
+          "samples": 5230
+        },
+        "gpu_atmosphere_fire": {
+          "median_ms": 1.7347089999999998,
+          "p95_ms": 2.274542,
+          "samples": 5230
+        },
+        "timing_coverage": {
+          "counter_scope": "skipped and late counters are cumulative for the native session, including warm-up",
+          "gpu_presentation_ui_reason": null,
+          "gpu_timestamps_supported": true,
+          "late_render_samples": 1328,
+          "native_presentation_ui_samples": 5229,
+          "rendered_frames": 5230,
+          "skipped_compute_samples": 3,
+          "skipped_native_presentation_ui_samples": 1,
+          "skipped_render_samples": 0,
+          "smoke_compute_samples": 7197,
+          "timed_render_frames": 5230
+        },
+        "cpu_upload": {
+          "median_ms": 0.23837399999999997,
+          "p95_ms": 1.854667,
+          "samples": 5230
+        },
+        "mean_globals_uploads_per_frame": 1,
+        "mean_globals_upload_bytes_per_frame": 848,
+        "report": "pair-02-optimized.engine.json",
+        "report_sha256": "9e6657e56a628e2cf713c3a79c80a86ae3fc1e7afa6061bbada904004706a9a6"
+      }
+    },
+    {
+      "pair": 3,
+      "order": [
+        "optimized",
+        "legacy"
+      ],
+      "deltas_optimized_minus_legacy": {
+        "frames_per_second": -0.2078529172976573,
+        "cpu_native_frame_ms": -0.16079100000000146,
+        "cpu_upload_ms": -0.04216500000000001,
+        "gpu_atmosphere_fire_ms": 0.01420700000000008,
+        "globals_uploads_per_frame": -1.3786630913618079,
+        "globals_upload_bytes_per_frame": -1169.1063014748133
+      },
+      "legacy": {
+        "frames_per_second": 43.510674796844455,
+        "cpu_native_frame": {
+          "median_ms": 8.678416,
+          "p95_ms": 70.469958,
+          "samples": 5221
+        },
+        "gpu_atmosphere_fire": {
+          "median_ms": 1.7343339999999998,
+          "p95_ms": 2.21425,
+          "samples": 5221
+        },
+        "timing_coverage": {
+          "counter_scope": "skipped and late counters are cumulative for the native session, including warm-up",
+          "gpu_presentation_ui_reason": null,
+          "gpu_timestamps_supported": true,
+          "late_render_samples": 1258,
+          "native_presentation_ui_samples": 5218,
+          "rendered_frames": 5221,
+          "skipped_compute_samples": 1,
+          "skipped_native_presentation_ui_samples": 3,
+          "skipped_render_samples": 0,
+          "smoke_compute_samples": 7198,
+          "timed_render_frames": 5221
+        },
+        "cpu_upload": {
+          "median_ms": 0.260583,
+          "p95_ms": 1.9318759999999997,
+          "samples": 5221
+        },
+        "mean_globals_uploads_per_frame": 2.378663091361808,
+        "mean_globals_upload_bytes_per_frame": 2017.1063014748133,
+        "report": "pair-03-legacy.engine.json",
+        "report_sha256": "dfdb42d375f30bb19fed7236829165cd28fd9c6b6b5ce576581c312c1dc9e92c"
+      },
+      "optimized": {
+        "frames_per_second": 43.3028218795468,
+        "cpu_native_frame": {
+          "median_ms": 8.517624999999999,
+          "p95_ms": 70.563708,
+          "samples": 5195
+        },
+        "gpu_atmosphere_fire": {
+          "median_ms": 1.748541,
+          "p95_ms": 2.4724999999999997,
+          "samples": 5195
+        },
+        "timing_coverage": {
+          "counter_scope": "skipped and late counters are cumulative for the native session, including warm-up",
+          "gpu_presentation_ui_reason": null,
+          "gpu_timestamps_supported": true,
+          "late_render_samples": 1309,
+          "native_presentation_ui_samples": 5191,
+          "rendered_frames": 5195,
+          "skipped_compute_samples": 11,
+          "skipped_native_presentation_ui_samples": 4,
+          "skipped_render_samples": 0,
+          "smoke_compute_samples": 7169,
+          "timed_render_frames": 5195
+        },
+        "cpu_upload": {
+          "median_ms": 0.218418,
+          "p95_ms": 1.849751,
+          "samples": 5195
+        },
+        "mean_globals_uploads_per_frame": 1,
+        "mean_globals_upload_bytes_per_frame": 848,
+        "report": "pair-03-optimized.engine.json",
+        "report_sha256": "5256b0039b01e28f33a8632e4b6ad30ec31833236ad6dbef428c0c40ee4e523f"
+      }
+    }
+  ],
+  "paired_medians_optimized_minus_legacy": {
+    "frames_per_second": 0.1239284235192315,
+    "cpu_native_frame_ms": -0.044500000000001094,
+    "cpu_upload_ms": -0.0064589999999999925,
+    "gpu_atmosphere_fire_ms": 0.005541999999999936,
+    "globals_uploads_per_frame": -1.3786630913618079,
+    "globals_upload_bytes_per_frame": -1169.1063014748133
+  },
+  "limitations": [
+    "Native-window results include surface acquisition, UI, submission and vsync.",
+    "CPU spans overlap and must not be summed; the atmosphere/fire GPU stage and full-window measures are separate.",
+    "This host and route do not qualify Windows/DX12 or other adapters."
+  ]
+}

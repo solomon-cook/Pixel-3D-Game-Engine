@@ -145,6 +145,9 @@ enum Command {
         /// Issue one draw per visible object instead of grouping compatible instances.
         #[arg(long)]
         disable_instancing: bool,
+        /// Restore the redundant render Globals upload during smoke simulation for comparison.
+        #[arg(long)]
+        legacy_smoke_globals_upload: bool,
         /// Move a scene object around the primary fire light during the route.
         #[arg(long)]
         moving_caster: Option<String>,
@@ -338,6 +341,7 @@ fn start() -> Result<()> {
             precompute_fire_bounds,
             disable_object_culling,
             disable_instancing,
+            legacy_smoke_globals_upload,
             moving_caster,
             caster_orbit_radius,
             caster_orbit_period,
@@ -357,6 +361,7 @@ fn start() -> Result<()> {
                 precompute_fire_bounds,
                 object_culling_enabled: !disable_object_culling,
                 instancing_enabled: !disable_instancing,
+                legacy_smoke_globals_upload,
                 moving_caster,
                 caster_orbit_radius,
                 caster_orbit_period,
