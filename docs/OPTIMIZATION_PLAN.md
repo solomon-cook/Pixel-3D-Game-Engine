@@ -556,9 +556,16 @@ its own aligned per-tick smoke configuration (including wind/time), compute timi
 queries remain associated with their tick, and separate ordered compute passes
 preserve the smoke-volume ping-pong sequence. Frame diagnostics report both fixed
 steps and simulation submissions; the resource inventory includes the config ring.
-This remains an image-preserving candidate pending same-device reset/replay hashes,
-multi-tick state parity, and alternating CPU/total-frame timing runs. GPU rendering
-was not verified as part of implementation validation.
+The pre-batch and candidate builds produce byte-identical 640×360 images at tick
+120 for clearing, profiling-heavy and two-emitter review scenes. The candidate also
+matches when 120 ticks are requested once, as twenty six-tick requests, 120
+one-tick requests, or mixed request sizes. A direct build-to-build sample reports
+20 queue submissions for one 120-tick request versus 120 before batching; the
+captured CPU submit times are single samples and are not performance evidence.
+See [parity report](measurements-o08-batch-parity.json) and its
+[reproducible runner](../scripts/simulation_batch_parity.py). Alternating sustained
+CPU/total-frame timing, continuous playback, native-window and other-adapter
+acceptance remain open.
 
 **Acceptance:** image/state comparisons survive pause/reset, repeated fixed steps,
 camera moves, resource recreation and invalid shader rollback. Report memory,

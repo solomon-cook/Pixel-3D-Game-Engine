@@ -18,9 +18,12 @@ on M1 Max/Metal. Platform acceptance gates remain open.
 O08 fixed-step submission batching is now implemented as a bounded candidate:
 `Session::step` encodes up to six consecutive ticks per queue submission, with a
 per-tick smoke configuration ring, tick-associated compute queries and ordered
-ping-pong passes. The non-GPU verification suite passes, but rendering, replay
-parity and batching performance have not been verified on a GPU. Keep acceptance
-open pending same-device before/after replay evidence and alternating timing runs.
+ping-pong passes. GPU verification on M1 Max/Metal matches pre-batch images at
+tick 120 across clearing, profiling-heavy and two-emitter review scenes, including
+four different request partitions. One 120-tick request now reports 20 compute
+submissions instead of 120; sustained timing and broader platform acceptance
+remain open. See [parity report](measurements-o08-batch-parity.json) and
+[runner](../scripts/simulation_batch_parity.py).
 
 O04's opt-in projected fire-segment LOD is implemented at 40/20 px with 48/24 px
 hysteresis. In the 120-second 640×360 clearing orbit, including a close-smoke

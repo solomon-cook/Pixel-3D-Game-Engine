@@ -1,0 +1,162 @@
+{
+  "device": "Apple M1 Max",
+  "backend": "Metal",
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "method": "Headless fixed-tick PNG hash comparison using real GPU renderer",
+  "timing_status": "single captures only; timing values are not performance evidence",
+  "baseline": "/private/tmp/pixel-engine-prebatch/target/debug/engine-lab",
+  "candidate": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/debug/engine-lab",
+  "baseline_revision": "23c4ad732cc266bf1230923181105956a84ab739",
+  "candidate_revision": "7137f44f52f3be5e3ffba7337c51335212460df7",
+  "scenes": {
+    "clearing": {
+      "scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+      "baseline": {
+        "sha256": "9ef9d7b40b22b1e68cb40ed46a4a87f0f5a5189e19e9bac4c2c04dcf23021d52",
+        "bytes": 229638,
+        "fixed_steps_reported": 120,
+        "simulation_submissions_reported": null,
+        "queue_submit_cpu_ms": 5.221251999999996
+      },
+      "batched_partitions": {
+        "one_batch_request": {
+          "sha256": "9ef9d7b40b22b1e68cb40ed46a4a87f0f5a5189e19e9bac4c2c04dcf23021d52",
+          "bytes": 229638,
+          "fixed_steps_reported": 120,
+          "simulation_submissions_reported": 20,
+          "queue_submit_cpu_ms": 2.0859589999999995,
+          "step_requests": 1,
+          "identical_to_baseline": true
+        },
+        "twenty_six_tick_requests": {
+          "sha256": "9ef9d7b40b22b1e68cb40ed46a4a87f0f5a5189e19e9bac4c2c04dcf23021d52",
+          "bytes": 229638,
+          "fixed_steps_reported": 120,
+          "simulation_submissions_reported": 20,
+          "queue_submit_cpu_ms": 2.013001,
+          "step_requests": 20,
+          "identical_to_baseline": true
+        },
+        "one_tick_requests": {
+          "sha256": "9ef9d7b40b22b1e68cb40ed46a4a87f0f5a5189e19e9bac4c2c04dcf23021d52",
+          "bytes": 229638,
+          "fixed_steps_reported": 120,
+          "simulation_submissions_reported": 120,
+          "queue_submit_cpu_ms": 5.330080000000001,
+          "step_requests": 120,
+          "identical_to_baseline": true
+        },
+        "mixed_request_boundaries": {
+          "sha256": "9ef9d7b40b22b1e68cb40ed46a4a87f0f5a5189e19e9bac4c2c04dcf23021d52",
+          "bytes": 229638,
+          "fixed_steps_reported": 120,
+          "simulation_submissions_reported": 21,
+          "queue_submit_cpu_ms": 1.948125,
+          "step_requests": 20,
+          "identical_to_baseline": true
+        }
+      }
+    },
+    "profiling-heavy": {
+      "scene_sha256": "f736a0779a868d11c22d761b46a0920eb1b154db6241088c9d09a9fa1ca8a05b",
+      "baseline": {
+        "sha256": "02f40cee4c1b606cf27859ce9b4eb9a0208222f805bd2af4f61828eef9f17ed1",
+        "bytes": 243367,
+        "fixed_steps_reported": 120,
+        "simulation_submissions_reported": null,
+        "queue_submit_cpu_ms": 5.287208
+      },
+      "batched_partitions": {
+        "one_batch_request": {
+          "sha256": "02f40cee4c1b606cf27859ce9b4eb9a0208222f805bd2af4f61828eef9f17ed1",
+          "bytes": 243367,
+          "fixed_steps_reported": 120,
+          "simulation_submissions_reported": 20,
+          "queue_submit_cpu_ms": 2.067044,
+          "step_requests": 1,
+          "identical_to_baseline": true
+        },
+        "twenty_six_tick_requests": {
+          "sha256": "02f40cee4c1b606cf27859ce9b4eb9a0208222f805bd2af4f61828eef9f17ed1",
+          "bytes": 243367,
+          "fixed_steps_reported": 120,
+          "simulation_submissions_reported": 20,
+          "queue_submit_cpu_ms": 1.977123,
+          "step_requests": 20,
+          "identical_to_baseline": true
+        },
+        "one_tick_requests": {
+          "sha256": "02f40cee4c1b606cf27859ce9b4eb9a0208222f805bd2af4f61828eef9f17ed1",
+          "bytes": 243367,
+          "fixed_steps_reported": 120,
+          "simulation_submissions_reported": 120,
+          "queue_submit_cpu_ms": 5.006789999999997,
+          "step_requests": 120,
+          "identical_to_baseline": true
+        },
+        "mixed_request_boundaries": {
+          "sha256": "02f40cee4c1b606cf27859ce9b4eb9a0208222f805bd2af4f61828eef9f17ed1",
+          "bytes": 243367,
+          "fixed_steps_reported": 120,
+          "simulation_submissions_reported": 21,
+          "queue_submit_cpu_ms": 2.1206259999999997,
+          "step_requests": 20,
+          "identical_to_baseline": true
+        }
+      }
+    },
+    "two-emitter-review": {
+      "scene_sha256": "9ca7aee40dac7a9cde4010f6f90c2623e441c8e0c9a1f19ff2a9c570c1082892",
+      "baseline": {
+        "sha256": "5537bbde1423bf94c2b932e8de8c9166019d0a87333f4afbe9f8036b92f6774a",
+        "bytes": 238924,
+        "fixed_steps_reported": 120,
+        "simulation_submissions_reported": null,
+        "queue_submit_cpu_ms": 5.3807070000000055
+      },
+      "batched_partitions": {
+        "one_batch_request": {
+          "sha256": "5537bbde1423bf94c2b932e8de8c9166019d0a87333f4afbe9f8036b92f6774a",
+          "bytes": 238924,
+          "fixed_steps_reported": 120,
+          "simulation_submissions_reported": 20,
+          "queue_submit_cpu_ms": 2.340291,
+          "step_requests": 1,
+          "identical_to_baseline": true
+        },
+        "twenty_six_tick_requests": {
+          "sha256": "5537bbde1423bf94c2b932e8de8c9166019d0a87333f4afbe9f8036b92f6774a",
+          "bytes": 238924,
+          "fixed_steps_reported": 120,
+          "simulation_submissions_reported": 20,
+          "queue_submit_cpu_ms": 2.1969589999999997,
+          "step_requests": 20,
+          "identical_to_baseline": true
+        },
+        "one_tick_requests": {
+          "sha256": "5537bbde1423bf94c2b932e8de8c9166019d0a87333f4afbe9f8036b92f6774a",
+          "bytes": 238924,
+          "fixed_steps_reported": 120,
+          "simulation_submissions_reported": 120,
+          "queue_submit_cpu_ms": 5.4534579999999995,
+          "step_requests": 120,
+          "identical_to_baseline": true
+        },
+        "mixed_request_boundaries": {
+          "sha256": "5537bbde1423bf94c2b932e8de8c9166019d0a87333f4afbe9f8036b92f6774a",
+          "bytes": 238924,
+          "fixed_steps_reported": 120,
+          "simulation_submissions_reported": 21,
+          "queue_submit_cpu_ms": 2.505043,
+          "step_requests": 20,
+          "identical_to_baseline": true
+        }
+      }
+    }
+  },
+  "all_images_identical": true
+}
