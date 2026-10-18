@@ -566,8 +566,10 @@ optical surface interactions and 8,839–21,180 successful transmission
 interactions. A separate uninstrumented run of the identical scene hash, route,
 seed and duration measured a 2.076 ms median optical-resolve stage and 2.828 ms
 median GPU render. Counter-run timings remain disabled and unusable. Counter-hook
-injection now fails when a WGSL pattern no longer matches. Continuous playback,
-native-window and other-adapter coverage remain open. See
+injection now checks each WGSL pattern's exact occurrence count, including the
+explicit two-source cases, and fails on missing or unexpected duplicates. This
+prevents shader edits from silently changing which operations are counted.
+Continuous playback, native-window and other-adapter coverage remain open. See
 [profile/view counter evidence](measurements-o01-counter-profile-scope.json) and
 its [capture runner](../scripts/shading_counter_profile_study.py), plus the
 [optical route report](measurements-o01-optical-counter-route.json) and

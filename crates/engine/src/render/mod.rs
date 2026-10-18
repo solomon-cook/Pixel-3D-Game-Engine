@@ -492,10 +492,18 @@ fn inject_counter_hooks(
     mut source: String,
     hooks: &[(&str, &str)],
     shader_name: &str,
+    expected_matches: &[(&str, usize)],
 ) -> Result<String> {
     for (pattern, replacement) in hooks {
-        if !source.contains(pattern) {
-            bail!("shading counter hook no longer matches {shader_name}: {pattern}");
+        let match_count = source.matches(pattern).count();
+        let expected_count = expected_matches
+            .iter()
+            .find_map(|(expected_pattern, count)| (*expected_pattern == *pattern).then_some(*count))
+            .unwrap_or(1);
+        if match_count != expected_count {
+            bail!(
+                "shading counter hook matched {match_count} times in {shader_name}; expected {expected_count}: {pattern}"
+            );
         }
         source = source.replace(pattern, replacement);
     }
@@ -2418,6 +2426,7 @@ impl Renderer {
                 ("temperature=max(temperature,clamp(textureSampleLevel(secondary_heat_volume,heat_sampler,secondary_uv,0.).y,0.,1.));", "diag_add(17u); temperature=max(temperature,clamp(textureSampleLevel(secondary_heat_volume,heat_sampler,secondary_uv,0.).y,0.,1.));"),
             ],
             "world shader",
+            &[],
         )?;
         let diagnostic_mesh_module = shader(
             device,
@@ -2434,6 +2443,7 @@ impl Renderer {
                 ("let discriminant=qb*qb-qa*qc;", "diag_add(2u); let discriminant=qb*qb-qa*qc;"),
             ],
             "fire shader",
+            &[],
         )?;
         let diagnostic_volume = inject_counter_hooks(
             volume_source,
@@ -2459,6 +2469,10 @@ impl Renderer {
                 ("for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;}", "for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;} diag_add(12u);"),
             ],
             "volume shader",
+            &[(
+                "if along+bound<0. || along-bound>distance || length(origin+direction*max(along,0.)-parent)>bound {continue;}",
+                2,
+            ), ("if bubble>child_count {break;}", 2)],
         )?;
         let diagnostic_volume_module = shader(device, "instrumented volumetrics", format!(
             "{common}\n{tile_common}\n{tile_group3}\n{diagnostic_preamble}\n{diagnostic_world}\n{diagnostic_fire}\n{}",
@@ -2475,6 +2489,7 @@ impl Renderer {
                 ("if transmission(m)>0. && dot(transmitted_direction,transmitted_direction)>=0.000001 {", "if transmission(m)>0. && dot(transmitted_direction,transmitted_direction)>=0.000001 { diag_add(21u);"),
             ],
             "optical shader",
+            &[],
         )?;
         let diagnostic_optical_volume = diagnostic_volume.replace("@group(2)", "@group(3)");
         let diagnostic_optical_module = shader(
