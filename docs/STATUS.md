@@ -202,7 +202,7 @@ optical-no-copy glass case; all six normal/diagnostic pairs are byte-identical a
 report optical surface interactions. See
 [optical camera coverage](measurements-o01-optical-counter-coverage.json) and its
 [runner](../scripts/shading_counter_optical_coverage.py). Continuous visual review,
-native-window and other-adapter checks remain open. See
+fixed-tick native-window Session control now passes at tick 120: all 22 counter fields are reported, 4,608,000 scratch bytes are allocated only while diagnostics are enabled, and disabled/diagnostic/disabled captures match pixel-for-pixel. Continuous playback, diagnostic performance and other-adapter checks remain open. See [native counter report](measurements-o01-shading-counter-native.json) and [runner](../scripts/shading_counter_native_study.py), plus
 [counter profile/view evidence](measurements-o01-counter-profile-scope.json),
 [optical route report](measurements-o01-optical-counter-route.json) and
 [route runner](../scripts/shading_counter_optical_route.py).

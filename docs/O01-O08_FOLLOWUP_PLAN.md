@@ -489,6 +489,8 @@ moving caster; the separate report is
 [measurements-o01-shading-counter-route.json](measurements-o01-shading-counter-route.json).
 Native-window checks and other-adapter validation remain open.
 
+**Native Session control added (18 October 2026):** `set_shading_diagnostics` now toggles the same companion-counter path through shared Session operations. A paused native-window study captures disabled/diagnostic/disabled at tick 120: all 22 counter fields are present and nonzero where expected, scratch targets allocate 4,608,000 bytes only while enabled, and all three images are pixel-identical. The fixed-tick native access and image-preservation gate now passes on M1 Max/Metal; continuous playback, performance, and other-adapter checks remain open. See [native counter report](measurements-o01-shading-counter-native.json) and [runner](../scripts/shading_counter_native_study.py).
+
 **Expanded profile/view sample (18 October 2026):** fixed-tick counter captures
 now cover campfire, quiet and bonfire profiles at hero, smoke-close, fire-study
 and orthographic cameras on M1 Max/Metal. Operation counts range from 26,374 to

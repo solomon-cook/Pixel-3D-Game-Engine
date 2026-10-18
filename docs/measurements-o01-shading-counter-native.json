@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "workstream": "O01 native-window shading-counter Session operation",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": true,
+    "window": {
+      "fullscreen": false,
+      "minimized": false,
+      "physical_size": [
+        2560,
+        1600
+      ],
+      "scale_factor": 2.0
+    }
+  },
+  "scene": "assets/scenes/profiling-heavy.json",
+  "scene_sha256": "f736a0779a868d11c22d761b46a0920eb1b154db6241088c9d09a9fa1ca8a05b",
+  "binary_sha256": "b321f1af49e93fdfa3fc396a795bb081d88411d45c0ca6b845ff89ff9f3ad72a",
+  "session_source_sha256": "265c3ec5471518a1fbff903f022f043a7ee43daa45a196d8c84525fc90fb9ef8",
+  "seed": 42,
+  "tick": 120,
+  "camera": "hero",
+  "resolution": [
+    640,
+    360
+  ],
+  "toggle_results": {
+    "disabled_before": {
+      "enabled": false,
+      "scratch_bytes": 0
+    },
+    "enabled": {
+      "enabled": true,
+      "scratch_bytes": 4608000
+    },
+    "disabled_after": {
+      "enabled": false,
+      "scratch_bytes": 0
+    }
+  },
+  "captures": {
+    "disabled_before": {
+      "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o01-counter-native/disabled_before.png",
+      "sha256": "02f40cee4c1b606cf27859ce9b4eb9a0208222f805bd2af4f61828eef9f17ed1",
+      "tick": 120,
+      "counters": null,
+      "scratch_bytes": 0
+    },
+    "enabled": {
+      "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o01-counter-native/enabled.png",
+      "sha256": "02f40cee4c1b606cf27859ce9b4eb9a0208222f805bd2af4f61828eef9f17ed1",
+      "tick": 120,
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 54006,
+        "fire_bounds_tests": 82097,
+        "fire_ellipsoid_tests": 10102,
+        "fire_primitive_candidates": 82097,
+        "fire_shadow_lookups": 284511,
+        "optical_reflection_refinement_steps": 0,
+        "optical_reflection_steps": 0,
+        "optical_surface_interactions": 0,
+        "optical_transmission_interactions": 0,
+        "particle_light_candidates": 10921,
+        "point_light_candidates": 26832,
+        "smoke_bubble_intersection_tests": 48796,
+        "smoke_density_samples": 71565,
+        "smoke_lobe_candidates": 50432,
+        "smoke_parent_bounds_tests": 50432,
+        "sun_shadow_lookups": 283463,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 245651,
+        "world_point_light_candidates": 2268088,
+        "world_shading_invocations": 283511
+      },
+      "scratch_bytes": 4608000
+    },
+    "disabled_after": {
+      "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o01-counter-native/disabled_after.png",
+      "sha256": "02f40cee4c1b606cf27859ce9b4eb9a0208222f805bd2af4f61828eef9f17ed1",
+      "tick": 120,
+      "counters": null,
+      "scratch_bytes": 0
+    }
+  },
+  "diagnostic_counters_nonzero": true,
+  "counters_absent_when_disabled": true,
+  "scratch_allocation_released": true,
+  "normal_diagnostic_normal_pixel_identical": true,
+  "limitations": [
+    "Single fixed-tick native-window M1 Max/Metal capture; it validates access and image preservation, not continuous motion, counter performance or other adapters.",
+    "Atomic diagnostics perturb timing; captured timings are excluded from performance comparisons."
+  ],
+  "all_checks_passed": true
+}
