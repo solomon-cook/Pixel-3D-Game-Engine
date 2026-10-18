@@ -457,8 +457,13 @@ Both emitters advance from the same seed and start tick; effect counts match on
 every frame. Mean frame RGB error is 0.026/255 (p95 0.032/255), mean temporal-
 change-magnitude error is 0.020/255, and maximum channel error is 21/255. The
 contact sheet shows close sampled agreement with differences around the smoke.
-This adds one offscreen M1 Max/Metal workload; it does not establish playback
-acceptance, speedup, or portability. See [temporal report](measurements-multi-emitter-absorption-temporal.json)
+A full 120-second moving-camera maximum-budget route now compares direct and 8³
+cache over 2,400 frame pairs. Camera poses, effect counts and images match every
+frame; temporal-change error is also zero for this workload. Contact-sheet review
+shows matching smoke and fire through the orbit. This is offscreen M1 Max/Metal;
+native playback, sustained performance and portability remain open. See [moving-route
+report](measurements-multi-emitter-absorption-moving-route.json) and [runner](../scripts/two_emitter_absorption_moving_route_study.py).
+See [temporal report](measurements-multi-emitter-absorption-temporal.json)
 and [runner](../scripts/two_emitter_absorption_temporal_study.py). The 16³
 comparison reports mean RGB error 0.014/255 (p95 0.019/255), mean temporal-change
 error 0.015/255 and maximum channel difference 17/255; effect counts also match

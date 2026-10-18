@@ -360,7 +360,14 @@ matches its five-entry layout; a fresh off/on/off protocol capture completed wit
 4096 cache bytes while enabled. This confirms the toggle route and resource
 lifetime, not image parity or multi-emitter cache support; see
 [runtime-toggle evidence](measurements-o05.json).
-This does not improve a moving route where each simulation step dirties the cache.
+The bounded two-emitter extension now has a full 120-second, 20 fps moving-camera
+comparison on the maximum-budget scene. Across 2,400 direct/cache pairs, camera
+poses and effect counts match every frame; the 8³ cached output is byte-identical
+to direct output and has zero temporal-change error on this route. This is one
+offscreen M1 Max/Metal scene, not native playback or performance acceptance; the
+cache remains off by default because sustained total-render timings did not improve.
+See [moving-route report](measurements-multi-emitter-absorption-moving-route.json)
+and [runner](../scripts/two_emitter_absorption_moving_route_study.py).
 The bounded multi-emitter extension reuses the same RGBA16Float cache: source
 zero remains in red, and green stores source one's optical depth over its local
 domain for its colocated primary fire light. It adds no cache allocation and
