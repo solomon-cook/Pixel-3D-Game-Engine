@@ -23,6 +23,12 @@ into a testable two-source runtime without changing the single-source baseline.
   allocation increases by 12,928 bytes. This is capacity groundwork only: the
   renderer still samples, uploads and renders one source. See
   [storage ABI evidence](measurements-multi-emitter-storage-abi.json).
+- Fire tile construction and flame shading now iterate both frame slots. Tile
+  indices encode source slot and primitive index; overflow evaluates each
+  source's complete primitive pool. The source-zero capture remains byte-identical
+  on M1 Max/Metal. The renderer still uploads only source zero, and source-specific
+  palette/detail settings, smoke, global particle lights and shadow sets are not
+  implemented. See [fire consumer evidence](measurements-multi-emitter-fire-consumer.json).
 - One 48×64×48 Rg16Float density/temperature pair occupies 1,179,648 bytes.
   One point-light cubemap set occupies 1,572,864 bytes. The 8 authored point
   lights and 12 derived particle lights are global renderer budgets.

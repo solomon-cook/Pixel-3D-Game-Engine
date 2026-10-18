@@ -39,12 +39,14 @@ fn build_tile_lists(@builtin(global_invocation_id) id:vec3<u32>) {
     var counts=vec4<u32>(0u);var flags=vec4<u32>(0u);
     if tile_config.force_overflow.x!=0u {flags.x=15u;}
     if tile_config.force_overflow.x==0u {
-        for(var i=0u;i<256u;i++) {
-            if i>=fire[0].counts.x {break;}
-            let primitive=fire[0].primitives[i];
-            if overlaps_tile(primitive.center_radius.xyz,max(primitive.center_radius.w,primitive.axis_length.w),id.xy) {
-                if counts.x<FIRE_TILE_CAPACITY {fire_tile_indices_out[fire_base+counts.x]=i;} else {flags.x|=1u;}
-                counts.x++;
+        for(var source=0u;source<2u;source++) {
+            for(var i=0u;i<256u;i++) {
+                if i>=fire[source].counts.x {break;}
+                let primitive=fire[source].primitives[i];
+                if overlaps_tile(primitive.center_radius.xyz,max(primitive.center_radius.w,primitive.axis_length.w),id.xy) {
+                    if counts.x<FIRE_TILE_CAPACITY {fire_tile_indices_out[fire_base+counts.x]=source*256u+i;} else {flags.x|=1u;}
+                    counts.x++;
+                }
             }
         }
         if g.experiments.w>0.5 {

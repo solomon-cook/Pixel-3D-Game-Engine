@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "purpose": "Verify source-zero pixel identity after enabling two-slot candidate collection and fire shading.",
+  "host": {
+    "adapter": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "workload": {
+    "scene": "assets/scenes/profiling-heavy.json",
+    "camera": "hero",
+    "seed": 42,
+    "tick": 120,
+    "resolution": [
+      640,
+      360
+    ]
+  },
+  "comparison": {
+    "baseline": {
+      "shader_state": "committed single-source loops over two-slot storage",
+      "capture": "artifacts/multi-emitter-storage-abi/before-two-frame-shader.png",
+      "pixel_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48"
+    },
+    "candidate": {
+      "shader_state": "tile and fire passes visit both frame slots; only source zero populated",
+      "capture": "artifacts/multi-emitter-storage-abi/after-two-source-consumer.png",
+      "pixel_sha256": "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48"
+    },
+    "pixel_identical": true
+  },
+  "scope": "Only the existing one-emitter scene was exercised. The Renderer still uploads source zero only; this does not validate dual-source rendering, source-specific presentation, smoke, lighting or shadows.",
+  "provenance": {
+    "baseline_commit": "d9214dd897707ae0a8acce141562037748822a81",
+    "source_sha256": {
+      "crates/engine/src/render/shaders/fire.wgsl": "5bb7a7ca002eb4be0acdf1dafb61b36565032b70e04eb5a8f40ad9c5fd928910",
+      "crates/engine/src/render/shaders/tile_build.wgsl": "78845195b75512679141b348deed10e3f673adc5ddb8ae403daa7f43c74bd371"
+    },
+    "binary_sha256": "37a75e4081f0d708f0f1c247ee8f506667da30450dbeb8a30d3b30de466565cb"
+  }
+}

@@ -456,9 +456,12 @@ aggregate occupancy, memory, CPU work, GPU stages and fallback rates.
 The first renderer ABI step is complete: storage now has two fixed-layout
 `FireFrame` slots, existing code uploads slot zero, and a matched Metal capture is
 byte-identical to the prior ABI. The second slot is not yet populated or consumed;
-smoke simulation, multi-source shading, tile membership, shadows and scene
-acceptance remain unimplemented. See
-[storage ABI comparison](measurements-multi-emitter-storage-abi.json).
+tile construction and fire shading now consume both slots, and the source-zero
+capture remains byte-identical. The renderer still uploads only slot zero;
+source-specific presentation, smoke simulation, global particle lights, shadows
+and scene acceptance remain unimplemented. See the
+[storage ABI](measurements-multi-emitter-storage-abi.json) and
+[fire consumer](measurements-multi-emitter-fire-consumer.json) comparisons.
 
 **Exit gate:** all source ownership, deterministic replay, overflow, reset/edit and
 resource-recreation checks pass on Metal; then run the same evidence on DX12 and
