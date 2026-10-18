@@ -63,6 +63,14 @@ def verify(binary):
             assert working==capture('rollback'),'bad optical reload replaced working pipelines'
             shader.write_text(source);assert 'result' in call('reload_shaders')
             assert working==capture('reload'),'successful reload changed fixed-tick image'
+            call('set_camera',id='glass-close')
+            optical_direct=capture('optical-direct')
+            set_value('render.experiments.optical_surface_reuse',True)
+            optical_reuse=capture('optical-reuse')
+            assert call('get_metrics')['result']['frame']['optical_surface_reuse_enabled'] is True
+            assert optical_direct==optical_reuse,'optical surface reuse changed the matched glass image'
+            set_value('render.experiments.optical_surface_reuse',False)
+            assert optical_direct==capture('optical-direct-restored'),'disabling optical surface reuse did not restore direct output'
             assert call('get_metrics')['result']['capabilities']['resolution']==[640,360]
             assert call('get_metrics')['result']['capabilities']['transmission_layers']==1
         finally:
