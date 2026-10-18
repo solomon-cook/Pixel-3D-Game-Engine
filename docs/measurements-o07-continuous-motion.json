@@ -1,0 +1,134 @@
+{
+  "date": "2026-10-18",
+  "workstream": "O07 continuous fixed-tick moving-caster visual parity review",
+  "status": "fixed-tick capture evidence recorded; human playback acceptance remains open",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal",
+    "device_type": "IntegratedGpu"
+  },
+  "scene": {
+    "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/assets/scenes/clearing.json",
+    "sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+    "resolution": [
+      640,
+      360
+    ]
+  },
+  "seed": 42,
+  "camera": "hero",
+  "route": "clearing-orbit",
+  "route_start_seconds": 0,
+  "motion": {
+    "start_tick": 300,
+    "frame_stride_ticks": 3,
+    "frames": 120,
+    "sample_rate_fps": 20,
+    "moving_caster": "rock-0",
+    "caster_orbit_radius": 5.0,
+    "caster_orbit_period_seconds": 20.0
+  },
+  "modes": {
+    "baked": {
+      "mode": "baked",
+      "binary_sha256": "ef9ae05166a430f4cd717180f6437709bbc4b138b88135f8207fbaea078192a9",
+      "capture_script_sha256": "632e74b9f59f88d65d33665fc5eb8ef6220222a8bad55d0133007141a2006b7e",
+      "frame_hashes_sha256": "1d14e19169d5fbce09c08713d524ea2c11c7e14dc61f64fd61b5491676e224c7"
+    },
+    "instancing-only": {
+      "mode": "instancing-only",
+      "binary_sha256": "ef9ae05166a430f4cd717180f6437709bbc4b138b88135f8207fbaea078192a9",
+      "capture_script_sha256": "632e74b9f59f88d65d33665fc5eb8ef6220222a8bad55d0133007141a2006b7e",
+      "frame_hashes_sha256": "60ff07e865dd0623d7d78532709c01bf3f9aec39b08a0343ed27b82647ff27d9"
+    },
+    "culling-instancing": {
+      "mode": "culling-instancing",
+      "binary_sha256": "ef9ae05166a430f4cd717180f6437709bbc4b138b88135f8207fbaea078192a9",
+      "capture_script_sha256": "632e74b9f59f88d65d33665fc5eb8ef6220222a8bad55d0133007141a2006b7e",
+      "frame_hashes_sha256": "60ff07e865dd0623d7d78532709c01bf3f9aec39b08a0343ed27b82647ff27d9"
+    }
+  },
+  "paired_schedule_identical": true,
+  "paired_camera_states_identical": true,
+  "comparisons": {
+    "baked_vs_instancing_only": {
+      "frames": 120,
+      "identical_frames": 5,
+      "changed_pixels_per_frame": {
+        "min": 0,
+        "median": 3.0,
+        "max": 13
+      },
+      "mean_absolute_rgb_error_0_255_per_frame": {
+        "median": 6.076388888888889e-05,
+        "max": 0.0005309606481481481
+      },
+      "maximum_channel_error_0_255": 132
+    },
+    "baked_vs_culling_instancing": {
+      "frames": 120,
+      "identical_frames": 5,
+      "changed_pixels_per_frame": {
+        "min": 0,
+        "median": 3.0,
+        "max": 13
+      },
+      "mean_absolute_rgb_error_0_255_per_frame": {
+        "median": 6.076388888888889e-05,
+        "max": 0.0005309606481481481
+      },
+      "maximum_channel_error_0_255": 132
+    },
+    "instancing_only_vs_culling_instancing": {
+      "frames": 120,
+      "identical_frames": 120,
+      "changed_pixels_per_frame": {
+        "min": 0,
+        "median": 0.0,
+        "max": 0
+      },
+      "mean_absolute_rgb_error_0_255_per_frame": {
+        "median": 0.0,
+        "max": 0.0
+      },
+      "maximum_channel_error_0_255": 0
+    }
+  },
+  "visual_review": {
+    "contact_sheet": "artifacts/o07-continuous-motion-review-20261018/contact-sheet.png",
+    "checkpoints": [
+      0,
+      29,
+      59,
+      89,
+      119
+    ],
+    "finding": "The five sampled checkpoints show no obvious scene-pop or culling loss. Culling+instancing is pixel-identical to instancing-only at all 120 samples; baked versus instanced has sparse pixel differences."
+  },
+  "source_revision": "a08bce1d5b93929486882ac0c50cd8390f294776",
+  "source_sha256": {
+    "crates/engine/src/assets.rs": "3c93524d8d7bbd1a79a2756ae237336e0801d683459db8b11309ca278f039fc4",
+    "crates/engine/src/render/mod.rs": "88bcb7a6730fc9ce8db7937a127d620e99c3ffd0fb407b07db0113688c173acd",
+    "crates/engine-lab/src/main.rs": "d79fabde68117b95e31b8aebf92f39c1e57356df4c4a8141beddb4459f125243",
+    "scripts/capture_motion.py": "632e74b9f59f88d65d33665fc5eb8ef6220222a8bad55d0133007141a2006b7e"
+  },
+  "limitations": [
+    "Fixed-tick route captures are not real-time native playback.",
+    "A sampled contact sheet is not owner visual sign-off.",
+    "Only M1 Max/Metal was rendered; DX12 and another adapter remain unverified."
+  ],
+  "source_worktree_state": {
+    "dirty": true,
+    "uncommitted_relevant_files": [
+      "scripts/capture_motion.py",
+      "docs/O01-O08_FOLLOWUP_PLAN.md",
+      "docs/OPTIMIZATION_PLAN.md",
+      "docs/STATUS.md"
+    ],
+    "unrelated_preexisting_files": [
+      "TODO.md",
+      "docs/GAME_CAPABILITY_ROADMAP.md"
+    ]
+  },
+  "runner_command_template": "python3 scripts/capture_motion.py --binary target/debug/engine-lab --scene assets/scenes/clearing.json --camera hero --route clearing-orbit --moving-caster rock-0 --geometry-mode {baked|instancing-only|culling-instancing} --start-tick 300 --frames 120 --stride 3 --output artifacts/o07-continuous-motion-review-20261018/{mode} --gif"
+}

@@ -471,8 +471,16 @@ current path; this evidence does not justify a more complex submission path.
 Full metrics and per-run summaries are in
 [measurements-o07-native-scale-study.json](measurements-o07-native-scale-study.json);
 raw resumable outputs remain under ignored `artifacts/o07/`. Native-window
-measurement is complete on this Mac, while continuous-motion image review and
-non-Metal acceptance remain open.
+measurement is complete on this Mac. The fixed-tick moving-caster visual route
+now covers 120 matched frames at 20 fps-equivalent sampling across baked,
+instancing-only and culling+instancing paths. The two instanced modes are
+pixel-identical for all frames; versus baked, instancing changes a median of 3
+pixels (maximum 13), and culling adds no further differences. Five sampled
+checkpoints were inspected; owner review of continuous playback and non-Metal
+acceptance remain open. See
+[continuous-motion report](measurements-o07-continuous-motion.json), its
+[contact sheet](../artifacts/o07-continuous-motion-review-20261018/contact-sheet.png)
+and the extended [motion capture runner](../scripts/capture_motion.py).
 
 1. Generate deterministic scenes at increasing object counts and mesh reuse rates,
    starting from the current 276-object clearing scene and increasing by measured

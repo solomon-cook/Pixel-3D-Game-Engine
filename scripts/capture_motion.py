@@ -41,6 +41,10 @@ def main():
     parser.add_argument('--profile', default='effect-campfire')
     parser.add_argument('--experiments', help='comma-separated renderer experiments')
     parser.add_argument('--force-rg16-fallback', action='store_true', help='force the RGBA16F effect-target fallback')
+    parser.add_argument('--geometry-mode', choices=('baked', 'instancing-only', 'culling-instancing'), default='culling-instancing', help='O07 geometry path to capture continuously')
+    parser.add_argument('--moving-caster', help='move this stable scene-object ID around the primary emitter')
+    parser.add_argument('--caster-orbit-radius', type=float, default=5.0)
+    parser.add_argument('--caster-orbit-period', type=float, default=20.0, help='moving-caster orbit period in seconds')
     parser.add_argument('--route', help='camera route ID from the scene; updates the camera at every frame')
     parser.add_argument('--route-start', type=float, default=0, help='camera-route time in seconds at frame zero')
     parser.add_argument('--start-tick', type=int, default=300)
@@ -68,6 +72,16 @@ def main():
     base_camera = next((camera for camera in scene.get('cameras', []) if camera.get('id') == args.camera), None)
     if base_camera is None:
         parser.error(f"camera '{args.camera}' not found in scene")
+    caster = next((obj for obj in scene.get('objects', []) if obj.get('id') == args.moving_caster), None) if args.moving_caster else None
+    if args.moving_caster and caster is None:
+        parser.error(f"moving caster '{args.moving_caster}' not found in scene")
+    if not math.isfinite(args.caster_orbit_radius) or args.caster_orbit_radius <= 0:
+        parser.error('--caster-orbit-radius must be finite and positive')
+    if not math.isfinite(args.caster_orbit_period) or args.caster_orbit_period <= 0:
+        parser.error('--caster-orbit-period must be finite and positive')
+    primary_emitter = scene.get('emitters', [{}])[0] if scene.get('emitters') else None
+    if args.moving_caster and primary_emitter is None:
+        parser.error('--moving-caster requires a scene with at least one emitter')
     args.output.mkdir(parents=True, exist_ok=True)
     command = [str(args.binary), 'serve', '--scene', str(args.scene.resolve()), '--seed', str(args.seed), '--camera', args.camera]
     if args.profile:
@@ -94,15 +108,31 @@ def main():
 
     frames = []
     try:
+        request('set_geometry_rendering',
+                culling=args.geometry_mode == 'culling-instancing',
+                instancing=args.geometry_mode != 'baked')
         request('step', ticks=args.start_tick)
         for index in range(args.frames):
             if index:
                 request('step', ticks=args.stride)
+            caster_position = None
+            if caster:
+                angle = math.tau * (args.start_tick + index * args.stride) / 60 / args.caster_orbit_period
+                center = primary_emitter['position']
+                caster_position = [
+                    center[0] + args.caster_orbit_radius * math.cos(angle),
+                    caster['position'][1],
+                    center[2] + args.caster_orbit_radius * math.sin(angle),
+                ]
+                request('set_object_transform', id=args.moving_caster, position=caster_position)
             if route:
                 camera = route_camera_at(route, base_camera, args.route_start + index * args.stride / 60)
                 request('set_camera', camera=camera)
             path = args.output / f'{index:04}.png'
-            frames.append(request('capture_frame', path=str(path.resolve()), scale=1))
+            captured = request('capture_frame', path=str(path.resolve()), scale=1)
+            if caster_position is not None:
+                captured['moving_caster_position'] = caster_position
+            frames.append(captured)
         sequence = {
             'fps': 60 / args.stride,
             'camera': args.camera,
@@ -117,6 +147,10 @@ def main():
             'profile': args.profile,
             'experiments': args.experiments,
             'force_rg16_fallback': args.force_rg16_fallback,
+            'geometry_mode': args.geometry_mode,
+            'moving_caster': args.moving_caster,
+            'caster_orbit_radius': args.caster_orbit_radius if args.moving_caster else None,
+            'caster_orbit_period_seconds': args.caster_orbit_period if args.moving_caster else None,
             'route': args.route,
             'route_start_seconds': args.route_start if route else None,
             'start_tick': args.start_tick,

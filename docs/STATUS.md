@@ -15,6 +15,15 @@ and cross-backend measurements remain open. O03's bounded single-emitter tile li
 shared meshes, instancing and live object transforms are implemented and measured
 on M1 Max/Metal. Platform acceptance gates remain open.
 
+O07's `capture_motion.py` runner now supports the three geometry modes and a
+deterministic moving caster through the shared Session API. A matched 120-frame
+clearing-orbit comparison at 20 fps-equivalent fixed ticks found zero image
+changes from culling versus instancing-only, and a median of three changed pixels
+(maximum 13) from instancing versus baked rendering. Sampled checkpoints show
+no obvious scene-pop; owner continuous-playback review and other-adapter
+acceptance remain open. See
+[the motion report](measurements-o07-continuous-motion.json).
+
 O08 fixed-step submission batching is now implemented as a bounded candidate:
 `Session::step` encodes up to six consecutive ticks per queue submission, with a
 per-tick smoke configuration ring, tick-associated compute queries and ordered
