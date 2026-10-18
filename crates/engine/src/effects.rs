@@ -255,6 +255,42 @@ pub struct FireKey {
     pub enabled: f32,
     pub profile: EffectProfile,
 }
+
+/// A derived light selected from a source frame for the shared renderer budget.
+#[derive(Clone, Copy)]
+pub struct EmitterParticleLight<'a> {
+    pub emitter_id: &'a str,
+    pub light: ParticleLight,
+}
+
+/// Merge per-source light candidates into the renderer-wide budget. Selection
+/// is independent of input order: strongest lights win, followed by stable
+/// emitter ID and event identity for exact power ties.
+pub fn select_emitter_particle_lights<'a>(
+    sources: &'a [(String, FireFrame)],
+) -> Result<Vec<EmitterParticleLight<'a>>> {
+    if sources.len() > MAX_EMITTERS {
+        bail!("effects: at most {MAX_EMITTERS} emitters can provide particle lights");
+    }
+    let mut candidates = Vec::new();
+    for (id, frame) in sources {
+        for light in frame.lights.iter().take(frame.lighting[0] as usize) {
+            candidates.push(EmitterParticleLight {
+                emitter_id: id,
+                light: *light,
+            });
+        }
+    }
+    candidates.sort_by(|a, b| {
+        b.light.color_power[3]
+            .total_cmp(&a.light.color_power[3])
+            .then_with(|| a.emitter_id.cmp(b.emitter_id))
+            .then_with(|| a.light.identity.cmp(&b.light.identity))
+    });
+    candidates.truncate(MAX_PARTICLE_LIGHTS);
+    Ok(candidates)
+}
+
 fn random(seed: u32, index: u64, lane: u32) -> f32 {
     let mut x = seed
         ^ (index as u32).wrapping_mul(0x9e3779b9)
@@ -757,6 +793,45 @@ mod tests {
             .map(|index| (format!("fire-{index}"), key()))
             .collect::<Vec<_>>();
         assert!(FireFrame::sample_emitters(&sources).is_err());
+    }
+
+    #[test]
+    fn emitter_particle_lights_use_a_stable_global_budget() {
+        let mut frames = FireFrame::sample_emitters(&[
+            ("fire-b".to_string(), key()),
+            ("fire-a".to_string(), key()),
+        ])
+        .unwrap();
+        for (_, frame) in &mut frames {
+            frame.lighting[0] = MAX_PARTICLE_LIGHTS as u32;
+            for (index, light) in frame.lights.iter_mut().enumerate() {
+                light.color_power[3] = 1.;
+                light.identity = [0, index as u32, 0, 0];
+            }
+        }
+
+        let selected = select_emitter_particle_lights(&frames).unwrap();
+        assert_eq!(selected.len(), MAX_PARTICLE_LIGHTS);
+        assert!(selected
+            .iter()
+            .all(|candidate| candidate.emitter_id == "fire-a"));
+        let reversed = frames.iter().rev().cloned().collect::<Vec<_>>();
+        let selected_reversed = select_emitter_particle_lights(&reversed).unwrap();
+        assert_eq!(
+            selected
+                .iter()
+                .map(|candidate| (candidate.emitter_id, candidate.light.identity))
+                .collect::<Vec<_>>(),
+            selected_reversed
+                .iter()
+                .map(|candidate| (candidate.emitter_id, candidate.light.identity))
+                .collect::<Vec<_>>(),
+        );
+
+        frames[1].1.lights[0].color_power[3] = 2.;
+        let promoted = select_emitter_particle_lights(&frames).unwrap();
+        assert_eq!(promoted[0].emitter_id, "fire-b");
+        assert_eq!(promoted.len(), MAX_PARTICLE_LIGHTS);
     }
 
     #[test]
