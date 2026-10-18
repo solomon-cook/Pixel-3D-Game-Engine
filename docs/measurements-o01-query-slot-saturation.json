@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-18",
+  "workstream": "O01 bounded asynchronous timestamp-slot behavior",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "validation": {
+    "command": "python3 scripts/verify.py --gpu",
+    "untimed_capture_matches_timed_capture": true,
+    "untimed_timestamp_query_sets": 0,
+    "bounded_buffered_route_passed": true
+  },
+  "saturation_route": {
+    "mode": "buffered",
+    "duration_seconds": 1.1,
+    "warmup_seconds": 0,
+    "fixed_ticks_per_frame": 60,
+    "simulation_tick_samples": [60, 120],
+    "rendered_frames": 2,
+    "render_query_slots": 3,
+    "compute_query_slots": 6,
+    "timed_render_samples": 2,
+    "timed_compute_samples": 12,
+    "skipped_render_samples": 0,
+    "skipped_compute_samples": 108,
+    "late_samples": 0,
+    "route_frames_preserved": true
+  },
+  "limits": [
+    "This verifies slot exhaustion and reporting on M1 Max/Metal; it does not measure the cost of query skipping.",
+    "No physical adapter without TIMESTAMP_QUERY was available; the verifier checks that such an adapter reports the unsupported reason and preserves the route."
+  ],
+  "raw_report": "artifacts/o01/query-slot-saturation-20261018.json"
+}

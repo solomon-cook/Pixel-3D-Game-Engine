@@ -116,6 +116,17 @@ keep it null with a reason and preserve asynchronous completion-to-readback late
 separately. Windows/DX12 and adapters without timestamp support remain hardware
 acceptance gates. Offscreen and native scopes are recorded separately; no
 target-hardware or optimization gain is claimed.
+The standard GPU verifier now compares a timing-enabled serve capture with a
+timing-disabled standalone capture at the same scene/seed/tick and requires
+byte-identical pixels plus zero timestamp query sets when disabled. It also runs
+a short buffered route with 60 fixed ticks per frame to fill the six compute
+query slots, requiring all route frames to remain in the report and skipped
+compute samples to be counted (or a clear unsupported-timestamp reason on
+adapters without query support). On M1 Max/Metal, two route frames at ticks 60
+and 120 completed with 108 skipped compute samples, 12 timed compute samples,
+zero skipped render samples and zero late samples. See the
+[slot-saturation report](measurements-o01-query-slot-saturation.json); the raw
+benchmark output remains under ignored `artifacts/o01/`.
 
 ## O02 — Cache static shadow maps
 

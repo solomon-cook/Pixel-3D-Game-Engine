@@ -211,6 +211,71 @@ def main():
                 process.stdin.close()
                 process.wait(timeout=30)
             assert process.returncode == 0
+            # Timing must remain observational: disabling its query resources
+            # preserves the selected fixed-tick image exactly.
+            timing_disabled_image = temp / "timing-disabled.png"
+            run(
+                binary,
+                "capture",
+                "--scene",
+                scene_path,
+                "--camera",
+                "hero",
+                "--seed",
+                "42",
+                "--tick",
+                "120",
+                "--scale",
+                "1",
+                "--output",
+                timing_disabled_image,
+                "--disable-gpu-timing",
+            )
+            timed_metadata = json.loads((temp / "first.json").read_text())
+            untimed_metadata = json.loads(timing_disabled_image.with_suffix(".json").read_text())
+            assert untimed_metadata["capabilities"]["gpu_timestamps"] is False
+            assert untimed_metadata["capabilities"]["resource_inventory"]["gpu_timestamp_query_set_count"] == 0
+            expected_timed_query_sets = 9 if timed_metadata["capabilities"]["gpu_timestamps"] else 0
+            assert timed_metadata["capabilities"]["resource_inventory"]["gpu_timestamp_query_set_count"] == expected_timed_query_sets
+            assert (temp / "first.png").read_bytes() == timing_disabled_image.read_bytes(), "disabling GPU timing changed the fixed-tick image"
+
+            # 60 ticks in one buffered sample intentionally exceeds the six
+            # asynchronous compute-query slots. Samples must be skipped and
+            # reported without blocking or losing route frames.
+            saturation_report = temp / "query-slot-saturation.json"
+            run(
+                binary,
+                "benchmark",
+                "--mode",
+                "buffered",
+                "--duration",
+                "1.1",
+                "--warmup",
+                "0",
+                "--simulation-steps-per-frame",
+                "60",
+                "--output",
+                saturation_report,
+            )
+            saturation = json.loads(saturation_report.read_text())
+            rendered_samples = saturation["rendered_samples"]
+            assert rendered_samples > 0
+            assert len(saturation["samples"]) == rendered_samples, "buffered report lost submitted frames"
+            assert saturation["duration_simulation_ticks"] == rendered_samples * 60
+            assert [sample["tick"] for sample in saturation["samples"]] == [60, 120], (
+                "buffered report lost or reordered fixed-tick route samples"
+            )
+            coverage = saturation["timing_coverage"]
+            if saturation["capabilities"]["gpu_timestamps"]:
+                expected_skipped = sum(
+                    max(0, sample["simulation_steps_requested"] - 6)
+                    for sample in saturation["samples"]
+                )
+                assert coverage["skipped_compute_samples"] >= expected_skipped, (
+                    "compute query-slot exhaustion was not reported"
+                )
+            else:
+                assert coverage["unavailable_reason"] == "adapter does not support TIMESTAMP_QUERY"
             fallback_image = temp / "forced-rgba16-fallback.png"
             run(binary, "capture", "--scene", scene_path, "--camera", "hero", "--seed", "42", "--tick", "120", "--scale", "1", "--output", fallback_image, "--force-rg16-fallback")
             fallback_metadata = json.loads(fallback_image.with_suffix(".json").read_text())
