@@ -756,3 +756,27 @@ motion, performance, or DX12. Captures and report are in ignored
 [`two_emitter_heat_response_study.py`](../scripts/two_emitter_heat_response_study.py),
 with the versioned summary in
 [`measurements-multi-emitter-opaque-heat.json`](measurements-multi-emitter-opaque-heat.json).
+
+## Two-source ink-smoke tile-list addressing (18 October)
+
+The maximum-budget tiled capture initially differed from exhaustive rendering
+in 9,616 pixels. Increasing projected puff bounds reduced the difference
+non-monotonically, which ruled out a simple under-sized geometric bound as the
+whole cause. Reading the fixed-layout storage contract exposed two offset errors:
+each tile reserves 36 primary plus 36 secondary indices, but primary construction
+advanced by only 36 entries per tile, and secondary shading read from the primary
+segment instead of the secondary segment. The first error caused cross-tile
+primary/secondary writes; the second fed source one the wrong puff IDs.
+
+The builder now advances by 72 entries per tile, primary shading reads that tile's
+first segment, and secondary shading reads the segment beginning at +36. The
+existing capacities, buffer allocation and dispatch count are unchanged. The
+M1 Max/Metal stress runner now reports exact tiled/exhaustive output for all six
+named cameras, each emitter alone, forced fallback and reversed emitter order.
+The 402-primitive stress scene naturally overflows 74 fire tiles but not either
+36-entry smoke list; forced overflow remains an exact reference check. The
+source-zero profiling-heavy capture is byte-identical to the prior source-zero
+capture. This resolves fixed-tick correctness for this scene; it is not a
+sustained performance or cross-adapter result. Reproduce with
+[`two_emitter_overflow_study.py`](../scripts/two_emitter_overflow_study.py) and
+inspect [the report](measurements-multi-emitter-overflow.json).

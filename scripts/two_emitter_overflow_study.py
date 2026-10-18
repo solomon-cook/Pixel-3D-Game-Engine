@@ -10,21 +10,24 @@ import subprocess
 from pathlib import Path
 
 from absorption_cache_study import image_error
+from PIL import Image
 
 
 ROOT = Path(__file__).resolve().parents[1]
 SCENE = ROOT / "assets/scenes/two-emitter-overflow-stress.json"
+SOURCE_ZERO_SCENE = ROOT / "assets/scenes/profiling-heavy.json"
+SOURCE_ZERO_RGBA_SHA256 = "9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48"
 
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def capture(binary: Path, scene: Path, output: Path, mode: str) -> dict:
-    image = output / f"{mode}.png"
+def capture(binary: Path, scene: Path, output: Path, camera: str, mode: str) -> dict:
+    image = output / f"{camera}-{mode}.png"
     command = [
         str(binary), "capture", "--scene", str(scene), "--seed", "42",
-        "--camera", "stress-close", "--tick", "300", "--resolution", "640x360",
+        "--camera", camera, "--tick", "300", "--resolution", "640x360",
         "--scale", "1", "--output", str(image.resolve()),
     ]
     if mode == "exhaustive":
@@ -36,8 +39,12 @@ def capture(binary: Path, scene: Path, output: Path, mode: str) -> dict:
     metadata = json.loads(metadata_path.read_text())
     metrics = metadata["metrics"]
     capabilities = metadata["capabilities"]
+    try:
+        image_reference = str(image.relative_to(ROOT))
+    except ValueError:
+        image_reference = str(image)
     return {
-        "image": str(image.relative_to(ROOT)),
+        "image": image_reference,
         "sha256": sha256(image),
         "metrics": {
             "fire_primitives": metrics.get("fire_primitives"),
@@ -49,6 +56,8 @@ def capture(binary: Path, scene: Path, output: Path, mode: str) -> dict:
         "backend": capabilities.get("backend"),
         "max_point_lights": capabilities.get("max_point_lights"),
         "max_particle_lights": capabilities.get("max_particle_lights"),
+        "known_gpu_allocation_bytes": capabilities.get("resource_inventory", {}).get("known_gpu_allocation_bytes"),
+        "tile_list_bytes": capabilities.get("resource_inventory", {}).get("tile_list_bytes"),
     }
 
 
@@ -63,37 +72,115 @@ def main() -> int:
     report_path = args.report.resolve()
     output.mkdir(parents=True, exist_ok=True)
     subprocess.run([str(binary), "validate", str(scene)], cwd=ROOT, check=True, capture_output=True)
+    source = json.loads(scene.read_text())
+    emitters = sorted(source.get("emitters", []), key=lambda emitter: emitter["id"])
+    if len(emitters) != 2:
+        raise SystemExit("stress scene must contain exactly two emitters")
+    cameras = [camera["id"] for camera in source.get("cameras", [])]
+    camera_results = {}
+    for camera in cameras:
+        captures = {mode: capture(binary, scene, output, camera, mode) for mode in ("tiled", "exhaustive")}
+        camera_results[camera] = {
+            "captures": captures,
+            "image_error": image_error(Path(captures["exhaustive"]["image"]), Path(captures["tiled"]["image"])),
+            "exact_match": captures["tiled"]["sha256"] == captures["exhaustive"]["sha256"],
+        }
 
-    captures = {mode: capture(binary, scene, output, mode) for mode in ("tiled", "exhaustive", "forced-fallback")}
+    stress_camera = "stress-close"
+    forced = capture(binary, scene, output, stress_camera, "forced-fallback")
+    expected = camera_results[stress_camera]["captures"]["exhaustive"]
+
+    scenes_dir = output / "scenes"
+    scenes_dir.mkdir(parents=True, exist_ok=True)
+    isolated_results = {}
+    for emitter in emitters:
+        isolated = json.loads(json.dumps(source))
+        for candidate in isolated["emitters"]:
+            candidate["enabled"] = candidate["id"] == emitter["id"]
+        isolated_path = scenes_dir / f"{emitter['id']}-only.json"
+        isolated_path.write_text(json.dumps(isolated, indent=2) + "\n")
+        subprocess.run([str(binary), "validate", str(isolated_path)], cwd=ROOT, check=True, capture_output=True)
+        tiled = capture(binary, isolated_path, output, stress_camera, f"{emitter['id']}-only-tiled")
+        exhaustive = capture(binary, isolated_path, output, stress_camera, f"{emitter['id']}-only-exhaustive")
+        isolated_results[emitter["id"]] = {
+            "tiled": tiled,
+            "exhaustive": exhaustive,
+            "exact_match": tiled["sha256"] == exhaustive["sha256"],
+        }
+
+    reversed_scene = json.loads(json.dumps(source))
+    reversed_scene["emitters"].reverse()
+    reversed_path = scenes_dir / "reversed-emitter-order.json"
+    reversed_path.write_text(json.dumps(reversed_scene, indent=2) + "\n")
+    subprocess.run([str(binary), "validate", str(reversed_path)], cwd=ROOT, check=True, capture_output=True)
+    reversed_capture = capture(binary, reversed_path, output, stress_camera, "reversed-order-tiled")
+    tiled_reference = camera_results[stress_camera]["captures"]["tiled"]
+
+    source_zero_image = output / "source-zero-profiling-heavy.png"
+    subprocess.run(
+        [
+            str(binary), "capture", "--scene", str(SOURCE_ZERO_SCENE), "--seed", "42",
+            "--camera", "hero", "--tick", "120", "--resolution", "640x360", "--scale", "1",
+            "--output", str(source_zero_image.resolve()),
+        ],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    source_zero_rgba_sha256 = hashlib.sha256(Image.open(source_zero_image).convert("RGBA").tobytes()).hexdigest()
+    source_zero_matches = source_zero_rgba_sha256 == SOURCE_ZERO_RGBA_SHA256
+
+    all_camera_matches = all(result["exact_match"] for result in camera_results.values())
+    isolated_matches = all(result["exact_match"] for result in isolated_results.values())
+    forced_matches = forced["sha256"] == expected["sha256"]
+    order_matches = reversed_capture["sha256"] == tiled_reference["sha256"]
+    all_correctness_checks = all((all_camera_matches, isolated_matches, forced_matches, order_matches, source_zero_matches))
     report = {
         "date": "2026-10-18",
         "workstream": "bounded two-emitter maximum-budget tile-list correctness",
         "host": {"gpu": "Apple M1 Max", "backend": "Metal", "native_window": False},
         "scene": str(scene.relative_to(ROOT)),
         "scene_sha256": sha256(scene),
+        "diagnosis": {
+            "initial_changed_pixels": 9616,
+            "cause": "The primary list used a 36-entry per-tile stride in a 72-entry layout, and the secondary reader omitted the 36-entry segment offset.",
+            "correction": "Use a 72-entry per-tile stride and read source one from the second 36-entry segment.",
+            "allocation_or_dispatch_change": False,
+        },
         "seed": 42,
         "tick": 300,
-        "camera": "stress-close",
+        "cameras": cameras,
         "resolution": [640, 360],
-        "captures": captures,
-        "comparisons": {
-            "tiled_vs_exhaustive": {
-                "image_error": image_error(output / "exhaustive.png", output / "tiled.png"),
-                "exact_match": captures["tiled"]["sha256"] == captures["exhaustive"]["sha256"],
-            },
-            "forced_fallback_vs_exhaustive": {
-                "exact_match": captures["forced-fallback"]["sha256"] == captures["exhaustive"]["sha256"],
-            },
+        "camera_matrix": camera_results,
+        "source_isolation": isolated_results,
+        "forced_fallback": {"capture": forced, "matches_exhaustive": forced_matches},
+        "reversed_emitter_order": {"capture": reversed_capture, "matches_tiled": order_matches},
+        "source_zero_baseline": {
+            "scene": str(SOURCE_ZERO_SCENE.relative_to(ROOT)),
+            "camera": "hero",
+            "seed": 42,
+            "tick": 120,
+            "reference_rgba_sha256": SOURCE_ZERO_RGBA_SHA256,
+            "current_rgba_sha256": source_zero_rgba_sha256,
+            "matches": source_zero_matches,
         },
-        "result": "failed: tiled evaluation differs from exhaustive evaluation; forced fallback matches exhaustive",
+        "comparisons": {
+            "all_tiled_cameras_match_exhaustive": all_camera_matches,
+            "source_isolation_matches_exhaustive": isolated_matches,
+            "forced_fallback_matches_exhaustive": forced_matches,
+            "reversed_emitter_order_matches": order_matches,
+            "source_zero_baseline_matches": source_zero_matches,
+        },
+        "result": "passed" if all_correctness_checks else "failed",
         "limitations": [
-            "Single fixed-tick close camera on M1 Max/Metal; no temporal, native-window, DX12, or other-adapter acceptance.",
+            "Fixed-tick still captures on M1 Max/Metal; no temporal, native-window, DX12, or other-adapter acceptance.",
             "Derived particle-light selection is capped at 12; 38 additional candidates are reported dropped in this scene.",
         ],
     }
     report_path.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report["comparisons"], indent=2))
-    return 0
+    return 0 if all_correctness_checks else 1
 
 
 if __name__ == "__main__":

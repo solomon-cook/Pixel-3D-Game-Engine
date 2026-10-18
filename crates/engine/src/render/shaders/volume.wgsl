@@ -143,7 +143,7 @@ fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,
     let smoke_candidate_count=select(tile_header.counts.y,36u,smoke_overflow);
     if bounds_exit>bounds_enter {for(var candidate=0u;candidate<36u;candidate++) {
         if candidate>=smoke_candidate_count {break;}
-        let i=select(smoke_tile_indices[tile*SMOKE_TILE_CAPACITY+candidate],candidate,smoke_overflow);
+        let i=select(smoke_tile_indices[tile*SMOKE_TILE_CAPACITY*2u+candidate],candidate,smoke_overflow);
         let layer=f32(i/3u);let branch=f32(i%3u);let age=fract(time*0.125-layer/12.)*8.;
         if age>time || age<0.12 {continue;}
         let phase=hash(vec3(layer,branch,g.params.z))*6.28318;
@@ -201,7 +201,7 @@ fn ink_volume(pixel:vec4<f32>,origin:vec3<f32>,direction:vec3<f32>,distance:f32,
         if source_exit>source_enter {for(var candidate=0u;candidate<36u;candidate++) {
             if candidate>=secondary_count {break;}
             var i=candidate;
-            if !secondary_smoke_overflow {i=smoke_tile_indices[tile*SMOKE_TILE_CAPACITY*2u+candidate];}
+            if !secondary_smoke_overflow {i=smoke_tile_indices[tile*SMOKE_TILE_CAPACITY*2u+SMOKE_TILE_CAPACITY+candidate];}
             let layer=f32(i/3u);let branch=f32(i%3u);let age=fract(time*0.125-layer/12.)*8.;
             if age>time || age<0.12 {continue;}
             let source_seed=g.params.z+997.;

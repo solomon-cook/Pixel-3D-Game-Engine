@@ -33,7 +33,7 @@ fn build_tile_lists(@builtin(global_invocation_id) id:vec3<u32>) {
     if id.x>=tiles_x || id.y>=tiles_y {return;}
     let tile_index=id.y*tiles_x+id.x;
     let fire_base=tile_index*FIRE_TILE_CAPACITY;
-    let smoke_base=tile_index*SMOKE_TILE_CAPACITY;
+    let smoke_base=tile_index*SMOKE_TILE_CAPACITY*2u;
     let point_base=tile_index*POINT_TILE_CAPACITY;
     let particle_base=tile_index*PARTICLE_TILE_CAPACITY;
     var counts=vec4<u32>(0u);var flags=vec4<u32>(0u);

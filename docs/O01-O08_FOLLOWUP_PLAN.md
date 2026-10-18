@@ -482,8 +482,9 @@ samples its independent domain; a fixed-tick source-zero capture remains
 byte-identical. Scene validation accepts two emitters, and the review exercises
 the dual-source render path. Inked smoke, a source-local absorption-cache
 channel, the opaque-material heat cue's second temperature field, post heat and
-source-specific primary-light shadows are implemented. Focused cache/heat A/B,
-maximum-budget stress and sustained performance review remain open. Per-source
+source-specific primary-light shadows are implemented. Fixed-tick cache/heat A/B,
+maximum-budget parity and forced fallback pass. Cache temporal and sustained
+multi-emitter performance review remain open. Per-source
 primary-light, sun, caster, material, shader-reload and reset invalidation now
 match forced redraw at fixed tick; see
 [shadow invalidation evidence](measurements-multi-emitter-shadow-invalidation.json)
@@ -528,20 +529,24 @@ resource-recreation checks pass on Metal; then run the same evidence on DX12 and
 another adapter before raising the source cap. Keep the cap at two until correctness,
 memory and performance budgets pass.
 
-**Current overflow gate: failed, retained as a blocker.** The reproducible maximum-
-budget route uses two close ink emitters, 402 fire primitives, eight authored point
-lights and the 12-light derived cap. At seed 42/tick 300, tiled output differs from
-exhaustive output in 9,616 of 230,400 pixels (bbox x=320..450, y=0..147); forced
-fallback is byte-identical to exhaustive. Only the fire tile list naturally overflows
-(74 tiles); smoke lists do not, so the mismatch is not covered by the existing
-overflow fallback. The changed region is around the overlapping flame and smoke.
-Increasing both smoke-lobe bounds fourfold reduced the observed difference to 1,169
-pixels in one exploratory build but did not restore parity, so that bound change is
-not accepted. Reproduce with [the stress scene](../assets/scenes/two-emitter-overflow-stress.json),
-[the runner](../scripts/two_emitter_overflow_study.py) and
-[the report](measurements-multi-emitter-overflow.json). The cause remains unresolved;
-do not treat the two-source overflow gate as passed. This is one fixed close-camera
-Metal capture, not temporal, native-window or cross-adapter evidence.
+**Maximum-budget ink-smoke parity: corrected and verified on M1 Max/Metal.** The
+reproducible route initially differed from exhaustive output in 9,616 of 230,400
+pixels. Inspection found two indexing errors in the expanded per-tile smoke buffer:
+the primary list used a 36-entry stride although storage reserves 72 entries per
+tile, and the secondary reader omitted its 36-entry offset. Primary entries could
+overlap the prior tile's secondary entries, while secondary shading read primary
+candidate IDs. The builder and both readers now use the shared 72-entry tile stride
+and the secondary segment offset. At seed 42/tick 300, tiled output now matches
+exhaustive output byte-for-byte in all six named cameras; both isolated emitters,
+forced fallback and reversed emitter order also match. The same-tick source-zero
+profiling-heavy capture remains byte-identical to its prior evidence hash. Natural
+overflow in this scene affects 74 fire-list tiles; the smoke lists fit their per-
+source 36-entry capacity and do not overflow. This does not provide temporal, native-
+window, performance, DX12 or other-adapter evidence. Reproduce with [the stress
+scene](../assets/scenes/two-emitter-overflow-stress.json), [the runner](../scripts/two_emitter_overflow_study.py)
+and [the report](measurements-multi-emitter-overflow.json). No additional list
+allocation or dispatch was introduced; the existing buffer layout is now addressed
+consistently.
 
 ## Program completion record
 
