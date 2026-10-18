@@ -812,3 +812,31 @@ do not infer a general win from this one route. Tiled mode also retained the
 Reproduce with
 [`two_emitter_overflow_study.py`](../scripts/two_emitter_overflow_study.py) and
 inspect [the report](measurements-multi-emitter-overflow.json).
+
+## O06 x O08 moving-camera temporal interaction (18 October)
+
+The fixed-tick O06 x O08 factorial showed exact RGBA16F no-copy output, while
+compact HDR had small but measurable differences. To check whether the three
+choices interact under motion, all eight direct/reuse, copy/no-copy and
+RGBA16F/Rg11b10Ufloat combinations were captured for 240 frames at 20 fps on the
+same 640x360 mixed fire/smoke/material camera route. Every variant preserved the
+baseline fire and effect counts at every tick. Direct RGBA16F copy and no-copy
+were exact. Direct compact HDR measured 0.337/255 mean frame error and 0.421/255
+mean temporal-change error on this route. The opaque-light reuse combinations
+had very small mean errors but a sparse 188/255 peak at tick 957 and pixel
+(344, 226), at the fire/glass edge. The mean alone therefore hides a visible
+outlier. The sampled contact sheet shows the difference confined to a few edge
+pixels; continuous playback review remains open.
+
+A moving-route guard probe compared the current depth match, a tighter depth
+match, exact depth, foreground-alpha limits of 0.05, 0.10 and 0.25, and
+foreground-radiance limits of 0.5, 2 and 8. Exact
+depth reduced mean RGB error from 0.000118 to 0.000101/255 and the maximum
+changed-pixel count per frame from 42 to 30, but it did not remove the 188/255
+peak. The alpha and foreground-radiance limits changed no measured image
+metrics. No guard timing was measured, and none is promoted. Keep opaque-light reuse disabled by default
+while investigating HDR foreground reconstruction at the fire/glass edge.
+Evidence: [factorial temporal report](measurements-o06-o08-factorial-temporal.json),
+[guard report](measurements-o06-temporal-depth-guard.json), and runners
+[`optical_factorial_temporal_study.py`](../scripts/optical_factorial_temporal_study.py),
+[`optical_reuse_temporal_guard_study.py`](../scripts/optical_reuse_temporal_guard_study.py).

@@ -246,6 +246,19 @@ off and close the experiment with that result.
    does not resolve the outlier and is not adopted; keep the measured depth guard
    unchanged. See [snapshot-color report](measurements-o06-snapshot-color-guard.json)
    and [reproducible runner](../scripts/optical_snapshot_color_guard_study.py).
+   A matched 240-frame, 20 fps `mixed-close` route now covers all eight O06×O08
+   combinations; effect counts match at every frame. RGBA16F direct-copy/no-copy
+   remain exact, while compact HDR has 0.337/255 mean frame and 0.421/255 mean
+   temporal-change error. Every opaque-light reuse variant exhibits a sparse
+   188/255 maximum channel error at tick 957, pixel (344, 226), near the
+   fire/glass edge. The moving-route guard probe finds that exact depth reduces
+   average error and the changed-pixel footprint but leaves this maximum intact;
+   alpha limits 0.05–0.25 and foreground-radiance limits 0.5–8 change no image metrics. This is a correctness gap,
+   not an accepted visual tolerance. No timing was measured for the guards. See
+   [factorial temporal report](measurements-o06-o08-factorial-temporal.json),
+   [guard report](measurements-o06-temporal-depth-guard.json), and runners
+   [factorial](../scripts/optical_factorial_temporal_study.py) and
+   [guard](../scripts/optical_reuse_temporal_guard_study.py).
 
 **Exit gate:** sustained total-render gain larger than run variance, acceptable
 images in reflection/transmission stress views and no stale live-edit output.
@@ -275,13 +288,17 @@ produced byte-identical fixed-tick output to copy for both HDR formats. Compact
 HDR lowered known allocation by 1.84 MB; packed-HDR no-copy adds a 0.23 MB mask.
 In this high-output scene, compact-HDR mean RGB error was 0.21–0.72/255 per
 camera/channel, with a 28/255 maximum. The contact sheet remained visually close,
-but temporal error and additional workloads remain open. A quantified temporal
-sample now compares direct RGBA16F copy with direct compact-HDR copy over 240
+but combined temporal error and additional workloads remain open. A quantified
+temporal sample now compares direct RGBA16F copy with direct compact-HDR copy over 240
 frames at 20 fps on the same high-dynamic mixed route. Mean per-frame RGB error
 is 0.342/255 (p95 frame mean 0.373/255, maximum channel error 29/255); mean
 temporal-change-magnitude error is 0.418/255 (p95 frame mean 0.455/255, maximum
-channel error 29/255). This adds one route, not a perceptual acceptance threshold.
-Human playback review and fallback/DX12 validation remain open. Three alternating
+channel error 29/255). A matched 240-frame orbit now covers all eight lighting,
+copy and HDR combinations. Each variant preserves effect counts; the reused
+opaque-light paths exhibit a sparse 188/255 channel outlier even though their
+mean RGB error is very small. Compact HDR with direct lighting has 0.337/255
+mean frame error and 0.421/255 temporal-change error on this route. Human
+playback review and fallback/DX12 validation remain open. Three alternating
 120-second native-window pairs now cover the high-dynamic mixed route. Candidate
 minus baseline FPS deltas were +1.512/-0.769/+0.151 fps (median +0.151); native
 CPU-frame median delta was -0.306 ms and GPU-stage deltas were small and mixed.

@@ -1,0 +1,267 @@
+{
+  "date": "2026-10-18",
+  "workstream": "O06 moving-camera temporal depth-guard probe",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "scene_source": "optical_factorial_study.mixed_scene with high-dynamic overrides",
+  "scene_sha256": {
+    "direct_copy_rgba16": "3020c76e7c948cbfa130a72bcd6c39ece326750bc5f12faaa76013c9a9b7a768",
+    "reuse_copy_rgba16": "4ecfb8418f00ddd2b06fe991beb8e4265dcf7911f1666c3b70ec2be5d1e9c9ac"
+  },
+  "binary_sha256": "f49bdfcd6d867a7baca3572b46a586c2bbf14b979f9f6cdd12f8e141cc8980bc",
+  "capture_script_sha256": "a2120471d7cc238776997875b8549aedd2ffd34312dd452d77c4ae9208e9ff34",
+  "study_script_sha256": "08de6a6653d1aabeeef67be28964a98d0a544d60629b4251a4f2ad013ed18ee5",
+  "shader_sha256": {
+    "current": "2a946bc823df1a588046155d2d66c78aca8d33f246aa73e25c9a2aef8b5453ad",
+    "very_tight": "52ebffa84b4a3896e532f58e8f0c93c18d1c1724cb642312fed9560e050439e0",
+    "exact_depth": "b5c26d131b3fbfbc68ddbfa17162609e042bfae1a08fa1018547f29e87057f73",
+    "alpha_0.05": "9756154e40e67f3e375158780892454cc6de94ea679d6d4248b7e925f4a2febf",
+    "alpha_0.10": "f651301e8f085cf3901c7b2ecc5d3c95aee2d0eb6cf26fca81ef810e4c263559",
+    "alpha_0.25": "847fe408985cbeb5352b1ebf017765f584d440c3efb5e9dc3d08b4bcaa7ab172",
+    "foreground_0.5": "428cf370949fc3ce89f5db7dae8ad708a6abd8b29b019a392cc6698864562490",
+    "foreground_2": "e949c33c5e2d95cb025602ca525a2a0eb04a960b93767a4042d9975e06657067",
+    "foreground_8": "7e7b1357240e22b170e550e2a3ef9e4cc124bbf41e75593fb2846160f320990d"
+  },
+  "route": "mixed-smoke-material-orbit",
+  "camera": "mixed-close",
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "start_tick": 300,
+  "end_tick": 1017,
+  "frames": 240,
+  "fps": 20.0,
+  "guard_values": {
+    "current": {
+      "absolute_floor": 0.002,
+      "relative_depth_tolerance": 0.0005
+    },
+    "very_tight": {
+      "absolute_floor": 0.0005,
+      "relative_depth_tolerance": 0.0001
+    },
+    "exact_depth": {
+      "absolute_floor": 0.0,
+      "relative_depth_tolerance": 0.0
+    },
+    "foreground_alpha_maximum": [
+      0.05,
+      0.1,
+      0.25
+    ],
+    "foreground_rgb_maximum": [
+      0.5,
+      2.0,
+      8.0
+    ]
+  },
+  "current_guard": {
+    "frame_count": 240,
+    "effect_counts_match_every_frame": true,
+    "frame_rgb_mae_mean": 0.00011810980902777778,
+    "frame_rgb_mae_p95": 0.0006438078703703703,
+    "frame_rgb_mae_max": 0.0012123842592592592,
+    "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
+    "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
+    "max_channel_difference": 188,
+    "maximum_changed_pixels_per_frame": 42,
+    "peak": {
+      "channel_difference": 188,
+      "frame_index": 219,
+      "tick": 957,
+      "changed_pixels": 32,
+      "coordinate_xy": [
+        344,
+        226
+      ]
+    }
+  },
+  "very_tight_guard": {
+    "frame_count": 240,
+    "effect_counts_match_every_frame": true,
+    "frame_rgb_mae_mean": 0.00010435956790123456,
+    "frame_rgb_mae_p95": 0.0006365740740740741,
+    "frame_rgb_mae_max": 0.0011675347222222222,
+    "temporal_change_magnitude_rgb_mae_mean": 0.00019648685688826903,
+    "temporal_change_magnitude_rgb_mae_p95": 0.0010706018518518519,
+    "max_channel_difference": 188,
+    "maximum_changed_pixels_per_frame": 32,
+    "peak": {
+      "channel_difference": 188,
+      "frame_index": 219,
+      "tick": 957,
+      "changed_pixels": 22,
+      "coordinate_xy": [
+        344,
+        226
+      ]
+    }
+  },
+  "exact_depth_guard": {
+    "frame_count": 240,
+    "effect_counts_match_every_frame": true,
+    "frame_rgb_mae_mean": 0.0001009837962962963,
+    "frame_rgb_mae_p95": 0.0006351273148148148,
+    "frame_rgb_mae_max": 0.0011675347222222222,
+    "temporal_change_magnitude_rgb_mae_mean": 0.00018987050596621727,
+    "temporal_change_magnitude_rgb_mae_p95": 0.001066261574074074,
+    "max_channel_difference": 188,
+    "maximum_changed_pixels_per_frame": 30,
+    "peak": {
+      "channel_difference": 188,
+      "frame_index": 219,
+      "tick": 957,
+      "changed_pixels": 16,
+      "coordinate_xy": [
+        344,
+        226
+      ]
+    }
+  },
+  "foreground_alpha_gates": {
+    "0.05": {
+      "frame_count": 240,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.00011810980902777778,
+      "frame_rgb_mae_p95": 0.0006438078703703703,
+      "frame_rgb_mae_max": 0.0012123842592592592,
+      "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
+      "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
+      "max_channel_difference": 188,
+      "maximum_changed_pixels_per_frame": 42,
+      "peak": {
+        "channel_difference": 188,
+        "frame_index": 219,
+        "tick": 957,
+        "changed_pixels": 32,
+        "coordinate_xy": [
+          344,
+          226
+        ]
+      }
+    },
+    "0.10": {
+      "frame_count": 240,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.00011810980902777778,
+      "frame_rgb_mae_p95": 0.0006438078703703703,
+      "frame_rgb_mae_max": 0.0012123842592592592,
+      "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
+      "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
+      "max_channel_difference": 188,
+      "maximum_changed_pixels_per_frame": 42,
+      "peak": {
+        "channel_difference": 188,
+        "frame_index": 219,
+        "tick": 957,
+        "changed_pixels": 32,
+        "coordinate_xy": [
+          344,
+          226
+        ]
+      }
+    },
+    "0.25": {
+      "frame_count": 240,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.00011810980902777778,
+      "frame_rgb_mae_p95": 0.0006438078703703703,
+      "frame_rgb_mae_max": 0.0012123842592592592,
+      "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
+      "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
+      "max_channel_difference": 188,
+      "maximum_changed_pixels_per_frame": 42,
+      "peak": {
+        "channel_difference": 188,
+        "frame_index": 219,
+        "tick": 957,
+        "changed_pixels": 32,
+        "coordinate_xy": [
+          344,
+          226
+        ]
+      }
+    }
+  },
+  "foreground_radiance_gates": {
+    "0.5": {
+      "frame_count": 240,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.00011810980902777778,
+      "frame_rgb_mae_p95": 0.0006438078703703703,
+      "frame_rgb_mae_max": 0.0012123842592592592,
+      "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
+      "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
+      "max_channel_difference": 188,
+      "maximum_changed_pixels_per_frame": 42,
+      "peak": {
+        "channel_difference": 188,
+        "frame_index": 219,
+        "tick": 957,
+        "changed_pixels": 32,
+        "coordinate_xy": [
+          344,
+          226
+        ]
+      }
+    },
+    "2": {
+      "frame_count": 240,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.00011810980902777778,
+      "frame_rgb_mae_p95": 0.0006438078703703703,
+      "frame_rgb_mae_max": 0.0012123842592592592,
+      "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
+      "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
+      "max_channel_difference": 188,
+      "maximum_changed_pixels_per_frame": 42,
+      "peak": {
+        "channel_difference": 188,
+        "frame_index": 219,
+        "tick": 957,
+        "changed_pixels": 32,
+        "coordinate_xy": [
+          344,
+          226
+        ]
+      }
+    },
+    "8": {
+      "frame_count": 240,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.00011810980902777778,
+      "frame_rgb_mae_p95": 0.0006438078703703703,
+      "frame_rgb_mae_max": 0.0012123842592592592,
+      "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
+      "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
+      "max_channel_difference": 188,
+      "maximum_changed_pixels_per_frame": 42,
+      "peak": {
+        "channel_difference": 188,
+        "frame_index": 219,
+        "tick": 957,
+        "changed_pixels": 32,
+        "coordinate_xy": [
+          344,
+          226
+        ]
+      }
+    }
+  },
+  "strict_guard_reduced_total_pixel_error": true,
+  "peak_frame_contact": {
+    "path": "artifacts/o06-o08/temporal-depth-guard/peak-frame-contact.png",
+    "sha256": "1103c846c1d3985adf04d72ae705db8a5146a93c4d5c019d809c9e47f36a7703",
+    "frame_index": 219
+  },
+  "interpretation": "Tighter and exact-depth, foreground-alpha, and foreground-radiance guards are explicit fallback-to-direct conditions. The peak fire/glass mismatch persists across them, so these guards do not solve reuse reconstruction. This experiment measures image quality only and does not establish performance or promotion suitability.",
+  "limitations": [
+    "One offscreen M1 Max/Metal route; native-window and other-adapter checks remain open.",
+    "The fixed-camera experiment and this one orbit do not establish continuous human playback acceptance."
+  ]
+}

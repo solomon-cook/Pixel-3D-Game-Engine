@@ -34,6 +34,7 @@ def route_camera_at(route, base_camera, seconds):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--binary', type=Path, default=ROOT / 'target/release/engine-lab')
+    parser.add_argument('--shaders', type=Path, help='override WGSL shader directory for a renderer experiment')
     parser.add_argument('--camera', default='fire-study')
     parser.add_argument('--scene', type=Path, default=ROOT / 'assets/scenes/clearing.json')
     parser.add_argument('--seed', type=int, default=42)
@@ -56,6 +57,10 @@ def main():
         parser.error(f'scene does not exist: {args.scene}')
     args.scene = args.scene.resolve()
     args.binary = args.binary.resolve()
+    if args.shaders:
+        args.shaders = args.shaders.resolve()
+        if not args.shaders.is_dir():
+            parser.error(f'shader directory does not exist: {args.shaders}')
     scene = json.loads(args.scene.read_text())
     route = next((route for route in scene.get('routes', []) if route.get('id') == args.route), None) if args.route else None
     if args.route and route is None:
@@ -69,6 +74,8 @@ def main():
         command.extend(['--effect-profile', args.profile])
     if args.experiments:
         command.extend(['--experiments', args.experiments])
+    if args.shaders:
+        command.extend(['--shaders', str(args.shaders)])
     if args.force_rg16_fallback:
         command.append('--force-rg16-fallback')
     process = subprocess.Popen(command, cwd=ROOT, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
@@ -103,6 +110,8 @@ def main():
             'scene_sha256': hashlib.sha256(args.scene.read_bytes()).hexdigest(),
             'binary': str(args.binary),
             'binary_sha256': hashlib.sha256(args.binary.read_bytes()).hexdigest(),
+            'shaders': str(args.shaders) if args.shaders else None,
+            'shader_sha256': hashlib.sha256((args.shaders / 'optical.wgsl').read_bytes()).hexdigest() if args.shaders and (args.shaders / 'optical.wgsl').is_file() else None,
             'capture_script_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
             'seed': args.seed,
             'profile': args.profile,

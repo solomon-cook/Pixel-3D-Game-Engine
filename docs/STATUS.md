@@ -135,6 +135,24 @@ is not part of the renderer. See
 [snapshot-color report](measurements-o06-snapshot-color-guard.json) and
 [runner](../scripts/optical_snapshot_color_guard_study.py).
 
+A matched 240-frame, 20 fps `mixed-close` camera orbit now exercises the O06×O08
+factorial. All eight variants preserve effect counts at every frame. RGBA16F
+direct-copy and direct no-copy stay byte-identical; compact HDR has mean frame
+error 0.337/255 and mean temporal-change error 0.421/255 in this moving route.
+Opaque-light reuse, with either copy mode or HDR format, exposes a sparse
+188/255 channel outlier at tick 957, pixel (344, 226), at the fire/glass edge.
+Mean error alone hides it. See [factorial temporal report](measurements-o06-o08-factorial-temporal.json)
+and [runner](../scripts/optical_factorial_temporal_study.py).
+
+A focused moving-route probe tightened the depth guard, required exact depth,
+and tested foreground-alpha gates at 0.05, 0.10 and 0.25 plus foreground-radiance
+gates at 0.5, 2 and 8. Exact depth lowers mean error from 0.000118 to
+0.000101/255 and the maximum changed-pixel count from 42 to 30, but the same
+188/255 peak remains; the alpha and radiance gates change no metrics. This does
+not fix the reuse path, so do not promote it. No timing was measured. See
+[temporal guard report](measurements-o06-temporal-depth-guard.json) and
+[runner](../scripts/optical_reuse_temporal_guard_study.py).
+
 O01 profiling implementation now includes bounded asynchronous timestamps for
 smoke compute, shadows, opaque geometry, atmosphere/fire, optical resolve and post;
 serial latency and buffered throughput reports; a native vsynced route report;
