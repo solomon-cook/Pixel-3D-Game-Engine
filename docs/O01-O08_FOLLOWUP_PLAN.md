@@ -615,9 +615,10 @@ plus [per-source origin](measurements-multi-emitter-source-origins.json),
 reset/edit checks pass on Metal for the reviewed scenes. The maximum-budget
 sustained route shows a serial frame-work gain alongside a higher reported
 GPU-render metric, so do not generalize it to other workloads. Cache temporal
-quality, resource recreation, native-window, DX12 and another-adapter acceptance
-remain open. Keep the cap at two until those correctness, memory and performance
-budgets pass.
+quality and resource recreation, native sustained performance, DX12 and
+another-adapter acceptance remain open. Fixed-tick native tiled/exhaustive output
+matches across six cameras, source isolation and reversed emitter order. Keep the
+cap at two until the remaining correctness, memory and performance budgets pass.
 
 **Maximum-budget ink-smoke parity: corrected and verified on M1 Max/Metal.** The
 reproducible route initially differed from exhaustive output in 9,616 of 230,400
@@ -631,8 +632,8 @@ exhaustive output byte-for-byte in all six named cameras; both isolated emitters
 forced fallback and reversed emitter order also match. The same-tick source-zero
 profiling-heavy capture remains byte-identical to its prior evidence hash. Natural
 overflow in this scene affects 74 fire-list tiles; the smoke lists fit their per-
-source 36-entry capacity and do not overflow. This does not provide temporal, native-
-window, performance, DX12 or other-adapter evidence. Reproduce with [the stress
+source 36-entry capacity and do not overflow. This does not provide temporal,
+sustained native-window performance, DX12 or other-adapter evidence. Reproduce with [the stress
 scene](../assets/scenes/two-emitter-overflow-stress.json), [the runner](../scripts/two_emitter_overflow_study.py)
 and [the report](measurements-multi-emitter-overflow.json). No additional list
 allocation or dispatch was introduced; the existing buffer layout is now addressed
