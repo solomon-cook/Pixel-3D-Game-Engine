@@ -11,22 +11,22 @@
     "direct_copy_rgba16": "3020c76e7c948cbfa130a72bcd6c39ece326750bc5f12faaa76013c9a9b7a768",
     "reuse_copy_rgba16": "4ecfb8418f00ddd2b06fe991beb8e4265dcf7911f1666c3b70ec2be5d1e9c9ac"
   },
-  "binary_sha256": "f49bdfcd6d867a7baca3572b46a586c2bbf14b979f9f6cdd12f8e141cc8980bc",
+  "binary_sha256": "cceaa3c520243f31b3a2febe7c0ee778fe1039f9735c48e69452d042458de157",
   "capture_script_sha256": "a2120471d7cc238776997875b8549aedd2ffd34312dd452d77c4ae9208e9ff34",
-  "study_script_sha256": "639fdac0a5ce4a871d2f8f4d83b3cfdaf4f32c9b796a4a2e2a87829bfe8331d2",
+  "study_script_sha256": "1a6331d3aae7ecd438057baa3dae2012a9c3f41d61c5cc7b2d7a0f69300a6202",
   "shader_sha256": {
-    "current": "2a946bc823df1a588046155d2d66c78aca8d33f246aa73e25c9a2aef8b5453ad",
-    "very_tight": "52ebffa84b4a3896e532f58e8f0c93c18d1c1724cb642312fed9560e050439e0",
-    "exact_depth": "b5c26d131b3fbfbc68ddbfa17162609e042bfae1a08fa1018547f29e87057f73",
-    "alpha_0.05": "9756154e40e67f3e375158780892454cc6de94ea679d6d4248b7e925f4a2febf",
-    "alpha_0.10": "f651301e8f085cf3901c7b2ecc5d3c95aee2d0eb6cf26fca81ef810e4c263559",
-    "alpha_0.25": "847fe408985cbeb5352b1ebf017765f584d440c3efb5e9dc3d08b4bcaa7ab172",
-    "foreground_0.5": "428cf370949fc3ce89f5db7dae8ad708a6abd8b29b019a392cc6698864562490",
-    "foreground_2": "e949c33c5e2d95cb025602ca525a2a0eb04a960b93767a4042d9975e06657067",
-    "foreground_8": "7e7b1357240e22b170e550e2a3ef9e4cc124bbf41e75593fb2846160f320990d",
-    "normal_dot_0.90": "d0373684b1149ae0612781b73ea73546669f258fa380d0b04371de7a9a334dfa",
-    "normal_dot_0.95": "f86a632bb18b9e36f4be4299728a755c8e90b57d9d6d8911c6854d83fc75df49",
-    "normal_dot_0.99": "a34f79d8dcf1b14644a50243bbf659e39e98ac96509308b3e078784911c87987"
+    "current": "5dcff7826ffc79479843a173477c4187f2e094070ded21bbf942b7ed21f9e690",
+    "very_tight": "f4352a94335f6d69062cf72c95c802bbbff79be69d109b3c880a96f99f013bd7",
+    "exact_depth": "5dcff7826ffc79479843a173477c4187f2e094070ded21bbf942b7ed21f9e690",
+    "alpha_0.05": "64739165adc3ba1cdf8980453114ee4feb8ca31b7a8bce8796335191b90d6e7f",
+    "alpha_0.10": "08f4c2c76970f375713f5e2bc676a9444557be1a5a6c3124ec1546431f454abb",
+    "alpha_0.25": "94937ae70fa4ddc03a0617b245c52498451e06cdbd77c9f113393eedff7eba0f",
+    "foreground_0.5": "07e88543c20a09808fdeae1413db84220b019f77477639388ce3b3d020ee0fe0",
+    "foreground_2": "db17cedbea8348add4cfc6055460d5ea7a138f50a9726595d3bfa710cdb13dc0",
+    "foreground_8": "97d92f50c743d3e124f6c46acae5bcd1b8a72378755e6dc4a6a1d08c5fb4f9b2",
+    "normal_dot_0.90": "4bbb984bbeb8f2f264df12e0bc381e338a1a89a5e6a13525d3d748aa7dd8207c",
+    "normal_dot_0.95": "66af1831c44fe625f292b9209ed7ae705148f3741ff3adc395c5a475aae31406",
+    "normal_dot_0.99": "afbd92a178bc481de1f81d8a061a38d1d7e9efc639f722ad3fc7024f965923e3"
   },
   "route": "mixed-smoke-material-orbit",
   "camera": "mixed-close",
@@ -41,16 +41,14 @@
   "fps": 20.0,
   "guard_values": {
     "current": {
-      "absolute_floor": 0.002,
-      "relative_depth_tolerance": 0.0005
+      "depth_match": "exact"
     },
     "very_tight": {
       "absolute_floor": 0.0005,
       "relative_depth_tolerance": 0.0001
     },
     "exact_depth": {
-      "absolute_floor": 0.0,
-      "relative_depth_tolerance": 0.0
+      "depth_match": "exact"
     },
     "foreground_alpha_maximum": [
       0.05,
@@ -71,63 +69,63 @@
   "current_guard": {
     "frame_count": 240,
     "effect_counts_match_every_frame": true,
-    "frame_rgb_mae_mean": 0.00011810980902777778,
-    "frame_rgb_mae_p95": 0.0006438078703703703,
-    "frame_rgb_mae_max": 0.0012123842592592592,
-    "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
-    "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
-    "max_channel_difference": 188,
-    "maximum_changed_pixels_per_frame": 42,
+    "frame_rgb_mae_mean": 6.028163580246913e-09,
+    "frame_rgb_mae_p95": 0.0,
+    "frame_rgb_mae_max": 1.4467592592592592e-06,
+    "temporal_change_magnitude_rgb_mae_mean": 1.2106772044010537e-08,
+    "temporal_change_magnitude_rgb_mae_p95": 0.0,
+    "max_channel_difference": 1,
+    "maximum_changed_pixels_per_frame": 1,
     "peak": {
-      "channel_difference": 188,
-      "frame_index": 219,
-      "tick": 957,
-      "changed_pixels": 32,
+      "channel_difference": 1,
+      "frame_index": 175,
+      "tick": 825,
+      "changed_pixels": 1,
       "coordinate_xy": [
-        344,
-        226
+        428,
+        199
       ]
     }
   },
   "very_tight_guard": {
     "frame_count": 240,
     "effect_counts_match_every_frame": true,
-    "frame_rgb_mae_mean": 0.00010435956790123456,
-    "frame_rgb_mae_p95": 0.0006365740740740741,
-    "frame_rgb_mae_max": 0.0011675347222222222,
-    "temporal_change_magnitude_rgb_mae_mean": 0.00019648685688826903,
-    "temporal_change_magnitude_rgb_mae_p95": 0.0010706018518518519,
-    "max_channel_difference": 188,
-    "maximum_changed_pixels_per_frame": 32,
+    "frame_rgb_mae_mean": 1.9344376929012345e-05,
+    "frame_rgb_mae_p95": 9.548611111111112e-05,
+    "frame_rgb_mae_max": 0.00026765046296296297,
+    "temporal_change_magnitude_rgb_mae_mean": 3.681669378583605e-05,
+    "temporal_change_magnitude_rgb_mae_p95": 0.00017650462962962962,
+    "max_channel_difference": 87,
+    "maximum_changed_pixels_per_frame": 14,
     "peak": {
-      "channel_difference": 188,
-      "frame_index": 219,
-      "tick": 957,
-      "changed_pixels": 22,
+      "channel_difference": 87,
+      "frame_index": 210,
+      "tick": 930,
+      "changed_pixels": 5,
       "coordinate_xy": [
-        344,
-        226
+        366,
+        222
       ]
     }
   },
   "exact_depth_guard": {
     "frame_count": 240,
     "effect_counts_match_every_frame": true,
-    "frame_rgb_mae_mean": 0.0001009837962962963,
-    "frame_rgb_mae_p95": 0.0006351273148148148,
-    "frame_rgb_mae_max": 0.0011675347222222222,
-    "temporal_change_magnitude_rgb_mae_mean": 0.00018987050596621727,
-    "temporal_change_magnitude_rgb_mae_p95": 0.001066261574074074,
-    "max_channel_difference": 188,
-    "maximum_changed_pixels_per_frame": 30,
+    "frame_rgb_mae_mean": 6.028163580246913e-09,
+    "frame_rgb_mae_p95": 0.0,
+    "frame_rgb_mae_max": 1.4467592592592592e-06,
+    "temporal_change_magnitude_rgb_mae_mean": 1.2106772044010537e-08,
+    "temporal_change_magnitude_rgb_mae_p95": 0.0,
+    "max_channel_difference": 1,
+    "maximum_changed_pixels_per_frame": 1,
     "peak": {
-      "channel_difference": 188,
-      "frame_index": 219,
-      "tick": 957,
-      "changed_pixels": 16,
+      "channel_difference": 1,
+      "frame_index": 175,
+      "tick": 825,
+      "changed_pixels": 1,
       "coordinate_xy": [
-        344,
-        226
+        428,
+        199
       ]
     }
   },
@@ -135,63 +133,63 @@
     "0.05": {
       "frame_count": 240,
       "effect_counts_match_every_frame": true,
-      "frame_rgb_mae_mean": 0.00011810980902777778,
-      "frame_rgb_mae_p95": 0.0006438078703703703,
-      "frame_rgb_mae_max": 0.0012123842592592592,
-      "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
-      "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
-      "max_channel_difference": 188,
-      "maximum_changed_pixels_per_frame": 42,
+      "frame_rgb_mae_mean": 6.028163580246913e-09,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 1.4467592592592592e-06,
+      "temporal_change_magnitude_rgb_mae_mean": 1.2106772044010537e-08,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "max_channel_difference": 1,
+      "maximum_changed_pixels_per_frame": 1,
       "peak": {
-        "channel_difference": 188,
-        "frame_index": 219,
-        "tick": 957,
-        "changed_pixels": 32,
+        "channel_difference": 1,
+        "frame_index": 175,
+        "tick": 825,
+        "changed_pixels": 1,
         "coordinate_xy": [
-          344,
-          226
+          428,
+          199
         ]
       }
     },
     "0.10": {
       "frame_count": 240,
       "effect_counts_match_every_frame": true,
-      "frame_rgb_mae_mean": 0.00011810980902777778,
-      "frame_rgb_mae_p95": 0.0006438078703703703,
-      "frame_rgb_mae_max": 0.0012123842592592592,
-      "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
-      "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
-      "max_channel_difference": 188,
-      "maximum_changed_pixels_per_frame": 42,
+      "frame_rgb_mae_mean": 6.028163580246913e-09,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 1.4467592592592592e-06,
+      "temporal_change_magnitude_rgb_mae_mean": 1.2106772044010537e-08,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "max_channel_difference": 1,
+      "maximum_changed_pixels_per_frame": 1,
       "peak": {
-        "channel_difference": 188,
-        "frame_index": 219,
-        "tick": 957,
-        "changed_pixels": 32,
+        "channel_difference": 1,
+        "frame_index": 175,
+        "tick": 825,
+        "changed_pixels": 1,
         "coordinate_xy": [
-          344,
-          226
+          428,
+          199
         ]
       }
     },
     "0.25": {
       "frame_count": 240,
       "effect_counts_match_every_frame": true,
-      "frame_rgb_mae_mean": 0.00011810980902777778,
-      "frame_rgb_mae_p95": 0.0006438078703703703,
-      "frame_rgb_mae_max": 0.0012123842592592592,
-      "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
-      "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
-      "max_channel_difference": 188,
-      "maximum_changed_pixels_per_frame": 42,
+      "frame_rgb_mae_mean": 6.028163580246913e-09,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 1.4467592592592592e-06,
+      "temporal_change_magnitude_rgb_mae_mean": 1.2106772044010537e-08,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "max_channel_difference": 1,
+      "maximum_changed_pixels_per_frame": 1,
       "peak": {
-        "channel_difference": 188,
-        "frame_index": 219,
-        "tick": 957,
-        "changed_pixels": 32,
+        "channel_difference": 1,
+        "frame_index": 175,
+        "tick": 825,
+        "changed_pixels": 1,
         "coordinate_xy": [
-          344,
-          226
+          428,
+          199
         ]
       }
     }
@@ -200,63 +198,63 @@
     "0.5": {
       "frame_count": 240,
       "effect_counts_match_every_frame": true,
-      "frame_rgb_mae_mean": 0.00011810980902777778,
-      "frame_rgb_mae_p95": 0.0006438078703703703,
-      "frame_rgb_mae_max": 0.0012123842592592592,
-      "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
-      "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
-      "max_channel_difference": 188,
-      "maximum_changed_pixels_per_frame": 42,
+      "frame_rgb_mae_mean": 6.028163580246913e-09,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 1.4467592592592592e-06,
+      "temporal_change_magnitude_rgb_mae_mean": 1.2106772044010537e-08,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "max_channel_difference": 1,
+      "maximum_changed_pixels_per_frame": 1,
       "peak": {
-        "channel_difference": 188,
-        "frame_index": 219,
-        "tick": 957,
-        "changed_pixels": 32,
+        "channel_difference": 1,
+        "frame_index": 175,
+        "tick": 825,
+        "changed_pixels": 1,
         "coordinate_xy": [
-          344,
-          226
+          428,
+          199
         ]
       }
     },
     "2": {
       "frame_count": 240,
       "effect_counts_match_every_frame": true,
-      "frame_rgb_mae_mean": 0.00011810980902777778,
-      "frame_rgb_mae_p95": 0.0006438078703703703,
-      "frame_rgb_mae_max": 0.0012123842592592592,
-      "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
-      "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
-      "max_channel_difference": 188,
-      "maximum_changed_pixels_per_frame": 42,
+      "frame_rgb_mae_mean": 6.028163580246913e-09,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 1.4467592592592592e-06,
+      "temporal_change_magnitude_rgb_mae_mean": 1.2106772044010537e-08,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "max_channel_difference": 1,
+      "maximum_changed_pixels_per_frame": 1,
       "peak": {
-        "channel_difference": 188,
-        "frame_index": 219,
-        "tick": 957,
-        "changed_pixels": 32,
+        "channel_difference": 1,
+        "frame_index": 175,
+        "tick": 825,
+        "changed_pixels": 1,
         "coordinate_xy": [
-          344,
-          226
+          428,
+          199
         ]
       }
     },
     "8": {
       "frame_count": 240,
       "effect_counts_match_every_frame": true,
-      "frame_rgb_mae_mean": 0.00011810980902777778,
-      "frame_rgb_mae_p95": 0.0006438078703703703,
-      "frame_rgb_mae_max": 0.0012123842592592592,
-      "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
-      "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
-      "max_channel_difference": 188,
-      "maximum_changed_pixels_per_frame": 42,
+      "frame_rgb_mae_mean": 6.028163580246913e-09,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 1.4467592592592592e-06,
+      "temporal_change_magnitude_rgb_mae_mean": 1.2106772044010537e-08,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "max_channel_difference": 1,
+      "maximum_changed_pixels_per_frame": 1,
       "peak": {
-        "channel_difference": 188,
-        "frame_index": 219,
-        "tick": 957,
-        "changed_pixels": 32,
+        "channel_difference": 1,
+        "frame_index": 175,
+        "tick": 825,
+        "changed_pixels": 1,
         "coordinate_xy": [
-          344,
-          226
+          428,
+          199
         ]
       }
     }
@@ -265,74 +263,74 @@
     "0.90": {
       "frame_count": 240,
       "effect_counts_match_every_frame": true,
-      "frame_rgb_mae_mean": 0.00011810980902777778,
-      "frame_rgb_mae_p95": 0.0006438078703703703,
-      "frame_rgb_mae_max": 0.0012123842592592592,
-      "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
-      "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
-      "max_channel_difference": 188,
-      "maximum_changed_pixels_per_frame": 42,
+      "frame_rgb_mae_mean": 6.028163580246913e-09,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 1.4467592592592592e-06,
+      "temporal_change_magnitude_rgb_mae_mean": 1.2106772044010537e-08,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "max_channel_difference": 1,
+      "maximum_changed_pixels_per_frame": 1,
       "peak": {
-        "channel_difference": 188,
-        "frame_index": 219,
-        "tick": 957,
-        "changed_pixels": 32,
+        "channel_difference": 1,
+        "frame_index": 175,
+        "tick": 825,
+        "changed_pixels": 1,
         "coordinate_xy": [
-          344,
-          226
+          428,
+          199
         ]
       }
     },
     "0.95": {
       "frame_count": 240,
       "effect_counts_match_every_frame": true,
-      "frame_rgb_mae_mean": 0.00011810980902777778,
-      "frame_rgb_mae_p95": 0.0006438078703703703,
-      "frame_rgb_mae_max": 0.0012123842592592592,
-      "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
-      "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
-      "max_channel_difference": 188,
-      "maximum_changed_pixels_per_frame": 42,
+      "frame_rgb_mae_mean": 6.028163580246913e-09,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 1.4467592592592592e-06,
+      "temporal_change_magnitude_rgb_mae_mean": 1.2106772044010537e-08,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "max_channel_difference": 1,
+      "maximum_changed_pixels_per_frame": 1,
       "peak": {
-        "channel_difference": 188,
-        "frame_index": 219,
-        "tick": 957,
-        "changed_pixels": 32,
+        "channel_difference": 1,
+        "frame_index": 175,
+        "tick": 825,
+        "changed_pixels": 1,
         "coordinate_xy": [
-          344,
-          226
+          428,
+          199
         ]
       }
     },
     "0.99": {
       "frame_count": 240,
       "effect_counts_match_every_frame": true,
-      "frame_rgb_mae_mean": 0.00011810980902777778,
-      "frame_rgb_mae_p95": 0.0006438078703703703,
-      "frame_rgb_mae_max": 0.0012123842592592592,
-      "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
-      "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
-      "max_channel_difference": 188,
-      "maximum_changed_pixels_per_frame": 42,
+      "frame_rgb_mae_mean": 6.028163580246913e-09,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 1.4467592592592592e-06,
+      "temporal_change_magnitude_rgb_mae_mean": 1.2106772044010537e-08,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "max_channel_difference": 1,
+      "maximum_changed_pixels_per_frame": 1,
       "peak": {
-        "channel_difference": 188,
-        "frame_index": 219,
-        "tick": 957,
-        "changed_pixels": 32,
+        "channel_difference": 1,
+        "frame_index": 175,
+        "tick": 825,
+        "changed_pixels": 1,
         "coordinate_xy": [
-          344,
-          226
+          428,
+          199
         ]
       }
     }
   },
-  "strict_guard_reduced_total_pixel_error": true,
+  "exact_guard_reduced_total_pixel_error": true,
   "peak_frame_contact": {
     "path": "artifacts/o06-o08/temporal-depth-guard/peak-frame-contact.png",
-    "sha256": "1103c846c1d3985adf04d72ae705db8a5146a93c4d5c019d809c9e47f36a7703",
-    "frame_index": 219
+    "sha256": "f46af1bb7749d4f8a72c87df4942fb88c31027501cc1b6d6d9e1d0f8d2588995",
+    "frame_index": 210
   },
-  "interpretation": "Tighter and exact-depth, foreground-alpha, foreground-radiance, and surface-normal alignment guards are explicit fallback-to-direct conditions. This experiment measures image quality only and does not establish performance or promotion suitability.",
+  "interpretation": "Exact depth matching with the camera-facing direct fallback leaves one 1/255 channel difference on one pixel across this 240-frame route. A looser depth tolerance restores a sparse 87/255 edge error; alpha, radiance and normal-alignment gates do not improve the exact-guard result. This experiment measures image quality only and does not establish performance or promotion suitability.",
   "limitations": [
     "One offscreen M1 Max/Metal route; native-window and other-adapter checks remain open.",
     "The fixed-camera experiment and this one orbit do not establish continuous human playback acceptance."

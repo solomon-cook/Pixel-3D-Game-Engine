@@ -19,9 +19,10 @@
   "fps": 20.0,
   "baseline": "direct_copy_rgba16",
   "baseline_scene_sha256": "3020c76e7c948cbfa130a72bcd6c39ece326750bc5f12faaa76013c9a9b7a768",
-  "binary_sha256": "f49bdfcd6d867a7baca3572b46a586c2bbf14b979f9f6cdd12f8e141cc8980bc",
-  "capture_script_sha256": "32cb84904894b6c0581dbb18f85ba39e181aee2ed4f0556df66718bd67f2a098",
-  "study_script_sha256": "8a8fe219a6cbe8c51fac3396aa02f7c771567f38ac20d328bdd51cc512863ca8",
+  "binary_sha256": "cceaa3c520243f31b3a2febe7c0ee778fe1039f9735c48e69452d042458de157",
+  "capture_script_sha256": "a2120471d7cc238776997875b8549aedd2ffd34312dd452d77c4ae9208e9ff34",
+  "study_script_sha256": "23b17be24b42255421f0e17972eed8aaf736dce574ded893f9f68d7159b8b1e1",
+  "shader_sha256": "5dcff7826ffc79479843a173477c4187f2e094070ded21bbf942b7ed21f9e690",
   "variants": {
     "direct_copy_rgba16": {
       "scene_sha256": "3020c76e7c948cbfa130a72bcd6c39ece326750bc5f12faaa76013c9a9b7a768",
@@ -34,20 +35,20 @@
       "temporal_change_magnitude_rgb_mae_p95": 0.0,
       "maximum_channel_difference": 0,
       "maximum_changed_pixels": 0,
-      "sequence_sha256": "b7a2323952c63c1a5beef57e3644f256307a13343c281562d034a1f09e01976a"
+      "sequence_sha256": "6fff2be742e3890fbb17d08ec358e68c7acf0eaf729bbf7fa5df948d88761189"
     },
     "reuse_copy_rgba16": {
       "scene_sha256": "4ecfb8418f00ddd2b06fe991beb8e4265dcf7911f1666c3b70ec2be5d1e9c9ac",
       "frame_count": 240,
       "effect_counts_match_every_frame": true,
-      "frame_rgb_mae_mean": 0.00011810980902777778,
-      "frame_rgb_mae_p95": 0.0006438078703703703,
-      "frame_rgb_mae_max": 0.0012123842592592592,
-      "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
-      "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
-      "maximum_channel_difference": 188,
-      "maximum_changed_pixels": 42,
-      "sequence_sha256": "5d71cb78c741fef5b9d22f25346241cbcb66b17a4c10905b5294d5a2b8ae2589"
+      "frame_rgb_mae_mean": 6.028163580246913e-09,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 1.4467592592592592e-06,
+      "temporal_change_magnitude_rgb_mae_mean": 1.2106772044010537e-08,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "maximum_channel_difference": 1,
+      "maximum_changed_pixels": 1,
+      "sequence_sha256": "ebc57bd90f752102fd83255e5620b33c70234ca14a5c69563d6584b11e9c97c9"
     },
     "direct_no_copy_rgba16": {
       "scene_sha256": "e12fe40fce0a077d6cd9432acb42491a49b0b11006c519b380c3a817d1cbb3f4",
@@ -60,20 +61,20 @@
       "temporal_change_magnitude_rgb_mae_p95": 0.0,
       "maximum_channel_difference": 0,
       "maximum_changed_pixels": 0,
-      "sequence_sha256": "41fe300c021967dea9cabfd3736342ac1ab201d58993d7d7e18792ee5f5c0804"
+      "sequence_sha256": "12d485fb6b2edeeee57185cb6a0ab14de2907886f61e1f7450ff8d65991ab900"
     },
     "reuse_no_copy_rgba16": {
       "scene_sha256": "10fa9f03d1c9392f755e4acb3f4dcbe0a0299706e5294f059c8b7d02fc4a6802",
       "frame_count": 240,
       "effect_counts_match_every_frame": true,
-      "frame_rgb_mae_mean": 0.00011810980902777778,
-      "frame_rgb_mae_p95": 0.0006438078703703703,
-      "frame_rgb_mae_max": 0.0012123842592592592,
-      "temporal_change_magnitude_rgb_mae_mean": 0.0002236605067410507,
-      "temporal_change_magnitude_rgb_mae_p95": 0.001083622685185185,
-      "maximum_channel_difference": 188,
-      "maximum_changed_pixels": 42,
-      "sequence_sha256": "ffdfd442070d4a228a524f16bf1b0d7e4d17208ac4f0a81c23189bd4c8f092a2"
+      "frame_rgb_mae_mean": 6.028163580246913e-09,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 1.4467592592592592e-06,
+      "temporal_change_magnitude_rgb_mae_mean": 1.2106772044010537e-08,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "maximum_channel_difference": 1,
+      "maximum_changed_pixels": 1,
+      "sequence_sha256": "7102e617c840affc8987b9d57e07728cbf13e034cfe951cf69e4cd9171e6c3ae"
     },
     "direct_copy_rg11b10": {
       "scene_sha256": "d73a3ebd12160bb380914b71939101358e99177987c8254db1ea6923449b640b",
@@ -86,20 +87,20 @@
       "temporal_change_magnitude_rgb_mae_p95": 0.4658955439814815,
       "maximum_channel_difference": 38,
       "maximum_changed_pixels": 131755,
-      "sequence_sha256": "e196ad51a734e4d5d6c545ba08d71e8007678960ccf00474f8038e78ad9a8c81"
+      "sequence_sha256": "64cec6f263492600791a8ed05d4d987226500462cf259b795cb27832315d9a93"
     },
     "reuse_copy_rg11b10": {
       "scene_sha256": "53c150b4663c4ae494f6a98e66a7f4f2209cf8b275467dc546c04c3703781a8f",
       "frame_count": 240,
       "effect_counts_match_every_frame": true,
-      "frame_rgb_mae_mean": 0.33700825255594136,
-      "frame_rgb_mae_p95": 0.37850983796296295,
-      "frame_rgb_mae_max": 0.387037037037037,
-      "temporal_change_magnitude_rgb_mae_mean": 0.4211983646172323,
-      "temporal_change_magnitude_rgb_mae_p95": 0.46595341435185184,
-      "maximum_channel_difference": 188,
-      "maximum_changed_pixels": 131776,
-      "sequence_sha256": "a23e7697e80f59a63c2abc1da86213abf2e39ead5986baf7386aa2252ef50b45"
+      "frame_rgb_mae_mean": 0.33673962553047837,
+      "frame_rgb_mae_p95": 0.37841145833333334,
+      "frame_rgb_mae_max": 0.3869574652777778,
+      "temporal_change_magnitude_rgb_mae_mean": 0.4207844340810476,
+      "temporal_change_magnitude_rgb_mae_p95": 0.4658955439814815,
+      "maximum_channel_difference": 38,
+      "maximum_changed_pixels": 131755,
+      "sequence_sha256": "340d5761985997c39b3d807e4ac49de178b96725e9aecf3d20c71995fca27d27"
     },
     "direct_no_copy_rg11b10": {
       "scene_sha256": "78417f05f21ce136212290e34b8b955bd23149154515d2e1b8b43aa96207d8d0",
@@ -112,26 +113,26 @@
       "temporal_change_magnitude_rgb_mae_p95": 0.4658955439814815,
       "maximum_channel_difference": 38,
       "maximum_changed_pixels": 131755,
-      "sequence_sha256": "4fc82ce90ade47c08c6db7b2b510c1edaad55764210dcddde65f6f134d7ba867"
+      "sequence_sha256": "6b578c73265ceba73e6a40c19ba9d3d715454130486350b59656ccbe9e1b9f8f"
     },
     "reuse_no_copy_rg11b10": {
       "scene_sha256": "4c98509af60fd55f201120068e7d33c714106ba61aeae4f515dc7fbb2c6978d7",
       "frame_count": 240,
       "effect_counts_match_every_frame": true,
-      "frame_rgb_mae_mean": 0.33700825255594136,
-      "frame_rgb_mae_p95": 0.37850983796296295,
-      "frame_rgb_mae_max": 0.387037037037037,
-      "temporal_change_magnitude_rgb_mae_mean": 0.4211983646172323,
-      "temporal_change_magnitude_rgb_mae_p95": 0.46595341435185184,
-      "maximum_channel_difference": 188,
-      "maximum_changed_pixels": 131776,
-      "sequence_sha256": "bffcee06a43b9d6500c5c988e5ef82523796765c5e6daf68bc732f3b704fc320"
+      "frame_rgb_mae_mean": 0.33673962553047837,
+      "frame_rgb_mae_p95": 0.37841145833333334,
+      "frame_rgb_mae_max": 0.3869574652777778,
+      "temporal_change_magnitude_rgb_mae_mean": 0.4207844340810476,
+      "temporal_change_magnitude_rgb_mae_p95": 0.4658955439814815,
+      "maximum_channel_difference": 38,
+      "maximum_changed_pixels": 131755,
+      "sequence_sha256": "a6734ed6ce7941011530677fe48c4f9f0edd0cca5a2403d2233f289aaa1d5bae"
     }
   },
   "worst_mean_error_variant": "reuse_copy_rg11b10",
   "contact_sheet": {
     "path": "artifacts/o06-o08/factorial-temporal/worst-variant-contact.png",
-    "sha256": "5a2453662c48c2bbcbff2f9abd1cd576ad6ff3450ecae1713caacf788784b1ac"
+    "sha256": "c826cc44c28731f62166f7c3fe1990949c5200eb39c001926bbf248be1aa8edf"
   },
   "limitations": [
     "One offscreen M1 Max/Metal route; native-window and other-adapter results are not included.",

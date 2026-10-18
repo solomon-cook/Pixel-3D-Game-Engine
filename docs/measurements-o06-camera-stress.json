@@ -48,8 +48,8 @@
   },
   "source_scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
   "stress_scene_sha256": "36e8659ca6221ffbf228f9fd2c9ba2ea06392b994138a4bea01502c3c6295c87",
-  "shader_source_sha256": "ea749647bb66d0634103796678c42f73f95fafcdb9b80949cadfd8b39a0cbdeb",
-  "binary_sha256": "e18956da749438f3d4ce0d2706497adc61670b8e2b15d4d65edc0b0f191ec9a4",
+  "shader_source_sha256": "5dcff7826ffc79479843a173477c4187f2e094070ded21bbf942b7ed21f9e690",
+  "binary_sha256": "cceaa3c520243f31b3a2febe7c0ee778fe1039f9735c48e69452d042458de157",
   "study_script_sha256": "258a4fc1ee668fc7df9c7754450eca3079c012ea5b614cf95c0170b496f039bb",
   "cases": {
     "glass-inside-oblique": {

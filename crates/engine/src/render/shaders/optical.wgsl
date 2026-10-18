@@ -93,14 +93,16 @@ fn shade_optical(v:Varying)->vec4<f32> {
         let composited=textureLoad(scene_color,pixel_coord,0).rgb;
         let sampled_normal_depth=textureLoad(scene_normals,pixel_coord,0);
         let expected_depth=length(g.camera.xyz-v.position);
-        let depth_tolerance=max(0.002,expected_depth*0.0005);
-        if sampled_normal_depth.w>0. && abs(sampled_normal_depth.w-expected_depth)<=depth_tolerance {
+        if sampled_normal_depth.w>0. && sampled_normal_depth.w==expected_depth {
             base_color=max(composited-foreground.rgb,vec3(0.))/max(1.-foreground.a,0.015);
             base_normal_depth=sampled_normal_depth;
         } else {
             // At a silhouette or occlusion edge, the opaque snapshot pixel may
-            // belong to another surface. Keep the direct path for that fragment.
-            let base=shade_surface(v,tile);
+            // belong to another surface. Keep the direct path for that fragment,
+            // with the same camera-facing interface normal used by the baseline.
+            var fallback_surface=v;
+            fallback_surface.normal=interface_normal;
+            let base=shade_surface(fallback_surface,tile);
             base_color=base.color.rgb;
             base_normal_depth=base.normal_depth;
         }

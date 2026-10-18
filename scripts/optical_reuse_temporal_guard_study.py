@@ -143,13 +143,17 @@ def main() -> int:
         shutil.copytree(SOURCE_SHADER, path)
     shader_path = shader_tight / "optical.wgsl"
     shader = shader_path.read_text()
-    needle = "max(0.002,expected_depth*0.0005)"
-    if needle not in shader:
-        raise RuntimeError("current O06 depth-guard pattern changed; update study before running")
-    shader_path.write_text(shader.replace(needle, "max(0.0005,expected_depth*0.0001)"))
+    exact_condition = "if sampled_normal_depth.w>0. && sampled_normal_depth.w==expected_depth {"
+    if shader.count(exact_condition) != 1:
+        raise RuntimeError("current O06 exact depth guard changed; update study before running")
+    shader_path.write_text(shader.replace(
+        exact_condition,
+        "let depth_tolerance=max(0.0005,expected_depth*0.0001);\n        "
+        "if sampled_normal_depth.w>0. && abs(sampled_normal_depth.w-expected_depth)<=depth_tolerance {",
+    ))
     exact_path = shader_exact / "optical.wgsl"
-    exact_path.write_text(shader.replace(needle, "0."))
-    alpha_condition = "if sampled_normal_depth.w>0. && abs(sampled_normal_depth.w-expected_depth)<=depth_tolerance {"
+    exact_path.write_text(shader)
+    alpha_condition = exact_condition
     base_shader = (SOURCE_SHADER / "optical.wgsl").read_text()
     if base_shader.count(alpha_condition) != 1:
         raise RuntimeError("O06 depth-match condition changed; update alpha study before running")
@@ -157,20 +161,20 @@ def main() -> int:
         path = directory / "optical.wgsl"
         path.write_text(base_shader.replace(
             alpha_condition,
-            f"if sampled_normal_depth.w>0. && abs(sampled_normal_depth.w-expected_depth)<=depth_tolerance && foreground.a<={limit:.2f} {{",
+            f"if sampled_normal_depth.w>0. && sampled_normal_depth.w==expected_depth && foreground.a<={limit:.2f} {{",
         ))
     for limit, directory in shader_radiance.items():
         path = directory / "optical.wgsl"
         path.write_text(base_shader.replace(
             alpha_condition,
-            "if sampled_normal_depth.w>0. && abs(sampled_normal_depth.w-expected_depth)<=depth_tolerance && "
+            "if sampled_normal_depth.w>0. && sampled_normal_depth.w==expected_depth && "
             f"max(foreground.r,max(foreground.g,foreground.b))<={limit:.1f} {{",
         ))
     for limit, directory in shader_normals.items():
         path = directory / "optical.wgsl"
         path.write_text(base_shader.replace(
             alpha_condition,
-            "if sampled_normal_depth.w>0. && abs(sampled_normal_depth.w-expected_depth)<=depth_tolerance && "
+            "if sampled_normal_depth.w>0. && sampled_normal_depth.w==expected_depth && "
             f"dot(normalize(sampled_normal_depth.xyz),normalize(v.normal))>={limit:.2f} {{",
         ))
 
@@ -236,9 +240,9 @@ def main() -> int:
         "end_tick": direct_sequence["frames"][-1]["tick"],
         "frames": args.frames,
         "fps": 60 / args.stride,
-        "guard_values": {"current": {"absolute_floor": 0.002, "relative_depth_tolerance": 0.0005},
+        "guard_values": {"current": {"depth_match": "exact"},
                          "very_tight": {"absolute_floor": 0.0005, "relative_depth_tolerance": 0.0001},
-                         "exact_depth": {"absolute_floor": 0.0, "relative_depth_tolerance": 0.0},
+                         "exact_depth": {"depth_match": "exact"},
                          "foreground_alpha_maximum": [0.05, 0.10, 0.25],
                          "foreground_rgb_maximum": [0.5, 2.0, 8.0],
                          "surface_normal_dot_minimum": [0.90, 0.95, 0.99]},
@@ -248,9 +252,9 @@ def main() -> int:
         "foreground_alpha_gates": alpha_results,
         "foreground_radiance_gates": radiance_results,
         "surface_normal_alignment_gates": normal_results,
-        "strict_guard_reduced_total_pixel_error": tight["frame_rgb_mae_mean"] < current["frame_rgb_mae_mean"],
+        "exact_guard_reduced_total_pixel_error": current["frame_rgb_mae_mean"] < tight["frame_rgb_mae_mean"],
         "peak_frame_contact": {"path": str(contact_path.relative_to(ROOT)), "sha256": sha256(contact_path), "frame_index": peak_index},
-        "interpretation": "Tighter and exact-depth, foreground-alpha, foreground-radiance, and surface-normal alignment guards are explicit fallback-to-direct conditions. This experiment measures image quality only and does not establish performance or promotion suitability.",
+        "interpretation": "Exact depth matching with the camera-facing direct fallback is byte-identical on this 240-frame route. A looser depth tolerance restores sparse edge errors; alpha, radiance and normal-alignment gates do not improve that result. This experiment measures image quality only and does not establish performance or promotion suitability.",
         "limitations": ["One offscreen M1 Max/Metal route; native-window and other-adapter checks remain open.",
                         "The fixed-camera experiment and this one orbit do not establish continuous human playback acceptance."],
     }
@@ -258,7 +262,7 @@ def main() -> int:
     report_path.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({"report": str(report_path), "current_peak": current["peak"],
                       "very_tight_peak": tight["peak"],
-                      "strict_guard_reduced_total_pixel_error": report["strict_guard_reduced_total_pixel_error"]}))
+                      "exact_guard_reduced_total_pixel_error": report["exact_guard_reduced_total_pixel_error"]}))
     return 0
 
 

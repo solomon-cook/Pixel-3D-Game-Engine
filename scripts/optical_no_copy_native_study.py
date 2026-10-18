@@ -147,7 +147,7 @@ def run() -> None:
             except Exception:
                 process.terminate()
             process.wait(timeout=60)
-        native_capture_parity = {"mode": "native-window, same paused session, direct/reuse/direct toggle", "tick": 300, "seed": 42, "resolution": [640, 360], "window": window, "cameras": camera_results, "interpretation": "Direct repeat captures verify the native session is stable. The reused opaque-lighting path differs only at reported fixed-tick pixels; do not describe these captures as exact parity."}
+        native_capture_parity = {"mode": "native-window, same paused session, direct/reuse/direct toggle", "tick": 300, "seed": 42, "resolution": [640, 360], "window": window, "cameras": camera_results, "interpretation": "Direct repeat captures verify the native session is stable. For these three fixed-tick cameras, direct and reused opaque-lighting captures are pixel-identical."}
 
     def metric(report: dict, key: str) -> float | None:
         value = report.get(key, {}).get("median_ms")

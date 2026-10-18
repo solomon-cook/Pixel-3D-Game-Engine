@@ -246,20 +246,30 @@ off and close the experiment with that result.
    does not resolve the outlier and is not adopted; keep the measured depth guard
    unchanged. See [snapshot-color report](measurements-o06-snapshot-color-guard.json)
    and [reproducible runner](../scripts/optical_snapshot_color_guard_study.py).
-   A matched 240-frame, 20 fps `mixed-close` route now covers all eight O06×O08
-   combinations; effect counts match at every frame. RGBA16F direct-copy/no-copy
-   remain exact, while compact HDR has 0.337/255 mean frame and 0.421/255 mean
-   temporal-change error. Every opaque-light reuse variant exhibits a sparse
-   188/255 maximum channel error at tick 957, pixel (344, 226), near the
-   fire/glass edge. The moving-route guard probe finds that exact depth reduces
-   average error and the changed-pixel footprint but leaves this maximum intact;
-   alpha limits 0.05–0.25, foreground-radiance limits 0.5–8 and surface-normal
-   alignment thresholds 0.90–0.99 change no image metrics. This is a correctness gap,
-   not an accepted visual tolerance. No timing was measured for the guards. See
+   **Moving-route reconstruction issue resolved on M1 Max/Metal:** the guarded
+   direct fallback previously shaded with the un-oriented normal, unlike the
+   baseline camera-facing interface path. Matching exact depth and using that
+   same oriented fallback removes the prior 188/255 spike. Across the 240-frame
+   O06×O08 matrix, all variants preserve effect counts; RGBA16F reuse differs by
+   one channel level on one pixel, while compact-HDR reuse has the same measured
+   error as direct compact HDR (0.337/255 frame mean, 0.421/255 temporal-change
+   mean). Looser depth tolerance restores an 87/255 outlier; alpha, radiance and
+   normal-alignment gates do not improve the exact-depth result. See
    [factorial temporal report](measurements-o06-o08-factorial-temporal.json),
    [guard report](measurements-o06-temporal-depth-guard.json), and runners
    [factorial](../scripts/optical_factorial_temporal_study.py) and
    [guard](../scripts/optical_reuse_temporal_guard_study.py).
+
+   A follow-up three-pair 120-second offscreen timing comparison using exact
+   depth shows median GPU-render +0.027 ms and optical-resolve +0.023 ms; the
+   median serial frame-work delta is -0.024 ms with mixed pair results. This
+   does not establish a whole-GPU-render benefit, so leave reuse opt-in and
+   disabled by default. Full paired data are in
+   [measurements-o06-exact-depth-sustained.json](measurements-o06-exact-depth-sustained.json).
+   A refreshed three-pair native-window run shows a median +0.043 FPS and
+   +0.0043 ms optical-resolve delta; same-session direct/reuse captures match
+   pixel-for-pixel at three fixed-tick cameras. This is not a material whole-render
+   gain. See [native report](measurements-o06-native-exact-depth.json).
 
 **Exit gate:** sustained total-render gain larger than run variance, acceptable
 images in reflection/transmission stress views and no stale live-edit output.
@@ -294,12 +304,13 @@ temporal sample now compares direct RGBA16F copy with direct compact-HDR copy ov
 frames at 20 fps on the same high-dynamic mixed route. Mean per-frame RGB error
 is 0.342/255 (p95 frame mean 0.373/255, maximum channel error 29/255); mean
 temporal-change-magnitude error is 0.418/255 (p95 frame mean 0.455/255, maximum
-channel error 29/255). A matched 240-frame orbit now covers all eight lighting,
-copy and HDR combinations. Each variant preserves effect counts; the reused
-opaque-light paths exhibit a sparse 188/255 channel outlier even though their
-mean RGB error is very small. Compact HDR with direct lighting has 0.337/255
-mean frame error and 0.421/255 temporal-change error on this route. Human
-playback review and fallback/DX12 validation remain open. Three alternating
+channel error 29/255). A matched 240-frame orbit covers all eight lighting,
+copy and HDR combinations. Each variant preserves effect counts. The oriented
+direct fallback and exact-depth reuse guard remove the former sparse 188/255
+reuse outlier; RGBA16F reuse has only one 1/255 changed pixel, and compact HDR
+reuse matches the direct compact-HDR aggregate error. Compact HDR with direct
+lighting has 0.337/255 mean frame error and 0.421/255 temporal-change error on
+this route. Human playback review and fallback/DX12 validation remain open. Three alternating
 120-second native-window pairs now cover the high-dynamic mixed route. Candidate
 minus baseline FPS deltas were +1.512/-0.769/+0.151 fps (median +0.151); native
 CPU-frame median delta was -0.306 ms and GPU-stage deltas were small and mixed.

@@ -32,6 +32,8 @@ fallbacks. Other memory layout work remains proposed. Measurements are recorded 
 [docs/measurements-o06-native-reuse.json](docs/measurements-o06-native-reuse.json),
 [docs/measurements-o06-o08-factorial-temporal.json](docs/measurements-o06-o08-factorial-temporal.json),
 [docs/measurements-o06-temporal-depth-guard.json](docs/measurements-o06-temporal-depth-guard.json),
+[docs/measurements-o06-exact-depth-sustained.json](docs/measurements-o06-exact-depth-sustained.json),
+[docs/measurements-o06-native-exact-depth.json](docs/measurements-o06-native-exact-depth.json),
 [docs/measurements-o07-culling.json](docs/measurements-o07-culling.json),
 [docs/measurements-o07-scale-study.json](docs/measurements-o07-scale-study.json),
 [docs/measurements-o07-moving-caster.json](docs/measurements-o07-moving-caster.json),

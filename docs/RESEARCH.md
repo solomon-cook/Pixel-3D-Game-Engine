@@ -815,30 +815,33 @@ inspect [the report](measurements-multi-emitter-overflow.json).
 
 ## O06 x O08 moving-camera temporal interaction (18 October)
 
-The fixed-tick O06 x O08 factorial showed exact RGBA16F no-copy output, while
-compact HDR had small but measurable differences. To check whether the three
-choices interact under motion, all eight direct/reuse, copy/no-copy and
-RGBA16F/Rg11b10Ufloat combinations were captured for 240 frames at 20 fps on the
-same 640x360 mixed fire/smoke/material camera route. Every variant preserved the
-baseline fire and effect counts at every tick. Direct RGBA16F copy and no-copy
-were exact. Direct compact HDR measured 0.337/255 mean frame error and 0.421/255
-mean temporal-change error on this route. The opaque-light reuse combinations
-had very small mean errors but a sparse 188/255 peak at tick 957 and pixel
-(344, 226), at the fire/glass edge. The mean alone therefore hides a visible
-outlier. The sampled contact sheet shows the difference confined to a few edge
-pixels; continuous playback review remains open.
+The moving-route O06 x O08 factorial covers all eight direct/reuse,
+copy/no-copy and RGBA16F/Rg11b10Ufloat combinations for 240 frames at 20 fps on
+the 640x360 mixed fire/smoke/material route. Every variant preserves the
+baseline fire and effect counts. Direct RGBA16F copy and no-copy remain exact;
+direct compact HDR has 0.337/255 mean frame error and 0.421/255 mean
+temporal-change error. Investigation traced the former 188/255 reuse spike to
+the fallback shading an un-oriented normal when a depth guard rejected snapshot
+reuse. The fallback now uses the same camera-facing interface normal as the
+direct path, and the production guard requires exact depth equality.
 
-A moving-route guard probe compared the current depth match, a tighter depth
-match, exact depth, foreground-alpha limits of 0.05, 0.10 and 0.25, and
-foreground-radiance limits of 0.5, 2 and 8. Exact
-depth reduced mean RGB error from 0.000118 to 0.000101/255 and the maximum
-changed-pixel count per frame from 42 to 30, but it did not remove the 188/255
-peak. The alpha and foreground-radiance limits changed no measured image
-metrics. Surface-normal alignment thresholds of 0.90, 0.95 and 0.99 also leave
-every image metric unchanged. No guard timing was measured, and none is
-promoted. Keep opaque-light reuse disabled by default while investigating HDR
-foreground reconstruction at the fire/glass edge.
-Evidence: [factorial temporal report](measurements-o06-o08-factorial-temporal.json),
-[guard report](measurements-o06-temporal-depth-guard.json), and runners
-[`optical_factorial_temporal_study.py`](../scripts/optical_factorial_temporal_study.py),
-[`optical_reuse_temporal_guard_study.py`](../scripts/optical_reuse_temporal_guard_study.py).
+With that correction, RGBA16F reuse has a single 1/255 channel difference on
+one pixel across the route; compact-HDR reuse has the same measured aggregate
+error as direct compact HDR. A guard sweep shows looser depth tolerance brings
+back an 87/255 sparse edge error. Foreground-alpha/radiance and normal-alignment
+gates do not improve exact-depth output. The sampled contact sheet remains
+visually close; continuous playback acceptance remains open. See
+[factorial temporal report](measurements-o06-o08-factorial-temporal.json) and
+[guard report](measurements-o06-temporal-depth-guard.json), with runners
+[`optical_factorial_temporal_study.py`](../scripts/optical_factorial_temporal_study.py)
+and [`optical_reuse_temporal_guard_study.py`](../scripts/optical_reuse_temporal_guard_study.py).
+
+A new three-pair 120-second offscreen comparison for exact-depth reuse shows
+median GPU-render +0.027 ms and optical-resolve +0.023 ms. Serial frame-work
+has a mixed -0.024 ms median delta; this is not a whole-GPU-render win. Keep the
+feature opt-in and disabled by default pending broader route and other-adapter
+evidence. A refreshed native-window three-pair study shows median FPS +0.043
+for reuse, with median optical-resolve +0.0043 ms; same-session captures at
+three fixed-tick cameras are pixel-identical. These small mixed timing changes
+do not establish a whole-render win. See [exact-depth sustained report](measurements-o06-exact-depth-sustained.json) and
+[native-window report](measurements-o06-native-exact-depth.json).
