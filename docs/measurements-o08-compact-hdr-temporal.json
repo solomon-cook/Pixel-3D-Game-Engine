@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "purpose": "Quantified temporal comparison of compact Rg11b10Ufloat HDR against Rgba16Float; no promotion decision is inferred.",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal"
+  },
+  "scene": "high-dynamic mixed fire/smoke/reflector/glass factorial workload",
+  "scene_variants": {
+    "baseline": "artifacts/o08/compact-hdr-temporal/scenes/direct_copy_rgba16.json",
+    "candidate": "artifacts/o08/compact-hdr-temporal/scenes/direct_copy_rg11b10.json",
+    "only_difference": "render.compact_hdr"
+  },
+  "provenance": {
+    "baseline_scene_sha256": "3020c76e7c948cbfa130a72bcd6c39ece326750bc5f12faaa76013c9a9b7a768",
+    "candidate_scene_sha256": "d73a3ebd12160bb380914b71939101358e99177987c8254db1ea6923449b640b",
+    "binary_sha256": "eafa08fe20bb9650a572a4c278ef93257cebbe42e9ad30c1cc0d02a16a1b4255",
+    "candidate_binary_sha256": "eafa08fe20bb9650a572a4c278ef93257cebbe42e9ad30c1cc0d02a16a1b4255",
+    "capture_script_sha256": "194f006a85642827caf26ebde77a880f2eb728e5fbae002920e277d68c6d3aca",
+    "study_script_sha256": "8e90194a236a7800dcd1f1f5a4786f9f3e6ff00ff3de5cd8de1488bb4203792e",
+    "baseline_hdr_format": "Rgba16Float",
+    "candidate_hdr_format": "Rg11b10Ufloat",
+    "compact_hdr_supported": true
+  },
+  "route": "mixed-smoke-material-orbit",
+  "camera": "mixed-close",
+  "route_start_seconds": 8.0,
+  "seed": 42,
+  "start_tick": 300,
+  "frame_count": 240,
+  "frame_stride_ticks": 3,
+  "capture_rate_hz": 20.0,
+  "resolution": [
+    640,
+    360
+  ],
+  "variants": {
+    "baseline": "Rgba16Float",
+    "candidate": "Rg11b10Ufloat"
+  },
+  "frame_error_rgb_255": {
+    "mean_of_frame_means": 0.3420476888020833,
+    "p95_frame_mean": 0.3730629340277778,
+    "max_frame_mean": 0.3808116319444444,
+    "max_channel_error": 29
+  },
+  "temporal_change_magnitude_error_rgb_255": {
+    "mean_of_frame_means": 0.4175901591314116,
+    "p95_frame_mean": 0.4551529224537037,
+    "max_frame_mean": 0.46055266203703704,
+    "max_channel_error": 29
+  },
+  "limitations": [
+    "One route, camera and M1 Max/Metal adapter; no native-window, DX12, other-adapter or human playback acceptance.",
+    "Temporal metric compares per-pixel absolute frame-to-frame change magnitudes; it is not a perceptual threshold.",
+    "Capture timing is not performance evidence."
+  ]
+}

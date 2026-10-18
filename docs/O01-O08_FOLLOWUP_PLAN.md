@@ -251,7 +251,16 @@ produced byte-identical fixed-tick output to copy for both HDR formats. Compact
 HDR lowered known allocation by 1.84 MB; packed-HDR no-copy adds a 0.23 MB mask.
 In this high-output scene, compact-HDR mean RGB error was 0.21–0.72/255 per
 camera/channel, with a 28/255 maximum. The contact sheet remained visually close,
-but temporal error and additional workloads remain open.
+but temporal error and additional workloads remain open. A quantified temporal
+sample now compares direct RGBA16F copy with direct compact-HDR copy over 240
+frames at 20 fps on the same high-dynamic mixed route. Mean per-frame RGB error
+is 0.342/255 (p95 frame mean 0.373/255, maximum channel error 29/255); mean
+temporal-change-magnitude error is 0.418/255 (p95 frame mean 0.455/255, maximum
+channel error 29/255). This adds one route, not a perceptual acceptance threshold.
+Native-window and human playback review, other workloads and fallback/DX12
+validation remain open. See
+[compact-HDR temporal evidence](measurements-o08-compact-hdr-temporal.json) and
+the [reproducible capture/analysis runner](../scripts/compact_hdr_temporal_study.py).
 
 **Exit gate:** select a combination only when it improves a declared target (memory,
 traffic or runtime) without violating image/temporal tolerances. Logical byte savings
