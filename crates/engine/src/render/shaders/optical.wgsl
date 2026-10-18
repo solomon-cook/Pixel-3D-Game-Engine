@@ -61,15 +61,26 @@ fn reflected_scene(p:vec3<f32>,n:vec3<f32>,view:vec3<f32>,rough:f32)->vec3<f32> 
     }
     return fallback;
 }
-fn shade_optical(v:Varying,front:bool)->vec4<f32> {
+fn shade_optical(v:Varying)->vec4<f32> {
     let tile=tile_index(v.clip.xy);
     let m=materials[v.material];
     if optical_strength(m)<=0. {discard;}
-    // Closed glass uses the entry face only; nearest entries win the depth test.
-    if transmission(m)>0. && !front {discard;}
-    let n=normalize(v.normal);let view=surface_view(v);
+    // The nearest visible glass surface is an entry from outside or an exit
+    // from inside. Use the geometric normal/view relation, not winding, to
+    // orient the interface for either side of a closed transmissive mesh.
+    let n=normalize(v.normal);let view=surface_view(v);let inside=dot(n,view)<0.;
+    let interface_normal=select(n,-n,inside);
     let rough=clamp(m.surface.x*v.roughness,0.,1.);let albedo=surface_albedo(v,m);
-    let f=fresnel(material_f0(m,albedo),max(dot(n,view),0.));
+    var f=fresnel(material_f0(m,albedo),max(dot(interface_normal,view),0.));
+    var transmitted_direction=vec3(0.);
+    if transmission(m)>0. {
+        let eta=select(1./m.optical.x,m.optical.x,inside);
+        transmitted_direction=refract(-view,interface_normal,eta);
+        if dot(transmitted_direction,transmitted_direction)<0.000001 {
+            // WGSL refract returns zero under total internal reflection.
+            f=vec3(1.);
+        }
+    }
     let foreground=atmosphere(v.clip,v.clip.z,tile);
     // An opaque foreground smoke lobe hides the complete optical surface.
     if foreground.a>0.985 {
@@ -83,16 +94,18 @@ fn shade_optical(v:Varying,front:bool)->vec4<f32> {
         base_color=max(composited-foreground.rgb,vec3(0.))/max(1.-foreground.a,0.015);
         base_normal_depth=textureLoad(scene_normals,pixel_coord,0);
     } else {
-        let base=shade_surface(v,tile);
+        var oriented_surface=v;
+        oriented_surface.normal=interface_normal;
+        let base=shade_surface(oriented_surface,tile);
         base_color=base.color.rgb;
         base_normal_depth=base.normal_depth;
     }
     var color=base_color;
-    let reflection=reflected_scene(v.position,n,view,rough);
+    let reflection=reflected_scene(v.position,interface_normal,view,rough);
     color+=reflection*f*optical_strength(m);
-    if transmission(m)>0. {
-        let direction=refract(-view,n,1./m.optical.x);
-        let path=m.optical.y/max(abs(dot(n,direction)),0.2);
+    if transmission(m)>0. && dot(transmitted_direction,transmitted_direction)>=0.000001 {
+        let direction=transmitted_direction;
+        let path=m.optical.y/max(abs(dot(interface_normal,direction)),0.2);
         let straight=project_uv(v.position-view*path).xy;
         let refracted=project_uv(v.position+direction*path).xy;
         var uv=clamp(refracted,vec2(0.),vec2(1.));
@@ -106,15 +119,15 @@ fn shade_optical(v:Varying,front:bool)->vec4<f32> {
     color=foreground.rgb+color*(1.-foreground.a);
     return vec4(color,1.);
 }
-@fragment fn optical_fs(v:Varying,@builtin(front_facing) front:bool)->@location(0) vec4<f32> {
-    return shade_optical(v,front);
+@fragment fn optical_fs(v:Varying)->@location(0) vec4<f32> {
+    return shade_optical(v);
 }
-@fragment fn optical_overlay_fs(v:Varying,@builtin(front_facing) front:bool)->OpticalOverlayOutput {
+@fragment fn optical_overlay_fs(v:Varying)->OpticalOverlayOutput {
     var output:OpticalOverlayOutput;
-    output.color=shade_optical(v,front);
+    output.color=shade_optical(v);
     output.mask=vec4(1.);
     return output;
 }
-@fragment fn optical_overlay_alpha_fs(v:Varying,@builtin(front_facing) front:bool)->@location(0) vec4<f32> {
-    return shade_optical(v,front);
+@fragment fn optical_overlay_alpha_fs(v:Varying)->@location(0) vec4<f32> {
+    return shade_optical(v);
 }

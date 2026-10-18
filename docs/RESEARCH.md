@@ -608,9 +608,11 @@ had rare pixels with up to 34/255 channel error; average error stayed below
 with maximum channel error 1/255.
 
 These offscreen results extend the earlier short profile but do not settle
-continuous motion, camera-inside/near-plane behavior, native-window output or
-other adapters. Keep the path opt-in pending those checks. Full captures and paired
-stage data: [measurements-o06-sustained.json](measurements-o06-sustained.json).
+continuous motion, native-window output or other adapters. Separate fixed-tick
+inside-glass and near-plane direct/reuse checks are recorded in
+[measurements-o06-camera-stress.json](measurements-o06-camera-stress.json). Keep
+the path opt-in pending the remaining checks. Full captures and paired stage
+data: [measurements-o06-sustained.json](measurements-o06-sustained.json).
 
 ## O06 × O08 factorial (18 October)
 
@@ -672,3 +674,19 @@ motion review, refresh-policy hypothesis, Windows/DX12 and other adapters remain
 open. Reproduction scripts are `scripts/absorption_cache_temporal_study.py` and
 `scripts/absorption_cache_pause_resume_study.py`; reports are linked from TODO
 and STATUS.
+
+## O06 camera-inside and near-plane follow-up (18 October)
+
+The optical pass previously discarded transmissive backfaces, so an inside-glass
+view could not shade the exit interface correctly. The shader now chooses the
+interface normal from the geometric normal/view relationship, selects the
+inside/outside refraction ratio, and treats WGSL's zero-vector refraction result
+as total internal reflection. Two named 640×360, seed-42, tick-300 cameras cover
+an oblique inside-glass view and a view 0.1 world units outside the glass sphere.
+Direct and opaque-light-reuse captures were byte-identical in both cases. The
+inside view changed substantially from the prior wrong-side shading; the
+contact sheet shows the environment through the exit interface without a new
+direct/reuse discrepancy. This is fixed-tick offscreen Metal evidence only;
+continuous motion, native-window performance and other adapters remain open.
+Reproduce with `scripts/optical_camera_stress_study.py`; report:
+[measurements-o06-camera-stress.json](measurements-o06-camera-stress.json).

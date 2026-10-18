@@ -62,6 +62,11 @@ see [invalidation study](measurements-o05-invalidation.json).
 O06 now has an opt-in opaque-reflector lighting reuse path. It reverses the
 matching same-pixel foreground atmosphere contribution from the HDR snapshot and
 uses the opaque normal/depth snapshot; transmissive surfaces keep direct shading.
+The transmissive shader also handles camera-inside exit surfaces, with a
+normal/view-based interface orientation and total-internal-reflection fallback.
+M1 Max/Metal fixed-tick inside-glass and near-plane camera stress pairs match
+direct/reuse captures byte-for-byte; see
+[measurements-o06-camera-stress.json](measurements-o06-camera-stress.json).
 Three paired 120-second M1 Max/Metal routes in both Material Atelier and a mixed
 smoke/fire/material scene reduced GPU-render medians by 0.169 ms and 0.081 ms,
 respectively; optical-resolve medians fell by 0.166 ms and 0.076 ms. CPU frame-work

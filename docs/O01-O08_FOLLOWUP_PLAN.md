@@ -157,8 +157,13 @@ off and close the experiment with that result.
    pairs plus three pairs on a mixed smoke/fire/material orbit include reflective
    and transmissive surfaces in front of and behind atmosphere.
 2. **Partially complete:** direct and reused opaque lighting retain direct
-   transmissive evaluation. A paused chrome roughness edit and a near-glass camera
-   were reviewed; camera-inside and true near-plane stress remain open.
+   transmissive evaluation. A paused chrome roughness edit and near-glass camera
+   were reviewed. The transmissive pass now handles the visible exit interface
+   when the camera is inside glass, using the normal/view orientation and inverse
+   refraction ratio, with reflection fallback under total internal reflection.
+   Direct and reuse captures match exactly in one inside-glass and one near-plane
+   camera stress case. Continuous camera motion and other-adapter behavior remain
+   open; see [measurements-o06-camera-stress.json](measurements-o06-camera-stress.json).
 3. **Complete offscreen:** report optical resolve, full GPU render, CPU frame work
    and image error separately. All six pairs show lower total GPU render time on
    this host; native-window and other-adapter results are still required before

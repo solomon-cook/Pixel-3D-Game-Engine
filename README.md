@@ -22,6 +22,7 @@ fallbacks. Other memory layout work remains proposed. Measurements are recorded 
 [docs/measurements-o05-temporal.json](docs/measurements-o05-temporal.json),
 [docs/measurements-o05-pause-resume.json](docs/measurements-o05-pause-resume.json),
 [docs/measurements-o06.json](docs/measurements-o06.json) and
+[docs/measurements-o06-camera-stress.json](docs/measurements-o06-camera-stress.json),
 [docs/measurements-o07-culling.json](docs/measurements-o07-culling.json) and
 [docs/measurements-o08.json](docs/measurements-o08.json).
 
@@ -51,6 +52,7 @@ python3 scripts/profile_compare.py --baseline assets/scenes/materials.json --can
 python3 scripts/capture_motion.py --scene assets/scenes/projected-detail-motion-review.json --route projected-detail-review-orbit --camera fire-study --frames 400 --stride 3 --experiments projected_detail_lod --output artifacts/o04/continuous-motion/lod-20fps --gif
 python3 scripts/absorption_cache_temporal_study.py
 python3 scripts/absorption_cache_pause_resume_study.py
+python3 scripts/optical_camera_stress_study.py
 python3 scripts/verify.py --gpu --native
 python3 scripts/package.py
 ```

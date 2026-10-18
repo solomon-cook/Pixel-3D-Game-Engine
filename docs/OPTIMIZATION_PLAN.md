@@ -377,8 +377,9 @@ Implementation:
 
 **Acceptance:** reflective/transparent objects behind and in front of smoke/fire,
 heat shimmer and foreground silhouettes retain correct ordering and live edits.
-Compare image differences, total pass time and added bandwidth/memory. Do not
-claim nested-glass or camera-inside support from this work.
+Compare image differences, total pass time and added bandwidth/memory. Nested
+glass remains unsupported. Camera-inside exit refraction now has a separate
+fixed-tick M1 Max/Metal sample; this does not establish continuous-motion support.
 
 **Deliverable:** specialised optical paths, selected by measured whole-frame gain.
 Dependencies: O01; geometry partitioning needs O07. Optional SSR prior work:
@@ -393,10 +394,12 @@ opaque pass omits them. On M1 Max/Metal, three paired 120-second routes reduced
 total GPU render by 0.169 ms in Material Atelier and 0.081 ms in a mixed
 smoke/fire/material scene; optical resolve fell by 0.166 ms and 0.076 ms. Frame
 work improved across all six pairs. Matched hero, close metal/glass, smoke-ordering
-and live roughness-edit captures were inspected. Keep the experiment off by default
-pending continuous motion review, camera-inside/near-plane cases, native-window
-measurement and cross-backend validation. See [measurements-o06.json](measurements-o06.json)
-and [measurements-o06-sustained.json](measurements-o06-sustained.json).
+and live roughness-edit captures were inspected. Inside-glass and near-plane
+direct/reuse captures now match exactly at fixed ticks. Keep the experiment off by
+default pending continuous motion review, native-window performance measurement
+and cross-backend validation. See [measurements-o06.json](measurements-o06.json),
+[measurements-o06-sustained.json](measurements-o06-sustained.json) and
+[measurements-o06-camera-stress.json](measurements-o06-camera-stress.json).
 
 ## O07 — Object bounds, culling and shared meshes
 
