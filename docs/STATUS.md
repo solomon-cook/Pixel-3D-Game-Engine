@@ -148,8 +148,10 @@ A focused moving-route probe tightened the depth guard, required exact depth,
 and tested foreground-alpha gates at 0.05, 0.10 and 0.25 plus foreground-radiance
 gates at 0.5, 2 and 8. Exact depth lowers mean error from 0.000118 to
 0.000101/255 and the maximum changed-pixel count from 42 to 30, but the same
-188/255 peak remains; the alpha and radiance gates change no metrics. This does
-not fix the reuse path, so do not promote it. No timing was measured. See
+188/255 peak remains; the alpha and radiance gates change no metrics. A surface
+normal-alignment sweep at dot thresholds 0.90, 0.95 and 0.99 also leaves every
+image metric unchanged. This does not fix the reuse path, so do not promote it.
+No timing was measured. See
 [temporal guard report](measurements-o06-temporal-depth-guard.json) and
 [runner](../scripts/optical_reuse_temporal_guard_study.py).
 

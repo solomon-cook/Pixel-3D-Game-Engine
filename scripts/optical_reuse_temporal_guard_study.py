@@ -136,7 +136,8 @@ def main() -> int:
     shader_exact = output / "shaders-exact-depth"
     shader_alphas = {limit: output / f"shaders-alpha-{limit:.2f}" for limit in (0.05, 0.10, 0.25)}
     shader_radiance = {limit: output / f"shaders-foreground-{limit:g}" for limit in (0.5, 2.0, 8.0)}
-    for path in (shader_current, shader_tight, shader_exact, *shader_alphas.values(), *shader_radiance.values()):
+    shader_normals = {limit: output / f"shaders-normal-dot-{limit:.2f}" for limit in (0.90, 0.95, 0.99)}
+    for path in (shader_current, shader_tight, shader_exact, *shader_alphas.values(), *shader_radiance.values(), *shader_normals.values()):
         if path.exists():
             shutil.rmtree(path)
         shutil.copytree(SOURCE_SHADER, path)
@@ -165,6 +166,13 @@ def main() -> int:
             "if sampled_normal_depth.w>0. && abs(sampled_normal_depth.w-expected_depth)<=depth_tolerance && "
             f"max(foreground.r,max(foreground.g,foreground.b))<={limit:.1f} {{",
         ))
+    for limit, directory in shader_normals.items():
+        path = directory / "optical.wgsl"
+        path.write_text(base_shader.replace(
+            alpha_condition,
+            "if sampled_normal_depth.w>0. && abs(sampled_normal_depth.w-expected_depth)<=depth_tolerance && "
+            f"dot(normalize(sampled_normal_depth.xyz),normalize(v.normal))>={limit:.2f} {{",
+        ))
 
     direct_sequence = capture(binary, scene_paths["direct_copy_rgba16"], shader_current,
                               output / "frames-direct", args.frames, args.stride, args.start_tick)
@@ -189,6 +197,12 @@ def main() -> int:
                            output / f"frames-foreground-{limit:g}", args.frames, args.stride, args.start_tick)
         result, _, _ = analyze(direct_sequence, sequence)
         radiance_results[f"{limit:g}"] = result
+    normal_results = {}
+    for limit, directory in shader_normals.items():
+        sequence = capture(binary, scene_paths["reuse_copy_rgba16"], directory,
+                           output / f"frames-normal-dot-{limit:.2f}", args.frames, args.stride, args.start_tick)
+        result, _, _ = analyze(direct_sequence, sequence)
+        normal_results[f"{limit:.2f}"] = result
     sheet = Image.new("RGB", (1280, 380), (22, 22, 22))
     labels = ("direct RGBA16F", "very-tight reuse", "3x difference")
     for index, image in enumerate((peak_images[0], peak_images[1], peak_images[2].point(lambda c: min(255, c * 3)))):
@@ -212,6 +226,7 @@ def main() -> int:
             "exact_depth": sha256(shader_exact / "optical.wgsl"),
             **{f"alpha_{limit:.2f}": sha256(path / "optical.wgsl") for limit, path in shader_alphas.items()},
             **{f"foreground_{limit:g}": sha256(path / "optical.wgsl") for limit, path in shader_radiance.items()},
+            **{f"normal_dot_{limit:.2f}": sha256(path / "optical.wgsl") for limit, path in shader_normals.items()},
         },
         "route": ROUTE,
         "camera": "mixed-close",
@@ -225,15 +240,17 @@ def main() -> int:
                          "very_tight": {"absolute_floor": 0.0005, "relative_depth_tolerance": 0.0001},
                          "exact_depth": {"absolute_floor": 0.0, "relative_depth_tolerance": 0.0},
                          "foreground_alpha_maximum": [0.05, 0.10, 0.25],
-                         "foreground_rgb_maximum": [0.5, 2.0, 8.0]},
+                         "foreground_rgb_maximum": [0.5, 2.0, 8.0],
+                         "surface_normal_dot_minimum": [0.90, 0.95, 0.99]},
         "current_guard": current,
         "very_tight_guard": tight,
         "exact_depth_guard": exact,
         "foreground_alpha_gates": alpha_results,
         "foreground_radiance_gates": radiance_results,
+        "surface_normal_alignment_gates": normal_results,
         "strict_guard_reduced_total_pixel_error": tight["frame_rgb_mae_mean"] < current["frame_rgb_mae_mean"],
         "peak_frame_contact": {"path": str(contact_path.relative_to(ROOT)), "sha256": sha256(contact_path), "frame_index": peak_index},
-        "interpretation": "Tighter and exact-depth, foreground-alpha, and foreground-radiance guards are explicit fallback-to-direct conditions. The peak fire/glass mismatch persists across them, so these guards do not solve reuse reconstruction. This experiment measures image quality only and does not establish performance or promotion suitability.",
+        "interpretation": "Tighter and exact-depth, foreground-alpha, foreground-radiance, and surface-normal alignment guards are explicit fallback-to-direct conditions. This experiment measures image quality only and does not establish performance or promotion suitability.",
         "limitations": ["One offscreen M1 Max/Metal route; native-window and other-adapter checks remain open.",
                         "The fixed-camera experiment and this one orbit do not establish continuous human playback acceptance."],
     }

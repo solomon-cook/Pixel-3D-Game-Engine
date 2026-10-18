@@ -253,7 +253,8 @@ off and close the experiment with that result.
    188/255 maximum channel error at tick 957, pixel (344, 226), near the
    fire/glass edge. The moving-route guard probe finds that exact depth reduces
    average error and the changed-pixel footprint but leaves this maximum intact;
-   alpha limits 0.05–0.25 and foreground-radiance limits 0.5–8 change no image metrics. This is a correctness gap,
+   alpha limits 0.05–0.25, foreground-radiance limits 0.5–8 and surface-normal
+   alignment thresholds 0.90–0.99 change no image metrics. This is a correctness gap,
    not an accepted visual tolerance. No timing was measured for the guards. See
    [factorial temporal report](measurements-o06-o08-factorial-temporal.json),
    [guard report](measurements-o06-temporal-depth-guard.json), and runners

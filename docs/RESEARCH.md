@@ -834,8 +834,10 @@ foreground-radiance limits of 0.5, 2 and 8. Exact
 depth reduced mean RGB error from 0.000118 to 0.000101/255 and the maximum
 changed-pixel count per frame from 42 to 30, but it did not remove the 188/255
 peak. The alpha and foreground-radiance limits changed no measured image
-metrics. No guard timing was measured, and none is promoted. Keep opaque-light reuse disabled by default
-while investigating HDR foreground reconstruction at the fire/glass edge.
+metrics. Surface-normal alignment thresholds of 0.90, 0.95 and 0.99 also leave
+every image metric unchanged. No guard timing was measured, and none is
+promoted. Keep opaque-light reuse disabled by default while investigating HDR
+foreground reconstruction at the fire/glass edge.
 Evidence: [factorial temporal report](measurements-o06-o08-factorial-temporal.json),
 [guard report](measurements-o06-temporal-depth-guard.json), and runners
 [`optical_factorial_temporal_study.py`](../scripts/optical_factorial_temporal_study.py),
