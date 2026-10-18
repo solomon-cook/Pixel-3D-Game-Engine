@@ -500,18 +500,22 @@ The reported GPU-render metric is 1.922 ms higher for tiled; tile-build rises
 is a mixed, workload-specific result rather than a universal speedup. Cache
 temporal quality and other-scene scaling remain open. Native-window fixed-tick
 captures now match exhaustive shading across six cameras, source isolation and
-reversed emitter order; native sustained performance, continuous playback, DX12
-and other-adapter acceptance remain open. See [native report](measurements-multi-emitter-native.json),
+reversed emitter order. A three-pair native maximum-budget tiled/exhaustive study
+shows a median 0.393 ms atmosphere/fire GPU-stage reduction, with mixed whole-window
+FPS and CPU results; it does not establish a full-window win. Continuous playback,
+DX12 and other-adapter acceptance remain open. See [native report](measurements-multi-emitter-native.json),
 [native runner](../scripts/two_emitter_native_study.py), [overflow report](measurements-multi-emitter-overflow.json),
 [sustained report](measurements-multi-emitter-sustained.json),
 [performance runner](../scripts/two_emitter_sustained_study.py),
+[native tiled report](measurements-multi-emitter-tile-native.json),
+[native tiled runner](../scripts/two_emitter_tile_native_study.py),
 [scene](../assets/scenes/two-emitter-overflow-stress.json) and
 [runner](../scripts/two_emitter_overflow_study.py).
 
 `python3 scripts/verify.py --gpu` passed on this host: formatting, Clippy,
 40 workspace tests, scene validation and material/fire GPU checks. The verifier
-reports `native: false`; native-window lifecycle and Windows/DX12 rendering remain
-unverified.
+reports `native: false`; the separate native studies above cover selected capture,
+performance and surface-resize paths. Windows/DX12 rendering remains unverified.
 
 ## O02 whole-map shadow cache
 

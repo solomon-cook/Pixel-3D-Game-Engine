@@ -28,6 +28,7 @@ fallbacks. Other memory layout work remains proposed. Measurements are recorded 
 [docs/measurements-o05-temporal-cache8.json](docs/measurements-o05-temporal-cache8.json),
 [docs/measurements-multi-emitter-absorption-moving-route.json](docs/measurements-multi-emitter-absorption-moving-route.json),
 [docs/measurements-multi-emitter-absorption-moving-route-cache16.json](docs/measurements-multi-emitter-absorption-moving-route-cache16.json),
+[docs/measurements-multi-emitter-tile-native.json](docs/measurements-multi-emitter-tile-native.json),
 [docs/measurements-multi-emitter-absorption-native.json](docs/measurements-multi-emitter-absorption-native.json),
 [docs/measurements-multi-emitter-absorption-native-sustained.json](docs/measurements-multi-emitter-absorption-native-sustained.json),
 [docs/measurements-o05-pause-resume.json](docs/measurements-o05-pause-resume.json),

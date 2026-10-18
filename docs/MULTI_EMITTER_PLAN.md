@@ -39,15 +39,19 @@ and [runner](../scripts/two_emitter_absorption_sustained_study.py).
   atmosphere/optical, ink, absorption, opaque heat, authored primary-light and
   geometry shadow paths are connected. The new review scene exercises these
   paths on M1 Max/Metal. Cache-enabled fixed-tick review is complete. Maximum-
-  budget tiled/exhaustive parity and sustained offscreen performance are recorded;
-  temporal samples cover both cache sizes and the full 8³/16³-cache routes, while
+  budget tiled/exhaustive parity and sustained offscreen and native performance
+  are recorded. Native timing shows a GPU-stage reduction without a clear
+  whole-window gain. Temporal samples cover both cache sizes and full
+  8³/16³-cache routes, while
   continuous native playback, other-scene performance and adapter gates remain
   open.
 - Each `FireFrame` owns a 256-primitive pool; up to 12 derived particle lights
   are shared globally. O03 tile construction now includes both sources, and
   overflow falls back to exhaustive evaluation. Maximum-budget parity, forced
-  fallback and a three-pair sustained route are recorded; other-scene scaling,
-  native-window and portability evidence remain open.
+  fallback and three-pair offscreen and native sustained routes are recorded.
+  Native tiling lowers median atmosphere/fire GPU time by 0.393 ms, while the
+  median FPS delta is only -0.231 and the pair results are mixed; no whole-window
+  win is established. Other-scene scaling and portability evidence remain open.
 - The CPU storage packer now merges sampled source candidates into the shared
   12-light budget by descending power, then stable emitter ID and event identity.
   It stores the selected lights in source zero's shared-light slot and reports
@@ -130,8 +134,10 @@ and [runner](../scripts/two_emitter_absorption_sustained_study.py).
   frame-work for tiled rendering, while the reported GPU-render metric is 1.922 ms
   higher; tile-build rises 2.468 ms and atmosphere/fire falls 0.495 ms. These
   measurements are workload-specific, and GPU intervals may overlap. Per-source
-  primary-light shadow maps and discrete invalidation have fixed-tick live review;
-  native-window, other-scene and portability gates remain open. See
+  primary-light shadow maps and discrete invalidation have fixed-tick live review.
+  The new native-window tiled/exhaustive study adds three maximum-budget pairs;
+  its GPU atmosphere/fire stage favors tiling but whole-window performance is
+  mixed. Other-scene and portability gates remain open. See
   [sustained performance evidence](measurements-multi-emitter-sustained.json) and
   [inked smoke evidence](measurements-multi-emitter-ink.json).
 - The O05 absorption cache retains source zero in the red channel and builds a

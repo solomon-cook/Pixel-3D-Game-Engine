@@ -67,6 +67,16 @@ frame-win claim. Keep the 16×16 tile size and exhaustive overflow path. See
 [native tile-list evidence](measurements-o03-native-tile-lists.json) and the
 reproducible [native study runner](../scripts/tile_lists_native_study.py).
 
+A separate maximum-budget two-emitter native study now completes three
+alternating 120-second tiled/exhaustive pairs on `two-emitter-overflow-stress.json`
+using the `dual-wide` clearing orbit. Every run reports both emitters and GPU
+timestamp coverage. Exhaustive-minus-tiled paired median deltas are -0.231 FPS,
++0.018 ms CPU native frame work and +0.393 ms atmosphere/fire GPU time. GPU
+stage savings repeat across pairs, while FPS and CPU results vary in sign; this
+does not establish a whole-window win. Fixed-tick native image parity remains
+covered separately. See [multi-emitter native report](measurements-multi-emitter-tile-native.json)
+and [runner](../scripts/two_emitter_tile_native_study.py).
+
 **Exit gate:** no dropped effects or lights; exact same-backend capture parity,
 including natural overflow; stable membership after camera/state edits; and a net
 whole-frame benefit on representative workloads. If no alternative size beats the
