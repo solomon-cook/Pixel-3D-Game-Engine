@@ -377,7 +377,7 @@ per-frame reports remain under ignored `artifacts/o02/moving-route-120s/`. The
 timed run did not capture images; six deterministic boundary-pose pairs match in
 the moving-caster capture report above. Reproduce with
 `python3 scripts/profile_compare.py --baseline assets/scenes/clearing.json --candidate assets/scenes/clearing.json --baseline-force-shadow-redraw --moving-caster fallen-log --duration 120 --warmup 10 --pairs 3 --output artifacts/o02/moving-route-120s`.
-Native-window and Windows/DX12 remain unverified.
+Native-window performance is characterized below; Windows/DX12 remains unverified.
 
 Three alternating serial offscreen 120-second clearing-orbit pairs after 10-second
 warm-up on Apple M1 Max/64 GB/Metal at 640×360 compared identical scene inputs.
@@ -390,6 +390,21 @@ forced mode redrew seven maps each frame. These are M1 Max static-route results,
 not native-window or Windows DX12 acceptance. Full pair/run provenance is in
 [measurements-o02.json](measurements-o02.json), with raw samples under local ignored
 `artifacts/o02/shadow-static/`.
+
+A native-window version now runs three alternating 120-second cached/forced
+pairs after ten-second warm-ups, with `rock-0` orbiting the fire light at radius
+5 over 20 seconds. Forced redraw minus cached GPU shadow-stage medians were
++0.280/+0.286/+0.283 ms, and forced mode redrew 37,051–37,310 shadow passes per
+run versus 7,416–7,474 with caching. Whole-window FPS deltas were
++0.988/+1.163/+0.763 in favor of forced redraw, despite its higher shadow-stage
+cost; native CPU-frame deltas were +0.023/+0.123/+0.009 ms. The measurements
+therefore confirm less shadow GPU work, but do not show a whole-window throughput
+gain for caching on this route. Keep the cache for its measured stage reduction
+and correctness behavior; do not present it as a native FPS optimization. Full
+paired timing, counters, hashes and the reproducible runner are in
+[measurements-o02-native-shadow-cache.json](measurements-o02-native-shadow-cache.json)
+and [shadow_cache_native_study.py](../scripts/shadow_cache_native_study.py).
+Windows/DX12 and other-adapter acceptance remain open.
 
 A deterministic paused protocol route now moves `fallen-log` through six positions
 around the point light, including +X/+Z and opposing-face transitions. At each

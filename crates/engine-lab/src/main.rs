@@ -121,6 +121,9 @@ enum Command {
     BenchmarkNative {
         #[command(flatten)]
         options: Options,
+        /// Redraw all seven shadow maps every frame as a cache baseline.
+        #[arg(long)]
+        force_shadow_redraw: bool,
         /// Use exhaustive effect/light candidate evaluation instead of tile lists.
         #[arg(long)]
         disable_tile_lists: bool,
@@ -300,6 +303,7 @@ fn start() -> Result<()> {
         )?,
         Command::BenchmarkNative {
             options,
+            force_shadow_redraw,
             disable_tile_lists,
             disable_object_culling,
             disable_instancing,
@@ -317,6 +321,7 @@ fn start() -> Result<()> {
                 duration,
                 warmup,
                 output,
+                force_shadow_redraw,
                 tile_lists_enabled: !disable_tile_lists,
                 object_culling_enabled: !disable_object_culling,
                 instancing_enabled: !disable_instancing,

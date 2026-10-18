@@ -104,7 +104,11 @@ when casters actually move or change shadow participation?
 relevant edit invalidates the required maps, and stable segments show cache reuse.
 These gates are now recorded on M1 Max/Metal, including offscreen and native
 moving-image checkpoints. Continuous-invalidation cost is recorded separately.
-Native-window performance and non-Metal adapter acceptance remain open.
+Native-window stage and whole-window timing are now characterized for a continuous
+moving caster; selective invalidation lowers the shadow stage but did not improve
+measured whole-window throughput in this route. Windows/DX12 and other-adapter
+acceptance remain open. See
+[native shadow-cache comparison](measurements-o02-native-shadow-cache.json).
 
 ## Wave 2 — Decide the opt-in approximations using sustained motion
 
