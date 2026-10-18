@@ -276,11 +276,16 @@ host did not register minimize, so that path remains unverified. See
 playback, broader workload scaling, cross-adapter correctness and target-hardware
 support remain unverified. Gate 4's reset/replay, paused-edit and shader-reload
 checks have focused dual-source shadow invalidation evidence, while broader
-resource recreation and device-loss behavior remain open. A new dual-source shader
-rollback study appends WGSL syntax errors to the fire and volume modules in an
-isolated shader directory. At seed 42/tick 120, each failed reload retains the
-baseline image and reuses all shadow maps; restoring the modules reloads successfully,
-keeps the image identical and redraws all 13 maps for the successful reload. This
-closes fixed-tick headless Metal rollback coverage for these modules, not native or
-cross-adapter behavior. See [rollback report](measurements-multi-emitter-shader-rollback.json)
-and [runner](../scripts/two_emitter_shader_reload_rollback_study.py). A companion native-window run repeats both invalid-module failures and the successful restored reload at the same fixed tick; each capture remains pixel-identical to the baseline. Native per-frame shadow invalidation metrics are intentionally omitted because rendering may occur between requests. See [native rollback report](measurements-multi-emitter-shader-rollback-native.json).
+resource recreation and device-loss behavior remain open. A transactional shader
+rollback study now corrupts each of the 13 runtime shader-directory modules in
+isolation. At seed 42/tick 120, all 13 failures reach WGSL parsing, retain the
+baseline image and reuse all shadow maps. Restoring every module reloads
+successfully, keeps the image identical and redraws all 13 maps. This closes
+fixed-tick headless Metal rollback coverage for reloadable modules; the embedded
+presentation shader is not hot-reloadable, and native/cross-adapter coverage is
+separate. See [rollback report](measurements-multi-emitter-shader-rollback.json)
+and [runner](../scripts/two_emitter_shader_reload_rollback_study.py). A companion
+native-window run covers fire and volume failures plus a successful restored
+reload at the same fixed tick; each capture remains pixel-identical to baseline.
+Native per-frame shadow invalidation metrics are omitted because rendering may
+occur between requests. See [native rollback report](measurements-multi-emitter-shader-rollback-native.json).

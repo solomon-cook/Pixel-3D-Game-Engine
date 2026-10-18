@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify failed shader reload rollback with both emitter pipelines active."""
+"""Verify failed shader reload rollback across runtime WGSL modules."""
 from __future__ import annotations
 
 import argparse
@@ -13,7 +13,23 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 SCENE = ROOT / "assets/scenes/two-emitter-review.json"
 SHADERS = ROOT / "crates/engine/src/render/shaders"
-INVALID_SHADERS = ("fire.wgsl", "volume.wgsl")
+# Every shader-directory source read by Renderer::pipelines. `present.wgsl` is
+# compiled into the native host with include_str! and is not part of hot reload.
+INVALID_SHADERS = (
+    "common.wgsl",
+    "tile_common.wgsl",
+    "tile_bindings.wgsl",
+    "tile_build.wgsl",
+    "materials.wgsl",
+    "world.wgsl",
+    "optical.wgsl",
+    "volume.wgsl",
+    "fire.wgsl",
+    "post.wgsl",
+    "smoke.wgsl",
+    "absorption.wgsl",
+    "shadow.wgsl",
+)
 
 
 def sha256(path: Path) -> str:
@@ -92,7 +108,10 @@ def main() -> int:
             result = request("reload_shaders")
             if "error" not in result:
                 raise RuntimeError(f"invalid {filename} reload unexpectedly succeeded")
-            if "hook no longer matches" in result["error"]["message"]:
+            error_message = result["error"]["message"]
+            if ("hook no longer matches" in error_message or
+                    "parsing error" not in error_message or
+                    "deliberately invalid WGSL" not in error_message):
                 raise RuntimeError(f"{filename} reload failed before shader validation: {result['error']}")
             rollback = capture(f"rollback-{index}-{path.stem}")
             failures.append({"shader": filename, "source_sha256": hashlib.sha256(original.encode()).hexdigest(),
@@ -119,7 +138,7 @@ def main() -> int:
 
     report = {
         "version": 1,
-        "study": "O02 two-emitter transactional shader reload rollback",
+        "study": "O02 transactional shader reload rollback across runtime WGSL modules",
         "host": {"device": baseline["device"], "backend": baseline["backend"], "native_window": args.native},
         "session_mode": "native run --agent-stdio" if args.native else "headless serve",
         "scene": str(scene.relative_to(ROOT)) if scene.is_relative_to(ROOT) else str(scene),
@@ -137,11 +156,13 @@ def main() -> int:
         "all_failures_reached_shader_validation": all(item["failure_reached_shader_validation"] for item in failures),
         "failed_reloads_preserve_shadow_cache": (None if args.native else all(item["capture"]["shadow_maps_redrawn"] == 0 and item["capture"]["shadow_dirty_reason"] == "unchanged" for item in failures)),
         "successful_reload_invalidates_all_shadow_maps": (None if args.native else after_success["shadow_maps_redrawn"] == 13 and after_success["shadow_dirty_reason"] == "shader_reload"),
+        "tested_runtime_shader_modules": list(INVALID_SHADERS),
+        "excluded_embedded_shader_modules": ["present.wgsl (compiled into the host with include_str!; not hot-reloadable)"],
         "limitations": (["Fixed-tick native-window captures do not establish continuous playback or native performance.",
                          "M1 Max/Metal only; other-adapter behavior remains unverified.",
                          "Window frames may render between requests, so per-frame shadow invalidation metrics cannot be attributed to the reload command in this native run.",
-                         "Tests WGSL syntax failures for fire and volume modules; other shader-module failures rely on the shared transactional pipeline-set loader and existing verifier coverage."] if args.native else ["Headless M1 Max/Metal fixed-tick evidence; no native-window timing or other-adapter validation.",
-                         "Tests WGSL syntax failures for fire and volume modules; other shader-module failures rely on the shared transactional pipeline-set loader and existing verifier coverage."]),
+                         "All reloadable shader-directory modules are covered; the embedded presentation module is not hot-reloadable."] if args.native else ["Headless M1 Max/Metal fixed-tick evidence; no native-window timing or other-adapter validation.",
+                         "All reloadable shader-directory modules are covered; the embedded presentation module is not hot-reloadable."]),
     }
     report["all_checks_passed"] = (baseline["tick"] == args.tick and
                                    all(item["capture"]["tick"] == args.tick for item in failures) and
