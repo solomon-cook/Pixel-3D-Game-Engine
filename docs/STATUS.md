@@ -157,21 +157,31 @@ Windows DX12 and RTX-class rendering remain unverified.
 
 Expanded O01 diagnostic-counter captures now cover three fire profiles and four
 named cameras on M1 Max/Metal. Counts span 26,374–2,309,781 fire-primitive
-candidates and 25,106–451,096 smoke-density samples. Six of twelve normal and
-instrumented captures match exactly; the other six differ at one or two projected
-flame pixels (maximum channel error 31 or 50/255). Each pipeline repeats exactly
-on its own, so the instrumented variant itself has a small view-dependent output
-difference. Treat the counters as diagnostic operation counts, not as a visually
-identical render or performance timing. Broader optical camera-motion coverage
-remains open. The optical `material-orbit` now has three sparse counter samples on
+candidates and 25,106–451,096 smoke-density samples. Counter mode now draws the
+ordinary renderer first, then runs instrumented world, volume and optical companion
+passes into lazily allocated scratch color targets. Those passes read the normal
+depth and scene inputs without modifying the accepted image. At 640×360 this adds
+4,608,000 known bytes in the default RGBA16F path. Compact HDR no-copy requires
+one extra 230,400-byte mask plane within its format-specific scratch allocation;
+disabling diagnostics releases the targets.
+The expanded fixed-tick matrix matches all 12 baseline captures
+byte-for-byte, with nonzero operation counts. Counter-run timings remain diagnostic
+and are not performance evidence. The optical `material-orbit` now has
+three sparse counter samples on
 M1 Max/Metal, with nonzero surface, reflection and transmission work, plus a
 separate uninstrumented 120-second timing run on the identical scene hash and
 route. Median optical resolve was 2.076 ms and median GPU render was 2.828 ms;
-the instrumented run has no usable timing data. The route uncovered and fixed
-two stale WGSL counter-injection patterns. Broader optical-material, native-window
-and other-adapter checks remain open. See [counter profile/view evidence](measurements-o01-counter-profile-scope.json),
+the instrumented run has no usable timing data. Counter hook injection now fails
+if a WGSL pattern is stale. Fixed-tick Material Atelier counters cover hero,
+metal-close, glass-close, subsurface-close and orthographic, plus a compact-HDR
+optical-no-copy glass case; all six normal/diagnostic pairs are byte-identical and
+report optical surface interactions. See
+[optical camera coverage](measurements-o01-optical-counter-coverage.json) and its
+[runner](../scripts/shading_counter_optical_coverage.py). Continuous visual review,
+native-window and other-adapter checks remain open. See
+[counter profile/view evidence](measurements-o01-counter-profile-scope.json),
 [optical route report](measurements-o01-optical-counter-route.json) and
-[runner](../scripts/shading_counter_optical_route.py).
+[route runner](../scripts/shading_counter_optical_route.py).
 
 ## O08 resource and bandwidth inventory
 

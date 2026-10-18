@@ -196,6 +196,16 @@ struct TileStatsReadback {
     pending: Option<mpsc::Receiver<std::result::Result<(), wgpu::BufferAsyncError>>>,
     frame: u64,
 }
+struct ShadingDiagnosticTargets {
+    _color: wgpu::Texture,
+    color: wgpu::TextureView,
+    _normal: wgpu::Texture,
+    normal: wgpu::TextureView,
+    _effect_depth: wgpu::Texture,
+    effect_depth: wgpu::TextureView,
+    _mask: Option<wgpu::Texture>,
+    mask: Option<wgpu::TextureView>,
+}
 const TIMING_SLOTS: usize = 3;
 const COMPUTE_TIMING_SLOTS: usize = 6;
 const GPU_QUERY_COUNT: u32 = 14;
@@ -256,6 +266,8 @@ pub struct Renderer {
     volume_groups: [wgpu::BindGroup; 2],
     volume_layout: wgpu::BindGroupLayout,
     shading_diagnostic_buffer: wgpu::Buffer,
+    shading_diagnostic_targets: Option<ShadingDiagnosticTargets>,
+    shading_diagnostic_scratch_bytes: u64,
     shading_diagnostics_enabled: bool,
     smoke_groups: Vec<[wgpu::BindGroup; 2]>,
     smoke_source_buffers: Vec<wgpu::Buffer>,
@@ -471,6 +483,20 @@ fn texture(
         usage,
         view_formats: &[],
     })
+}
+
+fn inject_counter_hooks(
+    mut source: String,
+    hooks: &[(&str, &str)],
+    shader_name: &str,
+) -> Result<String> {
+    for (pattern, replacement) in hooks {
+        if !source.contains(pattern) {
+            bail!("shading counter hook no longer matches {shader_name}: {pattern}");
+        }
+        source = source.replace(pattern, replacement);
+    }
+    Ok(source)
 }
 
 fn format_capability(adapter: &wgpu::Adapter, format: wgpu::TextureFormat) -> serde_json::Value {
@@ -1924,6 +1950,11 @@ impl Renderer {
         };
         let render_targets_bytes =
             pixel_count * (8 + hdr_color_bytes_per_pixel + effect_depth_bytes_per_pixel + 4 + 4);
+        let shading_diagnostic_scratch_bytes = pixel_count
+            * (hdr_color_bytes_per_pixel
+                + 8
+                + effect_depth_bytes_per_pixel
+                + u64::from(optical_no_copy_enabled && optical_mask_required));
         let smoke_bytes_per_voxel = if smoke_volume_format == wgpu::TextureFormat::Rg16Float {
             4
         } else {
@@ -2046,6 +2077,8 @@ impl Renderer {
             "tile_config_bytes":tile_config_bytes,
             "tile_stats_readback_bytes":tile_stats_readback_bytes,
             "shading_diagnostic_counter_bytes":22 * std::mem::size_of::<u32>() as u64,
+            "shading_diagnostic_targets_bytes":0,
+            "shading_diagnostic_targets_reservation_bytes":shading_diagnostic_scratch_bytes,
             "gpu_timestamp_staging_bytes":timing_staging_bytes,
             "gpu_timestamp_query_set_count":if timestamp { TIMING_SLOTS + COMPUTE_TIMING_SLOTS } else { 0 },
             "tile_count":tile_count,
@@ -2114,6 +2147,8 @@ impl Renderer {
             volume_groups,
             volume_layout,
             shading_diagnostic_buffer,
+            shading_diagnostic_targets: None,
+            shading_diagnostic_scratch_bytes,
             shading_diagnostics_enabled: false,
             smoke_groups,
             smoke_source_buffers,
@@ -2361,14 +2396,19 @@ impl Renderer {
             ),
         );
         let diagnostic_preamble = "@group(0) @binding(2) var<storage, read_write> shading_diag: array<atomic<u32>,22>; fn diag_add(i:u32) { atomicAdd(&shading_diag[i],1u); }";
-        let diagnostic_world = world
-            .replace("return textureSampleCompareLevel(sun_shadow,shadow_sampler,uv,q.z/q.w-0.0015);", "diag_add(9u); return textureSampleCompareLevel(sun_shadow,shadow_sampler,uv,q.z/q.w-0.0015);")
-            .replace("return textureSampleCompareLevel(point_shadow,shadow_sampler,d,depth-0.004);", "diag_add(10u); return textureSampleCompareLevel(point_shadow,shadow_sampler,d,depth-0.004);")
-            .replace("fn shade_surface(v:Varying,tile:u32)->Output {", "fn shade_surface(v:Varying,tile:u32)->Output { diag_add(14u);")
-            .replace("for(var candidate=0u;candidate<8u;candidate++) {if candidate>=point_count {break;}", "for(var candidate=0u;candidate<8u;candidate++) {if candidate>=point_count {break;} diag_add(15u);")
-            .replace("for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;}", "for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;} diag_add(16u);")
-            .replace("let temperature=clamp(textureSampleLevel(heat_volume,heat_sampler,heat_uv,0.).y,0.,1.);", "diag_add(17u); let temperature=clamp(textureSampleLevel(heat_volume,heat_sampler,heat_uv,0.).y,0.,1.);")
-            .replace("temperature=max(temperature,clamp(textureSampleLevel(secondary_heat_volume,heat_sampler,secondary_uv,0.).y,0.,1.));", "diag_add(17u); temperature=max(temperature,clamp(textureSampleLevel(secondary_heat_volume,heat_sampler,secondary_uv,0.).y,0.,1.));");
+        let diagnostic_world = inject_counter_hooks(
+            world,
+            &[
+                ("return textureSampleCompareLevel(sun_shadow,shadow_sampler,uv,q.z/q.w-0.0015);", "diag_add(9u); return textureSampleCompareLevel(sun_shadow,shadow_sampler,uv,q.z/q.w-0.0015);"),
+                ("return textureSampleCompareLevel(point_shadow,shadow_sampler,d,i32(source_slot),depth-0.004);", "diag_add(10u); return textureSampleCompareLevel(point_shadow,shadow_sampler,d,i32(source_slot),depth-0.004);"),
+                ("fn shade_surface(v:Varying,tile:u32)->Output {", "fn shade_surface(v:Varying,tile:u32)->Output { diag_add(14u);"),
+                ("for(var candidate=0u;candidate<8u;candidate++) {if candidate>=point_count {break;}", "for(var candidate=0u;candidate<8u;candidate++) {if candidate>=point_count {break;} diag_add(15u);"),
+                ("for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;}", "for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;} diag_add(16u);"),
+                ("temperature=clamp(textureSampleLevel(heat_volume,heat_sampler,heat_uv,0.).y,0.,1.);", "diag_add(17u); temperature=clamp(textureSampleLevel(heat_volume,heat_sampler,heat_uv,0.).y,0.,1.);"),
+                ("temperature=max(temperature,clamp(textureSampleLevel(secondary_heat_volume,heat_sampler,secondary_uv,0.).y,0.,1.));", "diag_add(17u); temperature=max(temperature,clamp(textureSampleLevel(secondary_heat_volume,heat_sampler,secondary_uv,0.).y,0.,1.));"),
+            ],
+            "world shader",
+        )?;
         let diagnostic_mesh_module = shader(
             device,
             "instrumented opaque world",
@@ -2376,51 +2416,56 @@ impl Renderer {
                 "{common}\n{tile_common}\n{tile_group2}\n{diagnostic_preamble}\n{diagnostic_world}"
             ),
         );
-        let diagnostic_fire = fire_source
-            .replace("if candidate>=candidate_count {break;}", "if candidate>=candidate_count {break;} diag_add(0u);")
-            .replace("if along+bound<0. || along-bound>limit || length(ro+direction*max(along,0.))>bound {continue;}", "diag_add(1u); if along+bound<0. || along-bound>limit || length(ro+direction*max(along,0.))>bound {continue;}")
-            .replace("let discriminant=qb*qb-qa*qc;", "diag_add(2u); let discriminant=qb*qb-qa*qc;");
-        let diagnostic_volume = volume_source
-            .replace("if candidate>=smoke_candidate_count {break;}", "if candidate>=smoke_candidate_count {break;} diag_add(3u);")
-            .replace("if along+bound<0. || along-bound>distance || length(origin+direction*max(along,0.)-parent)>bound {continue;}", "diag_add(4u); if along+bound<0. || along-bound>distance || length(origin+direction*max(along,0.)-parent)>bound {continue;}")
-            .replace("if bubble>child_count {break;}", "if bubble>child_count {break;} diag_add(5u);")
-            .replace("let sample=textureSampleLevel(smoke,volume_sampler,volume_uv,0.);", "diag_add(6u); let sample=textureSampleLevel(smoke,volume_sampler,volume_uv,0.);")
-            .replace("let sample=textureSampleLevel(secondary_smoke", "diag_add(6u); let sample=textureSampleLevel(secondary_smoke")
-            .replace("optical+=textureSampleLevel(secondary_smoke,volume_sampler,q,0.).x*0.25;", "diag_add(6u); optical+=textureSampleLevel(secondary_smoke,volume_sampler,q,0.).x*0.25;")
-            .replace("absorption+=textureSampleLevel(secondary_smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x*source_span/6.*2.6;", "diag_add(6u); diag_add(13u); absorption+=textureSampleLevel(secondary_smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x*source_span/6.*2.6;")
-            .replace("let field=textureSampleLevel(secondary_smoke", "diag_add(6u); let field=textureSampleLevel(secondary_smoke")
-            .replace("heat=textureSampleLevel(secondary_smoke", "diag_add(6u); heat=textureSampleLevel(secondary_smoke")
-            .replace("let field=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x;", "diag_add(6u); let field=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x;")
-            .replace("let heat=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).y;", "diag_add(6u); let heat=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).y;")
-            .replace("optical+=textureSampleLevel(smoke,volume_sampler,q,0.).x*0.25;", "diag_add(6u); optical+=textureSampleLevel(smoke,volume_sampler,q,0.).x*0.25;")
-            .replace("absorption+=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x*span/6.*2.6;", "diag_add(6u); diag_add(13u); absorption+=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x*span/6.*2.6;")
-            .replace("let optical_depth=textureSampleLevel(smoke_absorption,volume_sampler,surface_uv,0.).x;", "diag_add(8u); let optical_depth=textureSampleLevel(smoke_absorption,volume_sampler,surface_uv,0.).x;")
-            .replace("optical_depth+=textureSampleLevel(smoke,volume_sampler,uv,0.).x*ds;", "diag_add(6u); diag_add(7u); optical_depth+=textureSampleLevel(smoke,volume_sampler,uv,0.).x*ds;")
-            .replace("for(var candidate=0u;candidate<8u;candidate++) {if candidate>=point_count {break;}", "for(var candidate=0u;candidate<8u;candidate++) {if candidate>=point_count {break;} diag_add(11u);")
-            .replace("for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;}", "for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;} diag_add(12u);");
+        let diagnostic_fire = inject_counter_hooks(
+            fire_source,
+            &[
+                ("if candidate>=candidate_count {break;}", "if candidate>=candidate_count {break;} diag_add(0u);"),
+                ("if along+bound<0. || along-bound>limit || length(ro+direction*max(along,0.))>bound {continue;}", "diag_add(1u); if along+bound<0. || along-bound>limit || length(ro+direction*max(along,0.))>bound {continue;}"),
+                ("let discriminant=qb*qb-qa*qc;", "diag_add(2u); let discriminant=qb*qb-qa*qc;"),
+            ],
+            "fire shader",
+        )?;
+        let diagnostic_volume = inject_counter_hooks(
+            volume_source,
+            &[
+                ("if candidate>=smoke_candidate_count {break;}", "if candidate>=smoke_candidate_count {break;} diag_add(3u);"),
+                ("if along+bound<0. || along-bound>distance || length(origin+direction*max(along,0.)-parent)>bound {continue;}", "diag_add(4u); if along+bound<0. || along-bound>distance || length(origin+direction*max(along,0.)-parent)>bound {continue;}"),
+                ("if bubble>child_count {break;}", "if bubble>child_count {break;} diag_add(5u);"),
+                ("let sample=textureSampleLevel(smoke,volume_sampler,volume_uv,0.);", "diag_add(6u); let sample=textureSampleLevel(smoke,volume_sampler,volume_uv,0.);"),
+                ("let sample=textureSampleLevel(secondary_smoke", "diag_add(6u); let sample=textureSampleLevel(secondary_smoke"),
+                ("optical+=textureSampleLevel(secondary_smoke,volume_sampler,q,0.).x*0.25;", "diag_add(6u); optical+=textureSampleLevel(secondary_smoke,volume_sampler,q,0.).x*0.25;"),
+                ("absorption+=textureSampleLevel(secondary_smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x*source_span/6.*2.6;", "diag_add(6u); diag_add(13u); absorption+=textureSampleLevel(secondary_smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x*source_span/6.*2.6;"),
+                ("let field=textureSampleLevel(secondary_smoke", "diag_add(6u); let field=textureSampleLevel(secondary_smoke"),
+                ("heat=textureSampleLevel(secondary_smoke", "diag_add(6u); heat=textureSampleLevel(secondary_smoke"),
+                ("let field=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x;", "diag_add(6u); let field=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x;"),
+                ("heat=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).y;", "diag_add(6u); heat=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).y;"),
+                ("optical+=textureSampleLevel(smoke,volume_sampler,q,0.).x*0.25;", "diag_add(6u); optical+=textureSampleLevel(smoke,volume_sampler,q,0.).x*0.25;"),
+                ("absorption+=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x*span/6.*2.6;", "diag_add(6u); diag_add(13u); absorption+=textureSampleLevel(smoke,volume_sampler,clamp(uv,vec3(0.),vec3(1.)),0.).x*span/6.*2.6;"),
+                ("let optical_depth=textureSampleLevel(smoke_absorption,volume_sampler,source_uv,0.).y;", "diag_add(8u); let optical_depth=textureSampleLevel(smoke_absorption,volume_sampler,source_uv,0.).y;"),
+                ("let optical_depth=textureSampleLevel(smoke_absorption,volume_sampler,surface_uv,0.).x;", "diag_add(8u); let optical_depth=textureSampleLevel(smoke_absorption,volume_sampler,surface_uv,0.).x;"),
+                ("optical_depth+=textureSampleLevel(secondary_smoke,volume_sampler,uv,0.).x*ds;", "diag_add(6u); diag_add(7u); optical_depth+=textureSampleLevel(secondary_smoke,volume_sampler,uv,0.).x*ds;"),
+                ("optical_depth+=textureSampleLevel(smoke,volume_sampler,uv,0.).x*ds;", "diag_add(6u); diag_add(7u); optical_depth+=textureSampleLevel(smoke,volume_sampler,uv,0.).x*ds;"),
+                ("for(var candidate=0u;candidate<8u;candidate++) {if candidate>=point_count {break;}", "for(var candidate=0u;candidate<8u;candidate++) {if candidate>=point_count {break;} diag_add(11u);"),
+                ("for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;}", "for(var candidate=0u;candidate<12u;candidate++) {if candidate>=particle_count {break;} diag_add(12u);"),
+            ],
+            "volume shader",
+        )?;
         let diagnostic_volume_module = shader(device, "instrumented volumetrics", format!(
             "{common}\n{tile_common}\n{tile_group3}\n{diagnostic_preamble}\n{diagnostic_world}\n{diagnostic_fire}\n{}",
             diagnostic_volume
                 .replace("@group(2) @binding(8)", "@group(2) @binding(3)")
                 .replace("@group(2) @binding(9)", "@group(2) @binding(4)")
         ));
-        let diagnostic_optical_source = optical_source
-            .replace(
-                "if optical_strength(m)<=0. {discard;}",
-                "if optical_strength(m)<=0. {discard;} diag_add(18u);",
-            )
-            .replace(
-                "if f32(i)>=g.presentation.z {break;}",
-                "if f32(i)>=g.presentation.z {break;} diag_add(19u);",
-            )
-            .replace(
-                "for(var refine=0;refine<4;refine++) {",
-                "for(var refine=0;refine<4;refine++) { diag_add(20u);",
-            )
-            .replace(
-                "if transmission(m)>0. && dot(transmitted_direction,transmitted_direction)>=0.000001 {",
-                "if transmission(m)>0. && dot(transmitted_direction,transmitted_direction)>=0.000001 { diag_add(21u);",
-            );
+        let diagnostic_optical_source = inject_counter_hooks(
+            optical_source,
+            &[
+                ("if optical_strength(m)<=0. {discard;}", "if optical_strength(m)<=0. {discard;} diag_add(18u);"),
+                ("if f32(i)>=g.presentation.z {break;}", "if f32(i)>=g.presentation.z {break;} diag_add(19u);"),
+                ("for(var refine=0;refine<4;refine++) {", "for(var refine=0;refine<4;refine++) { diag_add(20u);"),
+                ("if transmission(m)>0. && dot(transmitted_direction,transmitted_direction)>=0.000001 {", "if transmission(m)>0. && dot(transmitted_direction,transmitted_direction)>=0.000001 { diag_add(21u);"),
+            ],
+            "optical shader",
+        )?;
         let diagnostic_optical_volume = diagnostic_volume.replace("@group(2)", "@group(3)");
         let diagnostic_optical_module = shader(
             device,
@@ -2486,6 +2531,8 @@ impl Renderer {
                       depth: bool,
                       vertices: bool,
                       instanced_vertices: bool| {
+            let diagnostic =
+                label.starts_with("instrumented") || label.contains("operation counters");
             device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
                 label: Some(label),
                 layout: Some(layout),
@@ -2513,7 +2560,7 @@ impl Renderer {
                 },
                 depth_stencil: depth.then_some(wgpu::DepthStencilState {
                     format: DEPTH,
-                    depth_write_enabled: true,
+                    depth_write_enabled: !diagnostic,
                     depth_compare: wgpu::CompareFunction::LessEqual,
                     stencil: Default::default(),
                     bias: wgpu::DepthBiasState {
@@ -3040,6 +3087,82 @@ impl Renderer {
     }
 
     pub fn set_shading_diagnostics(&mut self, enabled: bool) {
+        if self.shading_diagnostics_enabled == enabled {
+            return;
+        }
+        self.shading_diagnostic_targets = enabled.then(|| {
+            let usage = wgpu::TextureUsages::RENDER_ATTACHMENT;
+            let color = texture(
+                &self.device,
+                "shading diagnostics scratch color",
+                [self.resolution[0], self.resolution[1], 1],
+                self.hdr_color_format,
+                usage,
+                wgpu::TextureDimension::D2,
+            );
+            let normal = texture(
+                &self.device,
+                "shading diagnostics scratch normal",
+                [self.resolution[0], self.resolution[1], 1],
+                HDR,
+                usage,
+                wgpu::TextureDimension::D2,
+            );
+            let effect_depth = texture(
+                &self.device,
+                "shading diagnostics scratch effect depth",
+                [self.resolution[0], self.resolution[1], 1],
+                self.effect_depth_format,
+                usage,
+                wgpu::TextureDimension::D2,
+            );
+            let (mask, mask_view) = if self.optical_no_copy_enabled && self.optical_mask_required {
+                let mask = texture(
+                    &self.device,
+                    "shading diagnostics scratch optical mask",
+                    [self.resolution[0], self.resolution[1], 1],
+                    wgpu::TextureFormat::R8Unorm,
+                    usage,
+                    wgpu::TextureDimension::D2,
+                );
+                let view = mask.create_view(&Default::default());
+                (Some(mask), Some(view))
+            } else {
+                (None, None)
+            };
+            ShadingDiagnosticTargets {
+                color: color.create_view(&Default::default()),
+                _color: color,
+                normal: normal.create_view(&Default::default()),
+                _normal: normal,
+                effect_depth: effect_depth.create_view(&Default::default()),
+                _effect_depth: effect_depth,
+                mask: mask_view,
+                _mask: mask,
+            }
+        });
+        let render_targets = self.resource_inventory["render_targets_bytes"]
+            .as_u64()
+            .unwrap_or(0);
+        let known_allocation = self.resource_inventory["known_gpu_allocation_bytes"]
+            .as_u64()
+            .unwrap_or(0);
+        if enabled {
+            self.resource_inventory["render_targets_bytes"] =
+                (render_targets + self.shading_diagnostic_scratch_bytes).into();
+            self.resource_inventory["known_gpu_allocation_bytes"] =
+                (known_allocation + self.shading_diagnostic_scratch_bytes).into();
+            self.resource_inventory["shading_diagnostic_targets_bytes"] =
+                self.shading_diagnostic_scratch_bytes.into();
+        } else {
+            self.resource_inventory["render_targets_bytes"] = render_targets
+                .saturating_sub(self.shading_diagnostic_scratch_bytes)
+                .into();
+            self.resource_inventory["known_gpu_allocation_bytes"] = known_allocation
+                .saturating_sub(self.shading_diagnostic_scratch_bytes)
+                .into();
+            self.resource_inventory["shading_diagnostic_targets_bytes"] = 0.into();
+        }
         self.shading_diagnostics_enabled = enabled;
         self.metrics.shading_counters = None;
     }
@@ -4438,16 +4561,58 @@ impl Renderer {
                 }),
                 occlusion_query_set: None,
             });
-            pass.set_pipeline(if self.shading_diagnostics_enabled {
-                if self.geometry_instancing_enabled {
-                    &self.pipelines.mesh_diagnostic
-                } else {
-                    &self.pipelines.mesh_baked_diagnostic
-                }
-            } else if self.geometry_instancing_enabled {
+            pass.set_pipeline(if self.geometry_instancing_enabled {
                 &self.pipelines.mesh
             } else {
                 &self.pipelines.mesh_baked
+            });
+            pass.set_bind_group(0, &self.globals, &[]);
+            pass.set_bind_group(1, &self.textures, &[]);
+            pass.set_bind_group(2, &self.tile_list_groups[self.smoke_index], &[]);
+            let vertex_buffer = if self.geometry_instancing_enabled {
+                &self.vertex
+            } else {
+                self.unshared_vertex_buffer
+                    .as_ref()
+                    .expect("baked reference buffer is allocated when instancing is disabled")
+            };
+            pass.set_vertex_buffer(0, vertex_buffer.slice(..));
+            let instance_buffer = &self.instance_buffers[self.shadow_buffers.len()];
+            for batch in &camera_draws.batches {
+                if self.geometry_instancing_enabled {
+                    let offset =
+                        u64::from(batch.first_instance) * std::mem::size_of::<InstanceGpu>() as u64;
+                    pass.set_vertex_buffer(1, instance_buffer.slice(offset..));
+                }
+                pass.draw(
+                    batch.first_vertex..batch.first_vertex + batch.vertex_count,
+                    0..batch.instance_count,
+                );
+            }
+        }
+        if self.shading_diagnostics_enabled {
+            let targets = self.shading_diagnostic_targets.as_ref().unwrap();
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("opaque world diagnostic counters"),
+                color_attachments: &[
+                    clear_attachment(&targets.color),
+                    clear_attachment(&targets.normal),
+                ],
+                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                    view: &self.depth,
+                    depth_ops: Some(wgpu::Operations {
+                        load: wgpu::LoadOp::Load,
+                        store: wgpu::StoreOp::Store,
+                    }),
+                    stencil_ops: None,
+                }),
+                timestamp_writes: None,
+                occlusion_query_set: None,
+            });
+            pass.set_pipeline(if self.geometry_instancing_enabled {
+                &self.pipelines.mesh_diagnostic
+            } else {
+                &self.pipelines.mesh_baked_diagnostic
             });
             pass.set_bind_group(0, &self.globals, &[]);
             pass.set_bind_group(1, &self.textures, &[]);
@@ -4495,11 +4660,26 @@ impl Renderer {
                 }),
                 occlusion_query_set: None,
             });
-            pass.set_pipeline(if self.shading_diagnostics_enabled {
-                &self.pipelines.volume_diagnostic
-            } else {
-                &self.pipelines.volume
+            pass.set_pipeline(&self.pipelines.volume);
+            pass.set_bind_group(0, &self.globals, &[]);
+            pass.set_bind_group(1, &self.textures, &[]);
+            pass.set_bind_group(2, &self.volume_groups[self.smoke_index], &[]);
+            pass.set_bind_group(3, &self.tile_list_groups[self.smoke_index], &[]);
+            pass.draw(0..3, 0..1);
+        }
+        if self.shading_diagnostics_enabled {
+            let targets = self.shading_diagnostic_targets.as_ref().unwrap();
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("volumetric diagnostic counters"),
+                color_attachments: &[
+                    clear_attachment(&targets.color),
+                    clear_attachment(&targets.effect_depth),
+                ],
+                depth_stencil_attachment: None,
+                timestamp_writes: None,
+                occlusion_query_set: None,
             });
+            pass.set_pipeline(&self.pipelines.volume_diagnostic);
             pass.set_bind_group(0, &self.globals, &[]);
             pass.set_bind_group(1, &self.textures, &[]);
             pass.set_bind_group(2, &self.volume_groups[self.smoke_index], &[]);
@@ -4581,25 +4761,7 @@ impl Renderer {
                 }),
                 occlusion_query_set: None,
             });
-            pass.set_pipeline(if self.shading_diagnostics_enabled {
-                if self.optical_no_copy_enabled {
-                    if self.geometry_instancing_enabled {
-                        if self.optical_mask_required {
-                            &self.pipelines.optical_overlay_diagnostic
-                        } else {
-                            &self.pipelines.optical_overlay_alpha_diagnostic
-                        }
-                    } else if self.optical_mask_required {
-                        &self.pipelines.optical_overlay_baked_diagnostic
-                    } else {
-                        &self.pipelines.optical_overlay_alpha_baked_diagnostic
-                    }
-                } else if self.geometry_instancing_enabled {
-                    &self.pipelines.optical_diagnostic
-                } else {
-                    &self.pipelines.optical_baked_diagnostic
-                }
-            } else if self.optical_no_copy_enabled {
+            pass.set_pipeline(if self.optical_no_copy_enabled {
                 if self.geometry_instancing_enabled {
                     if self.optical_mask_required {
                         &self.pipelines.optical_overlay
@@ -4617,6 +4779,73 @@ impl Renderer {
                 &self.pipelines.optical
             } else {
                 &self.pipelines.optical_baked
+            });
+            pass.set_bind_group(0, &self.globals, &[]);
+            pass.set_bind_group(1, &self.textures, &[]);
+            pass.set_bind_group(2, &self.optical_group, &[]);
+            pass.set_bind_group(3, &self.optical_smoke_groups[self.smoke_index], &[]);
+            let vertex_buffer = if self.geometry_instancing_enabled {
+                &self.vertex
+            } else {
+                self.unshared_vertex_buffer
+                    .as_ref()
+                    .expect("baked reference buffer is allocated when instancing is disabled")
+            };
+            pass.set_vertex_buffer(0, vertex_buffer.slice(..));
+            let instance_buffer = &self.instance_buffers[self.shadow_buffers.len()];
+            for batch in camera_draws.batches.iter().filter(|batch| batch.optical) {
+                if self.geometry_instancing_enabled {
+                    let offset =
+                        u64::from(batch.first_instance) * std::mem::size_of::<InstanceGpu>() as u64;
+                    pass.set_vertex_buffer(1, instance_buffer.slice(offset..));
+                }
+                pass.draw(
+                    batch.first_vertex..batch.first_vertex + batch.vertex_count,
+                    0..batch.instance_count,
+                );
+            }
+        }
+        if self.shading_diagnostics_enabled && optical_active {
+            let targets = self.shading_diagnostic_targets.as_ref().unwrap();
+            let mut attachments = vec![clear_attachment(&targets.color)];
+            if self.optical_no_copy_enabled && self.optical_mask_required {
+                attachments.push(clear_attachment(
+                    targets
+                        .mask
+                        .as_ref()
+                        .expect("diagnostic mask allocated on demand"),
+                ));
+            }
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("optical diagnostic counters"),
+                color_attachments: &attachments,
+                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                    view: &self.depth,
+                    depth_ops: Some(wgpu::Operations {
+                        load: wgpu::LoadOp::Load,
+                        store: wgpu::StoreOp::Store,
+                    }),
+                    stencil_ops: None,
+                }),
+                timestamp_writes: None,
+                occlusion_query_set: None,
+            });
+            pass.set_pipeline(if self.optical_no_copy_enabled {
+                if self.geometry_instancing_enabled {
+                    if self.optical_mask_required {
+                        &self.pipelines.optical_overlay_diagnostic
+                    } else {
+                        &self.pipelines.optical_overlay_alpha_diagnostic
+                    }
+                } else if self.optical_mask_required {
+                    &self.pipelines.optical_overlay_baked_diagnostic
+                } else {
+                    &self.pipelines.optical_overlay_alpha_baked_diagnostic
+                }
+            } else if self.geometry_instancing_enabled {
+                &self.pipelines.optical_diagnostic
+            } else {
+                &self.pipelines.optical_baked_diagnostic
             });
             pass.set_bind_group(0, &self.globals, &[]);
             pass.set_bind_group(1, &self.textures, &[]);

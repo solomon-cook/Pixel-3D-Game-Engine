@@ -305,6 +305,29 @@ measured frame/tick window; slot skip/late counters include warm-up. Full sample
 summary values and checksums. This evidence is a measurement baseline only; no
 renderer optimization was tested or promoted.
 
+## Output-preserving O01 shader counters (18 October)
+
+Hypothesis: diagnostic atomics can be collected without asking the instrumented
+shader variant to produce the accepted image. The previous approach substituted
+instrumented world, volumetric and optical pipelines for normal rendering; its
+expanded sample changed one or two flame pixels in six close-camera cases. The
+renderer now draws the normal passes first, then repeats the instrumented draws
+into lazily allocated scratch targets while reading the normal scene depth. This
+retains shader work and counters without modifying the captured color or depth.
+At 640×360, scratch targets add 4,608,000 known bytes on the default RGBA16F path;
+compact HDR no-copy adds one 230,400-byte mask plane within its format-specific
+allocation. These allocations release when diagnostic mode is disabled. This adds work only
+when `--shading-counters` is enabled; its timings remain unusable as
+performance evidence. M1 Max/Metal fixed-tick checks across campfire, quiet and
+bonfire profiles at hero, smoke-close, fire-study and orthographic cameras now
+match all 12 baseline images byte-for-byte and return nonzero operation counts.
+A five-view Material Atelier matrix and a compact-HDR optical-no-copy glass case
+also match the normal image byte-for-byte while reporting metal, glass and
+subsurface optical interactions. This closes
+sampled image parity for those views, not continuous playback, native-window or
+cross-adapter validation. See the [expanded fire report](measurements-o01-counter-profile-scope.json)
+and [optical report](measurements-o01-optical-counter-coverage.json).
+
 
 ## Shared geometry and conservative visibility (16 October)
 

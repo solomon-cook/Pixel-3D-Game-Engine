@@ -1,7 +1,7 @@
 {
   "version": 1,
   "purpose": "Expand O01 counter coverage across three fire profiles and four named views; counts are not timings.",
-  "scene": "assets/scenes/profiling-heavy.json",
+  "scene": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/assets/scenes/profiling-heavy.json",
   "seed": 42,
   "tick": 120,
   "resolution": [
@@ -19,11 +19,13 @@
     "fire-study",
     "orthographic"
   ],
+  "binary_sha256": "1bdfaa92de127f795f47a509b918156a438433f7cbef4f54681a426742efba65",
+  "runner_sha256": "2de8043a24ea37e3a16d331aec9277327308c668c52dcb19a6062fcfd5a7743e",
   "captures": [
     {
       "profile": "effect-campfire",
       "camera": "hero",
-      "scene": "assets/scenes/profiling-heavy.json",
+      "scene": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/assets/scenes/profiling-heavy.json",
       "seed": 42,
       "tick": 120,
       "normal": {
@@ -77,12 +79,13 @@
         "world_particle_light_candidates": 245651,
         "world_point_light_candidates": 2268088,
         "world_shading_invocations": 283511
-      }
+      },
+      "diagnostic_scratch_bytes": 4608000
     },
     {
       "profile": "effect-campfire",
       "camera": "smoke-close",
-      "scene": "assets/scenes/profiling-heavy.json",
+      "scene": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/assets/scenes/profiling-heavy.json",
       "seed": 42,
       "tick": 120,
       "normal": {
@@ -97,7 +100,7 @@
       },
       "diagnostic": {
         "image": "artifacts/o01-counter-profile-scope/effect-campfire-smoke-close-diagnostic.png",
-        "pixel_sha256": "c47bc28a69fe596cab3bc52b609fc30974de03e1a3ec9ae3776ebacd9a2ad201",
+        "pixel_sha256": "7a73a695a20a80b4d96f7f9b51ede027f34e48fcf99f0d3d24e8c99a8db620f3",
         "backend": "Metal",
         "adapter": "Apple M1 Max",
         "resolution": [
@@ -105,18 +108,13 @@
           360
         ]
       },
-      "pixel_identical": false,
+      "pixel_identical": true,
       "pixel_difference": {
-        "changed_pixels": 2,
+        "changed_pixels": 0,
         "total_pixels": 230400,
-        "mean_absolute_channel_error": 0.00012731481481481483,
-        "max_channel_error": 31,
-        "difference_bounds": [
-          27,
-          139,
-          58,
-          177
-        ]
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
       },
       "counters": {
         "cached_absorption_samples": 0,
@@ -141,12 +139,13 @@
         "world_particle_light_candidates": 674137,
         "world_point_light_candidates": 3073120,
         "world_shading_invocations": 384140
-      }
+      },
+      "diagnostic_scratch_bytes": 4608000
     },
     {
       "profile": "effect-campfire",
       "camera": "fire-study",
-      "scene": "assets/scenes/profiling-heavy.json",
+      "scene": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/assets/scenes/profiling-heavy.json",
       "seed": 42,
       "tick": 120,
       "normal": {
@@ -161,7 +160,7 @@
       },
       "diagnostic": {
         "image": "artifacts/o01-counter-profile-scope/effect-campfire-fire-study-diagnostic.png",
-        "pixel_sha256": "0444882cf12e10dce5f31e1e84ccd19cacb49b70feec1e773a9433955c910ec6",
+        "pixel_sha256": "49b9d36280c5ce11471d9d40c1079960e1c13f789e4843b04652501f0dfdeebb",
         "backend": "Metal",
         "adapter": "Apple M1 Max",
         "resolution": [
@@ -169,18 +168,13 @@
           360
         ]
       },
-      "pixel_identical": false,
+      "pixel_identical": true,
       "pixel_difference": {
-        "changed_pixels": 2,
+        "changed_pixels": 0,
         "total_pixels": 230400,
-        "mean_absolute_channel_error": 0.00017505787037037034,
-        "max_channel_error": 50,
-        "difference_bounds": [
-          116,
-          23,
-          334,
-          125
-        ]
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
       },
       "counters": {
         "cached_absorption_samples": 0,
@@ -205,12 +199,13 @@
         "world_particle_light_candidates": 1646916,
         "world_point_light_candidates": 4110776,
         "world_shading_invocations": 513847
-      }
+      },
+      "diagnostic_scratch_bytes": 4608000
     },
     {
       "profile": "effect-campfire",
       "camera": "orthographic",
-      "scene": "assets/scenes/profiling-heavy.json",
+      "scene": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/assets/scenes/profiling-heavy.json",
       "seed": 42,
       "tick": 120,
       "normal": {
@@ -264,12 +259,13 @@
         "world_particle_light_candidates": 123335,
         "world_point_light_candidates": 5333976,
         "world_shading_invocations": 666747
-      }
+      },
+      "diagnostic_scratch_bytes": 4608000
     },
     {
       "profile": "effect-quiet",
       "camera": "hero",
-      "scene": "assets/scenes/profiling-heavy.json",
+      "scene": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/assets/scenes/profiling-heavy.json",
       "seed": 42,
       "tick": 120,
       "normal": {
@@ -323,12 +319,13 @@
         "world_particle_light_candidates": 95302,
         "world_point_light_candidates": 2268088,
         "world_shading_invocations": 283511
-      }
+      },
+      "diagnostic_scratch_bytes": 4608000
     },
     {
       "profile": "effect-quiet",
       "camera": "smoke-close",
-      "scene": "assets/scenes/profiling-heavy.json",
+      "scene": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/assets/scenes/profiling-heavy.json",
       "seed": 42,
       "tick": 120,
       "normal": {
@@ -343,7 +340,7 @@
       },
       "diagnostic": {
         "image": "artifacts/o01-counter-profile-scope/effect-quiet-smoke-close-diagnostic.png",
-        "pixel_sha256": "d47a215e58230bb895a595248be9bcedee08322752de27cd50b84c63cbad1a3c",
+        "pixel_sha256": "9d38e4454bb40449e458fbe4e2111e6892eb110e1519f98e13f479b8db900c6a",
         "backend": "Metal",
         "adapter": "Apple M1 Max",
         "resolution": [
@@ -351,18 +348,13 @@
           360
         ]
       },
-      "pixel_identical": false,
+      "pixel_identical": true,
       "pixel_difference": {
-        "changed_pixels": 2,
+        "changed_pixels": 0,
         "total_pixels": 230400,
-        "mean_absolute_channel_error": 0.00012731481481481483,
-        "max_channel_error": 31,
-        "difference_bounds": [
-          27,
-          139,
-          58,
-          177
-        ]
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
       },
       "counters": {
         "cached_absorption_samples": 0,
@@ -387,12 +379,13 @@
         "world_particle_light_candidates": 262882,
         "world_point_light_candidates": 3073120,
         "world_shading_invocations": 384140
-      }
+      },
+      "diagnostic_scratch_bytes": 4608000
     },
     {
       "profile": "effect-quiet",
       "camera": "fire-study",
-      "scene": "assets/scenes/profiling-heavy.json",
+      "scene": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/assets/scenes/profiling-heavy.json",
       "seed": 42,
       "tick": 120,
       "normal": {
@@ -407,7 +400,7 @@
       },
       "diagnostic": {
         "image": "artifacts/o01-counter-profile-scope/effect-quiet-fire-study-diagnostic.png",
-        "pixel_sha256": "eb1e7b3d8b133801d6870864cc2f12913bee813e9e997d205f5eee751e64495f",
+        "pixel_sha256": "28b084c2267ddb5b4ae6c2f532a24b0a19125342236a70dfed0a1fb2c25700c3",
         "backend": "Metal",
         "adapter": "Apple M1 Max",
         "resolution": [
@@ -415,18 +408,13 @@
           360
         ]
       },
-      "pixel_identical": false,
+      "pixel_identical": true,
       "pixel_difference": {
-        "changed_pixels": 2,
+        "changed_pixels": 0,
         "total_pixels": 230400,
-        "mean_absolute_channel_error": 0.00017505787037037034,
-        "max_channel_error": 50,
-        "difference_bounds": [
-          116,
-          23,
-          334,
-          125
-        ]
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
       },
       "counters": {
         "cached_absorption_samples": 0,
@@ -451,12 +439,13 @@
         "world_particle_light_candidates": 755448,
         "world_point_light_candidates": 4110776,
         "world_shading_invocations": 513847
-      }
+      },
+      "diagnostic_scratch_bytes": 4608000
     },
     {
       "profile": "effect-quiet",
       "camera": "orthographic",
-      "scene": "assets/scenes/profiling-heavy.json",
+      "scene": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/assets/scenes/profiling-heavy.json",
       "seed": 42,
       "tick": 120,
       "normal": {
@@ -510,12 +499,13 @@
         "world_particle_light_candidates": 50534,
         "world_point_light_candidates": 5333976,
         "world_shading_invocations": 666747
-      }
+      },
+      "diagnostic_scratch_bytes": 4608000
     },
     {
       "profile": "effect-bonfire",
       "camera": "hero",
-      "scene": "assets/scenes/profiling-heavy.json",
+      "scene": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/assets/scenes/profiling-heavy.json",
       "seed": 42,
       "tick": 120,
       "normal": {
@@ -569,12 +559,13 @@
         "world_particle_light_candidates": 394347,
         "world_point_light_candidates": 2268088,
         "world_shading_invocations": 283511
-      }
+      },
+      "diagnostic_scratch_bytes": 4608000
     },
     {
       "profile": "effect-bonfire",
       "camera": "smoke-close",
-      "scene": "assets/scenes/profiling-heavy.json",
+      "scene": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/assets/scenes/profiling-heavy.json",
       "seed": 42,
       "tick": 120,
       "normal": {
@@ -589,7 +580,7 @@
       },
       "diagnostic": {
         "image": "artifacts/o01-counter-profile-scope/effect-bonfire-smoke-close-diagnostic.png",
-        "pixel_sha256": "772630c60320bd04fb4d112777f74f95a1ddbd941a6607517ddc6f91650362cf",
+        "pixel_sha256": "bf91f64d360c2f5ec34e66a14a9e63de58718767f140baa5f48e5b5580ec8ae8",
         "backend": "Metal",
         "adapter": "Apple M1 Max",
         "resolution": [
@@ -597,18 +588,13 @@
           360
         ]
       },
-      "pixel_identical": false,
+      "pixel_identical": true,
       "pixel_difference": {
-        "changed_pixels": 2,
+        "changed_pixels": 0,
         "total_pixels": 230400,
-        "mean_absolute_channel_error": 0.00012731481481481483,
-        "max_channel_error": 31,
-        "difference_bounds": [
-          27,
-          139,
-          58,
-          177
-        ]
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
       },
       "counters": {
         "cached_absorption_samples": 0,
@@ -633,17 +619,18 @@
         "world_particle_light_candidates": 1066307,
         "world_point_light_candidates": 3073120,
         "world_shading_invocations": 384140
-      }
+      },
+      "diagnostic_scratch_bytes": 4608000
     },
     {
       "profile": "effect-bonfire",
       "camera": "fire-study",
-      "scene": "assets/scenes/profiling-heavy.json",
+      "scene": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/assets/scenes/profiling-heavy.json",
       "seed": 42,
       "tick": 120,
       "normal": {
         "image": "artifacts/o01-counter-profile-scope/effect-bonfire-fire-study-normal.png",
-        "pixel_sha256": "54d527026f02e3800fa90724f57de8aa3dcced9496552be2996e8bd9c131755a",
+        "pixel_sha256": "c3bafe541ae73193859b328bdfbfb15f23db08729e780a68b104821b8155c20a",
         "backend": "Metal",
         "adapter": "Apple M1 Max",
         "resolution": [
@@ -653,7 +640,7 @@
       },
       "diagnostic": {
         "image": "artifacts/o01-counter-profile-scope/effect-bonfire-fire-study-diagnostic.png",
-        "pixel_sha256": "f3625d68f1bb13f8ae1378189ca731e7158654e1fb2ebef34acde51999c99538",
+        "pixel_sha256": "c3bafe541ae73193859b328bdfbfb15f23db08729e780a68b104821b8155c20a",
         "backend": "Metal",
         "adapter": "Apple M1 Max",
         "resolution": [
@@ -661,18 +648,13 @@
           360
         ]
       },
-      "pixel_identical": false,
+      "pixel_identical": true,
       "pixel_difference": {
-        "changed_pixels": 1,
+        "changed_pixels": 0,
         "total_pixels": 230400,
-        "mean_absolute_channel_error": 0.00017071759259259262,
-        "max_channel_error": 50,
-        "difference_bounds": [
-          116,
-          23,
-          117,
-          24
-        ]
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
       },
       "counters": {
         "cached_absorption_samples": 0,
@@ -697,12 +679,13 @@
         "world_particle_light_candidates": 2277592,
         "world_point_light_candidates": 4110776,
         "world_shading_invocations": 513847
-      }
+      },
+      "diagnostic_scratch_bytes": 4608000
     },
     {
       "profile": "effect-bonfire",
       "camera": "orthographic",
-      "scene": "assets/scenes/profiling-heavy.json",
+      "scene": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/assets/scenes/profiling-heavy.json",
       "seed": 42,
       "tick": 120,
       "normal": {
@@ -756,9 +739,10 @@
         "world_particle_light_candidates": 203711,
         "world_point_light_candidates": 5333976,
         "world_shading_invocations": 666747
-      }
+      },
+      "diagnostic_scratch_bytes": 4608000
     }
   ],
-  "all_pixel_identical": false,
-  "scope": "Fixed-tick diagnostic counts, not timing. Diagnostic shader variants differ at a small set of pixels in some close views; exact output parity is not established. No continuous-motion claim."
+  "all_pixel_identical": true,
+  "scope": "Fixed-tick diagnostic counts, not timing. Normal rendering produces the image; instrumented world, volume and optical draws then write to lazily allocated scratch targets while reading the normal depth and scene inputs. No continuous-motion claim."
 }

@@ -1,0 +1,381 @@
+{
+  "version": 1,
+  "purpose": "Fixed-tick output parity and operation counts across named optical material views; atomic diagnostic draws are not timing evidence.",
+  "scene": "assets/scenes/materials.json",
+  "scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
+  "seed": 42,
+  "tick": 300,
+  "resolution": [
+    640,
+    360
+  ],
+  "cameras": [
+    "hero",
+    "metal-close",
+    "glass-close",
+    "subsurface-close",
+    "orthographic"
+  ],
+  "binary_sha256": "1bdfaa92de127f795f47a509b918156a438433f7cbef4f54681a426742efba65",
+  "runner_sha256": "7ebd4eedb8a371fedd1e00ca05184f7cfdc08cf18a8a9a12a208d11035f727da",
+  "renderer_source_sha256": "211bf4155a039927a310cd886ce3598cc3a6d78cabdc010030e2c1b607d78446",
+  "cases": [
+    {
+      "camera": "hero",
+      "variant": "hero",
+      "options": [],
+      "normal": {
+        "image": "artifacts/o01/optical-counter-coverage/hero-normal.png",
+        "pixel_sha256": "e353aba9e702ab845a9f2750422cf4ccced2669cb9cb40dc006fb0f37b3c4448",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "diagnostic": {
+        "image": "artifacts/o01/optical-counter-coverage/hero-diagnostic.png",
+        "pixel_sha256": "e353aba9e702ab845a9f2750422cf4ccced2669cb9cb40dc006fb0f37b3c4448",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "pixel_identical": true,
+      "pixel_difference": {
+        "changed_pixels": 0,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 22486,
+        "fire_bounds_tests": 50539,
+        "fire_ellipsoid_tests": 5069,
+        "fire_primitive_candidates": 50539,
+        "fire_shadow_lookups": 489373,
+        "optical_reflection_refinement_steps": 106336,
+        "optical_reflection_steps": 3073438,
+        "optical_surface_interactions": 211446,
+        "optical_transmission_interactions": 8844,
+        "particle_light_candidates": 5175,
+        "point_light_candidates": 4266,
+        "smoke_bubble_intersection_tests": 52773,
+        "smoke_density_samples": 54011,
+        "smoke_lobe_candidates": 147932,
+        "smoke_parent_bounds_tests": 147932,
+        "sun_shadow_lookups": 487951,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 116400,
+        "world_point_light_candidates": 1445877,
+        "world_shading_invocations": 481959
+      },
+      "diagnostic_scratch_bytes": 4608000
+    },
+    {
+      "camera": "metal-close",
+      "variant": "metal-close",
+      "options": [],
+      "normal": {
+        "image": "artifacts/o01/optical-counter-coverage/metal-close-normal.png",
+        "pixel_sha256": "087c0047c6c11847207429a44712f5a9cedbc0b81f4816cb93edda8df0e1e354",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "diagnostic": {
+        "image": "artifacts/o01/optical-counter-coverage/metal-close-diagnostic.png",
+        "pixel_sha256": "087c0047c6c11847207429a44712f5a9cedbc0b81f4816cb93edda8df0e1e354",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "pixel_identical": true,
+      "pixel_difference": {
+        "changed_pixels": 0,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 0,
+        "fire_bounds_tests": 0,
+        "fire_ellipsoid_tests": 0,
+        "fire_primitive_candidates": 0,
+        "fire_shadow_lookups": 1190096,
+        "optical_reflection_refinement_steps": 85164,
+        "optical_reflection_steps": 4590402,
+        "optical_surface_interactions": 425844,
+        "optical_transmission_interactions": 37860,
+        "particle_light_candidates": 0,
+        "point_light_candidates": 0,
+        "smoke_bubble_intersection_tests": 0,
+        "smoke_density_samples": 0,
+        "smoke_lobe_candidates": 251625,
+        "smoke_parent_bounds_tests": 251625,
+        "sun_shadow_lookups": 1190096,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 409580,
+        "world_point_light_candidates": 3557058,
+        "world_shading_invocations": 1185686
+      },
+      "diagnostic_scratch_bytes": 4608000
+    },
+    {
+      "camera": "glass-close",
+      "variant": "glass-close",
+      "options": [],
+      "normal": {
+        "image": "artifacts/o01/optical-counter-coverage/glass-close-normal.png",
+        "pixel_sha256": "338200f39f3f4adc3582a477d57fe185d5e5f21e3a9a3823d743da6816e8b232",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "diagnostic": {
+        "image": "artifacts/o01/optical-counter-coverage/glass-close-diagnostic.png",
+        "pixel_sha256": "338200f39f3f4adc3582a477d57fe185d5e5f21e3a9a3823d743da6816e8b232",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "pixel_identical": true,
+      "pixel_difference": {
+        "changed_pixels": 0,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 0,
+        "fire_bounds_tests": 9992,
+        "fire_ellipsoid_tests": 651,
+        "fire_primitive_candidates": 9992,
+        "fire_shadow_lookups": 1062780,
+        "optical_reflection_refinement_steps": 417236,
+        "optical_reflection_steps": 4270089,
+        "optical_surface_interactions": 383916,
+        "optical_transmission_interactions": 60058,
+        "particle_light_candidates": 0,
+        "point_light_candidates": 0,
+        "smoke_bubble_intersection_tests": 4571,
+        "smoke_density_samples": 2834,
+        "smoke_lobe_candidates": 96324,
+        "smoke_parent_bounds_tests": 96324,
+        "sun_shadow_lookups": 1062780,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 240900,
+        "world_point_light_candidates": 3111678,
+        "world_shading_invocations": 1037226
+      },
+      "diagnostic_scratch_bytes": 4608000
+    },
+    {
+      "camera": "subsurface-close",
+      "variant": "subsurface-close",
+      "options": [],
+      "normal": {
+        "image": "artifacts/o01/optical-counter-coverage/subsurface-close-normal.png",
+        "pixel_sha256": "902b6acb48b447818b263b3bdef6e2da1c5552ad8268b3a25e33565f0dcb1a60",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "diagnostic": {
+        "image": "artifacts/o01/optical-counter-coverage/subsurface-close-diagnostic.png",
+        "pixel_sha256": "902b6acb48b447818b263b3bdef6e2da1c5552ad8268b3a25e33565f0dcb1a60",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "pixel_identical": true,
+      "pixel_difference": {
+        "changed_pixels": 0,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 0,
+        "fire_bounds_tests": 0,
+        "fire_ellipsoid_tests": 0,
+        "fire_primitive_candidates": 0,
+        "fire_shadow_lookups": 1036228,
+        "optical_reflection_refinement_steps": 32520,
+        "optical_reflection_steps": 3644094,
+        "optical_surface_interactions": 273574,
+        "optical_transmission_interactions": 4229,
+        "particle_light_candidates": 0,
+        "point_light_candidates": 0,
+        "smoke_bubble_intersection_tests": 0,
+        "smoke_density_samples": 0,
+        "smoke_lobe_candidates": 0,
+        "smoke_parent_bounds_tests": 0,
+        "sun_shadow_lookups": 1036228,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 0,
+        "world_point_light_candidates": 2846652,
+        "world_shading_invocations": 948884
+      },
+      "diagnostic_scratch_bytes": 4608000
+    },
+    {
+      "camera": "orthographic",
+      "variant": "orthographic",
+      "options": [],
+      "normal": {
+        "image": "artifacts/o01/optical-counter-coverage/orthographic-normal.png",
+        "pixel_sha256": "dfb7aeb8b3c9ede1d47c053a844d6ad98fb45894e457c8ee2a75522fc221314d",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "diagnostic": {
+        "image": "artifacts/o01/optical-counter-coverage/orthographic-diagnostic.png",
+        "pixel_sha256": "dfb7aeb8b3c9ede1d47c053a844d6ad98fb45894e457c8ee2a75522fc221314d",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "pixel_identical": true,
+      "pixel_difference": {
+        "changed_pixels": 0,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 100843,
+        "fire_bounds_tests": 112376,
+        "fire_ellipsoid_tests": 16520,
+        "fire_primitive_candidates": 112376,
+        "fire_shadow_lookups": 812181,
+        "optical_reflection_refinement_steps": 240416,
+        "optical_reflection_steps": 4125041,
+        "optical_surface_interactions": 331354,
+        "optical_transmission_interactions": 16050,
+        "particle_light_candidates": 23979,
+        "point_light_candidates": 19809,
+        "smoke_bubble_intersection_tests": 199284,
+        "smoke_density_samples": 194749,
+        "smoke_lobe_candidates": 364512,
+        "smoke_parent_bounds_tests": 364512,
+        "sun_shadow_lookups": 805578,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 258330,
+        "world_point_light_candidates": 2376888,
+        "world_shading_invocations": 792296
+      },
+      "diagnostic_scratch_bytes": 4608000
+    },
+    {
+      "camera": "glass-close",
+      "variant": "glass-close-compact-hdr-no-copy",
+      "options": [
+        "--compact-hdr",
+        "--optical-no-copy"
+      ],
+      "normal": {
+        "image": "artifacts/o01/optical-counter-coverage/glass-close-compact-hdr-no-copy-normal.png",
+        "pixel_sha256": "5af9a753e8b5862f3c20d81ac74114415de5bf45441a830523b54c65828a5e85",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "diagnostic": {
+        "image": "artifacts/o01/optical-counter-coverage/glass-close-compact-hdr-no-copy-diagnostic.png",
+        "pixel_sha256": "5af9a753e8b5862f3c20d81ac74114415de5bf45441a830523b54c65828a5e85",
+        "backend": "Metal",
+        "adapter": "Apple M1 Max",
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "pixel_identical": true,
+      "pixel_difference": {
+        "changed_pixels": 0,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
+      },
+      "counters": {
+        "cached_absorption_samples": 0,
+        "camera_to_flame_absorption_samples": 0,
+        "direct_absorption_samples": 0,
+        "fire_bounds_tests": 9992,
+        "fire_ellipsoid_tests": 651,
+        "fire_primitive_candidates": 9992,
+        "fire_shadow_lookups": 1062780,
+        "optical_reflection_refinement_steps": 417236,
+        "optical_reflection_steps": 4270089,
+        "optical_surface_interactions": 383916,
+        "optical_transmission_interactions": 60058,
+        "particle_light_candidates": 0,
+        "point_light_candidates": 0,
+        "smoke_bubble_intersection_tests": 4571,
+        "smoke_density_samples": 2834,
+        "smoke_lobe_candidates": 96324,
+        "smoke_parent_bounds_tests": 96324,
+        "sun_shadow_lookups": 1062780,
+        "world_heat_samples": 0,
+        "world_particle_light_candidates": 240900,
+        "world_point_light_candidates": 3111678,
+        "world_shading_invocations": 1037226
+      },
+      "diagnostic_scratch_bytes": 3916800
+    }
+  ],
+  "all_pixel_identical": true,
+  "limitations": [
+    "Fixed-tick M1 Max/Metal captures do not establish continuous visual quality.",
+    "Diagnostic mode allocates scratch render targets and adds rendering work; its timings are not comparable.",
+    "Native-window and non-Metal optical-counter coverage remain open."
+  ]
+}

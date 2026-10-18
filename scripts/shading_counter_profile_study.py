@@ -17,6 +17,10 @@ def pixel_hash(path: Path) -> str:
     return hashlib.sha256(pixels).hexdigest()
 
 
+def file_hash(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
 def pixel_difference(normal: Path, diagnostic: Path) -> dict:
     with Image.open(normal) as image:
         baseline = image.convert("RGB")
@@ -43,6 +47,8 @@ def main() -> None:
     parser.add_argument("--tick", type=int, default=120)
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
+    args.binary = args.binary.resolve()
+    args.scene = args.scene.resolve()
     args.output.mkdir(parents=True, exist_ok=True)
     captures = []
     for profile in PROFILES:
@@ -71,6 +77,9 @@ def main() -> None:
                     if not counters:
                         raise RuntimeError(f"missing shading counters: {profile}/{camera}")
                     variants["counters"] = counters
+                    variants["diagnostic_scratch_bytes"] = metadata["capabilities"]["resource_inventory"][
+                        "shading_diagnostic_targets_bytes"
+                    ]
             difference = pixel_difference(paths["normal"], paths["diagnostic"])
             captures.append({
                 "profile": profile,
@@ -83,6 +92,7 @@ def main() -> None:
                 "pixel_identical": variants["normal"]["pixel_sha256"] == variants["diagnostic"]["pixel_sha256"],
                 "pixel_difference": difference,
                 "counters": variants["counters"],
+                "diagnostic_scratch_bytes": variants["diagnostic_scratch_bytes"],
             })
     report = {
         "version": 1,
@@ -93,9 +103,11 @@ def main() -> None:
         "resolution": [640, 360],
         "profiles": list(PROFILES),
         "cameras": list(CAMERAS),
+        "binary_sha256": file_hash(args.binary),
+        "runner_sha256": file_hash(Path(__file__).resolve()),
         "captures": captures,
         "all_pixel_identical": all(row["pixel_identical"] for row in captures),
-        "scope": "Fixed-tick diagnostic counts, not timing. Diagnostic shader variants differ at a small set of pixels in some close views; exact output parity is not established. No continuous-motion claim.",
+        "scope": "Fixed-tick diagnostic counts, not timing. Normal rendering produces the image; instrumented world, volume and optical draws then write to lazily allocated scratch targets while reading the normal depth and scene inputs. No continuous-motion claim.",
     }
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, indent=2) + "\n")

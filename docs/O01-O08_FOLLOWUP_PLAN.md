@@ -432,12 +432,17 @@ show sensitivity to candidate work, retained primitives and optical reuse, but d
 not isolate exact per-pixel operation costs.
 
 **Counter implementation: instrumented paths complete on M1 Max/Metal.**
-`engine-lab capture --shading-counters` selects isolated diagnostic variants for
+`engine-lab capture --shading-counters` executes companion instrumented draws for
 world, volumetric and optical passes and serializes fire primitive, smoke
 lobe/bubble, density/absorption, light-candidate, shadow, reflection and
 transmission counts. Earlier selected baseline, diagnostic and optical no-copy
-captures produced byte-identical pixels at matched fixed ticks. Expanded coverage
-below found a small diagnostic-variant difference in some close views. Captures are recorded in
+captures produced byte-identical pixels at matched fixed ticks. The ordinary
+renderer produces the image first; companion draws use lazily allocated scratch
+color targets while reading the normal scene depth. At 640×360, diagnostics add
+4,608,000 known bytes on the default RGBA16F path, released when the mode is
+disabled. Compact HDR no-copy adds one 230,400-byte scratch mask plane within its
+format-specific allocation. Expanded coverage now
+confirms byte identity across 12 profile/view pairs. Captures are recorded in
 [measurements-o01-shading-counters.json](measurements-o01-shading-counters.json).
 Atomic counter captures are diagnostic only; their timings are not comparable.
 Sparse start/mid/end samples now cover a full 120-second camera orbit with a
@@ -449,22 +454,21 @@ Native-window checks and other-adapter validation remain open.
 now cover campfire, quiet and bonfire profiles at hero, smoke-close, fire-study
 and orthographic cameras on M1 Max/Metal. Operation counts range from 26,374 to
 2,309,781 fire-primitive candidates and 25,106 to 451,096 smoke-density samples
-across these views. Six of 12 normal/diagnostic pairs are byte-identical. The six
-close/fire-study pairs differ at only one or two pixels (maximum channel error
-31/50 out of 255; mean absolute channel error below 0.00018/255), near the
-projected flame. Repeated captures are stable within each pipeline, so this is a
-diagnostic-variant output difference, not replay noise. Counter values remain
-useful as operation counts, but exact image parity is not universal and the
-instrumented shader must not be used for visual acceptance. The optical
-camera-motion counter route is now complete on M1 Max/Metal: three sparse
+across these views. Scratch-target companion passes restore byte-identical output
+in all 12 normal/counter pairs. Fixed-tick Material Atelier camera coverage now
+includes hero, metal-close, glass-close, subsurface-close and orthographic views,
+plus a compact-HDR optical-no-copy glass case; all six pairs match exactly and
+report optical interactions. See
+[optical coverage report](measurements-o01-optical-counter-coverage.json) and its
+[runner](../scripts/shading_counter_optical_coverage.py). The optical camera-motion
+counter route is also complete on M1 Max/Metal: three sparse
 samples from a 120-second `materials.json` `material-orbit` report 211,446–311,506
 optical surface interactions and 8,839–21,180 successful transmission
 interactions. A separate uninstrumented run of the identical scene hash, route,
 seed and duration measured a 2.076 ms median optical-resolve stage and 2.828 ms
-median GPU render. Counter-run timings remain disabled and unusable. Fixing this
-route exposed stale counter-injection patterns that no longer matched the live
-WGSL; optical surface and transmission hooks now count current shader paths.
-Additional optical material coverage remains open. See
+median GPU render. Counter-run timings remain disabled and unusable. Counter-hook
+injection now fails when a WGSL pattern no longer matches. Continuous playback,
+native-window and other-adapter coverage remain open. See
 [profile/view counter evidence](measurements-o01-counter-profile-scope.json) and
 its [capture runner](../scripts/shading_counter_profile_study.py), plus the
 [optical route report](measurements-o01-optical-counter-route.json) and
