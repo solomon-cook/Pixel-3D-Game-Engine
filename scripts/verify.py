@@ -198,6 +198,46 @@ def main():
             assert fallback_inventory["effect_depth_format"] == "Rgba16Float"
             assert fallback_inventory["smoke_volume_format"] == "Rgba16Float"
             assert (temp / "first.png").read_bytes() == fallback_image.read_bytes(), "RGBA16F fallback changed the fixed-tick image"
+            dual_scene = ROOT / "assets/scenes/two-emitter-review.json"
+            reversed_dual_scene = temp / "two-emitter-reversed.json"
+            dual_definition = json.loads(dual_scene.read_text())
+            dual_definition["emitters"].reverse()
+            reversed_dual_scene.write_text(json.dumps(dual_definition))
+            dual_images = {}
+            for name, scene_arg, flags in [
+                ("tiled", dual_scene, []),
+                ("exhaustive", dual_scene, ["--disable-tile-lists"]),
+                ("forced-overflow", dual_scene, ["--force-tile-overflow"]),
+                ("reversed-order", reversed_dual_scene, []),
+            ]:
+                image = temp / f"dual-{name}.png"
+                run(
+                    binary,
+                    "capture",
+                    "--scene",
+                    scene_arg,
+                    "--camera",
+                    "dual-wide",
+                    "--seed",
+                    "42",
+                    "--tick",
+                    "120",
+                    "--scale",
+                    "1",
+                    "--output",
+                    image,
+                    *flags,
+                )
+                dual_images[name] = image.read_bytes()
+            assert dual_images["tiled"] == dual_images["exhaustive"], (
+                "two-emitter tiled output differs from exhaustive evaluation"
+            )
+            assert dual_images["tiled"] == dual_images["forced-overflow"], (
+                "two-emitter forced fallback changed image"
+            )
+            assert dual_images["tiled"] == dual_images["reversed-order"], (
+                "two-emitter output depends on scene array order"
+            )
     if args.gpu:
         import sys
         run(sys.executable, ROOT / "scripts/verify_materials.py", "--binary", binary)
