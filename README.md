@@ -46,6 +46,7 @@ cargo run --release -p engine-lab -- capture --scene assets/scenes/materials.jso
 cargo run --release -p engine-lab -- benchmark --duration 120 --warmup 10
 cargo run --release -p engine-lab -- benchmark-native --duration 120 --warmup 10
 python3 scripts/profile_compare.py --baseline assets/scenes/materials.json --candidate assets/scenes/materials.json --measure-overhead
+python3 scripts/capture_motion.py --scene assets/scenes/projected-detail-motion-review.json --route projected-detail-review-orbit --camera fire-study --frames 400 --stride 3 --experiments projected_detail_lod --output artifacts/o04/continuous-motion/lod-20fps --gif
 python3 scripts/verify.py --gpu --native
 python3 scripts/package.py
 ```

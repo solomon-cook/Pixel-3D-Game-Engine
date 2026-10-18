@@ -5,18 +5,42 @@ PNG frames and JSON provenance require only Python's standard library. Optional
 --gif uses Pillow to create a small motion preview (not a seamless loop).
 """
 import argparse
+import hashlib
 import json
+import math
 from pathlib import Path
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def route_camera_at(route, base_camera, seconds):
+    time = seconds % route['duration_seconds']
+    keyframes = route['keyframes']
+    index = max(0, min(len(keyframes) - 2, next(
+        (i - 1 for i, keyframe in enumerate(keyframes) if keyframe['time'] > time),
+        len(keyframes) - 2,
+    )))
+    first, second = keyframes[index:index + 2]
+    span = second['time'] - first['time']
+    amount = max(0.0, min(1.0, (time - first['time']) / span))
+    return {
+        **base_camera,
+        'position': [a + (b - a) * amount for a, b in zip(first['position'], second['position'])],
+        'target': [a + (b - a) * amount for a, b in zip(first['target'], second['target'])],
+    }
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--binary', type=Path, default=ROOT / 'target/release/engine-lab')
     parser.add_argument('--camera', default='fire-study')
+    parser.add_argument('--scene', type=Path, default=ROOT / 'assets/scenes/clearing.json')
+    parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--profile', default='effect-campfire')
+    parser.add_argument('--experiments', help='comma-separated renderer experiments')
+    parser.add_argument('--route', help='camera route ID from the scene; updates the camera at every frame')
+    parser.add_argument('--route-start', type=float, default=0, help='camera-route time in seconds at frame zero')
     parser.add_argument('--start-tick', type=int, default=300)
     parser.add_argument('--frames', type=int, default=120)
     parser.add_argument('--stride', type=int, default=3)
@@ -25,8 +49,26 @@ def main():
     args = parser.parse_args()
     if not 1 <= args.frames <= 600 or not 1 <= args.stride <= 60 or not 0 <= args.start_tick <= 36000:
         parser.error('frames 1..600, stride 1..60, start-tick 0..36000')
+    if not math.isfinite(args.route_start) or args.route_start < 0:
+        parser.error('--route-start must be finite and nonnegative')
+    if not args.scene.is_file():
+        parser.error(f'scene does not exist: {args.scene}')
+    args.scene = args.scene.resolve()
+    args.binary = args.binary.resolve()
+    scene = json.loads(args.scene.read_text())
+    route = next((route for route in scene.get('routes', []) if route.get('id') == args.route), None) if args.route else None
+    if args.route and route is None:
+        parser.error(f"route '{args.route}' not found in scene")
+    base_camera = next((camera for camera in scene.get('cameras', []) if camera.get('id') == args.camera), None)
+    if base_camera is None:
+        parser.error(f"camera '{args.camera}' not found in scene")
     args.output.mkdir(parents=True, exist_ok=True)
-    process = subprocess.Popen([str(args.binary), 'serve', '--camera', args.camera, '--effect-profile', args.profile], cwd=ROOT, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+    command = [str(args.binary), 'serve', '--scene', str(args.scene.resolve()), '--seed', str(args.seed), '--camera', args.camera]
+    if args.profile:
+        command.extend(['--effect-profile', args.profile])
+    if args.experiments:
+        command.extend(['--experiments', args.experiments])
+    process = subprocess.Popen(command, cwd=ROOT, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
     counter = 0
 
     def request(method, **params):
@@ -46,9 +88,29 @@ def main():
         for index in range(args.frames):
             if index:
                 request('step', ticks=args.stride)
+            if route:
+                camera = route_camera_at(route, base_camera, args.route_start + index * args.stride / 60)
+                request('set_camera', camera=camera)
             path = args.output / f'{index:04}.png'
             frames.append(request('capture_frame', path=str(path.resolve()), scale=1))
-        (args.output / 'sequence.json').write_text(json.dumps({'fps': 60 / args.stride, 'profile': args.profile, 'frames': frames}, indent=2) + '\n')
+        sequence = {
+            'fps': 60 / args.stride,
+            'camera': args.camera,
+            'scene': str(args.scene.resolve()),
+            'scene_sha256': hashlib.sha256(args.scene.read_bytes()).hexdigest(),
+            'binary': str(args.binary),
+            'binary_sha256': hashlib.sha256(args.binary.read_bytes()).hexdigest(),
+            'capture_script_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+            'seed': args.seed,
+            'profile': args.profile,
+            'experiments': args.experiments,
+            'route': args.route,
+            'route_start_seconds': args.route_start if route else None,
+            'start_tick': args.start_tick,
+            'frame_stride_ticks': args.stride,
+            'frames': frames,
+        }
+        (args.output / 'sequence.json').write_text(json.dumps(sequence, indent=2) + '\n')
     finally:
         process.stdin.close()
         process.wait(timeout=30)

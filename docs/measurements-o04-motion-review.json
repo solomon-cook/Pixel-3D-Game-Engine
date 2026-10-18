@@ -1,0 +1,226 @@
+{
+  "title": "O04 projected fire detail deterministic motion review",
+  "date": "2026-10-18",
+  "scene": {
+    "path": "assets/scenes/projected-detail-motion-review.json",
+    "sha256": "cfea9e3579b4f6602c4703bdae1b88887180e2b0fe752711544441547435ab77",
+    "object_count": 31,
+    "route": "projected-detail-review-orbit"
+  },
+  "renderer": {
+    "binary": "target/release/engine-lab",
+    "sha256": "e18956da749438f3d4ce0d2706497adc61670b8e2b15d4d65edc0b0f191ec9a4",
+    "capture_script": "scripts/capture_motion.py",
+    "capture_script_sha256": "194f006a85642827caf26ebde77a880f2eb728e5fbae002920e277d68c6d3aca",
+    "gpu": "Apple M1 Max",
+    "backend": "Metal",
+    "resolution": [
+      640,
+      360
+    ],
+    "seed": 42
+  },
+  "profiles": {
+    "campfire": {
+      "frames": 400,
+      "fps": 20.0,
+      "tier_frames": {
+        "0": 134,
+        "1": 178,
+        "2": 88
+      },
+      "transitions": [
+        {
+          "frame": 39,
+          "from": 0,
+          "to": 1,
+          "projected_fire_height_px": 39.73
+        },
+        {
+          "frame": 86,
+          "from": 1,
+          "to": 2,
+          "projected_fire_height_px": 19.95
+        },
+        {
+          "frame": 130,
+          "from": 2,
+          "to": 1,
+          "projected_fire_height_px": 24.32
+        },
+        {
+          "frame": 172,
+          "from": 1,
+          "to": 0,
+          "projected_fire_height_px": 48.3
+        },
+        {
+          "frame": 239,
+          "from": 0,
+          "to": 1,
+          "projected_fire_height_px": 39.73
+        },
+        {
+          "frame": 286,
+          "from": 1,
+          "to": 2,
+          "projected_fire_height_px": 19.95
+        },
+        {
+          "frame": 330,
+          "from": 2,
+          "to": 1,
+          "projected_fire_height_px": 24.32
+        },
+        {
+          "frame": 372,
+          "from": 1,
+          "to": 0,
+          "projected_fire_height_px": 48.3
+        }
+      ],
+      "fire_embers_particle_lights_match_every_frame": true,
+      "changed_pixels_median": 37.0,
+      "changed_pixels_p95": 114,
+      "changed_pixels_max": 151,
+      "pixel_diff_union_bbox": [
+        303,
+        177,
+        336,
+        206
+      ],
+      "binary_sha256": "e18956da749438f3d4ce0d2706497adc61670b8e2b15d4d65edc0b0f191ec9a4",
+      "scene_sha256": "cfea9e3579b4f6602c4703bdae1b88887180e2b0fe752711544441547435ab77",
+      "script_sha256": "194f006a85642827caf26ebde77a880f2eb728e5fbae002920e277d68c6d3aca"
+    },
+    "quiet": {
+      "frames": 120,
+      "fps": 12.0,
+      "tier_frames": {
+        "1": 51,
+        "2": 69
+      },
+      "transitions": [
+        {
+          "frame": 29,
+          "from": 1,
+          "to": 2,
+          "projected_fire_height_px": 19.95
+        },
+        {
+          "frame": 98,
+          "from": 2,
+          "to": 1,
+          "projected_fire_height_px": 24.48
+        }
+      ],
+      "fire_embers_particle_lights_match_every_frame": true,
+      "changed_pixels_median": 50.5,
+      "changed_pixels_p95": 139,
+      "changed_pixels_max": 169,
+      "pixel_diff_union_bbox": [
+        307,
+        181,
+        334,
+        209
+      ],
+      "binary_sha256": "e18956da749438f3d4ce0d2706497adc61670b8e2b15d4d65edc0b0f191ec9a4",
+      "scene_sha256": "cfea9e3579b4f6602c4703bdae1b88887180e2b0fe752711544441547435ab77",
+      "script_sha256": "194f006a85642827caf26ebde77a880f2eb728e5fbae002920e277d68c6d3aca"
+    },
+    "bonfire": {
+      "frames": 120,
+      "fps": 12.0,
+      "tier_frames": {
+        "0": 94,
+        "1": 26
+      },
+      "transitions": [
+        {
+          "frame": 52,
+          "from": 0,
+          "to": 1,
+          "projected_fire_height_px": 39.59
+        },
+        {
+          "frame": 78,
+          "from": 1,
+          "to": 0,
+          "projected_fire_height_px": 48.64
+        }
+      ],
+      "fire_embers_particle_lights_match_every_frame": true,
+      "changed_pixels_median": 0.0,
+      "changed_pixels_p95": 74,
+      "changed_pixels_max": 101,
+      "pixel_diff_union_bbox": [
+        304,
+        168,
+        337,
+        193
+      ],
+      "binary_sha256": "e18956da749438f3d4ce0d2706497adc61670b8e2b15d4d65edc0b0f191ec9a4",
+      "scene_sha256": "cfea9e3579b4f6602c4703bdae1b88887180e2b0fe752711544441547435ab77",
+      "script_sha256": "194f006a85642827caf26ebde77a880f2eb728e5fbae002920e277d68c6d3aca"
+    }
+  },
+  "visual_review": {
+    "method": "Inspected sampled side-by-side base/LOD threshold contact sheets for campfire, quiet and bonfire profiles.",
+    "finding": "Differences remain localized to the flame; sampled images show no obvious silhouette detachment or loss of glow.",
+    "continuous_playback": "Open: generated GIF/APNG previews could not be played in this session because the native Mac was locked and the in-app browser rejected local-file URLs. No workaround was attempted."
+  },
+  "limitations": [
+    "One Apple M1 Max / Metal adapter only.",
+    "The 20 fps full orbit is campfire profile; quiet and bonfire use 12 fps shorter captures.",
+    "No sustained per-profile timing comparison was performed in this review.",
+    "Continuous flicker/silhouette crawl review remains open; sampled contact sheets do not close it.",
+    "Native-window and Windows/DX12 or other GPU qualification remain open."
+  ],
+  "artifacts": [
+    {
+      "path": "artifacts/o04/continuous-motion/base-20fps/sequence.json",
+      "sha256": "a32d2ceaea12608a4850b7c8a0de2551b06dee1f8109c866431a769e1be6b275",
+      "bytes": 2748882
+    },
+    {
+      "path": "artifacts/o04/continuous-motion/lod-20fps/sequence.json",
+      "sha256": "d030c0b8b8abbf2925b78ca51da96348b7e528b42c48a2a763b72340f2502696",
+      "bytes": 2748100
+    },
+    {
+      "path": "artifacts/o04/continuous-motion/base-20fps/preview.gif",
+      "sha256": "7320c26cecce53d1c2f6eb4d8135607f1a08603651a305afe0c1e8698a041c47",
+      "bytes": 12484128
+    },
+    {
+      "path": "artifacts/o04/continuous-motion/lod-20fps/preview.gif",
+      "sha256": "33b310493930f2b68fa26bc6f471c4f9fb92e9f2dd367f7cb22081446fa294bf",
+      "bytes": 12484673
+    },
+    {
+      "path": "artifacts/o04/continuous-motion/base-20fps/preview.png",
+      "sha256": "b113ea0351e71871cd5e781d335287f535f17dcef6c4eca2683e442c4cfaa22e",
+      "bytes": 24408605
+    },
+    {
+      "path": "artifacts/o04/continuous-motion/lod-20fps/preview.png",
+      "sha256": "7f39b4135ff78925a1faa295887eb246082e46d4216ffdc66b7746d967c7d143",
+      "bytes": 24412310
+    },
+    {
+      "path": "artifacts/o04/continuous-motion/campfire-threshold-contact.png",
+      "sha256": "2edea9a27f870a831fbf14b7e5efaac9d6ca88877c7e5bedcb1c935b3e0de1d6",
+      "bytes": 838034
+    },
+    {
+      "path": "artifacts/o04/continuous-motion/quiet-threshold-contact.png",
+      "sha256": "173f74bf54f51a59eb0bbbe2599bbc9f1ae8aa9314feb0231fe0afa121ef99bd",
+      "bytes": 348666
+    },
+    {
+      "path": "artifacts/o04/continuous-motion/bonfire-threshold-contact.png",
+      "sha256": "1f15928a3bea725372e6f8c0257496970945d2b419bf4fe98c7d59168ae2bde8",
+      "bytes": 240083
+    }
+  ]
+}

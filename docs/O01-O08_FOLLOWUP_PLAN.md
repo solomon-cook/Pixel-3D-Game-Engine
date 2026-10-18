@@ -97,17 +97,22 @@ continuous-invalidation cost even if caching is not beneficial during motion.
    and particle event identities match with LOD off/on. The capture API does not
    expose the heat field; code inspection confirms segment reduction occurs after
    full deterministic `FireFrame` sampling.
-3. **Partial visual review:** matched PNG checkpoints were inspected. A continuous
-   motion review for flicker, silhouette crawl, attachment and lost glow remains
-   open; checkpoint stills cannot settle those temporal questions.
+3. **Partial visual review:** deterministic 20 fps, 400-frame campfire orbit and
+   12 fps quiet/bonfire profile pairs cross both hysteresis bands. Sampled
+   threshold contact sheets were inspected; changes remain localized to the
+   flame, with no obvious silhouette detachment or lost glow in the samples.
+   The full GIF/APNG could not be played for continuous human review in this
+   session, so flicker and silhouette crawl acceptance remain open.
 4. Keep the feature opt-in until a continuous visual review passes, the useful
    range is confirmed across additional fire profiles/sizes, and portability
    checks pass.
 
 **Remaining exit gate:** repeatable transitions and a measured small M1 Max/Metal
-win are now documented. Continuous motion review, broader fire/profile coverage,
-native-window timing, and Windows/DX12 or other GPU qualification remain open.
-Fewer primitives alone are not a frame-win claim.
+win are documented. Quiet and bonfire profiles now cross their applicable bands;
+per-frame full primitive, ember and particle-light counts match the baseline.
+Continuous playback review, sustained profile-specific timing, native-window
+timing, and Windows/DX12 or other GPU qualification remain open. Fewer primitives
+alone are not a frame-win claim. See [measurements-o04-motion-review.json](measurements-o04-motion-review.json).
 
 ### 4. O05 smoke absorption cache
 

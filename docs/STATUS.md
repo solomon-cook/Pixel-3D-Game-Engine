@@ -24,10 +24,15 @@ Three alternating M1 Max/Metal pairs measured a median GPU-render improvement of
 0.012 ms. These are small, single-profile results. Fourteen same-tick camera
 checkpoints confirmed repeatable
 transitions and exact parity for fire counts, bounds, lighting and particle event
-identities. Checkpoint images show differences confined to the small flame, but a
-continuous motion review remains open. It remains disabled by default pending
-broader fire-size/profile and portability evidence; see
-[measurements-o04.json](measurements-o04.json).
+identities. A deterministic 20 fps, 400-frame orbit crosses both thresholds four
+times; quiet and bonfire profile pairs also cross their applicable bands. Per-frame
+full primitive, ember and particle-light counts match in all three profiles.
+Sampled contact sheets show changes in the flame region, with no obvious loss of
+attachment or glow in those samples. The full motion files could not be played for
+continuous human review, and profile-specific sustained timings are not measured.
+It remains disabled by default pending those gates and portability evidence; see
+[measurements-o04.json](measurements-o04.json) and
+[measurements-o04-motion-review.json](measurements-o04-motion-review.json).
 
 O05 has an opt-in primary fire-light absorption cache at 8³ or 16³, rebuilt each
 render. The disabled path allocates no cache field and does no build pass; a live

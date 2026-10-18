@@ -1,0 +1,1277 @@
+{
+  "version": 1,
+  "name": "Emberwood \u2014 projected fire detail motion review",
+  "render": {
+    "resolution": [
+      640,
+      360
+    ],
+    "exposure": 1.25,
+    "shading_steps": 18,
+    "dither_strength": 0.18,
+    "smoke_steps": 56,
+    "experiments": {
+      "pixel_cluster_lighting": false,
+      "stable_smoke_detail": false,
+      "connected_motion": false
+    },
+    "bloom_strength": 0.16,
+    "palette_strength": 0.55
+  },
+  "environment": {
+    "sky_color": [
+      0.015,
+      0.027,
+      0.07
+    ],
+    "horizon_color": [
+      0.12,
+      0.065,
+      0.095
+    ],
+    "ambient": [
+      0.045,
+      0.07,
+      0.11
+    ],
+    "wind": [
+      0.23,
+      0,
+      0.08
+    ],
+    "fog_density": 0.012
+  },
+  "materials": [
+    {
+      "id": "earth",
+      "color": [
+        0.24,
+        0.27,
+        0.15
+      ],
+      "roughness": 0.95,
+      "emission": 0
+    },
+    {
+      "id": "bark",
+      "color": [
+        0.19,
+        0.105,
+        0.075
+      ],
+      "roughness": 0.9,
+      "emission": 0
+    },
+    {
+      "id": "pine-dark",
+      "color": [
+        0.065,
+        0.16,
+        0.15
+      ],
+      "roughness": 0.85,
+      "emission": 0
+    },
+    {
+      "id": "pine-mid",
+      "color": [
+        0.1,
+        0.22,
+        0.17
+      ],
+      "roughness": 0.85,
+      "emission": 0
+    },
+    {
+      "id": "pine-tip",
+      "color": [
+        0.15,
+        0.28,
+        0.19
+      ],
+      "roughness": 0.85,
+      "emission": 0
+    },
+    {
+      "id": "stone",
+      "color": [
+        0.42,
+        0.43,
+        0.48
+      ],
+      "roughness": 0.85,
+      "emission": 0
+    },
+    {
+      "id": "log",
+      "color": [
+        0.21,
+        0.1,
+        0.035
+      ],
+      "roughness": 0.9,
+      "emission": 0
+    },
+    {
+      "id": "char",
+      "color": [
+        0.055,
+        0.035,
+        0.023
+      ],
+      "roughness": 1,
+      "emission": 0
+    },
+    {
+      "id": "coals",
+      "color": [
+        0.8,
+        0.09,
+        0.01
+      ],
+      "roughness": 0.8,
+      "emission": 3
+    },
+    {
+      "id": "grass",
+      "color": [
+        0.27,
+        0.33,
+        0.14
+      ],
+      "roughness": 0.9,
+      "emission": 0
+    },
+    {
+      "id": "mushroom",
+      "color": [
+        0.68,
+        0.24,
+        0.13
+      ],
+      "roughness": 0.8,
+      "emission": 0
+    }
+  ],
+  "objects": [
+    {
+      "id": "forest-floor",
+      "material": "earth",
+      "geometry": {
+        "kind": "terrain",
+        "size": 52,
+        "subdivisions": 72
+      },
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "fire-ring-0",
+      "material": "stone",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        0.75,
+        -0.025,
+        0.0
+      ],
+      "scale": [
+        0.44,
+        0.35,
+        0.4
+      ],
+      "rotation": [
+        0.3149714429999152,
+        0.20072914171594813,
+        0.4557363683634643
+      ]
+    },
+    {
+      "id": "fire-ring-1",
+      "material": "stone",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        0.649519052838329,
+        -0.025,
+        0.37499999999999994
+      ],
+      "scale": [
+        0.44,
+        0.35,
+        0.4
+      ],
+      "rotation": [
+        0.3516453103858187,
+        0.7260370964336321,
+        0.8165232613357792
+      ]
+    },
+    {
+      "id": "fire-ring-2",
+      "material": "stone",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        0.3750000000000001,
+        -0.025,
+        0.649519052838329
+      ],
+      "scale": [
+        0.44,
+        0.35,
+        0.4
+      ],
+      "rotation": [
+        0.7718046207409143,
+        0.8582291075602142,
+        0.25260360364031376
+      ]
+    },
+    {
+      "id": "fire-ring-3",
+      "material": "stone",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        4.592425496802574e-17,
+        -0.025,
+        0.75
+      ],
+      "scale": [
+        0.44,
+        0.35,
+        0.4
+      ],
+      "rotation": [
+        0.6570299804173205,
+        0.7886096279164365,
+        0.837482418703279
+      ]
+    },
+    {
+      "id": "fire-ring-4",
+      "material": "stone",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        -0.3749999999999999,
+        -0.025,
+        0.649519052838329
+      ],
+      "scale": [
+        0.44,
+        0.35,
+        0.4
+      ],
+      "rotation": [
+        0.4209186878149951,
+        0.8961626050005713,
+        0.3591622914427768
+      ]
+    },
+    {
+      "id": "fire-ring-5",
+      "material": "stone",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        -0.649519052838329,
+        -0.025,
+        0.37499999999999994
+      ],
+      "scale": [
+        0.44,
+        0.35,
+        0.4
+      ],
+      "rotation": [
+        0.8896436953470062,
+        0.6712272864294456,
+        0.06452418603421617
+      ]
+    },
+    {
+      "id": "fire-ring-6",
+      "material": "stone",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        -0.75,
+        -0.025,
+        9.184850993605148e-17
+      ],
+      "scale": [
+        0.44,
+        0.35,
+        0.4
+      ],
+      "rotation": [
+        0.9168792377501085,
+        0.7735055043623746,
+        0.5454261938475597
+      ]
+    },
+    {
+      "id": "fire-ring-7",
+      "material": "stone",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        -0.649519052838329,
+        -0.025,
+        -0.3750000000000001
+      ],
+      "scale": [
+        0.44,
+        0.35,
+        0.4
+      ],
+      "rotation": [
+        0.9576086994030154,
+        0.8857257253326152,
+        0.8016964195940954
+      ]
+    },
+    {
+      "id": "fire-ring-8",
+      "material": "stone",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        -0.37500000000000033,
+        -0.025,
+        -0.6495190528383288
+      ],
+      "scale": [
+        0.44,
+        0.35,
+        0.4
+      ],
+      "rotation": [
+        0.7637905910377935,
+        0.717808861506858,
+        0.11632817363963599
+      ]
+    },
+    {
+      "id": "fire-ring-9",
+      "material": "stone",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        -1.3777276490407724e-16,
+        -0.025,
+        -0.75
+      ],
+      "scale": [
+        0.44,
+        0.35,
+        0.4
+      ],
+      "rotation": [
+        0.5862579840528561,
+        0.006366760872367427,
+        0.5065773630516439
+      ]
+    },
+    {
+      "id": "fire-ring-10",
+      "material": "stone",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        0.3750000000000001,
+        -0.025,
+        -0.649519052838329
+      ],
+      "scale": [
+        0.44,
+        0.35,
+        0.4
+      ],
+      "rotation": [
+        0.17300312812517393,
+        0.7027784735951149,
+        0.9149709286696572
+      ]
+    },
+    {
+      "id": "fire-ring-11",
+      "material": "stone",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        0.6495190528383288,
+        -0.025,
+        -0.37500000000000033
+      ],
+      "scale": [
+        0.44,
+        0.35,
+        0.4
+      ],
+      "rotation": [
+        0.2043426593824379,
+        0.5611368944946886,
+        0.2863875936983604
+      ]
+    },
+    {
+      "id": "fire-log-0",
+      "material": "char",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        0.15,
+        0.12,
+        0.0
+      ],
+      "scale": [
+        1.05,
+        0.22,
+        0.22
+      ],
+      "rotation": [
+        0,
+        0.0,
+        -0.15
+      ]
+    },
+    {
+      "id": "fire-log-1",
+      "material": "char",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        9.184850993605149e-18,
+        0.12,
+        0.15
+      ],
+      "scale": [
+        1.05,
+        0.22,
+        0.22
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0.15
+      ]
+    },
+    {
+      "id": "fire-log-2",
+      "material": "char",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        -0.15,
+        0.12,
+        1.8369701987210297e-17
+      ],
+      "scale": [
+        1.05,
+        0.22,
+        0.22
+      ],
+      "rotation": [
+        0,
+        3.141592653589793,
+        -0.15
+      ]
+    },
+    {
+      "id": "fire-log-3",
+      "material": "char",
+      "geometry": {
+        "kind": "cube"
+      },
+      "position": [
+        -2.7554552980815445e-17,
+        0.12,
+        -0.15
+      ],
+      "scale": [
+        1.05,
+        0.22,
+        0.22
+      ],
+      "rotation": [
+        0,
+        4.71238898038469,
+        0.15
+      ]
+    },
+    {
+      "id": "coal-0",
+      "material": "coals",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        0.4002390469975768,
+        -0.015,
+        -0.004170550088820724
+      ],
+      "scale": [
+        0.13,
+        0.06,
+        0.11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "coal-1",
+      "material": "coals",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        -0.2743205496581725,
+        -0.015,
+        0.11886410967930056
+      ],
+      "scale": [
+        0.13,
+        0.06,
+        0.11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "coal-2",
+      "material": "coals",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        -0.028317312056946486,
+        -0.015,
+        0.014883605785921183
+      ],
+      "scale": [
+        0.13,
+        0.06,
+        0.11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "coal-3",
+      "material": "coals",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        -0.04240090181931805,
+        -0.015,
+        -0.2878538730496939
+      ],
+      "scale": [
+        0.13,
+        0.06,
+        0.11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "coal-4",
+      "material": "coals",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        -0.3200579987077046,
+        -0.015,
+        0.08520387470309482
+      ],
+      "scale": [
+        0.13,
+        0.06,
+        0.11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "coal-5",
+      "material": "coals",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        -0.311766886804704,
+        -0.015,
+        -0.09435621189524246
+      ],
+      "scale": [
+        0.13,
+        0.06,
+        0.11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "coal-6",
+      "material": "coals",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        0.054454523660882825,
+        -0.015,
+        0.24360059311595922
+      ],
+      "scale": [
+        0.13,
+        0.06,
+        0.11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "coal-7",
+      "material": "coals",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        -0.28876116277756664,
+        -0.015,
+        -0.10197867635158825
+      ],
+      "scale": [
+        0.13,
+        0.06,
+        0.11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "coal-8",
+      "material": "coals",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        -0.3247230678536327,
+        -0.015,
+        -0.21966172664385722
+      ],
+      "scale": [
+        0.13,
+        0.06,
+        0.11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "coal-9",
+      "material": "coals",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        0.39251507553585424,
+        -0.015,
+        0.19438023456332337
+      ],
+      "scale": [
+        0.13,
+        0.06,
+        0.11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "coal-10",
+      "material": "coals",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        -0.3626371907068641,
+        -0.015,
+        0.40524777891312097
+      ],
+      "scale": [
+        0.13,
+        0.06,
+        0.11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "coal-11",
+      "material": "coals",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        -0.13789741033454345,
+        -0.015,
+        0.058632486315534804
+      ],
+      "scale": [
+        0.13,
+        0.06,
+        0.11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "coal-12",
+      "material": "coals",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        0.2435964249683807,
+        -0.015,
+        -0.2338232269319382
+      ],
+      "scale": [
+        0.13,
+        0.06,
+        0.11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "coal-13",
+      "material": "coals",
+      "geometry": {
+        "kind": "sphere"
+      },
+      "position": [
+        -0.17880611878231467,
+        -0.015,
+        -0.1541939517671439
+      ],
+      "scale": [
+        0.13,
+        0.06,
+        0.11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "lights": [
+    {
+      "id": "sun",
+      "kind": "directional",
+      "position": [
+        -0.8,
+        0.55,
+        -0.55
+      ],
+      "color": [
+        1,
+        0.62,
+        0.38
+      ],
+      "intensity": 0.32,
+      "flicker": 0,
+      "range": 20.0
+    },
+    {
+      "id": "fire-light",
+      "kind": "point",
+      "position": [
+        0,
+        0.55,
+        0
+      ],
+      "color": [
+        1,
+        0.28,
+        0.055
+      ],
+      "intensity": 10,
+      "flicker": 0.55,
+      "range": 20.0
+    }
+  ],
+  "emitters": [
+    {
+      "id": "campfire",
+      "position": [
+        0,
+        0.55,
+        0
+      ],
+      "intensity": 1,
+      "smoke_density": 2.8,
+      "buoyancy": 0.95,
+      "dissipation": 0.28,
+      "enabled": true,
+      "style": "ink",
+      "self_shadow_strength": 0.9,
+      "internal_glow": 0.0,
+      "effect_profile": "effect-campfire",
+      "light_id": "fire-light"
+    }
+  ],
+  "cameras": [
+    {
+      "id": "hero",
+      "position": [
+        5.8,
+        3.2,
+        7.2
+      ],
+      "target": [
+        0,
+        2.65,
+        0
+      ],
+      "projection": {
+        "kind": "perspective",
+        "fov_degrees": 52
+      }
+    },
+    {
+      "id": "smoke-close",
+      "position": [
+        3.4,
+        2.6,
+        4.2
+      ],
+      "target": [
+        0,
+        2.1,
+        0
+      ],
+      "projection": {
+        "kind": "perspective",
+        "fov_degrees": 48
+      }
+    },
+    {
+      "id": "orthographic",
+      "position": [
+        9,
+        8,
+        11
+      ],
+      "target": [
+        0,
+        1.2,
+        0
+      ],
+      "projection": {
+        "kind": "orthographic",
+        "height": 13
+      }
+    },
+    {
+      "id": "fire-study",
+      "position": [
+        2.4,
+        1.35,
+        3.0
+      ],
+      "target": [
+        0.0,
+        1.05,
+        0.0
+      ],
+      "projection": {
+        "kind": "perspective",
+        "fov_degrees": 42
+      }
+    }
+  ],
+  "routes": [
+    {
+      "id": "clearing-orbit",
+      "duration_seconds": 120,
+      "keyframes": [
+        {
+          "time": 0,
+          "position": [
+            9.0,
+            3.5,
+            0.0
+          ],
+          "target": [
+            0,
+            2.7,
+            0
+          ]
+        },
+        {
+          "time": 24,
+          "position": [
+            2.781152949374527,
+            4.355950864665639,
+            8.559508646656381
+          ],
+          "target": [
+            0,
+            2.7,
+            0
+          ]
+        },
+        {
+          "time": 48,
+          "position": [
+            -7.281152949374526,
+            4.029006727063226,
+            5.290067270632259
+          ],
+          "target": [
+            0,
+            2.7,
+            0
+          ]
+        },
+        {
+          "time": 72,
+          "position": [
+            -7.281152949374527,
+            2.9709932729367745,
+            -5.290067270632258
+          ],
+          "target": [
+            0,
+            2.7,
+            0
+          ]
+        },
+        {
+          "time": 96,
+          "position": [
+            2.7811529493745253,
+            2.644049135334362,
+            -8.559508646656383
+          ],
+          "target": [
+            0,
+            2.7,
+            0
+          ]
+        },
+        {
+          "time": 120,
+          "position": [
+            9.0,
+            3.5,
+            -2.204364238465236e-15
+          ],
+          "target": [
+            0,
+            2.7,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "projected-detail-review-orbit",
+      "duration_seconds": 20,
+      "keyframes": [
+        {
+          "time": 0,
+          "position": [
+            0.0,
+            3.05,
+            18.0
+          ],
+          "target": [
+            0.0,
+            1.05,
+            0.0
+          ]
+        },
+        {
+          "time": 5,
+          "position": [
+            60.0,
+            3.05,
+            3.67394039744206e-15
+          ],
+          "target": [
+            0.0,
+            1.05,
+            0.0
+          ]
+        },
+        {
+          "time": 10,
+          "position": [
+            2.204364238465236e-15,
+            3.05,
+            -18.0
+          ],
+          "target": [
+            0.0,
+            1.05,
+            0.0
+          ]
+        },
+        {
+          "time": 15,
+          "position": [
+            -60.0,
+            3.05,
+            -1.1021821192326178e-14
+          ],
+          "target": [
+            0.0,
+            1.05,
+            0.0
+          ]
+        },
+        {
+          "time": 20,
+          "position": [
+            -4.408728476930472e-15,
+            3.05,
+            18.0
+          ],
+          "target": [
+            0.0,
+            1.05,
+            0.0
+          ]
+        }
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "id": "effect-campfire",
+      "fire": {
+        "width": 1.1,
+        "height": 1.4,
+        "motion_speed": 0.55,
+        "curl": 0.8,
+        "tongues": 5,
+        "segments": 6,
+        "fragment_rate": 1.5,
+        "fragment_lifetime": 1.8,
+        "ember_rate": 4.0,
+        "ember_lifetime": 4.5,
+        "emission": 1.25,
+        "edge_breakup": 0.5,
+        "tip_breakup": 0.8,
+        "fragment_size": 0.06,
+        "lobe_roundness": 0.9,
+        "branches": 2,
+        "particle_lights": 12,
+        "particle_light_strength": 2.5,
+        "particle_light_range": 2.0,
+        "solid": true,
+        "color_bands": 4,
+        "heat_distortion": 1.8,
+        "heat_distortion_height": 2.8
+      },
+      "thermal": {
+        "heat_output": 2.5,
+        "cooling_rate": 0.9,
+        "lift": 0.6
+      },
+      "palette": {
+        "outer": [
+          1.6,
+          0.085,
+          0.008
+        ],
+        "warm": [
+          3.0,
+          0.78,
+          0.045
+        ],
+        "hot": [
+          5.0,
+          2.8,
+          0.75
+        ]
+      }
+    },
+    {
+      "id": "effect-quiet",
+      "fire": {
+        "width": 0.65,
+        "height": 1.0,
+        "motion_speed": 0.32,
+        "curl": 0.55,
+        "tongues": 5,
+        "segments": 6,
+        "fragment_rate": 0.35,
+        "fragment_lifetime": 1.8,
+        "ember_rate": 2.0,
+        "ember_lifetime": 4.5,
+        "emission": 1.0,
+        "edge_breakup": 0.25,
+        "tip_breakup": 0.45,
+        "fragment_size": 0.06,
+        "lobe_roundness": 0.9,
+        "branches": 1,
+        "particle_lights": 12,
+        "particle_light_strength": 2.5,
+        "particle_light_range": 2.0,
+        "solid": true,
+        "color_bands": 4,
+        "heat_distortion": 1.2,
+        "heat_distortion_height": 1.8
+      },
+      "thermal": {
+        "heat_output": 2.5,
+        "cooling_rate": 0.9,
+        "lift": 0.6
+      },
+      "palette": {
+        "outer": [
+          1.6,
+          0.085,
+          0.008
+        ],
+        "warm": [
+          3.0,
+          0.78,
+          0.045
+        ],
+        "hot": [
+          5.0,
+          2.8,
+          0.75
+        ]
+      }
+    },
+    {
+      "id": "effect-bonfire",
+      "fire": {
+        "width": 2.2,
+        "height": 3.2,
+        "motion_speed": 0.42,
+        "curl": 0.8,
+        "tongues": 10,
+        "segments": 6,
+        "fragment_rate": 3.0,
+        "fragment_lifetime": 1.8,
+        "ember_rate": 9.0,
+        "ember_lifetime": 4.5,
+        "emission": 1.25,
+        "edge_breakup": 0.65,
+        "tip_breakup": 0.9,
+        "fragment_size": 0.06,
+        "lobe_roundness": 0.85,
+        "branches": 2,
+        "particle_lights": 12,
+        "particle_light_strength": 2.5,
+        "particle_light_range": 2.0,
+        "solid": true,
+        "color_bands": 4,
+        "heat_distortion": 2.4,
+        "heat_distortion_height": 4.5
+      },
+      "thermal": {
+        "heat_output": 5.0,
+        "cooling_rate": 0.9,
+        "lift": 0.85
+      },
+      "palette": {
+        "outer": [
+          1.6,
+          0.085,
+          0.008
+        ],
+        "warm": [
+          3.0,
+          0.78,
+          0.045
+        ],
+        "hot": [
+          5.0,
+          2.8,
+          0.75
+        ]
+      }
+    }
+  ]
+}

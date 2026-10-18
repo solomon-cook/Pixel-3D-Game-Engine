@@ -629,3 +629,24 @@ in this high-output case. Packed-HDR no-copy adds a 0.23 MB mask over packed-HDR
 copy. This is Metal offscreen evidence only; temporal, native-window and additional
 adapter checks remain open. Full paired timing and capture data:
 [measurements-o06-o08-factorial.json](measurements-o06-o08-factorial.json).
+
+## O04 projected-detail motion review (18 October)
+
+A route-aware capture script drives the named camera from validated scene
+keyframes before each fixed-tick image capture. The new 31-object fire study
+scene provides an unobstructed orbit across the 40/20 px thresholds and 48/24 px
+return hysteresis. At 640×360, seed 42 and M1 Max/Metal, a 400-frame 20 fps
+campfire pair crossed all four transitions twice. Quiet and bonfire each have
+120-frame 12 fps pairs crossing their applicable band. Full primitive counts,
+ember counts and particle-light counts matched on every paired frame. Changed
+pixels stayed within a 27–33 px flame-region bounding box across the three
+profiles; sampled threshold sheets showed no obvious detachment or lost glow.
+
+The GIF/APNG deliverables were generated and hashed, but continuous playback was
+not available in the locked native Mac session and the in-app browser rejected
+local-file URLs. This evidence therefore does not close flicker or silhouette
+crawl review, and it contains no sustained timing claims for the two added
+profiles. The feature remains opt-in. Commands, hashes, tier occupancy and
+transition sizes are in [measurements-o04-motion-review.json](measurements-o04-motion-review.json);
+the generated frame sequences and preview files are under ignored
+`artifacts/o04/continuous-motion/`.
