@@ -366,11 +366,15 @@ primary-light shadow maps are exercised by fixed-tick Metal captures. Reversing
 emitter order preserves the combined image hashes. Cache-versus-forced captures
 also match after each source light, sun projection, caster, shadow material,
 shader reload and reset change. Moving one fire light now dirties only its six
-cube faces. Maximum-budget stress, sustained performance, focused cache/heat A/B,
-Windows/DX12 and other-adapter checks remain open. The dual-source scene inventory
-reports 25,889,280 known bytes at 640×360; this is not a paired single-source
-delta. See [implementation plan](MULTI_EMITTER_PLAN.md), [two-source review](measurements-multi-emitter-shadows.json)
-and [shadow invalidation evidence](measurements-multi-emitter-shadow-invalidation.json).
+cube faces. The 8³ absorption cache was also toggled on/off/on at four fixed-tick
+cameras: it used the existing 4,096-byte field, released it while disabled and
+restored the exact direct image. Cache error was small in the sampled stills, but
+this does not establish temporal quality or performance. Maximum-budget stress,
+sustained performance, focused heat A/B, Windows/DX12 and other-adapter checks
+remain open. The dual-source scene inventory reports 25,889,280 known bytes at
+640×360; this is not a paired single-source delta. See [implementation plan](MULTI_EMITTER_PLAN.md),
+[two-source review](measurements-multi-emitter-shadows.json), [shadow invalidation evidence](measurements-multi-emitter-shadow-invalidation.json)
+and [cache evidence](measurements-multi-emitter-absorption-cache.json).
 
 `python3 scripts/verify.py --gpu` passed on this host: formatting, Clippy,
 40 workspace tests, scene validation and material/fire GPU checks. The verifier

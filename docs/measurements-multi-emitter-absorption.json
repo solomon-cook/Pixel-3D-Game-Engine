@@ -51,5 +51,5 @@
     "No source-one image-quality, temporal-error, or performance measurements exist.",
     "Shadow maps remain primary-source only; Windows/DX12 and other-adapter acceptance remain open."
   ],
-  "historical_snapshot_note": "This report records the narrower single-source validation scope at the time it was captured. Current live dual-source implementation evidence is in measurements-multi-emitter-shadows.json; use the linked report for current runtime status."
+  "historical_snapshot_note": "This report records the source-local cache implementation and single-source parity evidence at the time it was captured. Current dual-source fixed-tick cache toggle, image-error and resource-lifecycle evidence is in measurements-multi-emitter-absorption-cache.json; current rendering/shadow status is in measurements-multi-emitter-shadows.json."
 }

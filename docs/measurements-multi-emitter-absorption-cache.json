@@ -1,0 +1,158 @@
+{
+  "date": "2026-10-18",
+  "scope": "Dual-source absorption-cache toggle, allocation lifetime and fixed-tick image comparison",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "scene": "assets/scenes/two-emitter-review.json",
+  "scene_sha256": "9ca7aee40dac7a9cde4010f6f90c2623e441c8e0c9a1f19ff2a9c570c1082892",
+  "source_ids": [
+    "campfire",
+    "watchfire"
+  ],
+  "seed": 42,
+  "tick": 120,
+  "resolution": [
+    640,
+    360
+  ],
+  "cache_resolution": 8,
+  "cache_resource_bytes_enabled": 4096,
+  "cache_storage_note": "One existing RGBA16Float cache texture is reused; source-zero and source-one optical depths occupy separate channels. The enabled dual-source path uses the same 4096-byte 8^3 allocation as the existing single-source cache.",
+  "views": {
+    "hero": {
+      "cache_bytes_cycle": [
+        0,
+        4096,
+        0
+      ],
+      "cache_build_count_before_and_after_enable": [
+        0,
+        1
+      ],
+      "changed_pixel_count": 3145,
+      "pixel_count": 230400,
+      "mean_absolute_rgb_error_0_255": [
+        0.05408854166666666,
+        0.036115451388888886,
+        0.03321180555555556
+      ],
+      "maximum_absolute_rgb_error_0_255": [
+        22,
+        16,
+        23
+      ],
+      "direct_after_disable_matches": true,
+      "fire_state_stable": true,
+      "direct_before_sha256": "7eed387c10ee30e66e961cfa67d7f2d58c013de7e535d0486b9db70e983b83db",
+      "cache_enabled_sha256": "1870c79e01850d8738da6cf8fd94f748d6a3d0bb6ee22847534d0dfcd358caa1",
+      "direct_after_sha256": "7eed387c10ee30e66e961cfa67d7f2d58c013de7e535d0486b9db70e983b83db"
+    },
+    "smoke-close": {
+      "cache_bytes_cycle": [
+        0,
+        4096,
+        0
+      ],
+      "cache_build_count_before_and_after_enable": [
+        1,
+        2
+      ],
+      "changed_pixel_count": 11772,
+      "pixel_count": 230400,
+      "mean_absolute_rgb_error_0_255": [
+        0.19572482638888888,
+        0.1388324652777778,
+        0.1045703125
+      ],
+      "maximum_absolute_rgb_error_0_255": [
+        23,
+        17,
+        24
+      ],
+      "direct_after_disable_matches": true,
+      "fire_state_stable": true,
+      "direct_before_sha256": "ae918f74da13c0f159719efcc95d37f423c670ba671173277ed69f9d07e07f06",
+      "cache_enabled_sha256": "4634121a2b2940fb847af8a6448450c14d334e50d44633387870af75ed67b735",
+      "direct_after_sha256": "ae918f74da13c0f159719efcc95d37f423c670ba671173277ed69f9d07e07f06"
+    },
+    "orthographic": {
+      "cache_bytes_cycle": [
+        0,
+        4096,
+        0
+      ],
+      "cache_build_count_before_and_after_enable": [
+        2,
+        3
+      ],
+      "changed_pixel_count": 1399,
+      "pixel_count": 230400,
+      "mean_absolute_rgb_error_0_255": [
+        0.022391493055555555,
+        0.013155381944444445,
+        0.0161328125
+      ],
+      "maximum_absolute_rgb_error_0_255": [
+        19,
+        13,
+        22
+      ],
+      "direct_after_disable_matches": true,
+      "fire_state_stable": true,
+      "direct_before_sha256": "cbb76595594cfdbb3ee23d20fab189698f1cd1962723d0616b77eb604143951f",
+      "cache_enabled_sha256": "8bc411cdcd7ac265651b5f89e05d04d48a7a1fb12da8cf7b06f178e9a7ec4467",
+      "direct_after_sha256": "cbb76595594cfdbb3ee23d20fab189698f1cd1962723d0616b77eb604143951f"
+    },
+    "dual-wide": {
+      "cache_bytes_cycle": [
+        0,
+        4096,
+        0
+      ],
+      "cache_build_count_before_and_after_enable": [
+        3,
+        4
+      ],
+      "changed_pixel_count": 978,
+      "pixel_count": 230400,
+      "mean_absolute_rgb_error_0_255": [
+        0.016015625,
+        0.009348958333333334,
+        0.011449652777777777
+      ],
+      "maximum_absolute_rgb_error_0_255": [
+        19,
+        13,
+        22
+      ],
+      "direct_after_disable_matches": true,
+      "fire_state_stable": true,
+      "direct_before_sha256": "25e49b492dd7046444ce4df8bae2d0c2be94860685a53b8e62d21f9d5dc551d6",
+      "cache_enabled_sha256": "34e7eb58c58f5f7f87e8ee7668b8cde4bf1d8f8d3e35fc582265c1abf8f53d2d",
+      "direct_after_sha256": "25e49b492dd7046444ce4df8bae2d0c2be94860685a53b8e62d21f9d5dc551d6"
+    }
+  },
+  "expectations": {
+    "all_direct_images_restore_after_disable": true,
+    "fire_state_unchanged_by_cache_toggle": true,
+    "disabled_mode_releases_cache": true,
+    "enabled_mode_allocates_cache": true,
+    "enabled_mode_builds_cache_for_each_view": true
+  },
+  "all_expectations_passed": true,
+  "visual_review": "Direct and cached captures inspected side-by-side for all four cameras; differences are subtle at this fixed tick, with no obvious loss or instability in the smoke/fire silhouettes.",
+  "limitations": [
+    "This is a fixed-tick visual/resource-lifecycle check, not a sustained performance or temporal-quality study.",
+    "Cache-enabled image differences are measured against direct sampling; no approximation threshold or promotion decision is made here.",
+    "Headless M1 Max/Metal only; Windows/DX12 and another adapter remain unverified."
+  ],
+  "runner": "scripts/two_emitter_absorption_cache_study.py",
+  "raw_capture_report": "artifacts/two-emitter-absorption-cache/report.json",
+  "validation": {
+    "runner": "passed",
+    "gpu_verifier": "python3 scripts/verify.py --gpu passed on M1 Max/Metal with 40 workspace tests at HEAD 1ca7e49; no engine source changed after that verification"
+  }
+}

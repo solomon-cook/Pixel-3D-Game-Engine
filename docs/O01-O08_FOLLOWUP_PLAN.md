@@ -498,9 +498,12 @@ open; see
 The second-source cache stores optical depth in the green channel of the existing
 3D cache texture, over the emitter's source-local domain. It adds no cache
 allocation and preserves the source-zero hero capture hash. A fixed-tick dual-
-source scene now renders on Metal, but the review used direct absorption; the
-cache-specific branch still needs an enabled-cache A/B. See
-[absorption evidence](measurements-multi-emitter-absorption.json).
+source cache-on/off/on study now covers four cameras at tick 120. The 8³ cache
+allocates 4,096 bytes; disabling releases it and restores the exact direct PNG.
+The approximate-cache image error is measured and inspected, but no sustained
+performance or temporal-quality decision is claimed. See
+[absorption evidence](measurements-multi-emitter-absorption.json) and
+[dual-source cache evidence](measurements-multi-emitter-absorption-cache.json).
 Opaque `heat_response` materials now sample the second emitter's local
 temperature volume as well. The source-zero Metal capture is byte-identical and
 the verifier passes. The dual-source scene is available for focused source-one

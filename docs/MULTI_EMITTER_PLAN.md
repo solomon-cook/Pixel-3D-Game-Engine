@@ -12,8 +12,8 @@ open; the single-source baseline remains selectable and pixel-identical.
   primary-light IDs for dual-source scenes. Per-emitter smoke simulation,
   atmosphere/optical, ink, absorption, opaque heat, authored primary-light and
   geometry shadow paths are connected. The new review scene exercises these
-  paths on M1 Max/Metal; cache-enabled dual-source review and sustained stress are
-  still open.
+  paths on M1 Max/Metal. Cache-enabled fixed-tick review is complete; temporal,
+  sustained-performance and stress gates remain open.
 - Each `FireFrame` owns a 256-primitive pool; up to 12 derived particle lights
   are shared globally. O03 tile construction now includes both sources, and
   overflow falls back to exhaustive evaluation, but multi-source stress evidence
@@ -94,20 +94,21 @@ open; the single-source baseline remains selectable and pixel-identical.
   On M1 Max/Metal at 640×360, tile indices use 603,520 bytes, up 132,480 bytes
   from one-source capacity. The two-source review scene uses 25,889,280 known
   bytes including both smoke fields and primary shadow sets. There is no
-  dual-source sustained performance result. The source-one cache channel is
-  implemented but not yet exercised with cache enabled. Per-source primary-light
-  shadow maps have a fixed-tick live capture, with stress/invalidation review
-  still open. See
+  dual-source sustained performance result. Per-source primary-light shadow maps
+  and discrete invalidation have fixed-tick live review; maximum-budget and
+  sustained stress remain open. See
   [inked smoke evidence](measurements-multi-emitter-ink.json).
 - The O05 absorption cache retains source zero in the red channel and builds a
   second light-transmittance field in the green channel over source one's local
   domain. Its colocated primary fire light selects that field; other lights and
   out-of-domain samples retain direct integration. The cache remains one 3D
   texture, so its memory cost does not increase. The source-zero fixed-tick RGBA
-  hash remains unchanged and the Metal verifier passes. The second-source branch
-  has a live dual-source capture, but no cache-specific visual/performance review
-  yet. See
-  [source-local absorption evidence](measurements-multi-emitter-absorption.json).
+  hash remains unchanged and the Metal verifier passes. Cache-enabled dual-source
+  captures at four cameras restore the direct image exactly after disable and
+  retain one 4096-byte 8³ cache allocation; measured image error is recorded but
+  no performance or temporal decision is claimed. See
+  [source-local absorption evidence](measurements-multi-emitter-absorption.json)
+  and [cache review](measurements-multi-emitter-absorption-cache.json).
 - Opaque materials with `heat_response` now sample source one's local temperature
   field alongside the legacy primary volume and use the stronger local heat
   sample. The new binding adds no texture allocation. A source-zero fixed-tick
