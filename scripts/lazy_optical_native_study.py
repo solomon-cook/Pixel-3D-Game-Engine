@@ -45,6 +45,15 @@ def main() -> int:
             "projection": {"kind": "perspective", "fov_degrees": 44.0},
         }
         scene.setdefault("cameras", []).append(away)
+    stress_cameras = [
+        {"id": "glass-inside-oblique", "position": [0.0, 1.35, 2.55], "target": [1.0, 1.35, 2.55],
+         "projection": {"kind": "perspective", "fov_degrees": 48.0}},
+        {"id": "glass-near-plane", "position": [0.0, 1.35, 2.85], "target": [0.0, 1.35, 1.7],
+         "projection": {"kind": "perspective", "fov_degrees": 48.0}},
+    ]
+    scene["cameras"] = [camera for camera in scene.get("cameras", [])
+                        if camera.get("id") not in {item["id"] for item in stress_cameras}]
+    scene["cameras"].extend(stress_cameras)
     generated_scene = output / "materials-away.json"
     generated_scene.write_text(json.dumps(scene, indent=2) + "\n")
     subprocess.run([str(binary), "validate", str(generated_scene)], cwd=ROOT, check=True, stdout=subprocess.PIPE)
@@ -78,6 +87,7 @@ def main() -> int:
         return response["result"]
 
     captures = {}
+    native_camera_views = {}
     window = None
     try:
         window = request("get_window")
@@ -101,6 +111,22 @@ def main() -> int:
                 "optical_draw_batches": metrics["optical_draw_batches"],
                 "optical_resolve_timed": "optical_resolve" in metrics.get("gpu_passes_ms", {}),
             }
+        native_camera_views["away"] = captures["edited_offscreen"]
+        native_camera_views["hero"] = captures["visible_again"]
+        for camera in (item["id"] for item in scene["cameras"] if item["id"] not in {"away", "hero"}):
+            request("set_camera", id=camera)
+            image_path = output / f"camera-{camera}.png"
+            result = request("capture_frame", path=str(image_path.resolve()), scale=1)
+            metadata = json.loads(image_path.with_suffix(".json").read_text())
+            native_camera_views[camera] = {
+                "camera": camera,
+                "tick": result["tick"],
+                "image": display_path(image_path),
+                "image_sha256": sha256(image_path),
+                "snapshot_bytes": metadata["capabilities"]["resource_inventory"]["optical_snapshot_bytes"],
+                "optical_draw_batches": metadata["metrics"]["optical_draw_batches"],
+                "optical_resolve_timed": "optical_resolve" in metadata["metrics"].get("gpu_passes_ms", {}),
+            }
         request("shutdown")
         process.wait(timeout=60)
     finally:
@@ -109,7 +135,7 @@ def main() -> int:
             process.wait(timeout=30)
 
     headless_captures = {}
-    for camera in ("away", "hero"):
+    for camera in native_camera_views:
         image_path = output / f"headless-{camera}.png"
         subprocess.run(
             [str(binary), "capture", "--scene", str(edited_scene), "--camera", camera,
@@ -133,6 +159,7 @@ def main() -> int:
         "generated_scene_sha256": sha256(generated_scene),
         "edited_scene": display_path(edited_scene),
         "edited_scene_sha256": sha256(edited_scene),
+        "stress_cameras": stress_cameras,
         "binary_sha256": sha256(binary),
         "render_source_sha256": sha256(ROOT / "crates/engine/src/render/mod.rs"),
         "session_source_sha256": sha256(ROOT / "crates/engine/src/session.rs"),
@@ -140,6 +167,7 @@ def main() -> int:
         "resolution": metadata["capabilities"].get("resolution"),
         "edit": {"path": "materials.chalk.reflectivity", "value": 0.3},
         "captures": captures,
+        "native_camera_views": native_camera_views,
         "headless_reference_captures": headless_captures,
         "checks": {
             "offscreen_edit_keeps_snapshot_unallocated": edited["snapshot_bytes"] == 0 and edited["optical_draw_batches"] == 0,
@@ -150,8 +178,8 @@ def main() -> int:
             "revisiting_visible_geometry_does_not_duplicate_allocation": visible_again["snapshot_bytes"] == first_visible["snapshot_bytes"] and visible_again["known_gpu_allocation_bytes"] == first_visible["known_gpu_allocation_bytes"],
             "allocation_increase_is_one_snapshot": first_visible["known_gpu_allocation_bytes"] - edited["known_gpu_allocation_bytes"] == 1843200,
             "repeated_paused_camera_captures_are_identical": edited["image_sha256"] == turned_away["image_sha256"] and first_visible["image_sha256"] == visible_again["image_sha256"],
-            "native_away_matches_headless": edited["image_sha256"] == headless_captures["away"]["image_sha256"],
-            "native_visible_matches_headless": first_visible["image_sha256"] == headless_captures["hero"]["image_sha256"],
+            "snapshot_residency_is_stable_across_named_and_stress_cameras": all(native_camera_views[camera]["snapshot_bytes"] == 1843200 for camera in native_camera_views if camera != "away"),
+            "native_cameras_match_headless": all(native_camera_views[camera]["image_sha256"] == headless_captures[camera]["image_sha256"] for camera in native_camera_views),
         },
         "limitations": [
             "One paused native-window Session on Apple M1 Max/Metal; this checks Session/resource lifecycle, not continuous timing.",

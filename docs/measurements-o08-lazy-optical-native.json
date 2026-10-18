@@ -18,9 +18,45 @@
   "scene": "assets/scenes/materials.json",
   "scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
   "generated_scene": "artifacts/o08/lazy-optical-native/materials-away.json",
-  "generated_scene_sha256": "95ff33093a47f19fc0fe639eaaedf4c562d41998228e89fc1e47467e6c3b693f",
+  "generated_scene_sha256": "5cdaa64d0fdfbebe68a1e178049eb1ce346600bf374f7965efbf61ce858b4b48",
   "edited_scene": "artifacts/o08/lazy-optical-native/materials-away-edited.json",
-  "edited_scene_sha256": "a86277fd66a8f894bbc6c21a13754073015b04f45e7ad07274a652e405149aa4",
+  "edited_scene_sha256": "82c01efa82422f3629811a2459c6a222a50ead737950d5b995fc7900ac6bc234",
+  "stress_cameras": [
+    {
+      "id": "glass-inside-oblique",
+      "position": [
+        0.0,
+        1.35,
+        2.55
+      ],
+      "target": [
+        1.0,
+        1.35,
+        2.55
+      ],
+      "projection": {
+        "kind": "perspective",
+        "fov_degrees": 48.0
+      }
+    },
+    {
+      "id": "glass-near-plane",
+      "position": [
+        0.0,
+        1.35,
+        2.85
+      ],
+      "target": [
+        0.0,
+        1.35,
+        1.7
+      ],
+      "projection": {
+        "kind": "perspective",
+        "fov_degrees": 48.0
+      }
+    }
+  ],
   "binary_sha256": "0c27f6b10921935fc71f65d5226a74367b4be400a20887b08d4f8083eed15b7b",
   "render_source_sha256": "c95d5026b9266b1725f308411b6db6663b909345e999369a505b9123cb873f6b",
   "session_source_sha256": "4fddb2f0046c105d94d69522ce2542ddd5297cf833ce76e3c6bc479501b3f83b",
@@ -75,6 +111,82 @@
       "optical_resolve_timed": true
     }
   },
+  "native_camera_views": {
+    "away": {
+      "camera": "away",
+      "tick": 0,
+      "image": "artifacts/o08/lazy-optical-native/edited_offscreen.png",
+      "image_sha256": "d5621f255b59aab0c3584ea24272b9c8df1177c798a18c76381fb6887689ffdc",
+      "snapshot_bytes": 0,
+      "known_gpu_allocation_bytes": 15193796,
+      "optical_draw_batches": 0,
+      "optical_resolve_timed": false
+    },
+    "hero": {
+      "camera": "hero",
+      "tick": 0,
+      "image": "artifacts/o08/lazy-optical-native/visible_again.png",
+      "image_sha256": "5763a99b6249d36b9f3aeca049a9a6a3ff61f8490546575931abce7fbe658784",
+      "snapshot_bytes": 1843200,
+      "known_gpu_allocation_bytes": 17036996,
+      "optical_draw_batches": 9,
+      "optical_resolve_timed": true
+    },
+    "metal-close": {
+      "camera": "metal-close",
+      "tick": 0,
+      "image": "artifacts/o08/lazy-optical-native/camera-metal-close.png",
+      "image_sha256": "ac3f8719a3aeda5b23744100dfc3979600211a86ac04382f8f282b07d0e5e02a",
+      "snapshot_bytes": 1843200,
+      "optical_draw_batches": 7,
+      "optical_resolve_timed": true
+    },
+    "glass-close": {
+      "camera": "glass-close",
+      "tick": 0,
+      "image": "artifacts/o08/lazy-optical-native/camera-glass-close.png",
+      "image_sha256": "d4a25cb20cf3c5501c0fe0fd735f2ad0e67d515f7e7bfaca79730ac5c8ce86af",
+      "snapshot_bytes": 1843200,
+      "optical_draw_batches": 9,
+      "optical_resolve_timed": true
+    },
+    "subsurface-close": {
+      "camera": "subsurface-close",
+      "tick": 0,
+      "image": "artifacts/o08/lazy-optical-native/camera-subsurface-close.png",
+      "image_sha256": "dcf4d68242d7c487faf8e8c4edad94f188de2820186de5d3661ec69472bc80a9",
+      "snapshot_bytes": 1843200,
+      "optical_draw_batches": 5,
+      "optical_resolve_timed": true
+    },
+    "orthographic": {
+      "camera": "orthographic",
+      "tick": 0,
+      "image": "artifacts/o08/lazy-optical-native/camera-orthographic.png",
+      "image_sha256": "d9244033a7426841f099bbd638e2a6cf2582c38bd64a4a0eea4173ee6c1fe037",
+      "snapshot_bytes": 1843200,
+      "optical_draw_batches": 9,
+      "optical_resolve_timed": true
+    },
+    "glass-inside-oblique": {
+      "camera": "glass-inside-oblique",
+      "tick": 0,
+      "image": "artifacts/o08/lazy-optical-native/camera-glass-inside-oblique.png",
+      "image_sha256": "adb30636a4eea20b5dd4938a4e1eb330da215e619212a9fe2dd09ac0ec903194",
+      "snapshot_bytes": 1843200,
+      "optical_draw_batches": 4,
+      "optical_resolve_timed": true
+    },
+    "glass-near-plane": {
+      "camera": "glass-near-plane",
+      "tick": 0,
+      "image": "artifacts/o08/lazy-optical-native/camera-glass-near-plane.png",
+      "image_sha256": "b1db813846657233aec5a7ab1e704d16c522a6210c75d9eee423af94124cae6e",
+      "snapshot_bytes": 1843200,
+      "optical_draw_batches": 7,
+      "optical_resolve_timed": true
+    }
+  },
   "headless_reference_captures": {
     "away": {
       "image": "artifacts/o08/lazy-optical-native/headless-away.png",
@@ -83,6 +195,30 @@
     "hero": {
       "image": "artifacts/o08/lazy-optical-native/headless-hero.png",
       "image_sha256": "5763a99b6249d36b9f3aeca049a9a6a3ff61f8490546575931abce7fbe658784"
+    },
+    "metal-close": {
+      "image": "artifacts/o08/lazy-optical-native/headless-metal-close.png",
+      "image_sha256": "ac3f8719a3aeda5b23744100dfc3979600211a86ac04382f8f282b07d0e5e02a"
+    },
+    "glass-close": {
+      "image": "artifacts/o08/lazy-optical-native/headless-glass-close.png",
+      "image_sha256": "d4a25cb20cf3c5501c0fe0fd735f2ad0e67d515f7e7bfaca79730ac5c8ce86af"
+    },
+    "subsurface-close": {
+      "image": "artifacts/o08/lazy-optical-native/headless-subsurface-close.png",
+      "image_sha256": "dcf4d68242d7c487faf8e8c4edad94f188de2820186de5d3661ec69472bc80a9"
+    },
+    "orthographic": {
+      "image": "artifacts/o08/lazy-optical-native/headless-orthographic.png",
+      "image_sha256": "d9244033a7426841f099bbd638e2a6cf2582c38bd64a4a0eea4173ee6c1fe037"
+    },
+    "glass-inside-oblique": {
+      "image": "artifacts/o08/lazy-optical-native/headless-glass-inside-oblique.png",
+      "image_sha256": "adb30636a4eea20b5dd4938a4e1eb330da215e619212a9fe2dd09ac0ec903194"
+    },
+    "glass-near-plane": {
+      "image": "artifacts/o08/lazy-optical-native/headless-glass-near-plane.png",
+      "image_sha256": "b1db813846657233aec5a7ab1e704d16c522a6210c75d9eee423af94124cae6e"
     }
   },
   "checks": {
@@ -94,8 +230,8 @@
     "revisiting_visible_geometry_does_not_duplicate_allocation": true,
     "allocation_increase_is_one_snapshot": true,
     "repeated_paused_camera_captures_are_identical": true,
-    "native_away_matches_headless": true,
-    "native_visible_matches_headless": true
+    "snapshot_residency_is_stable_across_named_and_stress_cameras": true,
+    "native_cameras_match_headless": true
   },
   "limitations": [
     "One paused native-window Session on Apple M1 Max/Metal; this checks Session/resource lifecycle, not continuous timing.",

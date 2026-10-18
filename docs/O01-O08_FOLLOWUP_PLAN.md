@@ -470,8 +470,9 @@ away/visible/away/visible. Snapshot residency stays at zero until nine optical
 batches become camera-visible, rises by exactly 1,843,200 bytes once, and remains
 resident without further allocation after turning away and returning. Optical
 resolve timestamps are absent in the away views and present in the visible views;
-the repeated paused captures and same-adapter headless references match
-byte-for-byte at both camera poses. DX12 and other-adapter resource lifecycle
+residency stays fixed across seven visible views, including inside-glass and
+near-plane stress cameras. All eight paused native captures and same-adapter
+headless references match byte-for-byte. DX12 and other-adapter resource lifecycle
 remain open. See
 [native report](measurements-o08-lazy-optical-native.json) and
 [runner](../scripts/lazy_optical_native_study.py).
