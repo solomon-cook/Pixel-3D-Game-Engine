@@ -128,8 +128,14 @@ FPS result: three alternating 120-second campfire pairs at 640×360 have full
 GPU timestamp coverage. LOD-minus-direct medians are −0.047 ms atmosphere/fire
 GPU time, −0.0041 ms native-frame median and −0.018 fps. GPU-stage time improves
 in two pairs, while FPS is lower in all three; there is no whole-window gain.
-Keep LOD disabled by default. Native quiet/bonfire routes and other adapters
-remain open. See the [current-release native report](measurements-o04-native-current-release.json).
+Keep LOD disabled by default. A current-release native quiet-profile comparison
+adds three alternating 120-second pairs with full timing coverage: paired medians
+are -0.079 ms atmosphere/fire GPU time, -0.0067 ms native-frame time, -0.039 fps
+and +0.153 ms renderer-encode time. The GPU stage improves in two pairs, but
+there is no whole-window gain. Bonfire native timing remains open: two attempts became occluded and produced
+0/0 direct frames, so neither is accepted as performance evidence; repeat with the
+benchmark window kept in the foreground. Other adapters also remain open. See the [campfire report](measurements-o04-native-current-release.json) and
+[quiet report](measurements-o04-native-quiet-current-release.json).
 The earlier 14-checkpoint fire-state recheck uses binary hash
 `4247485106ee2d30…`, with no binary path or source revision, so it remains
 exact-build evidence only. A current-release rerun now compares the full/detail

@@ -780,6 +780,18 @@ non-Metal systems remain open. See the
 [current-release native report](measurements-o04-native-current-release.json)
 and [runner](../scripts/projected_detail_native_study.py).
 
+## O04 current-release native quiet timing (19 October 2026)
+
+A current-release three-pair native quiet-profile comparison used the same
+120-second alternating direct/LOD orbit and 10-second warmups at 640×360 on
+M1 Max/Metal. Every run has full GPU timing coverage. LOD-minus-direct paired
+medians are -0.079 ms atmosphere/fire GPU time, -0.0067 ms native-frame median
+and -0.039 fps; CPU renderer-encode time rises by 0.153 ms. GPU stage improves
+in two of three pairs, but the FPS and encode results do not demonstrate a
+whole-window gain. Keep LOD disabled by default. Bonfire native timing and
+non-Metal qualification remain open. See the
+[current-release native report](measurements-o04-native-quiet-current-release.json).
+
 ## O05 absorption-cache scale study (18 October)
 
 Direct sampling, 8³ cache and 16³ cache were compared at small, medium and
