@@ -414,7 +414,7 @@ speedup. Profiling-heavy counters show about 1.38 fewer `Globals` writes and
 1,173 fewer uploaded bytes per rendered frame. Windows/DX12 and other-adapter
 validation remain open. See the
 [clearing report](measurements-o08-globals-upload-native.json),
-[profiling-heavy report](measurements-o08-globals-upload-native-profiling-heavy.json)
+[profiling-heavy report](measurements-o08-globals-upload-native-profiling-heavy.json),
 [Material Atelier report](measurements-o08-globals-upload-native-materials.json),
 [two-emitter report](measurements-o08-globals-upload-native-two-emitter.json),
 and [reproducible study](../scripts/globals_upload_native_study.py).
