@@ -1483,3 +1483,15 @@ That review does not erase the measured color error or establish broader-scene
 quality. Keep compact HDR experimental; no whole-window speedup or portability
 is established. See the [peak analysis](measurements-o08-compact-hdr-peak-error-analysis.json)
 and [reproducible analyzer](../scripts/analyze_compact_hdr_temporal_errors.py).
+
+
+## O04 bonfire native timing attempt (19 October 2026)
+
+A current-release 20-second native pilot was started for the bonfire profile at
+640×360 with a three-second warm-up. The renderer reported zero rendered frames,
+zero timed frames and three late-render events. The runner rejected the run before
+starting the LOD variant, so it is invalid as a performance comparison and yields
+no timing conclusion. Repeat only when the app remains foreground and timing
+coverage reaches at least 99%. See the [hashed attempt disposition](measurements-o04-native-bonfire-foreground-attempt.json)
+and local raw engine report at
+`artifacts/o04/bonfire-native-foreground-pilot/pair-01-direct.engine.json`.

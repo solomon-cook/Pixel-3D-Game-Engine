@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-19",
+  "study": "O04 bonfire native foreground timing pilot",
+  "accepted_as_performance_evidence": false,
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "os": "macOS-27.0.1-arm64-arm-64bit"
+  },
+  "source_revision": "eb38a5544f8005e6e58c8208f19a488d0151ad6f",
+  "binary_path": "target/release/engine-lab",
+  "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+  "runner_path": "scripts/projected_detail_native_study.py",
+  "runner_sha256": "512e0970c34316292c3a51322e6e9654f64ece14f4b227ce864570ba3e649ece",
+  "scene_path": "assets/scenes/projected-detail-motion-review.json",
+  "scene_sha256": "cfea9e3579b4f6602c4703bdae1b88887180e2b0fe752711544441547435ab77",
+  "profile": "effect-bonfire",
+  "camera": "hero",
+  "route": "projected-detail-review-orbit",
+  "seed": 42,
+  "resolution": [
+    640,
+    360
+  ],
+  "requested_seconds": {
+    "warmup": 3.0,
+    "measurement": 20.0
+  },
+  "direct_run": {
+    "report_path": "artifacts/o04/bonfire-native-foreground-pilot/pair-01-direct.engine.json",
+    "report_sha256": "aeba40fa59eda70f556eb74c6d167924b58e5bb26975b3f6a3328acf2c1864b4",
+    "actual_measured_seconds": 0.0,
+    "frames_per_second": 0.0,
+    "samples": 0,
+    "timing_coverage": {
+      "counter_scope": "skipped and late counters are cumulative for the native session, including warm-up",
+      "gpu_presentation_ui_reason": null,
+      "gpu_timestamps_supported": true,
+      "late_render_samples": 3,
+      "native_presentation_ui_samples": 0,
+      "rendered_frames": 0,
+      "skipped_compute_samples": 0,
+      "skipped_native_presentation_ui_samples": 0,
+      "skipped_render_samples": 0,
+      "smoke_compute_samples": 0,
+      "timed_render_frames": 0
+    }
+  },
+  "disposition": "Invalid as a performance comparison: the native run completed with 0 rendered frames and 0 timed frames (three late-render events), so the alternating LOD pair was stopped before running. The app window was available for selection through desktop accessibility, but this does not establish that it remained foreground for the benchmark. Repeat only when native rendered-frame and GPU timing coverage are nonzero and >=99%.",
+  "limitations": [
+    "No performance conclusion can be drawn.",
+    "The prior two occluded attempts and this 0/0 pilot do not replace a valid native bonfire timing run."
+  ]
+}

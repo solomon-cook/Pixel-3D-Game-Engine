@@ -28,6 +28,7 @@ fallbacks. Other memory layout work remains proposed. Measurements are recorded 
 [docs/measurements-o04-threshold-state-current-release.json](docs/measurements-o04-threshold-state-current-release.json),
 [docs/measurements-o04-native-current-release.json](docs/measurements-o04-native-current-release.json),
 [docs/measurements-o04-native-quiet-current-release.json](docs/measurements-o04-native-quiet-current-release.json),
+[docs/measurements-o04-native-bonfire-foreground-attempt.json](docs/measurements-o04-native-bonfire-foreground-attempt.json),
 [docs/measurements-o05.json](docs/measurements-o05.json),
 [docs/measurements-o05-size-current-release.json](docs/measurements-o05-size-current-release.json),
 [docs/measurements-o05-temporal.json](docs/measurements-o05-temporal.json),
