@@ -37,6 +37,16 @@ def git_source_state() -> dict:
     return {"revision": revision, "dirty_paths": dirty_paths}
 
 
+def require_matching_binary(run_path: Path, expected_sha256: str) -> None:
+    run = json.loads(run_path.read_text())
+    actual_sha256 = run.get("provenance", {}).get("binary_sha256")
+    if actual_sha256 != expected_sha256:
+        raise RuntimeError(
+            f"{run_path} has binary SHA-256 {actual_sha256!r}; expected current binary "
+            f"{expected_sha256}. Rerun with --benchmark before summarizing sustained performance."
+        )
+
+
 def orbit_keyframes(offset: list[float]) -> list[dict]:
     frames = []
     for step in range(5):
@@ -219,14 +229,7 @@ def main() -> int:
                 for pair in range(1, 4):
                     for variant in ("baseline", "candidate"):
                         run_path = comparison_dir / f"pair-{pair:02d}-{variant}.json"
-                        run = json.loads(run_path.read_text())
-                        actual_binary_sha256 = run.get("provenance", {}).get("binary_sha256")
-                        if actual_binary_sha256 != expected_binary_sha256:
-                            raise RuntimeError(
-                                f"{run_path} has binary SHA-256 {actual_binary_sha256!r}; "
-                                f"expected current binary {expected_binary_sha256}. "
-                                "Rerun with --benchmark before summarizing sustained performance."
-                            )
+                        require_matching_binary(run_path, expected_binary_sha256)
                 baseline_run = json.loads((comparison_dir / "pair-01-baseline.engine.json").read_text())
                 candidate_run = json.loads((comparison_dir / "pair-01-candidate.engine.json").read_text())
                 candidate_runs = [json.loads((comparison_dir / f"pair-{pair:02d}-candidate.engine.json").read_text()) for pair in range(1, 4)]
