@@ -1050,9 +1050,10 @@ limitations are in [static scale evidence](measurements-o07-scale-study.json) an
 measurement is complete on this Mac, with mixed whole-window results. The
 fixed-tick moving-caster image route is recorded in
 [continuous-motion evidence](measurements-o07-continuous-motion.json). A new
-20-second, 400-frame side-by-side MP4 covers all three geometry modes; owner
-playback review is pending. Native performance and non-Metal validation remain
-separate. See [review metadata](measurements-o07-owner-continuous-current-build.json),
+20-second, 400-frame side-by-side MP4 covers all three geometry modes; the owner
+accepted the moving-rock shadow placement and full motion in this offscreen
+segment. Native playback/performance and non-Metal validation remain separate.
+See [review metadata](measurements-o07-owner-continuous-current-build.json),
 [shadow freshness](measurements-o07-shadow-freshness-current-release.json) and
 [source-separated shadow mask](measurements-o07-shadow-projection-mask-current-build.json).
 

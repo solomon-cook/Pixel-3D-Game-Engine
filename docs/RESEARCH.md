@@ -476,9 +476,10 @@ not a claim of visual identity or universal speedup. See
 [measurements-o07-culling.json](measurements-o07-culling.json) for paired data,
 images and platform limits. A new 20-second, 400-frame offscreen comparison
 compares baked, instancing-only and culling+instancing with matched tick, camera
-and moving-caster states across one segment of the 120-second route. Owner
-playback review is pending; native performance and other-adapter acceptance
-remain separate. See [current review artifact report](measurements-o07-owner-continuous-current-build.json).
+and moving-caster states across one segment of the 120-second route. The owner
+accepted the moving-rock shadow placement and full motion in this 20-second
+offscreen segment. Native performance and other-adapter acceptance remain
+separate. See [current review artifact report](measurements-o07-owner-continuous-current-build.json).
 
 ## Coarse smoke transmittance cache (17 October)
 
@@ -1323,8 +1324,9 @@ again. Its maximum RGBA16F-versus-Rg11b10Ufloat difference is 38/255 in one
 red-channel pixel at tick 729, coordinate (434, 294): 45 in the RGBA16F capture
 and 7 in compact HDR. Only that one pixel in the sequence reaches 32/255; pixels
 at least 16/255 apart total 22,596 across the sequence, with at least one such
-pixel in every frame. This localizes the largest spike, but does not make the
-lossy path visually acceptable. Keep compact HDR experimental pending human
-playback review; no whole-window speedup or portability is established. See the
-[peak analysis](measurements-o08-compact-hdr-peak-error-analysis.json) and
-[reproducible analyzer](../scripts/analyze_compact_hdr_temporal_errors.py).
+pixel in every frame. The owner accepted motion and visual continuity in the
+20-second, 400-frame eight-variant offscreen playback, including compact HDR.
+That review does not erase the measured color error or establish broader-scene
+quality. Keep compact HDR experimental; no whole-window speedup or portability
+is established. See the [peak analysis](measurements-o08-compact-hdr-peak-error-analysis.json)
+and [reproducible analyzer](../scripts/analyze_compact_hdr_temporal_errors.py).
