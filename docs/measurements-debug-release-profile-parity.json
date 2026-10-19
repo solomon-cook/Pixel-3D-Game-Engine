@@ -354,6 +354,7 @@
   },
   "camera_matrix_profile_probe": {
     "date": "2026-10-19",
+    "source_revision": "eae654bcddd71b3fedec1ff60d328491728ba6be",
     "scene": "assets/scenes/materials.json",
     "camera": "hero",
     "aspect_ratio": "640 / 360",
@@ -369,5 +370,26 @@
     "different_view_proj_slots": 7,
     "inverse_view_proj_different_slots": 15,
     "interpretation": "The camera CPU calculation itself is profile-dependent for Materials/hero at this aspect ratio. This is a concrete downstream-of-fire-generation difference and a plausible cause of the sparse flame-edge output mismatch, but the experiment did not substitute matrices in the renderer and does not prove causality. No render-path change was made."
+  },
+  "camera_projection_view_decomposition": {
+    "source_revision": "eae654bcddd71b3fedec1ff60d328491728ba6be",
+    "method": "Temporary Rust probe evaluated the same Camera::matrix inputs as separate glam perspective_rh, look_at_rh and product operations in debug and release profiles.",
+    "projection_matrix_different_f32_slots": 2,
+    "projection_different_indices": [
+      0,
+      5
+    ],
+    "view_matrix_different_f32_slots": 0,
+    "view_projection_product_different_f32_slots": 7,
+    "view_projection_product_different_indices": [
+      0,
+      1,
+      5,
+      8,
+      9,
+      12,
+      13
+    ],
+    "interpretation": "The view matrix is bit-identical between profiles. The profile difference first appears in two f32 slots of the perspective projection and propagates through the matrix product and inverse. This narrows the CPU source to perspective-projection construction; it remains a plausible, unproven cause of the flame-edge pixel differences."
   }
 }

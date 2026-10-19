@@ -1033,12 +1033,13 @@ decisions and unresolved visual/backend gates are consolidated in the
   setting smoke density to zero leaves the 87-pixel divergence unchanged. The
   `inspect_effects` FNV-1a fingerprint, counts and bounds match across profiles,
   locating the remaining difference downstream of CPU primitive generation. A
-  direct Materials/hero `Camera::matrix(640/360)` probe now finds 7 of 16
-  view-projection f32 slots and 15 of 16 inverse-matrix slots differ between
-  debug and release. That is a concrete profile-dependent camera input and a
-  plausible source of the flame-edge discrepancy, but causality is not proven
-  because the matrices were not substituted in a renderer capture. This is not
-  a cross-profile identity pass; no render defaults or pixel grid were changed.
+  direct Materials/hero matrix probe finds the view matrix identical but two
+  perspective-projection slots different; the difference propagates to 7/16
+  view-projection and 15/16 inverse-matrix slots in debug versus release. This
+  is a concrete profile-dependent camera input and a plausible source of the
+  flame-edge discrepancy, but causality is not proven because the matrices were
+  not substituted in a renderer capture. This is not a cross-profile identity
+  pass; no render defaults or pixel grid were changed.
   See [report](measurements-debug-release-profile-parity.json) and
   [contact sheet](measurements-debug-release-profile-parity-contact.png).
 - **Native verification on 19 October, Mac unlocked:** `python3 scripts/verify.py
