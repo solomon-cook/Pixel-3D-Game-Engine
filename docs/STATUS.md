@@ -1052,9 +1052,14 @@ shadow frusta dirty all seven maps; the diagnostic reason identifies conservativ
 fallback. Validated scene assets do not currently produce a live unknown-bound case.
 
 Final `python3 scripts/verify.py --gpu` completed successfully on Apple M1 Max
-with Metal (`verified: true`, `gpu: true`, `native: false`). Workspace formatting,
-clippy, 34 unit tests, scene validation and material/fire GPU checks passed. Native
-window lifecycle and Windows DX12 rendering remain unverified.
+with Metal (`verified: true`, `gpu: true`, `native: false`). The 19 October 2026
+rerun passed formatting, warning-denied Clippy, all 42 Rust unit tests, six profile
+comparison tests, the locked workspace build, scene validation, headless GPU
+protocol/replay, and materials and pixel-fire GPU checks. Its binary and verifier
+hashes and exact scope are recorded in
+[the current GPU verification report](measurements-gpu-verification-current-release.json).
+This does not validate native window playback, Windows/DX12, another adapter, or a
+physically unsupported RG16 target.
 
 ## O07 object bounds, culling and shared meshes
 
