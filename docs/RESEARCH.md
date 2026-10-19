@@ -392,8 +392,13 @@ timed/untimed controls.
 A separate 120-second native clearing route measured 43.48 frames/s, 8.83 ms median /
 70.28 ms p95 native CPU frame and 6.36 ms median / 64.79 ms p95 surface acquisition.
 It includes native surface and vsync behavior, unlike the unpaced offscreen runs.
-Exact CPU-to-GPU queue latency is unavailable because wgpu timestamps have no
-calibrated host-clock mapping; readback-completion latency is reported separately.
+Exact CPU-to-GPU queue latency is unavailable through this checkout's pinned
+wgpu 24.0.5 / wgpu-hal 24.0.4 public API. The queue exposes timestamp tick period,
+and the adapter exposes a presentation-clock timestamp that can be paired with
+a nearby host `Instant`; neither provides a GPU-query-to-host-clock calibration
+pair. The pinned Metal HAL describes its lower-level timestamp correlation as
+approximate and very slow. Readback-completion latency remains separate and is
+not a queue-delay proxy. See the [clock-mapping capability audit](measurements-o01-clock-mapping-capability.json).
 All three workloads had 7,200/7,200 serial render and smoke-compute timing samples
 with no skipped or late samples. Native GPU sample summaries are filtered to the
 measured frame/tick window; slot skip/late counters include warm-up. Full sample reports are locally retained under

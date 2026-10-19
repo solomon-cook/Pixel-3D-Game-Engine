@@ -308,11 +308,14 @@ paired per-stage comparisons; optional timing-on/off overhead comparisons; sourc
 shader, scene and GLB hashes; draw/light/primitive counts; and a known-allocation
 GPU memory estimate. `get_metrics` exposes frame-tagged timings. Native presentation
 and egui GPU timestamps are recorded. Exact CPU/GPU queue latency is not
-measurable with this wgpu timestamp path because it provides no calibrated
-host/GPU clock mapping. The evidence-backed disposition is to preserve
-submit-to-readback completion latency as a separate metric and not infer queue
-delay from it; exact attribution remains open unless calibrated clock mapping is
-added. The memory figure excludes driver
+measurable through the pinned wgpu 24.0.5 / wgpu-hal 24.0.4 public API: it
+exposes timestamp tick period and presentation-clock timestamps, but no GPU
+query-to-host clock calibration pair. The pinned Metal HAL describes its
+lower-level correlation as approximate and very slow. Preserve
+submit-to-readback completion latency as a separate metric and do not infer queue
+delay from it; exact attribution remains open pending a backend-specific mapping
+with uncertainty bounds. See the [clock-mapping capability audit](measurements-o01-clock-mapping-capability.json).
+The memory figure excludes driver
 alignment, transient allocations and timestamp storage. Three alternating 120-second
 pairs plus timed/untimed controls cover clearing, `assets/scenes/profiling-heavy.json`
 (one plume and eight point lights), and Material Atelier; a separate 120-second

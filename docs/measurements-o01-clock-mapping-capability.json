@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "workstream": "O01 GPU and host clock mapping capability",
+  "repository_revision": "345b7fd",
+  "scope": "Static inspection of the dependency versions pinned by Cargo.lock and their local registry source. No GPU or native-window run was performed.",
+  "dependencies": {
+    "wgpu": "24.0.5",
+    "wgpu-hal": "24.0.4"
+  },
+  "available_public_wgpu_api": {
+    "queue_timestamp_period": {
+      "source": "wgpu-24.0.5/src/api/queue.rs:226-234",
+      "meaning": "Nanoseconds represented by each GPU timestamp-query tick; converts timestamp deltas to durations.",
+      "does_not_provide": "A paired GPU timestamp and host-clock sample, or a mapping between the GPU query clock and std::time::Instant."
+    },
+    "adapter_presentation_timestamp": {
+      "source": "wgpu-24.0.5/src/api/adapter.rs:172-195",
+      "meaning": "Timestamp from the presentation engine's clock, paired by the caller with a nearby host Instant.",
+      "does_not_provide": "A GPU timestamp-query clock sample or a documented conversion from query ticks to the presentation clock."
+    }
+  },
+  "metal_backend_note": {
+    "source": "wgpu-hal-24.0.4/src/metal/adapter.rs:36-60",
+    "finding": "The backend source describes Metal CPU/GPU correlation via device.sample_timestamps as approximate and very slow, and uses a known-device timestamp period instead of sampling a clock mapping.",
+    "scope_limit": "This backend implementation detail does not establish that no backend-specific mapping can be built; it is not exposed by the inspected public wgpu API."
+  },
+  "engine_reporting": {
+    "source": "crates/engine-lab/src/main.rs:1031; crates/engine-lab/src/window.rs:1247-1248; crates/engine/src/render/mod.rs:4096-4156",
+    "queue_latency_ms": null,
+    "readback_latency": "Reported separately as host submit-to-map-completion delay, including queueing, GPU work, and polling; not pure queue latency."
+  },
+  "disposition": "Exact GPU queue delay remains unavailable through this pinned public wgpu path. Preserve GPU timestamp stage durations and submit-to-readback as separate measurements. A future exact-latency study needs a backend-specific GPU/host clock mapping with calibration interval, uncertainty bounds, and validation under drift; do not infer queue delay from readback completion."
+}
