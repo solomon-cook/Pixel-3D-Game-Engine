@@ -180,10 +180,20 @@ and [historical provenance audit](measurements-o05-invalidation-provenance-audit
 A fresh current-release 400-frame direct-versus-16³ route records exact
 fire/effect-count parity, 0.096/255 mean frame RGB error and 0.104/255 mean
 temporal-change-magnitude error. Its 20-second, 20 fps side-by-side playback is
-open for owner review; the cache remains disabled pending that review and has no
-whole-frame performance case. This is offscreen evidence only. See the
+owner-accepted for motion and visual continuity; the cache remains disabled
+because there is no whole-frame performance case. The owner noted the review was
+general rather than a targeted defect audit. This is offscreen evidence only. See
 [current-release temporal report](measurements-o05-temporal-current-release.json)
 and [playback](../artifacts/o05/current-release-temporal16/owner-review-current.webp).
+A current-release native-window follow-up ran three alternating 120-second
+pairs after 10-second warmups on the same route. The cache's median paired
+atmosphere/fire GPU delta is -0.049 ms, but median native-frame time changes by
++0.0013 ms and frame rate by -0.043 fps; frame-rate deltas are negative in all
+three pairs. Timing coverage is 100% for all six runs. This finds no reliable
+whole-window benefit at medium smoke, so caching remains disabled by default.
+See [native report](measurements-o05-native-current-release.json) and
+[reproducible runner](../scripts/absorption_cache_native_study.py).
+
 The capture scripts record binary hashes,
 workspace revision, engine-source worktree status and runner hashes, and the sustained-run summarizer
 rejects timing records without a matching binary hash. The current-release GPU
@@ -1289,6 +1299,13 @@ decisions and unresolved visual/backend gates are consolidated in the
   and motion review against the reference remain open. See SMOKE_DIRECTION.md.
 
 ## Measured performance
+
+- **19 October 2026, Apple M1 Max / Metal, current checkout:** reran
+  `python3 scripts/verify.py --gpu` at source revision `58e287d7a9d1893ebf27d198cc4df216edd4dbfe`. Formatting,
+  warning-denied Clippy, 42 Rust unit tests, the locked build, scene validation,
+  headless GPU protocol/replay, materials GPU checks and pixel-fire GPU checks
+  passed. `verified=true`, `gpu=true`, `native=false`; Windows/DX12 and other
+  adapters remain unverified. See the [current verifier record](measurements-gpu-verification-current-release.json).
 
 ### O01 profiling characterization
 

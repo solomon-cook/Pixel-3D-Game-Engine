@@ -1022,12 +1022,27 @@ A current-release 400-frame, 20-second direct-versus-16³ medium-smoke route
 frames. Mean frame RGB MAE is 0.096/255, p95 0.177/255, maximum channel error
 19/255; temporal-change-magnitude MAE averages 0.104/255. The captured release
 binary hash is `740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c`.
-The continuous playback is awaiting owner visual acceptance. This is offscreen
-evidence; it does not establish native playback performance or a whole-render
-win. Keep direct sampling default and cache opt-in/disabled. See the
+The owner accepted motion and visual continuity in the full playback, while
+noting they were unsure what specific defects to seek; record this as general
+acceptance rather than a targeted defect audit. This is offscreen evidence and
+does not establish native playback performance or a whole-render win. Keep direct
+sampling default and cache opt-in/disabled. See the
 [current-release temporal report](measurements-o05-temporal-current-release.json),
 [playback](../artifacts/o05/current-release-temporal16/owner-review-current.webp)
 and [artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json).
+
+## O05 current-release native timing (19 October 2026)
+
+The 16³ candidate and direct sampling were compared in the 640×360 native
+window over three alternating 120-second pairs after 10-second warmups on the
+medium-smoke orbit. All six runs report complete GPU timing coverage. Cached
+minus direct paired medians are -0.049 ms for the atmosphere/fire GPU stage,
++0.0013 ms for native-frame median, and -0.043 fps; frame-rate change is
+negative in every pair. Stage savings therefore do not translate into a
+whole-window improvement. Keep direct sampling default and caching disabled.
+This is M1 Max/Metal evidence only. Reproduce with
+[`absorption_cache_native_study.py`](../scripts/absorption_cache_native_study.py);
+see the [native report](measurements-o05-native-current-release.json).
 
 ## O06 camera-inside and near-plane follow-up (18 October)
 

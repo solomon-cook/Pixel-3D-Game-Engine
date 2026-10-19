@@ -41,7 +41,7 @@
   "temporal_change_magnitude_rgb_mae_mean": 0.10402955449967512,
   "temporal_change_magnitude_rgb_mae_median": 0.09728732638888889,
   "temporal_change_magnitude_rgb_mae_p95": 0.16769675925925925,
-  "visual_review": "Continuous side-by-side 400-frame playback is available at artifacts/o05/current-release-temporal16/owner-review-current.webp; owner review remains pending.",
+  "visual_review": "Owner accepted motion and visual continuity for the full 400-frame offscreen playback, with the caveat that they were unsure what specific defects to look for. This is not native playback or performance acceptance.",
   "source_scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
   "limitations": [
     "Headless Apple M1 Max/Metal only; native-window and Windows/DX12 rendering are not covered.",
@@ -66,5 +66,11 @@
       "path": "artifacts/o05/current-release-temporal16/owner-review-current.webp",
       "sha256": "5b45eb7bd7295e279423d3b5c701a3a4dcae2e96aca995e70e62213a413c40ec"
     }
+  },
+  "owner_visual_review": {
+    "accepted": true,
+    "scope": "Motion and visual continuity through the full 20-second, 400-frame, 20 fps direct-versus-16-cubed comparison at 640x360.",
+    "owner_response": "I dont really know what I'm looking for but it all seems fine.",
+    "limitation": "General playback acceptance, not a detailed defect audit; offscreen only and does not verify native playback performance."
   }
 }

@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "study": "current-source GPU verification",
+  "command": "python3 scripts/verify.py --gpu",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "os": "macOS-27.0.1-arm64-arm-64bit",
+    "native": false
+  },
+  "source_revision": "58e287d7a9d1893ebf27d198cc4df216edd4dbfe",
+  "engine_source_dirty_paths": [],
+  "verifier_path": "scripts/verify.py",
+  "verifier_sha256": "d5cb93830141843de1d309cd02756f818d03306da74510850785755ccec56eee",
+  "binary_path": "target/debug/engine-lab",
+  "binary_sha256": "f3c8b4b1108f490173d94033ed377c7afa3e5b1ee8cc5d9935df45e881344baf",
+  "result": {
+    "passed": true,
+    "profile_compare_tests": 6,
+    "rust_unit_tests": 42,
+    "format_check": true,
+    "clippy_warnings_denied": true,
+    "locked_workspace_build": true,
+    "clearing_scene_validation": true,
+    "materials_scene_validation": true,
+    "headless_gpu_protocol_and_replay": true,
+    "materials_gpu_verification": true,
+    "pixel_fire_gpu_verification": true,
+    "reported_verified": true,
+    "reported_gpu": true,
+    "reported_native": false
+  },
+  "limitations": [
+    "M1 Max/Metal only; does not validate native window playback, Windows/DX12, another adapter or target hardware.",
+    "Build emitted the existing Rust future-incompatibility notice for the third-party block 0.1.6 package; all required checks passed."
+  ]
+}

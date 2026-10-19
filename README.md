@@ -30,6 +30,8 @@ fallbacks. Other memory layout work remains proposed. Measurements are recorded 
 [docs/measurements-o05-size-current-release.json](docs/measurements-o05-size-current-release.json),
 [docs/measurements-o05-temporal.json](docs/measurements-o05-temporal.json),
 [docs/measurements-o05-temporal-current-release.json](docs/measurements-o05-temporal-current-release.json),
+[docs/measurements-o05-native-current-release.json](docs/measurements-o05-native-current-release.json),
+[docs/measurements-gpu-verification-current-release.json](docs/measurements-gpu-verification-current-release.json),
 [docs/measurements-o05-temporal-cache8.json](docs/measurements-o05-temporal-cache8.json),
 [docs/measurements-multi-emitter-absorption-moving-route.json](docs/measurements-multi-emitter-absorption-moving-route.json),
 [docs/measurements-multi-emitter-absorption-moving-route-cache16.json](docs/measurements-multi-emitter-absorption-moving-route-cache16.json),
@@ -95,6 +97,7 @@ cargo run --release -p engine-lab -- benchmark-native --duration 120 --warmup 10
 python3 scripts/profile_compare.py --baseline assets/scenes/materials.json --candidate assets/scenes/materials.json --measure-overhead
 python3 scripts/capture_motion.py --scene assets/scenes/projected-detail-motion-review.json --route projected-detail-review-orbit --camera fire-study --frames 400 --stride 3 --experiments projected_detail_lod --output artifacts/o04/continuous-motion/lod-20fps --gif
 python3 scripts/absorption_cache_temporal_study.py
+python3 scripts/absorption_cache_native_study.py
 python3 scripts/absorption_cache_pause_resume_study.py
 python3 scripts/optical_camera_stress_study.py
 python3 scripts/verify.py --gpu --native
