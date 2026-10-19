@@ -1,5 +1,12 @@
 # Engine work queue
 
+The proposed reusable game-runtime capability roadmap is in
+[GAME_CAPABILITY_ROADMAP.md](docs/GAME_CAPABILITY_ROADMAP.md). It separates
+current renderer/lab capability from future runtime, animation, gameplay,
+authoring and shipping work, and explicitly follows the O01–O08 renderer
+follow-up dispositions. It is planning documentation; none of those roadmap
+items are marked implemented by its addition.
+
 The optimization queue tracks implementation separately from platform and visual
 acceptance. O01 profiling, O08's inventory, O02 whole-map reuse, O03 single-emitter
 tile lists and O07's bounds, shared meshes, instancing, culling and static/dynamic
