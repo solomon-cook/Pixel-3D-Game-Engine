@@ -154,8 +154,12 @@ A sustained three-scale study compares direct, 8³ and 16³ at
 closer to direct in fixed-tick mean RGB error. The cache reduced the targeted
 atmosphere/fire GPU stage by 0.058–0.101 ms, but adds 0.025–0.033 ms GPU build
 work and the total GPU render median was 0.025–0.044 ms slower in all six
-comparisons. No useful total-render win is demonstrated, so keep the cache off by
-default. See [measurements-o05.json](measurements-o05.json) and the detailed
+comparisons. The 18 October runs did not show a useful total-render win, so keep
+the cache off by default. However, the explicit-source sustained dual-emitter
+report is from revision `4e57d5f`, before 13 engine/shader changes; the later
+19 October invalidation check does not measure sustained cost. Current-source
+O05 performance remains unverified. See [source audit](measurements-o05-current-review-source-audit.json),
+[measurements-o05.json](measurements-o05.json) and the detailed
 [size study](measurements-o05-size-study.json). A 400-frame, 20 fps medium-smoke
 route compares direct and 16³ cache output: mean frame RGB MAE is 0.096/255 and
 mean frame-to-frame change-magnitude error is 0.104/255, with exact tick and

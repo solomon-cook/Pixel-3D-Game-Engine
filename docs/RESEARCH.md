@@ -922,8 +922,11 @@ use binary hash `e18956da749438f3d4ce0d2706497adc61670b8e2b15d4d65edc0b0f191ec9a
 which differs from the current verified release hash. Do not treat those frames
 as current-build owner acceptance; refresh them only if reconsidering promotion.
 See the [capture currentness audit](measurements-o05-current-review-source-audit.json).
-No total-render win follows from this quality study, and the cache remains
-disabled by default.
+Historical size/native runs did not establish a total-render win, so keep the
+cache disabled by default. The explicit-source sustained dual-emitter report is
+from revision `4e57d5f`, before 13 engine/shader changes; the later invalidation
+recheck measures correctness only. Current-source sustained performance remains
+open. See the [capture and performance source audit](measurements-o05-current-review-source-audit.json).
 
 The same route at 8³ also held tick/camera and fire/effect-count parity over 400
 frames. Mean frame RGB MAE was 0.285/255 (p95 0.426/255, maximum channel

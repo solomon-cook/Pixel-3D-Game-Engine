@@ -29,10 +29,35 @@
       "scene_sha256": "614e3fa36a06032354ce88d699fa324df85b22c7e8b6a871b593641f5ae17155"
     }
   },
-  "result": "saved_frames_are_from_an_older_binary",
-  "review_disposition": "Do not use the saved O05 sequences for current-build visual acceptance; recapture with the current verified release before requesting owner playback review.",
+  "result": "saved_visual_frames_are_stale_and_sustained_performance_needs_current_source_rerun",
+  "review_disposition": "Do not use the saved O05 sequences for current-build visual acceptance. Keep cache disabled; rerun current-source sustained performance before closing the performance gate, and refresh the visual preview if promotion is reconsidered.",
   "limitations": [
     "Binary hash mismatch establishes different executables, not the visual magnitude of any difference.",
     "No GPU rendering, motion capture, native playback, or performance measurement was run by this audit."
-  ]
+  ],
+  "current_engine_source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
+  "current_release_source_binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+  "prior_sustained_performance": {
+    "report": "measurements-multi-emitter-absorption-native-sustained.json",
+    "source_revision": "4e57d5f08819093a26ea3eb0b4c0068ad240fefe",
+    "binary_sha256": "cceaa3c520243f31b3a2febe7c0ee778fe1039f9735c48e69452d042458de157",
+    "date": "2026-10-18",
+    "engine_source_changes_before_current_release": [
+      "crates/engine-lab/src/main.rs",
+      "crates/engine-lab/src/window.rs",
+      "crates/engine/src/diagnostics.rs",
+      "crates/engine/src/effects.rs",
+      "crates/engine/src/render/mod.rs",
+      "crates/engine/src/render/shaders/common.wgsl",
+      "crates/engine/src/render/shaders/fire_projected_bounds.wgsl",
+      "crates/engine/src/render/shaders/smoke.wgsl",
+      "crates/engine/src/render/shaders/smoke_candidates.wgsl",
+      "crates/engine/src/render/shaders/tile_build.wgsl",
+      "crates/engine/src/render/shaders/volume.wgsl",
+      "crates/engine/src/scene.rs",
+      "crates/engine/src/session.rs"
+    ],
+    "current_source_match": false,
+    "interpretation": "The explicit-source dual-emitter sustained report predates renderer, shader, Session and window changes. The 19 October O05 invalidation report is a correctness recheck and does not provide sustained timing. Current-source O05 performance therefore needs a new paired run."
+  }
 }
