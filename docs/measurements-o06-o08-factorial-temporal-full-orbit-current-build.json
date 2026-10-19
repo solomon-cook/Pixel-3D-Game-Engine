@@ -178,8 +178,10 @@
     "sha256": "c9e0707bd8abfe1e584651b98b9cbe55ea807c8da88c4acc644aceb72f4a342a"
   },
   "owner_review": {
-    "status": "pending",
-    "scope": "Awaiting owner review of the current 20-second, 400-frame, 20 fps eight-variant playback at 640x360 per panel."
+    "status": "accepted",
+    "response": "Acceptable",
+    "scope": "Owner accepted motion and visual continuity in the current 20-second, 400-frame, 20 fps eight-variant playback at 640x360 per panel. This is offscreen image review only; it does not validate native playback/performance, other scenes, or other adapters/DX12.",
+    "reviewed_preview_sha256": "1a17d934cb3a7a72516f3e6b8e58ae00a61320418e1f1702eb471be361750a09"
   },
   "limitations": [
     "Offscreen M1 Max/Metal image evidence only; no native presentation or performance validation.",

@@ -62,8 +62,10 @@
     "sha256": "9fbfbe366188409e975c75b6f8a27fc49f50902b8d690f12ef11d1ae7b64ccd8"
   },
   "owner_review": {
-    "status": "pending",
-    "scope": "Awaiting owner review of the 20-second, 400-frame side-by-side motion preview across baked, instancing-only, and culling+instancing modes."
+    "status": "accepted",
+    "response": "Looks acceptable now",
+    "scope": "Owner accepted shadow position and full motion in the current 20-second, 400-frame side-by-side playback across baked, instancing-only and culling+instancing modes. This is offscreen image review only; native playback/performance, the remaining 100 seconds of the route, and other adapters remain unverified.",
+    "reviewed_preview_sha256": "7bd7f11d6a38a64f0c0491db58b34f5b6e3c77b48cfea2f6e12b6bbeb71260e8"
   },
   "limitations": [
     "Offscreen captures use the real Metal renderer and do not measure native presentation or performance.",

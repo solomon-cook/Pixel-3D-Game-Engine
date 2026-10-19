@@ -20,8 +20,9 @@ deterministic moving caster through the shared Session API. A matched 120-frame
 clearing-orbit comparison at 20 fps-equivalent fixed ticks found zero image
 changes from culling versus instancing-only, and a median of three changed pixels
 (maximum 13) from instancing versus baked rendering. Sampled checkpoints show
-no obvious scene-pop. A 20-second, 400-frame side-by-side motion preview across
-all three modes is now available for owner review. At each of the same 400 moving
+no obvious scene-pop. The owner reviewed the current 20-second, 400-frame
+side-by-side motion preview and accepted the moving rock shadow and motion across
+all three modes. At each of the same 400 moving
 rock poses, cached-shadow output is byte-identical to forced full redraw. A
 source-separated shadow-mask probe shows the fire point-light ground shadow
 moving with the caster at two camera-visible poses. Reprocessing the paired
@@ -29,10 +30,11 @@ rock/no-rock masks gives a point-shadow centroid 134 px left of the caster at
 tick 600 and 65 px right at tick 900; the changing screen-space offset is not a
 fixed rock-relative displacement. The scene also has a directional sun whose
 steady world-direction shadow is expected. No stale-cache or projection defect
-reproduced in those samples. Owner review of the normal
-playback, native playback/performance and other-adapter acceptance remain open. See
+reproduced in those samples. Offscreen visual acceptance is complete for this
+segment; native playback/performance, the rest of the route and other-adapter
+acceptance remain open. See
 [the motion report](measurements-o07-continuous-motion.json),
-[continuous review metadata](measurements-o07-owner-continuous-current-build.json)
+[continuous review metadata](measurements-o07-owner-continuous-current-build.json),
 [shadow freshness](measurements-o07-shadow-freshness-current-release.json) and
 [shadow projection mask](measurements-o07-shadow-projection-mask-current-build.json).
 
@@ -259,8 +261,9 @@ temporal-change error and a 29/255 maximum channel difference; lighting reuse
 does not add to that format error. The owner accepted motion and visual
 continuity in the labeled six-second, 20 fps four-panel offscreen review. A
 current-release 400-frame, 20-second eight-variant factorial comparison now
-extends that route; owner review is pending. A 20-second four-by-two MP4 now
-shows all eight variants at 640×360 per panel. All effect counts match in every
+extends that route; the owner accepted its motion and visual continuity. A
+20-second four-by-two MP4 now shows all eight variants at 640×360 per panel. All
+effect counts match in every
 variant. This is M1 Max/Metal image evidence, not timing or native presentation
 acceptance. See the [full-orbit report](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json),
 [playback](../artifacts/o06-o08/factorial-temporal-full-orbit-current-build/owner-review-current.mp4)
