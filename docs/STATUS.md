@@ -1049,11 +1049,17 @@ decisions and unresolved visual/backend gates are consolidated in the
   `focused: false` with `minimized: false` and `occluded: false` after the
   minimize request. The owner reported concurrent desktop use during these
   checks, so focus may have changed due to other UI activity. Treat minimization
-  as inconclusive and repeat the lifecycle check in an isolated native session.
-  A release rebuild from the current checkout passed, but its executable hash
-  differs from the binary used by those lifecycle runs; native behavior of this
-  exact rebuilt executable remains unverified. Both hashes and run attribution
-  are recorded in the measurement JSON.
+  as unresolved. After the owner confirmed the Mac was unlocked, the exact
+  current release executable was rerun with the native lifecycle verifier.
+  Resize, fullscreen entry and exit flag, fixed-tick capture, command handling
+  and shutdown passed; the OS still reported `minimized: false` and
+  `occluded: false` after an eight-second poll. The physical window size after
+  fullscreen exit remained 5120×2880 versus 1800×1200 after resize, so restored
+  dimensions were not verified. This closes the executable-hash mismatch for
+  basic lifecycle checks but does not establish macOS minimization or restore
+  behavior. The owner had earlier reported concurrent desktop use; this rerun
+  does not establish an isolated desktop session. Hashes, raw output, and run
+  attribution are recorded in the measurement JSON.
   The tick-120 scene capture was inspected. Keep minimization and restore open;
   do not substitute occlusion for minimization. The current release viewport was
   also inspected live at tick 423 with the 640×360 grid; the smoke still reads as
