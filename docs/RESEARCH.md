@@ -1166,11 +1166,17 @@ for this route. A temporary visibility shader then separated the directional sun
 visible tick-600 and tick-900 poses, moving the caster changed 3,929/2,028
 non-stone ground pixels in the fire-light visibility channel and 870/541 in the
 sun channel; at tick 300 neither shadow entered the fixed camera view. The point
-shadow centroid moves from x≈72 to x≈471 as the rock moves around the fire. The
-sun is directional, so its shadow keeps a fixed world direction and can supply a
-steady-looking component alongside the moving fire shadow. No stale-cache or
-shadow-projection defect was reproduced in these samples. The owner still needs
-to judge the normal rendered playback. See [playback metadata](measurements-o07-owner-continuous-current-build.json),
+shadow centroid moves from x≈72 to x≈471 as the rock moves around the fire. A
+post-process of those saved captures isolates the moving rock mask: at tick 600
+the caster centroid is x≈206 and the point-shadow centroid is x≈72 (−134 px); at
+tick 900 they are x≈407 and x≈471 (+65 px). The changing screen-space offset
+rules out a fixed shadow displacement in these visible samples; tick 300's
+point-light shadow lies outside the hero camera view. The sun is directional, so
+its shadow keeps a fixed world direction and can supply a steady-looking
+component alongside the moving fire shadow. No stale-cache or shadow-projection
+defect was reproduced in these samples. These are screen-space centroids rather
+than world-space contact measurements, and the owner still needs to judge normal
+rendered playback. See [playback metadata](measurements-o07-owner-continuous-current-build.json),
 [freshness report](measurements-o07-shadow-freshness-current-release.json),
 [shadow mask report](measurements-o07-shadow-projection-mask-current-build.json),
 [runner](../scripts/o07_shadow_mask_isolation.py), and the ignored preview at

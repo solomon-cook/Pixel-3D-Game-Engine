@@ -26,7 +26,7 @@
     "green": "primary fire point-light shadow visibility",
     "blue": "stone material surface mask"
   },
-  "method": "For each fixed tick, compare current rock orbit pose with the same Session after moving rock-0 to [1000,1000,1000]; instrumented fragment output exposes sun/fire visibility and a stone mask. Ground counts exclude stone pixels and require a visibility drop greater than 3/255.",
+  "method": "For each fixed tick, the same Session is captured with rock-0 at its orbit pose and moved to [1000,1000,1000]. The instrumented shader separates sun/fire visibility and stone masks. Point-light ground-shadow and moving-rock screen masks are derived from the paired captures; the reported centroid offset is screen-space only. These added centroids were postprocessed from existing captures without rendering again.",
   "per_pose": [
     {
       "tick": 0,
@@ -63,7 +63,29 @@
           336.4848484848485
         ],
         "mean_visibility_drop_0_255": 5.848484848484849,
-        "threshold_0_255": 3
+        "threshold_0_255": 3,
+        "offset_from_caster_centroid_xy": [
+          39.00629436185886,
+          43.49208030485653
+        ]
+      },
+      "moving_caster_screen_mask": {
+        "visible_pixels": 2489,
+        "bbox_xyxy": [
+          525,
+          261,
+          576,
+          322
+        ],
+        "centroid_xy": [
+          550.3270389714745,
+          292.99276817999197
+        ],
+        "threshold_0_255": 127
+      },
+      "input_capture_sha256": {
+        "with_caster": "7dbc12a633662cca7188a80fb9d48f3a644a6aeea9a95c31b8300d96670e6bce",
+        "caster_moved_away": "5594488caff36e9de1aa6b0cbf8937cc134ec8a3b3f9651351bb3415c4d8e241"
       }
     },
     {
@@ -80,6 +102,24 @@
       "fire_point_ground_shadow": {
         "changed_ground_pixels": 0,
         "threshold_0_255": 3
+      },
+      "moving_caster_screen_mask": {
+        "visible_pixels": 3965,
+        "bbox_xyxy": [
+          67,
+          277,
+          146,
+          354
+        ],
+        "centroid_xy": [
+          105.14653215636822,
+          319.1646910466583
+        ],
+        "threshold_0_255": 127
+      },
+      "input_capture_sha256": {
+        "with_caster": "48f7e0a059faa14cb2dbae68dfe54c3b2a04acd7da4ac15202073aa2d133c56b",
+        "caster_moved_away": "7e1ad1083bac09f6b449c4bed1c340106e6aa49b95f52d240ffffb73056fc7d0"
       }
     },
     {
@@ -117,7 +157,29 @@
           220.37465003817766
         ],
         "mean_visibility_drop_0_255": 222.7419190633749,
-        "threshold_0_255": 3
+        "threshold_0_255": 3,
+        "offset_from_caster_centroid_xy": [
+          -134.00774635542467,
+          -4.055813537981265
+        ]
+      },
+      "moving_caster_screen_mask": {
+        "visible_pixels": 604,
+        "bbox_xyxy": [
+          190,
+          210,
+          220,
+          244
+        ],
+        "centroid_xy": [
+          205.97847682119206,
+          224.43046357615893
+        ],
+        "threshold_0_255": 127
+      },
+      "input_capture_sha256": {
+        "with_caster": "f71cc7568d69b650876b9d997a9fba3afb982a0d8796981dc9f5783b2c6e922d",
+        "caster_moved_away": "301aceb0dcdf614f80e8e704d2c539230b4a24dc94d0a8ab88b4fb90c9a0e777"
       }
     },
     {
@@ -155,7 +217,29 @@
           224.5853057199211
         ],
         "mean_visibility_drop_0_255": 210.41863905325442,
-        "threshold_0_255": 3
+        "threshold_0_255": 3,
+        "offset_from_caster_centroid_xy": [
+          64.74391075281625,
+          2.3067822299882152
+        ]
+      },
+      "moving_caster_screen_mask": {
+        "visible_pixels": 596,
+        "bbox_xyxy": [
+          395,
+          207,
+          419,
+          239
+        ],
+        "centroid_xy": [
+          406.71812080536915,
+          222.2785234899329
+        ],
+        "threshold_0_255": 127
+      },
+      "input_capture_sha256": {
+        "with_caster": "74240c07680a841af2062618a3a3315b0121e782bd3122ac8d03565d2c386196",
+        "caster_moved_away": "39b4f487be9f8fb054091b73b6df28e980d45ba0a0ea450668d56737db9f337a"
       }
     }
   ],
@@ -168,6 +252,13 @@
     "The debug shader replaces final opaque world color with shadow visibility; it does not represent normal scene color or owner visual acceptance.",
     "Visibility changes are counted only on non-stone pixels, with a 3/255 threshold; this excludes the caster surface but also all other stone surfaces.",
     "The fixed hero camera shows only the portion of each shadow inside its view; zero sampled ground pixels does not mean the light failed to cast a shadow outside frame.",
-    "This is offscreen M1 Max/Metal evidence, not native playback or another adapter."
-  ]
+    "This is offscreen M1 Max/Metal evidence, not native playback or another adapter.",
+    "The moving-caster material-mask centroid is a screen-space locator derived from raster-mask differences; it is not a world-space contact or shadow measurement."
+  ],
+  "capture_reanalysis": {
+    "rendering_performed": false,
+    "input_capture_set": "artifacts/o07/shadow-mask-isolation/tick-*-with.png and tick-*-without.png",
+    "runner": "scripts/o07_shadow_mask_isolation.py",
+    "runner_sha256": "d7d7abc12309d236e1ce0ad025f7d35c90b5abce4a00c1dbd2b343bde1c69b88"
+  }
 }

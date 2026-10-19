@@ -58,6 +58,27 @@ def masked_shadow_deltas(with_path: Path, without_path: Path, threshold: int = 3
     return results
 
 
+def moving_stone_mask(with_path: Path, without_path: Path, threshold: int = 127) -> dict:
+    """Locate the moving caster by subtracting the stone-material debug mask."""
+    with_image = Image.open(with_path).convert("RGB")
+    without_image = Image.open(without_path).convert("RGB")
+    points = []
+    for y in range(with_image.height):
+        for x in range(with_image.width):
+            if with_image.getpixel((x, y))[2] - without_image.getpixel((x, y))[2] > threshold:
+                points.append((x, y))
+    if not points:
+        return {"visible_pixels": 0, "threshold_0_255": threshold}
+    return {
+        "visible_pixels": len(points),
+        "bbox_xyxy": [min(x for x, _ in points), min(y for _, y in points),
+                      max(x for x, _ in points) + 1, max(y for _, y in points) + 1],
+        "centroid_xy": [sum(x for x, _ in points) / len(points),
+                        sum(y for _, y in points) / len(points)],
+        "threshold_0_255": threshold,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--binary", type=Path, default=ROOT / "target/release/engine-lab")
@@ -139,12 +160,22 @@ def main() -> int:
             without_path = output / f"tick-{tick:04}-without.png"
             request("capture_frame", path=str(without_path), scale=1)
             request("set_object_transform", id=args.caster, position=position)
+            caster_mask = moving_stone_mask(with_path, without_path)
+            shadow_deltas = masked_shadow_deltas(with_path, without_path)
+            caster_centroid = caster_mask.get("centroid_xy")
+            fire_centroid = shadow_deltas["fire_point_light"].get("centroid_xy")
+            if caster_centroid and fire_centroid:
+                shadow_deltas["fire_point_light"]["offset_from_caster_centroid_xy"] = [
+                    fire_centroid[0] - caster_centroid[0],
+                    fire_centroid[1] - caster_centroid[1],
+                ]
             poses.append({
                 "tick": tick,
                 "caster_position": position,
                 "with_caster": str(with_path),
                 "caster_moved_away": str(without_path),
-                "shadow_visibility_deltas": masked_shadow_deltas(with_path, without_path),
+                "moving_caster_screen_mask": caster_mask,
+                "shadow_visibility_deltas": shadow_deltas,
             })
     finally:
         try:
@@ -183,11 +214,13 @@ def main() -> int:
         "period_seconds": args.period,
         "ticks": args.ticks,
         "visualization": {"red": "sun shadow visibility", "green": "primary fire point-light shadow visibility", "blue": "stone material surface mask"},
+        "method": "The moving rock screen mask is isolated by subtracting the no-caster stone mask. The point-light ground-shadow centroid offset is reported where both regions are visible.",
         "per_pose": poses,
         "contact_sheet": {"path": str(contact_path), "sha256": sha256(contact_path)},
         "limitations": [
             "The debug shader replaces final opaque world color with shadow visibility; it does not represent normal scene color or owner visual acceptance.",
             "Visibility changes are counted only on non-stone pixels, with a 3/255 threshold; this excludes the caster surface but also all other stone surfaces.",
+            "The moving-caster screen mask is a difference of material-ID masks, so edge pixels can vary with raster coverage; its centroid is a screen-space locator, not a world-space contact or shadow measurement.",
             "The fixed hero camera shows only the portion of each shadow inside its view; zero sampled ground pixels does not mean the light failed to cast a shadow outside frame.",
             "This is offscreen M1 Max/Metal evidence, not native playback or another adapter.",
         ],
