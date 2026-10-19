@@ -286,9 +286,12 @@ fixed-step counts; CPU upload/simulation/render/UI/acquisition/presentation span
 paired per-stage comparisons; optional timing-on/off overhead comparisons; source,
 shader, scene and GLB hashes; draw/light/primitive counts; and a known-allocation
 GPU memory estimate. `get_metrics` exposes frame-tagged timings. Native presentation
-and egui GPU timestamps are recorded. Exact queue-latency measurement remains open:
-wgpu timestamps have no calibrated host-clock mapping, so reports preserve
-submit-to-readback completion latency separately. The memory figure excludes driver
+and egui GPU timestamps are recorded. Exact CPU/GPU queue latency is not
+measurable with this wgpu timestamp path because it provides no calibrated
+host/GPU clock mapping. The evidence-backed disposition is to preserve
+submit-to-readback completion latency as a separate metric and not infer queue
+delay from it; exact attribution remains open unless calibrated clock mapping is
+added. The memory figure excludes driver
 alignment, transient allocations and timestamp storage. Three alternating 120-second
 pairs plus timed/untimed controls cover clearing, `assets/scenes/profiling-heavy.json`
 (one plume and eight point lights), and Material Atelier; a separate 120-second
@@ -296,8 +299,8 @@ native clearing route records presentation/UI/acquisition/vsync spans. Summary,
 provenance and raw-report checksums are in [measurements-o01.json](measurements-o01.json);
 full sample reports remain in the local ignored `artifacts/o01/` directory. Identical
 baseline/candidate scene inputs characterize run variance and profiling overhead,
-not optimization gains. Exact queue latency, adapters without timestamp support,
-Windows DX12 and RTX-class rendering remain unverified.
+not optimization gains. Adapters without timestamp support, Windows DX12 and
+RTX-class rendering remain unverified.
 The default `scripts/verify.py` path now runs six `profile_compare` unit tests
 before Rust validation; they cover nearest-rank summaries, missing-stage pair
 alignment, scene-relative GLB paths, route-ID selection and nested source/shader
