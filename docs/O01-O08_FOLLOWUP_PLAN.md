@@ -576,6 +576,7 @@ fallback capture also matches its headless counterpart exactly. The fallback
 uses 2,101,248 more known bytes at 640×360. This strengthens local fallback
 evidence but leaves physical unsupported-adapter and DX12 acceptance open. See
 [offscreen report](measurements-o08-rg16-fallback.json),
+[current-build recheck](measurements-o08-rg16-fallback-current-build.json),
 [native report](measurements-o08-rg16-native-fallback.json), the
 [offscreen runner](../scripts/rg16_fallback_study.py) and
 [native runner](../scripts/verify_native_rg16_fallback.py).
@@ -1058,7 +1059,9 @@ acknowledged `set_window minimized=true` but left `minimized=false`; an
 8-second focus-instrumented poll showed focus lost while `minimized` and
 `occluded` stayed false. The owner reported using the desktop concurrently, so
 other UI activity may have changed focus; this minimize result is inconclusive.
-Repeat the lifecycle check in an isolated native session. A live current-release viewport showed a
+The current checkout release rebuild has a different executable hash from the
+binary used by the recorded native runs and has only compile evidence. Repeat
+the lifecycle check with the rebuilt binary in an isolated native session. A live current-release viewport showed a
 moving tick-423 scene at 640×360, with the same tall, regular smoke-puff stack.
 This is sampled playback evidence, not owner acceptance or a temporal-quality
 measurement. Automated minimization and owner visual acceptance remain open.

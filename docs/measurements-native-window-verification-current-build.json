@@ -1,6 +1,6 @@
 {
   "date": "2026-10-19",
-  "source_revision": "c0e6c00ae93ce469164394dd987b024be67bf6b0",
+  "source_revision": "222983c7bee96caeff5b169a39240df8c91600cc",
   "host": {
     "device": "Apple M1 Max",
     "backend": "Metal",
@@ -14,6 +14,13 @@
     "command": "cargo build --release --locked",
     "result": "passed",
     "executable_sha256": "c631f966e18ffaec522026de949bdd87d133a73689d4190770756203e32f56a9"
+  },
+  "current_checkout_release_rebuild": {
+    "command": "cargo build --release --locked",
+    "result": "passed",
+    "executable_sha256": "ebd2146d8fbb502746383d47dcee67a084c6b1a29b070533d7b2372fb5235da1",
+    "native_lifecycle_rerun": false,
+    "note": "This rebuild produced a different executable hash from the release binary used for the recorded native lifecycle checks; the current checkout rebuild has only compile evidence."
   },
   "runs": [
     {
@@ -43,6 +50,7 @@
     {
       "name": "current release direct native Session control",
       "command": "target/release/engine-lab run --agent-stdio; get_window; set_window minimized=true; get_window",
+      "executable_sha256": "c631f966e18ffaec522026de949bdd87d133a73689d4190770756203e32f56a9",
       "initial_window": {
         "physical_size": [
           2560,
@@ -89,6 +97,7 @@
     {
       "name": "current release native lifecycle with focus diagnostics",
       "command": "python3 scripts/verify_native.py --binary target/release/engine-lab --minimize-timeout 8",
+      "executable_sha256": "c631f966e18ffaec522026de949bdd87d133a73689d4190770756203e32f56a9",
       "verifier_default_minimize_timeout_seconds": 5,
       "resize": true,
       "fullscreen_entry": true,

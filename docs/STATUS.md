@@ -1018,6 +1018,12 @@ decisions and unresolved visual/backend gates are consolidated in the
   does not close the O01–O08 moving-route, visual-review or cross-adapter gates.
   The full GPU verifier was rerun after adding O03 smoke-candidate dispatch/skip
   metrics; all checks passed on the instrumented build.
+  A separate current-build RG16 fallback study also forced RGBA16F effect-depth
+  and smoke targets: two scenes and all 120 sampled frames from tick 120 through
+  477 matched native-RG16 output byte-for-byte, with 2,101,248 additional known
+  bytes at 640×360. This tests fallback creation/rendering on an M1 Max that
+  supports Rg16Float; physical unsupported-adapter and DX12 acceptance remain
+  open. See [current-build report](measurements-o08-rg16-fallback-current-build.json).
 - **Native verification on 19 October, Mac unlocked:** `python3 scripts/verify.py
   --gpu --native` passed all GPU checks, then exited nonzero only at the
   minimization assertion. Native resize, fullscreen entry/exit, fixed tick-120
@@ -1030,6 +1036,10 @@ decisions and unresolved visual/backend gates are consolidated in the
   minimize request. The owner reported concurrent desktop use during these
   checks, so focus may have changed due to other UI activity. Treat minimization
   as inconclusive and repeat the lifecycle check in an isolated native session.
+  A release rebuild from the current checkout passed, but its executable hash
+  differs from the binary used by those lifecycle runs; native behavior of this
+  exact rebuilt executable remains unverified. Both hashes and run attribution
+  are recorded in the measurement JSON.
   The tick-120 scene capture was inspected. Keep minimization and restore open;
   do not substitute occlusion for minimization. The current release viewport was
   also inspected live at tick 423 with the 640×360 grid; the smoke still reads as

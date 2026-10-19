@@ -1104,8 +1104,24 @@ request, while `is_minimized` and `occluded` both stayed false. The longer wait
 did not resolve the gate. The owner reported using the desktop concurrently;
 other UI activity may have changed focus, making the minimize result
 inconclusive. Repeat in an isolated native session before diagnosing the engine
-request path. A live current-release native viewport reported tick 423
+request path. A release rebuild from the current checkout passed but produced a
+different executable hash from the binary used in the recorded lifecycle runs;
+the rebuilt binary has not received native lifecycle verification. A live
+current-release native viewport reported tick 423
 running at 640×360; the smoke still forms a tall regular stack of rounded puffs.
 This is an observed visual concern, not owner acceptance or a temporal score.
 Keep the macOS minimize/restore, owner playback, DX12 and another-adapter gates
 open. See [native verification](measurements-native-window-verification-current-build.json) and its [tick-120 capture](measurements-native-window-verification-current-build.png).
+
+## Current-build RG16 fallback recheck (19 October 2026)
+
+The current debug build reran the forced RGBA16F effect-depth and smoke-volume
+fallback comparison on Apple M1 Max/Metal at the fixed 640×360 pixel grid. The
+profiling-heavy and Materials scenes matched the native Rg16Float path at tick
+120; all 120 sampled frames from tick 120 through 477 on the moving fire-camera
+route also matched byte-for-byte. The fallback adds 2,101,248 known GPU bytes.
+This confirms current-build fallback rendering on capable hardware. It does not
+simulate a device that physically lacks Rg16Float support, nor validate DX12.
+See [the report](measurements-o08-rg16-fallback-current-build.json); the
+original forced-fallback evidence is preserved in
+[measurements-o08-rg16-fallback.json](measurements-o08-rg16-fallback.json).
