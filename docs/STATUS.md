@@ -768,6 +768,10 @@ acceptance. The `camera_draw_preparation_keeps_unknown_bounds_and_culls_known_mi
 unit test now exercises the prepared camera draw list: unknown-bound objects stay
 visible while a finite known miss is culled. This is still unit-level evidence,
 not an end-to-end GPU image comparison for unknown-bound geometry.
+Shadow transform/material invalidation now obtains the face mask and full-fallback
+decision in one bounds/frustum traversal, avoiding duplicate frustum extraction.
+The synthetic unknown-bound and invalid-frustum cases exercise this combined
+production helper; valid scene assets still cannot induce the live fallback.
 
 Three alternating serial pairs now cover a 120-second clearing orbit with a
 radius-5 `fallen-log` orbit around the fire source, sampled at 60 Hz, after a

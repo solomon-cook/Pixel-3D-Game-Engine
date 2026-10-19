@@ -434,30 +434,23 @@ fn fire_light_dirty_face_mask(
     dirty
 }
 
-fn shadow_face_mask_for_bounds(bounds: &[Option<assets::Bounds3>], matrices: &[Mat4]) -> Vec<bool> {
+fn shadow_face_mask_for_bounds(
+    bounds: &[Option<assets::Bounds3>],
+    matrices: &[Mat4],
+) -> (Vec<bool>, bool) {
     let mut dirty = vec![false; matrices.len()];
     for bound in bounds {
         let Some(bound) = bound else {
-            return vec![true; matrices.len()];
+            return (vec![true; matrices.len()], true);
         };
         for (index, matrix) in matrices.iter().enumerate() {
             let Some(frustum) = Frustum::from_view_projection(*matrix) else {
-                return vec![true; matrices.len()];
+                return (vec![true; matrices.len()], true);
             };
             dirty[index] |= frustum.intersects(bound);
         }
     }
-    dirty
-}
-
-fn shadow_bounds_require_full_fallback(
-    bounds: &[Option<assets::Bounds3>],
-    matrices: &[Mat4],
-) -> bool {
-    bounds.iter().any(Option::is_none)
-        || matrices
-            .iter()
-            .any(|matrix| Frustum::from_view_projection(*matrix).is_none())
+    (dirty, false)
 }
 
 fn only_object_transforms_changed(previous: &ShadowCacheKey, next: &ShadowCacheKey) -> bool {
@@ -4492,8 +4485,9 @@ impl Renderer {
                             .flat_map(|(_, old, new)| [old.clone(), new.clone()])
                             .collect::<Vec<_>>();
                         let matrices = shadow_matrices(scene);
-                        let transform_faces = shadow_face_mask_for_bounds(&bounds, &matrices);
-                        if shadow_bounds_require_full_fallback(&bounds, &matrices) {
+                        let (transform_faces, full_fallback) =
+                            shadow_face_mask_for_bounds(&bounds, &matrices);
+                        if full_fallback {
                             reported_reason = "unknown_caster_bounds";
                         }
                         for (dirty, transform_dirty) in
@@ -4548,8 +4542,9 @@ impl Renderer {
                         reported_reason = "unknown_shadow_material_bounds";
                     } else {
                         let matrices = shadow_matrices(scene);
-                        let material_faces = shadow_face_mask_for_bounds(&bounds, &matrices);
-                        if shadow_bounds_require_full_fallback(&bounds, &matrices) {
+                        let (material_faces, full_fallback) =
+                            shadow_face_mask_for_bounds(&bounds, &matrices);
+                        if full_fallback {
                             reported_reason = "unknown_shadow_material_bounds";
                         }
                         for (dirty, material_dirty) in dirty_faces.iter_mut().zip(material_faces) {
@@ -5699,26 +5694,21 @@ mod shadow_cache_tests {
             min: [2.8, -0.2, -0.2],
             max: [3.2, 0.2, 0.2],
         };
-        let dirty = shadow_face_mask_for_bounds(&[Some(positive_x.clone())], &matrices);
+        let (dirty, fallback) = shadow_face_mask_for_bounds(&[Some(positive_x.clone())], &matrices);
         assert_eq!(dirty, [false, true, false, false, false, false, false]);
-        assert_eq!(shadow_face_mask_for_bounds(&[None], &matrices), [true; 7]);
-        assert_eq!(
-            shadow_face_mask_for_bounds(&[Some(positive_x.clone()), None], &matrices),
-            [true; 7]
-        );
-        assert!(shadow_bounds_require_full_fallback(
-            &[Some(positive_x.clone()), None],
-            &matrices
-        ));
+        assert!(!fallback);
+        let (missing, fallback) = shadow_face_mask_for_bounds(&[None], &matrices);
+        assert_eq!(missing, [true; 7]);
+        assert!(fallback);
+        let (mixed, fallback) =
+            shadow_face_mask_for_bounds(&[Some(positive_x.clone()), None], &matrices);
+        assert_eq!(mixed, [true; 7]);
+        assert!(fallback);
         let invalid_matrices = vec![Mat4::ZERO; 7];
-        assert_eq!(
-            shadow_face_mask_for_bounds(&[Some(positive_x.clone())], &invalid_matrices),
-            [true; 7]
-        );
-        assert!(shadow_bounds_require_full_fallback(
-            &[Some(positive_x)],
-            &invalid_matrices
-        ));
+        let (invalid, fallback) =
+            shadow_face_mask_for_bounds(&[Some(positive_x)], &invalid_matrices);
+        assert_eq!(invalid, [true; 7]);
+        assert!(fallback);
     }
 
     fn scene() -> Scene {
