@@ -1,7 +1,7 @@
 {
   "version": 1,
   "date": "2026-10-19",
-  "source_revision": "225a0342dda10588fbe636e367bd0900ec0dd2c5",
+  "source_revision": "3a02ab46cf903e9feac282f5e46fa46ad2ce180d",
   "host": {
     "device": "Apple M1 Max",
     "device_type": "IntegratedGpu",
@@ -37,5 +37,12 @@
   "limitations": [
     "This is headless rendering evidence on one Metal adapter.",
     "Native-window minimization, continuous playback, owner visual acceptance, Windows/DX12, other-adapter, and target-hardware gates remain open."
-  ]
+  ],
+  "executable_sha256": "f3c8b4b1108f490173d94033ed377c7afa3e5b1ee8cc5d9935df45e881344baf",
+  "native_diagnostic_follow_up": {
+    "report": "measurements-native-window-verification-current-build.json",
+    "focused_window_minimize_button_enabled": true,
+    "os_reported_minimized_after_request": false,
+    "native_verification_included_in_this_command": false
+  }
 }
