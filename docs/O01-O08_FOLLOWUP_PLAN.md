@@ -1097,9 +1097,12 @@ enabled on a focused window, yet the request still leaves `minimized` and
 minimize request/window path. A separate active, key, visible and miniaturizable
 plain AppKit window on the same macOS 27.0.1 host also remains unminimized after
 both `miniaturize` and `performMiniaturize`. Treat this as a host/runtime
-limitation for this build pending a test of actual traffic-light input or a
-different macOS version; it does not prove which of macOS or local session
-policy is responsible.
+limitation for this build. A CUA accessibility click on the active minimize
+button was attempted on 19 October, but the post-click screen-capture request
+failed, the Session still reported `minimized: false`, and the active app binding
+could not distinguish a same-title packaged process from the current release
+window. Treat that input result as inconclusive; a different macOS version is
+still needed to distinguish OS behavior from local session policy.
 This is sampled playback evidence, not a temporal-quality measurement. The owner
 reviewed the separate 6-second offscreen preview and accepted its motion and
 visual continuity; that does not verify native playback performance or the

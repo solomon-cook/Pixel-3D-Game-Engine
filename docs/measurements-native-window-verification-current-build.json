@@ -425,5 +425,25 @@
     "is_minimized_after_perform_miniaturize": false,
     "result": "An independent plain AppKit window also failed to miniaturize through either method while active, key, visible, and enabled. This evidence supports a host/runtime-level disposition rather than an engine-specific window configuration cause, but it does not identify whether the cause is macOS 27.0.1 or local session policy.",
     "interpretation_limit": "Does not test a user clicking the window traffic-light button or another macOS version."
+  },
+  "traffic_light_ui_attempt": {
+    "date": "2026-10-19",
+    "current_release_executable_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+    "session_before": {
+      "focused": true,
+      "minimize_button_enabled": true,
+      "minimized": false,
+      "occluded": false
+    },
+    "action": "Attempted a CUA accessibility click on the active Pixel Engine Lab element identified as the minimize button.",
+    "session_after": {
+      "focused": false,
+      "minimize_button_enabled": true,
+      "minimized": false,
+      "occluded": false
+    },
+    "verification": "inconclusive",
+    "tool_error": "The post-click CUA accessibility/screenshot request failed with ScreenCaptureKit SCStreamErrorDomain code -3811 (failed to start stream).",
+    "limitation": "A separate long-running packaged Pixel Engine process with the same app identity/title was present, so the app binding could not prove that the click targeted the current release process. Do not count this as a verified traffic-light minimize test."
   }
 }

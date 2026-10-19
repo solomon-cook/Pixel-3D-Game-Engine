@@ -1150,8 +1150,12 @@ AppKit reference also reports its application active, window key and visible,
 and minimize button enabled, but both `miniaturize` and
 `performMiniaturize` leave `isMiniaturized` false. This supports an inference of
 a host/runtime limitation rather than engine-specific Winit window setup, but
-does not distinguish macOS 27.0.1 from local session policy; a real user click
-and another macOS version remain untested. Reproduce with
+does not distinguish macOS 27.0.1 from local session policy. A CUA accessibility
+click on the active minimize-button element was attempted on 19 October, but
+the post-click screen-capture request failed, the Session still reported
+`minimized: false`, and a same-title packaged process prevented reliable target
+attribution. Treat this as an inconclusive UI attempt; another macOS version
+remains untested. Reproduce with
 [`verify_native_minimize.py`](../scripts/verify_native_minimize.py); raw state
 and build identity, plus the standalone control runner, are in the
 [native verification report](measurements-native-window-verification-current-build.json).

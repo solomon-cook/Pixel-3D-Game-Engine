@@ -1107,8 +1107,12 @@ decisions and unresolved visual/backend gates are consolidated in the
   key, visible and miniaturizable; both `miniaturize` and
   `performMiniaturize` still left `isMiniaturized` false. This supports a
   host/runtime limitation rather than an engine-only setup problem, but the OS
-  version and local session policy are not separated; actual traffic-light
-  clicking and another macOS version remain untested. Current hashes and raw
+  version and local session policy are not separated. A CUA accessibility click
+  on the active minimize-button element was attempted on 19 October, but the
+  post-click screen-capture request failed and the Session still reported
+  `minimized: false`; because a same-title packaged process was also present,
+  the click target could not be tied to the current release window. Treat the
+  UI attempt as inconclusive; another macOS version remains untested. Current hashes and raw
   output are in the measurement JSON. The tick-120 scene
   capture was inspected. Keep
   minimization open;
@@ -1201,8 +1205,11 @@ motion capture measured effect CPU sampling/upload at a median 0.0103 ms; see me
 - Native programmatic minimization on the macOS 27.0.1 host is dispositioned as
   an unresolved host/runtime limitation: both the engine and a plain active
   AppKit reference window fail to report minimized after their native calls.
-  Recheck with actual traffic-light input or on another supported macOS version
-  before treating the native minimization/restore gate as qualified.
+  The 19 October CUA traffic-light attempt was inconclusive because the
+  post-click screen capture failed and an older same-title packaged process
+  prevented reliable target attribution; see the [native verification report](measurements-native-window-verification-current-build.json).
+  Another supported macOS version is still needed before treating the native
+  minimization/restore gate as qualified.
 - Reference-led billow hierarchy, heat/soot transition and multiple source scales;
   this remains further work. Basic thermal controls/independent cooling now run,
   while heat-driven persistent smoke billows are still proposed. FIRE_FIELDS.md
