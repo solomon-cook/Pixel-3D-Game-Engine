@@ -1,0 +1,25 @@
+{
+  "native_window_verified": true,
+  "adapter": "Apple M1 Max",
+  "backend": "Metal",
+  "seed": 42,
+  "tick": 120,
+  "resolution": [
+    640,
+    360
+  ],
+  "effect_depth_format": "Rgba16Float",
+  "smoke_volume_format": "Rgba16Float",
+  "known_gpu_allocation_bytes": 25064428,
+  "native_headless_png_identical": true,
+  "native_image": "artifacts/o08/current-release-rg16-native-fallback/native.png",
+  "headless_image": "artifacts/o08/current-release-rg16-native-fallback/headless.png",
+  "date": "2026-10-19",
+  "purpose": "Current-release forced RGBA16F fallback parity recheck on M1 Max/Metal.",
+  "binary_path": "target/release/engine-lab",
+  "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+  "workspace_revision_at_run": "14815a8bb03b6f8a251d34a59dcb321aaeef2b69",
+  "engine_source_worktree_status": [],
+  "runner_path": "scripts/verify_native_rg16_fallback.py",
+  "runner_sha256": "e0918b7e11e24e037f6ef9d1520855509e0b57cce74d799b8d32493f31bb0cfa"
+}

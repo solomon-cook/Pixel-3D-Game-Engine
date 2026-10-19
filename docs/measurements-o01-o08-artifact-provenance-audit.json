@@ -141,9 +141,31 @@
       "runner_sha256": "00114a9262445bf9dff522387e2f3d03942505662f37c10aa4520479109e8d0d",
       "matches_current_release_binary": true,
       "disposition": "current-release Metal sustained size study: all 36 runs use the audited release binary; 16-cubed screen-filling cache reduces GPU-render time in all three pairs, while whole-frame work is flat and other cache/scale conditions are mixed"
+    },
+    {
+      "workstream": "O08 RG16 forced-fallback offscreen current-release recheck",
+      "report": "docs/measurements-o08-rg16-fallback-current-release.json",
+      "binary_path": "target/release/engine-lab",
+      "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+      "workspace_revision_at_run": "14815a8bb03b6f8a251d34a59dcb321aaeef2b69",
+      "engine_source_worktree_status": [],
+      "runner_sha256": "c51052e50213661894b7b888f37adea283dca6f516ee0b1cb6c6822d22ae88f3",
+      "matches_current_release_binary": true,
+      "disposition": "current-release M1 Max/Metal forced fallback: two fixed-tick scenes and all 120 sampled moving-route frames match native RG16 images byte-for-byte; adds 2,101,248 known bytes; does not verify physically unsupported hardware"
+    },
+    {
+      "workstream": "O08 RG16 forced-fallback native-window current-release recheck",
+      "report": "docs/measurements-o08-rg16-native-fallback-current-release.json",
+      "binary_path": "target/release/engine-lab",
+      "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+      "workspace_revision_at_run": "14815a8bb03b6f8a251d34a59dcb321aaeef2b69",
+      "engine_source_worktree_status": [],
+      "runner_sha256": "e0918b7e11e24e037f6ef9d1520855509e0b57cce74d799b8d32493f31bb0cfa",
+      "matches_current_release_binary": true,
+      "disposition": "native window forced fallback initialized on M1 Max/Metal at tick 120 and its capture matches the headless forced-fallback PNG byte-for-byte"
     }
   ],
-  "conclusion": "The O04, O06xO08 and O07 full-orbit review reports, the O03 current native fire-bound report, and the 400-frame O06xO08 artifact correctness audit carry the current audited release hash. The current-release O05 invalidation rerun closes discrete cache freshness, and the current-release O05 sustained size study uses the same audited release binary and closes the offscreen sustained-timing gate on M1 Max/Metal. Only the 16-cubed screen-filling condition shows a repeatable GPU-render reduction; whole-frame work is effectively flat, so keep direct sampling default and caching opt-in. The 4247485106ee2d30... fixed-tick report group remains untraceable and is not present among current binaries; the O08 RG16 fallback report predates renderer/session/window source changes. Keep those historical records as exact-build evidence, not current-release proof. Recheck remaining untraceable O03/O04/O06xO08 fixed-tick claims as needed; O08 RG16 fallback still needs a current-release rerun. Windows/DX12, other adapters and native-window platform gates remain open.",
+  "conclusion": "The O04, O06xO08 and O07 full-orbit review reports, the O03 current native fire-bound report, and the 400-frame O06xO08 artifact correctness audit carry the current audited release hash. The current-release O05 invalidation rerun closes discrete cache freshness, and the current-release O05 sustained size study uses the same audited release binary and closes the offscreen sustained-timing gate on M1 Max/Metal. Only the 16-cubed screen-filling condition shows a repeatable GPU-render reduction; whole-frame work is effectively flat, so keep direct sampling default and caching opt-in. The 4247485106ee2d30... fixed-tick report group remains untraceable and is not present among current binaries; the older O08 RG16 fallback report predates renderer/session/window source changes, but a current-release offscreen and native rerun now match the audited release binary. Keep older records as exact-build evidence, not current-release proof. Recheck remaining untraceable O03/O04/O06xO08 fixed-tick claims as needed. Windows/DX12, other adapters and native-window platform gates remain open.",
   "limitations": [
     "Hash/source audit only; no renderer or adapter execution occurred.",
     "Current-source release parity is established for the current release binary only; Windows/DX12 and other adapters remain unverified."

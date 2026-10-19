@@ -450,19 +450,19 @@ select Rg16Float only with the adapter-specific format feature and required
 storage/sample support, falling back to Rgba16Float; they save 1,179,648 bytes.
 Pure capability-selection tests cover the required usages/features and the
 Rgba16Float fallback path. The diagnostic `--force-rg16-fallback` option also
-forces that branch on a capable adapter. A previous M1 Max/Metal run reported
-fallback texture and pipeline creation, two fixed-tick scenes and a 120-frame,
-20 fps moving route matching native RG16 output byte-for-byte. Its report names
-source revision `222983c`, before four engine/window source changes, so it is not
-current-source proof; rerun the forced fallback on the current release. Known allocation rises
-by 2,101,248 bytes at 640×360.
-This exercises fallback rendering but does not replace physical validation on an
-adapter without these capabilities or Windows/DX12 checks. See
-[offscreen evidence](measurements-o08-rg16-fallback.json) and
-[offscreen runner](../scripts/rg16_fallback_study.py). A native-window fallback
-session also reached tick 120 and its capture matched the headless fallback
-capture byte-for-byte; see [native evidence](measurements-o08-rg16-native-fallback.json)
-and [native runner](../scripts/verify_native_rg16_fallback.py).
+forces that branch on a capable adapter. A current-release M1 Max/Metal rerun
+confirms fallback texture/pipeline creation and byte-identical RG16-versus-forced-
+RGBA16F output for the profiling-heavy and Materials scenes at tick 120 and all
+120 sampled 20 fps moving-route frames. The native-window fallback initializes
+at tick 120 and its capture matches the headless fallback image byte-for-byte.
+The fallback adds 2,101,248 known allocation bytes at 640×360. Both reports
+record release hash `740bc2c4…` and clean engine-source status. This closes
+current-release forced-fallback checks on this capable adapter; it does not test
+hardware that lacks Rg16Float support or Windows/DX12. See [current offscreen
+evidence](measurements-o08-rg16-fallback-current-release.json), [current native
+evidence](measurements-o08-rg16-native-fallback-current-release.json),
+[historical offscreen evidence](measurements-o08-rg16-fallback.json) and
+[runners](../scripts/rg16_fallback_study.py).
 The live allocation estimate also includes the tile debug uniform (16 bytes)
 and timestamp resolve/readback buffers (864 bytes when timing is enabled); the
 opaque query-set storage remains excluded. Tile-stat buffers/readbacks were

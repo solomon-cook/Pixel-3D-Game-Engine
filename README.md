@@ -63,7 +63,9 @@ fallbacks. Other memory layout work remains proposed. Measurements are recorded 
 [docs/measurements-o08-smoke-bind-layout-native.json](docs/measurements-o08-smoke-bind-layout-native.json),
 [docs/measurements-o08-smoke-bind-layout-native-profiling-heavy.json](docs/measurements-o08-smoke-bind-layout-native-profiling-heavy.json),
 [docs/measurements-o08-smoke-bind-layout-native-materials.json](docs/measurements-o08-smoke-bind-layout-native-materials.json) and
-[docs/measurements-o08-smoke-bind-layout-native-two-emitter.json](docs/measurements-o08-smoke-bind-layout-native-two-emitter.json).
+[docs/measurements-o08-smoke-bind-layout-native-two-emitter.json](docs/measurements-o08-smoke-bind-layout-native-two-emitter.json),
+[docs/measurements-o08-rg16-fallback-current-release.json](docs/measurements-o08-rg16-fallback-current-release.json) and
+[docs/measurements-o08-rg16-native-fallback-current-release.json](docs/measurements-o08-rg16-native-fallback-current-release.json).
 
 ## Start
 

@@ -1324,6 +1324,22 @@ Rg16Float support or validate DX12. See [the report](measurements-o08-rg16-fallb
 original forced-fallback evidence is preserved in
 [measurements-o08-rg16-fallback.json](measurements-o08-rg16-fallback.json).
 
+## Current-release RG16 fallback verification (19 October 2026)
+
+The audited release binary (`740bc2c4…`) now exercises forced RGBA16F
+effect-depth and smoke-volume targets on M1 Max/Metal. Profiling-heavy and
+Materials captures at tick 120 and all 120 sampled frames (ticks 120–477) on
+the clearing orbit match the default Rg16Float output byte-for-byte. A native
+window run initializes the same forced fallback at tick 120; its capture matches
+the headless fallback image exactly. Known allocation increases by 2,101,248
+bytes at 640×360. The report records source revision `14815a8` and clean engine
+source paths. This closes the current-release forced-fallback gate on a capable
+Metal adapter. It does not test hardware physically lacking Rg16Float support,
+Windows/DX12 or another adapter. See the
+[offscreen report](measurements-o08-rg16-fallback-current-release.json),
+[native report](measurements-o08-rg16-native-fallback-current-release.json) and
+[artifact audit](measurements-o01-o08-artifact-provenance-audit.json).
+
 ## Debug/release fixed-tick output comparison (19 October 2026)
 
 Eleven M1 Max/Metal captures used seed 42, tick 120 and the selected 640×360

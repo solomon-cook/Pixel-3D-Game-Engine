@@ -663,19 +663,16 @@ remain open. See
 [native report](measurements-o08-lazy-optical-native.json) and
 [runner](../scripts/lazy_optical_native_study.py).
 
-The RG16 fallback has a diagnostic `--force-rg16-fallback` path that exercises
-RGBA16F effect-target and smoke-volume creation/rendering on a capable adapter.
-An earlier-source M1 Max/Metal run reports two fixed-tick scenes and all 120
-sampled frames across a moving fire-camera route matching native RG16 output;
-it also reports a native-window capture matching its headless counterpart. The
-report source predates four engine/window changes, so current-source fallback
-correctness needs a release-binary rerun. The fallback uses 2,101,248 more known
-bytes at 640×360. Physical unsupported-adapter and DX12 acceptance also remain
-open. See
-[offscreen report](measurements-o08-rg16-fallback.json),
-[current-build recheck](measurements-o08-rg16-fallback-current-build.json),
-[artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json),
-[native report](measurements-o08-rg16-native-fallback.json), the
+The diagnostic `--force-rg16-fallback` path now has current-release M1 Max/Metal
+offscreen and native-window checks. Two fixed-tick scenes and all 120 sampled
+frames on the moving fire-camera route match native RG16 images byte-for-byte;
+the native-window capture also matches the headless forced-fallback image. The
+fallback uses 2,101,248 more known bytes at 640×360. This closes forced-fallback
+resource/shader/capture validation on a capable adapter, not physical selection
+on hardware that lacks Rg16Float or Windows/DX12. See [current offscreen report](measurements-o08-rg16-fallback-current-release.json),
+[current native report](measurements-o08-rg16-native-fallback-current-release.json),
+[provenance audit](measurements-o01-o08-artifact-provenance-audit.json),
+[historical report](measurements-o08-rg16-fallback.json), the
 [offscreen runner](../scripts/rg16_fallback_study.py) and
 [native runner](../scripts/verify_native_rg16_fallback.py).
 
@@ -735,11 +732,10 @@ driver-allocation limitations in the inventory; do not present known allocation 
 physical device residency.
 
 **Exit gate:** every candidate has an independent disposition and verification
-scope. The O08 umbrella stays open while current-source fallback correctness,
-required physical fallback or target-backend validation is missing. The existing
-forced-fallback capture is from source `222983c`, before four engine/window
-changes, and must be repeated on the current release. Forced fallback on the
-M1 Max still does not substitute for an adapter that lacks RG16 capabilities.
+scope. Current-release forced-fallback correctness is now verified on M1 Max/Metal.
+The O08 umbrella remains open while physical fallback behavior on hardware that
+lacks RG16 support or target-backend validation is missing. Forced fallback on
+the M1 Max does not substitute for a physically unsupported adapter.
 
 ## Wave 4 — Scale scene structure and identify the next GPU bottleneck
 
@@ -1152,7 +1148,7 @@ finishes. A compile or a passing unit test does not close visual or hardware gat
 | O05 absorption cache | Keep direct sampling selected and caching disabled. Current-release sustained performance shows a repeatable 16³ GPU-render reduction only at screen-filling coverage (-0.104/-0.312/-0.032 ms); whole-frame work is effectively flat while CPU cache encoding increases. Other scales/sizes are mixed. Current-release invalidation matches fire state at all 13 checkpoints for both sizes; 16³ has lower image error at every checkpoint (mean RGB MAE 0.067/255 vs 0.217/255), using 32,768/4,096 cache bytes. No broad whole-frame gain or automatic threshold is established. [Current-release sustained](measurements-o05-size-current-release.json), [current-release invalidation](measurements-o05-invalidation-current-release.json), [historical size study](measurements-o05-size-study.json), [dual-emitter timing](measurements-multi-emitter-absorption-native-sustained.json), [source audit](measurements-o05-current-review-source-audit.json), [provenance audit](measurements-o05-invalidation-provenance-audit.json). | Current-build continuous owner review if promotion is reconsidered; native-window performance and other-adapter evidence. |
 | O06 opaque-light reuse | Keep reuse disabled: exact-depth guarding removed the moving-route spike, but sustained comparisons show no reliable whole-render benefit. The earlier behind-view fixed-tick error does not reproduce on the current release. Owner accepted motion and continuity in both the six-second and extended 20-second current-release eight-variant offscreen reviews; effect counts match every frame in the 400-frame sequence. The separate 240-frame 4247… recheck has no source/binary path provenance. [Full-orbit temporal](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json), [current guard recheck](measurements-o06-depth-guard-current-release.json), [current-release sustained](measurements-o06-exact-depth-sustained-current-release.json), [older-source recheck](measurements-o06-o08-factorial-current-build-recheck.json), [artifact audit](measurements-o01-o08-artifact-provenance-audit.json). | Broader optical camera review, native playback/performance follow-up and another adapter. |
 | O07 culling and instancing | Keep the existing path; shadow-stage savings grow with scene size but whole-frame/native results are mixed and non-monotonic. Do not add indirect or occlusion submission. The owner accepted shadow position and motion in the 20-second three-mode offscreen playback. Exact cache-vs-forced redraw parity holds at all 400 poses. Paired screen masks place the point-light shadow centroid 134 px left of the rock at tick 600 and 65 px right at tick 900, while the sun shadow remains directional; these samples do not show a fixed rock-relative point-shadow offset. [Review](measurements-o07-owner-continuous-current-build.json), [freshness](measurements-o07-shadow-freshness-current-release.json), [shadow projection](measurements-o07-shadow-projection-mask-current-build.json), [scale](measurements-o07-moving-caster.json), [native](measurements-o07-native-scale-study.json). | Native playback/performance follow-up, the rest of the 120-second route and non-Metal qualification. |
-| O08 resource/pass candidates | Keep independent candidate decisions and capability fallbacks. The 19 October forced RGBA16F fallback report names source `222983c`, before four engine/window changes; its two-scene and 120-frame parity is not current-source proof. Compact HDR's current-release 38/255 full-orbit peak is one pixel in one frame, localized in [peak analysis](measurements-o08-compact-hdr-peak-error-analysis.json); the owner accepted motion and visual continuity for the extended eight-variant current-release offscreen comparison. Keep compact HDR and no-copy experimental because no whole-window benefit or external bandwidth gain is established. [Decisions](DECISIONS_O08.md), [full-orbit temporal](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json), [factorial](measurements-o06-o08-factorial.json), [older-source 240-frame recheck](measurements-o06-o08-factorial-current-build-recheck.json), [RG16 fallback report](measurements-o08-rg16-fallback-current-build.json), [artifact audit](measurements-o01-o08-artifact-provenance-audit.json). | Current-release forced-fallback recheck, physical unsupported-format fallback and target-backend/DX12 qualification. |
+| O08 resource/pass candidates | Keep independent candidate decisions and capability fallbacks. Current-release forced RGBA16F fallback now has two-scene and 120-frame pixel-identical offscreen evidence plus native-window/headless capture parity on M1 Max/Metal; the fallback costs 2,101,248 known bytes at 640×360. This does not test a physically unsupported adapter. Compact HDR's current-release 38/255 full-orbit peak is one pixel in one frame, localized in [peak analysis](measurements-o08-compact-hdr-peak-error-analysis.json); the owner accepted motion and visual continuity for the extended eight-variant current-release offscreen comparison. Keep compact HDR and no-copy experimental because no whole-window benefit or external bandwidth gain is established. [Decisions](DECISIONS_O08.md), [full-orbit temporal](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json), [factorial](measurements-o06-o08-factorial.json), [older-source 240-frame recheck](measurements-o06-o08-factorial-current-build-recheck.json), [current RG16 offscreen](measurements-o08-rg16-fallback-current-release.json), [current RG16 native](measurements-o08-rg16-native-fallback-current-release.json), [artifact audit](measurements-o01-o08-artifact-provenance-audit.json). | Physical unsupported-format fallback and target-backend/DX12 qualification. |
 | Bounded two-emitter extension | Fixed-tick ordering, fallback, shader rollback and selected native controls are verified on M1 Max/Metal; cap remains two because the maximum-budget route has mixed whole-render cost. [Correctness](measurements-multi-emitter-overflow.json), [sustained](measurements-multi-emitter-sustained.json). | Continuous playback, broader resource-recreation, sustained native benefit, Windows/DX12 and another adapter. |
 
 ### Native window control gate (19 October 2026)

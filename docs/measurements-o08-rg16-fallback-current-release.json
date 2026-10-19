@@ -1,0 +1,1551 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "purpose": "Current-release forced RGBA16F fallback parity recheck on M1 Max/Metal.",
+  "adapter": {
+    "name": "Apple M1 Max",
+    "backend": "Metal",
+    "fallback_kind": "forced capability-selection fallback; not evidence from hardware lacking Rg16Float support"
+  },
+  "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+  "binary_path": "target/release/engine-lab",
+  "workspace_revision_at_run": "14815a8bb03b6f8a251d34a59dcb321aaeef2b69",
+  "engine_source_worktree_status": [],
+  "cases": [
+    {
+      "scene": "assets/scenes/profiling-heavy.json",
+      "scene_sha256": "f736a0779a868d11c22d761b46a0920eb1b154db6241088c9d09a9fa1ca8a05b",
+      "camera": "fire-study",
+      "adapter": "Apple M1 Max",
+      "backend": "Metal",
+      "seed": 42,
+      "tick": 120,
+      "resolution": [
+        640,
+        360
+      ],
+      "baseline": {
+        "image": "artifacts/o08/current-release-rg16-fallback/profiling-heavy-native-rg16.png",
+        "effect_depth_format": "Rg16Float",
+        "smoke_volume_format": "Rg16Float",
+        "known_gpu_allocation_bytes": 22963180
+      },
+      "fallback": {
+        "image": "artifacts/o08/current-release-rg16-fallback/profiling-heavy-forced-rgba16.png",
+        "forced": true,
+        "effect_depth_format": "Rgba16Float",
+        "smoke_volume_format": "Rgba16Float",
+        "known_gpu_allocation_bytes": 25064428
+      },
+      "allocation_delta_bytes": 2101248,
+      "image_comparison": {
+        "pixel_identical": true,
+        "changed_pixels": 0,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
+      }
+    },
+    {
+      "scene": "assets/scenes/materials.json",
+      "scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
+      "camera": "hero",
+      "adapter": "Apple M1 Max",
+      "backend": "Metal",
+      "seed": 42,
+      "tick": 120,
+      "resolution": [
+        640,
+        360
+      ],
+      "baseline": {
+        "image": "artifacts/o08/current-release-rg16-fallback/materials-native-rg16.png",
+        "effect_depth_format": "Rg16Float",
+        "smoke_volume_format": "Rg16Float",
+        "known_gpu_allocation_bytes": 17036996
+      },
+      "fallback": {
+        "image": "artifacts/o08/current-release-rg16-fallback/materials-forced-rgba16.png",
+        "forced": true,
+        "effect_depth_format": "Rgba16Float",
+        "smoke_volume_format": "Rgba16Float",
+        "known_gpu_allocation_bytes": 19138244
+      },
+      "allocation_delta_bytes": 2101248,
+      "image_comparison": {
+        "pixel_identical": true,
+        "changed_pixels": 0,
+        "total_pixels": 230400,
+        "mean_absolute_channel_error": 0.0,
+        "max_channel_error": 0,
+        "difference_bounds": null
+      }
+    }
+  ],
+  "moving_route": {
+    "scene": "assets/scenes/profiling-heavy.json",
+    "route": "clearing-orbit",
+    "seed": 42,
+    "start_tick": 120,
+    "frame_stride_ticks": 3,
+    "captured_frames_per_variant": 120,
+    "native_sequence": "artifacts/o08/current-release-rg16-fallback/motion-native-rg16/sequence.json",
+    "fallback_sequence": "artifacts/o08/current-release-rg16-fallback/motion-forced-rgba16/sequence.json",
+    "frame_comparisons": [
+      {
+        "index": 0,
+        "tick": 120,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 1,
+        "tick": 123,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 2,
+        "tick": 126,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 3,
+        "tick": 129,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 4,
+        "tick": 132,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 5,
+        "tick": 135,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 6,
+        "tick": 138,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 7,
+        "tick": 141,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 8,
+        "tick": 144,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 9,
+        "tick": 147,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 10,
+        "tick": 150,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 11,
+        "tick": 153,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 12,
+        "tick": 156,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 13,
+        "tick": 159,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 14,
+        "tick": 162,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 15,
+        "tick": 165,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 16,
+        "tick": 168,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 17,
+        "tick": 171,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 18,
+        "tick": 174,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 19,
+        "tick": 177,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 20,
+        "tick": 180,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 21,
+        "tick": 183,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 22,
+        "tick": 186,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 23,
+        "tick": 189,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 24,
+        "tick": 192,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 25,
+        "tick": 195,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 26,
+        "tick": 198,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 27,
+        "tick": 201,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 28,
+        "tick": 204,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 29,
+        "tick": 207,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 30,
+        "tick": 210,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 31,
+        "tick": 213,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 32,
+        "tick": 216,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 33,
+        "tick": 219,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 34,
+        "tick": 222,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 35,
+        "tick": 225,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 36,
+        "tick": 228,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 37,
+        "tick": 231,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 38,
+        "tick": 234,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 39,
+        "tick": 237,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 40,
+        "tick": 240,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 41,
+        "tick": 243,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 42,
+        "tick": 246,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 43,
+        "tick": 249,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 44,
+        "tick": 252,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 45,
+        "tick": 255,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 46,
+        "tick": 258,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 47,
+        "tick": 261,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 48,
+        "tick": 264,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 49,
+        "tick": 267,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 50,
+        "tick": 270,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 51,
+        "tick": 273,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 52,
+        "tick": 276,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 53,
+        "tick": 279,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 54,
+        "tick": 282,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 55,
+        "tick": 285,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 56,
+        "tick": 288,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 57,
+        "tick": 291,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 58,
+        "tick": 294,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 59,
+        "tick": 297,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 60,
+        "tick": 300,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 61,
+        "tick": 303,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 62,
+        "tick": 306,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 63,
+        "tick": 309,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 64,
+        "tick": 312,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 65,
+        "tick": 315,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 66,
+        "tick": 318,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 67,
+        "tick": 321,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 68,
+        "tick": 324,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 69,
+        "tick": 327,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 70,
+        "tick": 330,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 71,
+        "tick": 333,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 72,
+        "tick": 336,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 73,
+        "tick": 339,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 74,
+        "tick": 342,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 75,
+        "tick": 345,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 76,
+        "tick": 348,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 77,
+        "tick": 351,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 78,
+        "tick": 354,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 79,
+        "tick": 357,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 80,
+        "tick": 360,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 81,
+        "tick": 363,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 82,
+        "tick": 366,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 83,
+        "tick": 369,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 84,
+        "tick": 372,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 85,
+        "tick": 375,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 86,
+        "tick": 378,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 87,
+        "tick": 381,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 88,
+        "tick": 384,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 89,
+        "tick": 387,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 90,
+        "tick": 390,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 91,
+        "tick": 393,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 92,
+        "tick": 396,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 93,
+        "tick": 399,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 94,
+        "tick": 402,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 95,
+        "tick": 405,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 96,
+        "tick": 408,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 97,
+        "tick": 411,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 98,
+        "tick": 414,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 99,
+        "tick": 417,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 100,
+        "tick": 420,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 101,
+        "tick": 423,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 102,
+        "tick": 426,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 103,
+        "tick": 429,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 104,
+        "tick": 432,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 105,
+        "tick": 435,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 106,
+        "tick": 438,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 107,
+        "tick": 441,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 108,
+        "tick": 444,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 109,
+        "tick": 447,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 110,
+        "tick": 450,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 111,
+        "tick": 453,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 112,
+        "tick": 456,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 113,
+        "tick": 459,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 114,
+        "tick": 462,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 115,
+        "tick": 465,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 116,
+        "tick": 468,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 117,
+        "tick": 471,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 118,
+        "tick": 474,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      },
+      {
+        "index": 119,
+        "tick": 477,
+        "image_comparison": {
+          "pixel_identical": true,
+          "changed_pixels": 0,
+          "total_pixels": 230400,
+          "mean_absolute_channel_error": 0.0,
+          "max_channel_error": 0,
+          "difference_bounds": null
+        }
+      }
+    ],
+    "all_frames_pixel_identical": true,
+    "mean_changed_pixels": 0.0,
+    "max_channel_error": 0
+  },
+  "all_pixel_identical": true,
+  "runner_sha256": "c51052e50213661894b7b888f37adea283dca6f516ee0b1cb6c6822d22ae88f3",
+  "motion_capture_runner_sha256": "632e74b9f59f88d65d33665fc5eb8ef6220222a8bad55d0133007141a2006b7e",
+  "limitations": [
+    "Both captures use the same Apple M1 Max/Metal adapter; the fallback is selected through a diagnostic CLI override.",
+    "This exercises fallback resource and shader creation but does not replace physical validation on an adapter without the Rg16Float capabilities.",
+    "Fixed-tick images do not establish temporal or performance parity.",
+    "The moving-route comparison samples 120 frames at 20 fps; it is temporal evidence, not a 120-second sustained performance study."
+  ],
+  "runner_path": "scripts/rg16_fallback_study.py"
+}
