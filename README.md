@@ -35,6 +35,7 @@ fallbacks. Other memory layout work remains proposed. Measurements are recorded 
 [docs/measurements-o05-temporal-current-release.json](docs/measurements-o05-temporal-current-release.json),
 [docs/measurements-o05-native-current-release.json](docs/measurements-o05-native-current-release.json),
 [docs/measurements-gpu-verification-current-release.json](docs/measurements-gpu-verification-current-release.json),
+[docs/measurements-native-benchmark-occlusion-guard.json](docs/measurements-native-benchmark-occlusion-guard.json),
 [docs/measurements-o05-temporal-cache8.json](docs/measurements-o05-temporal-cache8.json),
 [docs/measurements-multi-emitter-absorption-moving-route.json](docs/measurements-multi-emitter-absorption-moving-route.json),
 [docs/measurements-multi-emitter-absorption-moving-route-cache16.json](docs/measurements-multi-emitter-absorption-moving-route-cache16.json),

@@ -9,12 +9,12 @@
     "os": "macOS-27.0.1-arm64-arm-64bit",
     "native": false
   },
-  "source_revision": "ff7a7e8ea29fe6356cb295c99731c14043227916",
+  "source_revision": "1eb7f1d30090f60f6ffebda93d9fcd86fd3dfb78",
   "engine_source_dirty_paths": [],
   "verifier_path": "scripts/verify.py",
   "verifier_sha256": "d5cb93830141843de1d309cd02756f818d03306da74510850785755ccec56eee",
   "binary_path": "target/debug/engine-lab",
-  "binary_sha256": "f3c8b4b1108f490173d94033ed377c7afa3e5b1ee8cc5d9935df45e881344baf",
+  "binary_sha256": "fac34432750f33a8e97f5375cec192ba6e71c060343106c254213db074edb576",
   "result": {
     "passed": true,
     "profile_compare_tests": 6,
@@ -34,6 +34,7 @@
   "limitations": [
     "Apple M1 Max/Metal only; does not validate native window playback, Windows/DX12, another adapter or target hardware.",
     "The verifier forced RG16 fallback on a device that supports RG16; physical unsupported-format behavior remains unverified.",
+    "Native benchmark occlusion fail-fast is validated separately; this verifier run has native=false.",
     "Build emitted the existing Rust future-incompatibility notice for the third-party block 0.1.6 package; all required checks passed."
   ]
 }

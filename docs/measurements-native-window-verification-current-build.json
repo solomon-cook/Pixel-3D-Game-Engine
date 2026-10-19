@@ -519,14 +519,16 @@
     "interpretation": "The engine call matches the pinned Winit macOS implementation. An independent active AppKit reference window also failed to miniaturize on macOS 27.0.1 with the miniaturize button enabled. This supports a host/session limitation, but does not identify its cause or verify another macOS version; leave the gate open."
   },
   "current_source_audit": {
-    "checkout_revision_audited": "ff7a7e8ea29fe6356cb295c99731c14043227916",
-    "latest_native_and_gpu_source_revision": "ff7a7e8ea29fe6356cb295c99731c14043227916",
+    "checkout_revision_audited": "1eb7f1d30090f60f6ffebda93d9fcd86fd3dfb78",
+    "latest_native_and_gpu_source_revision": "1eb7f1d30090f60f6ffebda93d9fcd86fd3dfb78",
+    "last_full_native_lifecycle_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
     "engine_dependency_toolchain_changes_since_validation": [],
     "release_executable_path": "target/release/engine-lab",
-    "release_executable_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
-    "matches_latest_idle_native_verification_binary": true,
-    "latest_debug_executable_sha256": "f3c8b4b1108f490173d94033ed377c7afa3e5b1ee8cc5d9935df45e881344baf",
-    "interpretation": "GPU verification and native lifecycle rerun apply to the current engine source. The latest full native command passes GPU checks and all measured lifecycle checks except OS-reported minimization. The new request led to occlusion without minimized state, so minimization remains unverified; Windows/DX12, other adapters and native sustained playback remain separate gates."
+    "release_executable_sha256": "3c9dce999ee733ea421f07da18e53c45f277b32b6734693e85a9faf7bedd49c5",
+    "matches_latest_idle_native_verification_binary": false,
+    "latest_native_benchmark_occlusion_report": "docs/measurements-native-benchmark-occlusion-guard.json",
+    "interpretation": "The full resize/fullscreen/minimization lifecycle result predates the benchmark-only occlusion guard and remains open at minimization. The current release source was built and the native benchmark occlusion-abort path was verified separately; this is not a full native lifecycle rerun. Windows/DX12, other adapters and sustained native playback remain separate gates.",
+    "latest_debug_executable_sha256": "fac34432750f33a8e97f5375cec192ba6e71c060343106c254213db074edb576"
   },
   "latest_debug_native_verification_2026_10_19": {
     "date": "2026-10-19",

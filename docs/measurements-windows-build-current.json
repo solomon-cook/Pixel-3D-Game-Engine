@@ -1,7 +1,7 @@
 {
   "version": 1,
   "date": "2026-10-19",
-  "source_revision": "d9a85308afbaa5ff3ed5bd7609e4055b8c4c725f",
+  "source_revision": "1eb7f1d30090f60f6ffebda93d9fcd86fd3dfb78",
   "host": {
     "device": "Apple M1 Max",
     "operating_system": "macOS 27.0.1",
@@ -10,32 +10,34 @@
   "target": "x86_64-pc-windows-gnu",
   "commands": [
     "cargo check --locked --workspace --target x86_64-pc-windows-gnu",
-    "cargo build --locked --release --workspace --target x86_64-pc-windows-gnu",
-    "cargo run --locked -p engine-lab -- describe"
+    "cargo build --release --locked --target x86_64-pc-windows-gnu",
+    "cargo check --release --locked --target x86_64-pc-windows-msvc",
+    "cargo build --release --locked --target x86_64-pc-windows-msvc"
   ],
   "result": "passed",
   "artifact": {
     "path": "target/x86_64-pc-windows-gnu/release/engine-lab.exe",
     "file_type": "PE32+ executable, x86-64, Windows",
-    "sha256": "6cd325e371f3b6850387a0454993722c99e14dce54735c121640a7224961cfc4"
+    "sha256": "b66cbcf30c6fdcd813fa13aa1fa478fd9f5b7aa4126c4b7c69e876a0a4c4e9b3"
   },
-  "scope": "The current checkout passed the locked workspace check and release link for x86_64 Windows GNU, and the Mac-hosted engine-lab describe output was valid with the required shared operations and authoritative scene schema. The release PE is byte-identical to the earlier artifact because engine source, Cargo.lock and rust-toolchain.toml are unchanged since its prior link. This does not execute Windows, create a DX12 device, render, or establish Windows image, motion, performance, or target-hardware acceptance.",
+  "scope": "The current source passes a locked GNU Windows workspace check and optimized release link, and an optimized MSVC target check. The MSVC release link cannot run on this Mac because link.exe (Visual Studio C++ Build Tools) is not installed. Neither cross-target check executes Windows, creates a DX12 device, renders, or establishes Windows image, motion, performance, or target-hardware acceptance.",
   "open_gates": [
+    "MSVC release link requires Windows Visual Studio C++ Build Tools",
     "Windows execution and DX12 rendering",
     "Windows image and motion review",
     "Windows performance on target hardware"
   ],
   "validation": {
-    "current_source_workspace_check": "passed",
-    "current_source_release_link": "passed",
-    "engine_lab_describe_json": "passed",
+    "current_source_gnu_workspace_check": "passed",
+    "current_source_gnu_release_link": "passed",
+    "current_source_msvc_release_check": "passed",
+    "current_source_msvc_release_link": "not_run_linker_missing",
+    "msvc_link_error": "link.exe not found; Visual Studio C++ Build Tools are not installed on this Mac",
+    "engine_lab_describe_json": "previous current-source protocol check passed; protocol/schema unchanged by this renderer-window change",
     "required_protocol_operations": "capture_frame, describe, get_metrics, inspect_scene, set_object_transform, set_shadow_cache, set_tile_lists, set_simulation_batching",
-    "engine_sources_changed_since_prior_windows_pe": false,
+    "engine_sources_changed_since_prior_windows_pe": true,
     "toolchain": "Rust 1.99.1",
-    "current_source_msvc_target_check": "passed",
-    "msvc_target_command": "cargo check --locked --workspace --target x86_64-pc-windows-msvc",
-    "msvc_target_linked_or_executed": false,
-    "msvc_target_scope": "Windows-specific Rust code type-checks for the MSVC target; no MSVC link, Windows execution, or DX12 validation.",
-    "msvc_check_checkout_revision": "438b444c8a612a3719ad5ffdf01576cb36225710"
+    "target_gnu": "x86_64-pc-windows-gnu",
+    "target_msvc": "x86_64-pc-windows-msvc"
   }
 }

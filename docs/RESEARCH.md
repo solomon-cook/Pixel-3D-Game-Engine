@@ -1495,3 +1495,20 @@ no timing conclusion. Repeat only when the app remains foreground and timing
 coverage reaches at least 99%. See the [hashed attempt disposition](measurements-o04-native-bonfire-foreground-attempt.json)
 and local raw engine report at
 `artifacts/o04/bonfire-native-foreground-pilot/pair-01-direct.engine.json`.
+
+
+## Native benchmark occlusion guard (19 October 2026)
+
+The native benchmark previously depended on a redraw to reach its completion
+check. Occluded surfaces skip drawing, so a zero-frame run could remain open
+instead of reporting that it was unusable. The current implementation writes a
+report with `completion_status: aborted` and `abort_reason: window_occluded`,
+then exits nonzero when the native OS reports occlusion. It also schedules a
+wall-clock frame deadline for a benchmark that stops receiving redraws. A release
+build was exercised on M1 Max/Metal twice: the first run wrote the marked
+incomplete report after 69 frames (68 timed) and about 1.14 measured seconds; a
+final-source run aborted before the first frame. Both exited nonzero as expected,
+and neither meets the study's full-duration and 99% coverage requirements. This
+verifies invalid-run handling only; valid foreground timing and platform
+qualification remain open. See the [focused check](measurements-native-benchmark-occlusion-guard.json)
+and implementation in [window.rs](../crates/engine-lab/src/window.rs).

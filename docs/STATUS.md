@@ -133,10 +133,13 @@ adds three alternating 120-second pairs with full timing coverage: paired median
 are -0.079 ms atmosphere/fire GPU time, -0.0067 ms native-frame time, -0.039 fps
 and +0.153 ms renderer-encode time. The GPU stage improves in two pairs, but
 there is no whole-window gain. Bonfire native timing remains open: two attempts became
-occluded, and a 20-second current-release foreground pilot also produced 0/0
-rendered and timed direct frames (three late-render events). None is valid
-performance evidence; repeat only when the native window produces at least 99%
-timing coverage. See [the hashed pilot disposition](measurements-o04-native-bonfire-foreground-attempt.json).
+occluded, and a 20-second current-release pilot produced 0/0 rendered/timed direct
+frames. The native benchmark now writes an explicit aborted report and exits
+nonzero on occlusion. One release check collected 69 frames, only 68 timed, before
+aborting after about 1.14 seconds; the final-source check aborted before any frame.
+Both are invalid performance evidence. Repeat only when the window stays foreground
+for the full route and reaches at least 99% timing coverage. See the [pilot disposition](measurements-o04-native-bonfire-foreground-attempt.json)
+and [occlusion-guard check](measurements-native-benchmark-occlusion-guard.json).
 Other adapters also remain open. See the [campfire report](measurements-o04-native-current-release.json) and
 [quiet report](measurements-o04-native-quiet-current-release.json).
 The earlier 14-checkpoint fire-state recheck uses binary hash
@@ -1061,8 +1064,10 @@ comparison tests, the locked workspace build, scene validation, headless GPU
 protocol/replay, and materials and pixel-fire GPU checks. Its binary and verifier
 hashes and exact scope are recorded in
 [the current GPU verification report](measurements-gpu-verification-current-release.json).
-This does not validate native window playback, Windows/DX12, another adapter, or a
-physically unsupported RG16 target.
+The native benchmark now aborts with an explicit incomplete report if the OS
+occludes its window; see [the focused check](measurements-native-benchmark-occlusion-guard.json).
+This GPU verification does not validate native window playback, Windows/DX12,
+another adapter, or a physically unsupported RG16 target.
 
 ## O07 object bounds, culling and shared meshes
 
@@ -1316,11 +1321,11 @@ decisions and unresolved visual/backend gates are consolidated in the
   release build and `engine-lab describe` protocol check, including the
   minimize-button field, are recorded in
   [the current macOS build report](measurements-macos-build-current.json). The
-  current checkout passes locked workspace checks for Windows GNU and MSVC,
-  and a GNU-target release link; its PE hash matches the previously recorded artifact because no engine,
-  lockfile or toolchain files changed since that build. See [current Windows
-  build report](measurements-windows-build-current.json).
-  This Mac cross-build does not execute Windows or establish DX12 rendering,
+  current source passes a locked Windows GNU workspace check and release link,
+  plus an optimized MSVC target check. The MSVC release link cannot run here because
+  `link.exe` is unavailable. The current GNU PE hash is recorded in the [Windows
+  build report](measurements-windows-build-current.json). These Mac cross-builds do
+  not execute Windows or establish DX12 rendering,
   image/motion quality or target-hardware performance. Initial repository CI
   passed on both hosted platforms, but predates this current source revision.
 - Matched stills were inspected. Original puff shapes and child bubbles remain;
@@ -1331,11 +1336,12 @@ decisions and unresolved visual/backend gates are consolidated in the
 ## Measured performance
 
 - **19 October 2026, Apple M1 Max / Metal, current checkout:** reran
-  `python3 scripts/verify.py --gpu` at source revision `58e287d7a9d1893ebf27d198cc4df216edd4dbfe`. Formatting,
-  warning-denied Clippy, 42 Rust unit tests, the locked build, scene validation,
-  headless GPU protocol/replay, materials GPU checks and pixel-fire GPU checks
-  passed. `verified=true`, `gpu=true`, `native=false`; Windows/DX12 and other
-  adapters remain unverified. See the [current verifier record](measurements-gpu-verification-current-release.json).
+  `python3 scripts/verify.py --gpu` at source revision `1eb7f1d30090f60f6ffebda93d9fcd86fd3dfb78`. Formatting,
+  warning-denied Clippy, 42 Rust unit tests, six profile-comparison tests, the
+  locked build, scene validation, headless GPU protocol/replay, materials GPU
+  checks and pixel-fire GPU checks passed. `verified=true`, `gpu=true`,
+  `native=false`; Windows/DX12 and other adapters remain unverified. See the
+  [current verifier record](measurements-gpu-verification-current-release.json).
 
 ### O01 profiling characterization
 

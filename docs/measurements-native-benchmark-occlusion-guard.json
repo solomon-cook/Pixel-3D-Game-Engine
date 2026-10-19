@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-19",
+  "study": "Native benchmark occlusion fail-fast",
+  "source_revision": "1eb7f1d30090f60f6ffebda93d9fcd86fd3dfb78",
+  "source_path": "crates/engine-lab/src/window.rs",
+  "source_sha256": "1fee016532b4c3a07ef484b3963769c74a80346eea42b1aa52ee4c472c05fd6a",
+  "binary_path": "target/release/engine-lab",
+  "binary_sha256": "3c9dce999ee733ea421f07da18e53c45f277b32b6734693e85a9faf7bedd49c5",
+  "debug_binary_sha256": "fac34432750f33a8e97f5375cec192ba6e71c060343106c254213db074edb576",
+  "command": "target/release/engine-lab benchmark-native --scene artifacts/o04/bonfire-native-foreground-pilot/scenes/bonfire-direct.json --camera hero --seed 42 --route projected-detail-review-orbit --duration 8 --warmup 2 --output /tmp/native-benchmark-occlusion-watchdog-release.json",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "pixel_resolution": [
+      640,
+      360
+    ]
+  },
+  "observed": {
+    "process_exit_code": 1,
+    "stderr_event": "native_benchmark_aborted",
+    "completion_status": "aborted",
+    "abort_reason": "window_occluded",
+    "actual_measured_seconds": 0.0,
+    "frames_per_second": 0.0,
+    "samples": 0,
+    "rendered_frames": 0,
+    "timed_render_frames": 0,
+    "late_render_samples": 3,
+    "raw_report_sha256": "47e0eb0db7416729efa947513a509b162c0a2442980628b922e6fe4cb15b93be",
+    "samples_total": 0,
+    "timed_frame_fraction": 0.0
+  },
+  "result": "Both release-build checks received a real OS window-occlusion event, wrote completion_status=aborted and abort_reason=window_occluded, and exited nonzero. The first collected partial data (69 rendered, 68 timed, about 1.14 seconds), below the full-duration and 99% coverage requirements. The final-source check aborted before any rendered frames. Neither is accepted as performance evidence.",
+  "verification": {
+    "cargo_fmt_check": true,
+    "cargo_clippy_warning_denied": true,
+    "rust_unit_tests_passed": 42,
+    "python3_scripts_verify_gpu": true,
+    "gpu_verification_record": "docs/measurements-gpu-verification-current-release.json"
+  },
+  "limitations": [
+    "No valid bonfire timing comparison has been produced; the native window must stay foreground for the full route and meet at least 99% GPU timing coverage.",
+    "Validated only on Apple M1 Max/Metal.",
+    "Does not replace full native lifecycle verification.",
+    "Windows/DX12, another adapter and physically unsupported RG16 behavior remain unverified."
+  ],
+  "validation_runs": [
+    {
+      "source_revision": "18af4bbeea82f3d9b7e13dbd1dc6a7106ea39234",
+      "binary_sha256": "20e1466fff7cc4ca33b4ccc91ea0e3cacbcd41f07e342242199bf96745dda135",
+      "process_exit_code": 1,
+      "completion_status": "aborted",
+      "abort_reason": "window_occluded",
+      "actual_measured_seconds": 1.1397558339999998,
+      "rendered_frames": 69,
+      "timed_render_frames": 68,
+      "late_render_samples": 2,
+      "raw_report_sha256": "61cd3f880305d3485928db4dc4ddf24558d591556be974e4e9e2db20b6654d91",
+      "disposition": "Partial, below duration and 99% coverage requirements; invalid performance evidence."
+    },
+    {
+      "source_revision": "1eb7f1d30090f60f6ffebda93d9fcd86fd3dfb78",
+      "binary_sha256": "3c9dce999ee733ea421f07da18e53c45f277b32b6734693e85a9faf7bedd49c5",
+      "process_exit_code": 1,
+      "completion_status": "aborted",
+      "abort_reason": "window_occluded",
+      "actual_measured_seconds": 0.0,
+      "rendered_frames": 0,
+      "timed_render_frames": 0,
+      "late_render_samples": 3,
+      "raw_report_sha256": "47e0eb0db7416729efa947513a509b162c0a2442980628b922e6fe4cb15b93be",
+      "disposition": "Current-source final check aborted on occlusion before rendering any frame; invalid performance evidence."
+    }
+  ]
+}
