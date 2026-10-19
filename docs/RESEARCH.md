@@ -865,8 +865,9 @@ pairs offscreen at 640×360. Candidate-minus-baseline median deltas are
 −0.049 ms frame work and −0.146 ms GPU render; all three pairs favor the
 candidate on both measures. This is a small single-workload result and does not
 replace the native-window comparison, whose paired FPS was effectively flat.
-Keep projected detail disabled by default pending owner playback review and
-non-Metal qualification. See
+Keep projected detail disabled by default pending broader route and non-Metal
+qualification; the owner accepted motion and continuity in the six-second
+offscreen clip. See
 [current-release sustained report](measurements-o04-sustained-current-release.json).
 
 A 19 October current-build recheck at seed 42 and 640×360 compared 14 fixed-tick
@@ -890,10 +891,10 @@ A separate current-release, fixed-tick comparison now pairs baseline and
 seed 42, starting at tick 300. The LOD path is enabled on every candidate frame
 and disabled on every baseline frame. Mean changed pixels are 28.9 per frame
 (p95 69, max 101), with mean RGB MAE 0.00247/255; the changed bounds stay in the
-fire region. This complements the sampled transition sheets but does not prove
-continuous playback quality or native-window performance. The LOD-specific
-owner review is pending. See
-[current-build motion report](measurements-o04-owner-motion-review-current-build.json).
+fire region. This complements the sampled transition sheets. The owner accepted motion and
+visual continuity in the six-second, 20 fps offscreen clip; that review does not
+cover all three fire profiles, the full 400-frame orbit or native-window
+performance. See [current-build motion report](measurements-o04-owner-motion-review-current-build.json).
 
 ## O05 absorption-cache temporal and pause/resume review (18 October)
 
@@ -1040,9 +1041,9 @@ A 19 October current-release 120-frame/20 fps rerun preserved all effect counts.
 RGBA16F direct/no-copy and lighting-reuse variants matched the direct/copy
 baseline byte-for-byte on the route. Compact HDR measured 0.3422/255 mean frame
 error, 0.4376/255 mean temporal-change error and 29/255 maximum channel error;
-the same image error appears with and without lighting reuse. The labeled
-four-panel review animation is available for owner review; it is still pending
-and does not establish native presentation quality or performance. See
+the same image error appears with and without lighting reuse. The owner accepted motion and visual continuity in the labeled six-second,
+20 fps four-panel offscreen review. This does not establish native presentation
+quality or performance, nor qualify other adapters. See
 [current-release report](measurements-o06-o08-factorial-temporal-current-build.json).
 
 A new three-pair 120-second offscreen comparison for exact-depth reuse shows
@@ -1052,8 +1053,12 @@ feature opt-in and disabled by default pending broader route and other-adapter
 evidence. A refreshed native-window three-pair study shows median FPS +0.043
 for reuse, with median optical-resolve +0.0043 ms; same-session captures at
 three fixed-tick cameras are pixel-identical. These small mixed timing changes
-do not establish a whole-render win. See [exact-depth sustained report](measurements-o06-exact-depth-sustained.json) and
-[native-window report](measurements-o06-native-exact-depth.json).
+do not establish a whole-render win. A 19 October current-release three-pair
+mixed-route rerun measures paired median frame-work +0.030 ms and GPU-render
++0.113 ms (slower in two pairs). Keep reuse disabled by default. See
+[current-release sustained report](measurements-o06-exact-depth-sustained-current-release.json),
+[earlier exact-depth sustained report](measurements-o06-exact-depth-sustained.json)
+and [native-window report](measurements-o06-native-exact-depth.json).
 
 ## O03 materialized smoke candidates (18 October)
 

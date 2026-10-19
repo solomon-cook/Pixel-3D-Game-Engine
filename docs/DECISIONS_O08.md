@@ -37,7 +37,7 @@ counts across all eight combinations. Direct/no-copy and optical-light reuse
 remain byte-identical to the RGBA16F baseline for this sequence. Compact HDR
 retains measurable image and temporal error (0.3422/255 and 0.4376/255 mean
 RGB error, with a 29/255 channel peak) and stays experimental; the paired
-owner-review animation is pending. See
+owner accepted motion and visual continuity in the six-second, 20 fps offscreen animation; native presentation/performance and other-adapter checks remain open. See
 [current-release temporal report](measurements-o06-o08-factorial-temporal-current-build.json).
 
 The render `Globals` buffer is also no longer rewritten during smoke simulation:

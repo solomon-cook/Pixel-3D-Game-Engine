@@ -235,9 +235,10 @@ factorial and confirms effect-count parity at every tick. Direct/no-copy and
 lighting-reuse variants match their RGBA16F baseline byte-for-byte for this
 sequence. Compact HDR measures 0.3422/255 mean frame error, 0.4376/255 mean
 temporal-change error and a 29/255 maximum channel difference; lighting reuse
-does not add to that format error. A labeled four-panel playback review is
-pending. This remains offscreen M1 Max/Metal image evidence, not timing or native
-presentation acceptance. See
+does not add to that format error. The owner accepted motion and visual
+continuity in the labeled six-second, 20 fps four-panel offscreen review. This
+remains M1 Max/Metal image evidence, not timing or native presentation
+acceptance. See
 [current-release report](measurements-o06-o08-factorial-temporal-current-build.json).
 
 The refreshed 240-frame guard report shows the production exact-depth condition
@@ -252,7 +253,11 @@ same-session direct/reuse captures match pixel-for-pixel across three cameras.
 See the [native report](measurements-o06-native-exact-depth.json),
 [guard report](measurements-o06-temporal-depth-guard.json),
 [sustained comparison](measurements-o06-exact-depth-sustained.json), and
-[guard runner](../scripts/optical_reuse_temporal_guard_study.py).
+[guard runner](../scripts/optical_reuse_temporal_guard_study.py). A new
+current-release three-pair mixed-route rerun measures paired median frame-work
++0.030 ms and GPU-render +0.113 ms; GPU render is slower in two pairs, so this
+establishes no whole-render benefit. See the [current-release sustained
+report](measurements-o06-exact-depth-sustained-current-release.json).
 The 19 October current-build 240-frame factorial recheck confirms all effect
 counts match. Direct no-copy is pixel-identical to copy for both HDR formats;
 reuse adds one 1/255 pixel difference in RGBA16F and three in compact HDR across
@@ -1142,9 +1147,10 @@ decisions and unresolved visual/backend gates are consolidated in the
   performance or review the opt-in renderer variants. See
   [preview metadata](measurements-owner-motion-review-preview.json). A separate
   current-release O04 comparison now captures 120 matched frames at 20 fps with
-  baseline left and projected-detail LOD right; the 6-second offscreen variant
-  review is pending. Its mean changed-pixel count is 28.9 per frame and mean RGB
-  MAE is 0.00247/255, localized to the fire region. See
+  baseline left and projected-detail LOD right. The owner accepted motion and
+  continuity in this six-second, 20 fps offscreen clip; all-profile/full-orbit
+  review and native playback performance remain open. Mean changed pixels are
+  28.9 per frame and mean RGB MAE is 0.00247/255, localized to the fire region. See
   [O04 paired-motion report](measurements-o04-owner-motion-review-current-build.json).
   The current idle-owner release lifecycle rerun passed resize, stable
   windowed-size restoration, fullscreen entry/exit, tick-120 capture and

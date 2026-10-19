@@ -138,13 +138,16 @@
     "One offscreen M1 Max/Metal route; native-window and other-adapter results are not included.",
     "The contact sheet samples five frames from the highest-mean-error variant; it does not replace continuous human playback review.",
     "This is image-quality evidence only and does not establish timing, bandwidth, or promotion thresholds.",
-    "The paired owner-review animation is offscreen and does not measure native presentation or performance; owner review is pending."
+    "The owner accepted motion/continuity in the offscreen comparison; native presentation/performance and other-adapter acceptance remain open."
   ],
   "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
   "measurement_head_after_documentation_commit": "ed2f740",
   "owner_review": {
-    "status": "pending",
-    "question": "Review the 6-second 20 fps 2x2 comparison for visual continuity across lighting reuse, no-copy and compact-HDR variants."
+    "status": "accepted",
+    "date": "2026-10-19",
+    "response": "Acceptable",
+    "scope": "The owner accepted motion and visual continuity in the six-second, 20 fps four-panel baseline/O06/O08/compact-HDR offscreen comparison at 640x360.",
+    "limitations": "This review does not measure native window presentation or performance and does not qualify other adapters."
   },
   "artifacts": {
     "owner_review_apng": {
