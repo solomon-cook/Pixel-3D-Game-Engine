@@ -1,0 +1,299 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "workstream": "O06 opaque surface reuse depth guard sweep",
+  "adapter": {
+    "name": "Apple M1 Max",
+    "backend": "Metal"
+  },
+  "source_scenes": {
+    "clearing_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+    "materials_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
+    "generated_mixed_scene": "artifacts/o06/depth-guard-current-release/mixed-scene.json",
+    "generated_mixed_scene_sha256": "7975020e1dbb4f69737cb96f1f120a83d0fcc7efcb57dcef9238b9b99a148ee3"
+  },
+  "optical_shader_sha256": "5dcff7826ffc79479843a173477c4187f2e094070ded21bbf942b7ed21f9e690",
+  "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+  "runner_sha256": "5ca358a98a66ac05356157d82e397e3a0716ab0a3edb6bfc36ca5860b0fd032e",
+  "seed": 42,
+  "tick": 300,
+  "resolution": [
+    640,
+    360
+  ],
+  "comparison": "Direct versus reused opaque lighting at identical fixed ticks. The current exact-depth shader is compared first, then variants add foreground-alpha limits.",
+  "cases": [
+    {
+      "guard": "current-exact-depth",
+      "cameras": [
+        {
+          "camera": "mixed-from-behind",
+          "reference_capture": "artifacts/o06/depth-guard-current-release/direct-mixed-from-behind.png",
+          "capture": "artifacts/o06/depth-guard-current-release/current-exact-depth-mixed-from-behind.png",
+          "shader_sha256": "5dcff7826ffc79479843a173477c4187f2e094070ded21bbf942b7ed21f9e690",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "mixed-close",
+          "reference_capture": "artifacts/o06/depth-guard-current-release/direct-mixed-close.png",
+          "capture": "artifacts/o06/depth-guard-current-release/current-exact-depth-mixed-close.png",
+          "shader_sha256": "5dcff7826ffc79479843a173477c4187f2e094070ded21bbf942b7ed21f9e690",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "glass-near",
+          "reference_capture": "artifacts/o06/depth-guard-current-release/direct-glass-near.png",
+          "capture": "artifacts/o06/depth-guard-current-release/current-exact-depth-glass-near.png",
+          "shader_sha256": "5dcff7826ffc79479843a173477c4187f2e094070ded21bbf942b7ed21f9e690",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        }
+      ]
+    }
+  ],
+  "foreground_alpha_sweep": [
+    {
+      "maximum_foreground_alpha_for_reuse": 0.001,
+      "cameras": [
+        {
+          "camera": "mixed-from-behind",
+          "reference_capture": "artifacts/o06/depth-guard-current-release/direct-mixed-from-behind.png",
+          "capture": "artifacts/o06/depth-guard-current-release/alpha-0.001-mixed-from-behind.png",
+          "shader_sha256": "2c4ddc962dffa82eebb7d1d297f45c95cc8e65a01ed90e1b023dd71aa1f55034",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "mixed-close",
+          "reference_capture": "artifacts/o06/depth-guard-current-release/direct-mixed-close.png",
+          "capture": "artifacts/o06/depth-guard-current-release/alpha-0.001-mixed-close.png",
+          "shader_sha256": "2c4ddc962dffa82eebb7d1d297f45c95cc8e65a01ed90e1b023dd71aa1f55034",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "glass-near",
+          "reference_capture": "artifacts/o06/depth-guard-current-release/direct-glass-near.png",
+          "capture": "artifacts/o06/depth-guard-current-release/alpha-0.001-glass-near.png",
+          "shader_sha256": "2c4ddc962dffa82eebb7d1d297f45c95cc8e65a01ed90e1b023dd71aa1f55034",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        }
+      ]
+    },
+    {
+      "maximum_foreground_alpha_for_reuse": 0.01,
+      "cameras": [
+        {
+          "camera": "mixed-from-behind",
+          "reference_capture": "artifacts/o06/depth-guard-current-release/direct-mixed-from-behind.png",
+          "capture": "artifacts/o06/depth-guard-current-release/alpha-0.010-mixed-from-behind.png",
+          "shader_sha256": "7cf8e4af9ba53899509368471c15e9e5b5f4f62ead82d55824247b16710102bb",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "mixed-close",
+          "reference_capture": "artifacts/o06/depth-guard-current-release/direct-mixed-close.png",
+          "capture": "artifacts/o06/depth-guard-current-release/alpha-0.010-mixed-close.png",
+          "shader_sha256": "7cf8e4af9ba53899509368471c15e9e5b5f4f62ead82d55824247b16710102bb",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "glass-near",
+          "reference_capture": "artifacts/o06/depth-guard-current-release/direct-glass-near.png",
+          "capture": "artifacts/o06/depth-guard-current-release/alpha-0.010-glass-near.png",
+          "shader_sha256": "7cf8e4af9ba53899509368471c15e9e5b5f4f62ead82d55824247b16710102bb",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        }
+      ]
+    },
+    {
+      "maximum_foreground_alpha_for_reuse": 0.05,
+      "cameras": [
+        {
+          "camera": "mixed-from-behind",
+          "reference_capture": "artifacts/o06/depth-guard-current-release/direct-mixed-from-behind.png",
+          "capture": "artifacts/o06/depth-guard-current-release/alpha-0.050-mixed-from-behind.png",
+          "shader_sha256": "62da19bb8de896b1c74c2b8bcac18b656a257e974e63fef03b866da6747b7ebe",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "mixed-close",
+          "reference_capture": "artifacts/o06/depth-guard-current-release/direct-mixed-close.png",
+          "capture": "artifacts/o06/depth-guard-current-release/alpha-0.050-mixed-close.png",
+          "shader_sha256": "62da19bb8de896b1c74c2b8bcac18b656a257e974e63fef03b866da6747b7ebe",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "glass-near",
+          "reference_capture": "artifacts/o06/depth-guard-current-release/direct-glass-near.png",
+          "capture": "artifacts/o06/depth-guard-current-release/alpha-0.050-glass-near.png",
+          "shader_sha256": "62da19bb8de896b1c74c2b8bcac18b656a257e974e63fef03b866da6747b7ebe",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        }
+      ]
+    },
+    {
+      "maximum_foreground_alpha_for_reuse": 0.1,
+      "cameras": [
+        {
+          "camera": "mixed-from-behind",
+          "reference_capture": "artifacts/o06/depth-guard-current-release/direct-mixed-from-behind.png",
+          "capture": "artifacts/o06/depth-guard-current-release/alpha-0.100-mixed-from-behind.png",
+          "shader_sha256": "eb05efe9f94c2c9369056e7ba845c6b63450ef0c58d6c931c04d4807cac4edae",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "mixed-close",
+          "reference_capture": "artifacts/o06/depth-guard-current-release/direct-mixed-close.png",
+          "capture": "artifacts/o06/depth-guard-current-release/alpha-0.100-mixed-close.png",
+          "shader_sha256": "eb05efe9f94c2c9369056e7ba845c6b63450ef0c58d6c931c04d4807cac4edae",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "glass-near",
+          "reference_capture": "artifacts/o06/depth-guard-current-release/direct-glass-near.png",
+          "capture": "artifacts/o06/depth-guard-current-release/alpha-0.100-glass-near.png",
+          "shader_sha256": "eb05efe9f94c2c9369056e7ba845c6b63450ef0c58d6c931c04d4807cac4edae",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        }
+      ]
+    },
+    {
+      "maximum_foreground_alpha_for_reuse": 0.25,
+      "cameras": [
+        {
+          "camera": "mixed-from-behind",
+          "reference_capture": "artifacts/o06/depth-guard-current-release/direct-mixed-from-behind.png",
+          "capture": "artifacts/o06/depth-guard-current-release/alpha-0.250-mixed-from-behind.png",
+          "shader_sha256": "63400fee1c45788d6f251f379513fc3f6c2c71030f3625a94c30c512dbf0c767",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "mixed-close",
+          "reference_capture": "artifacts/o06/depth-guard-current-release/direct-mixed-close.png",
+          "capture": "artifacts/o06/depth-guard-current-release/alpha-0.250-mixed-close.png",
+          "shader_sha256": "63400fee1c45788d6f251f379513fc3f6c2c71030f3625a94c30c512dbf0c767",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        },
+        {
+          "camera": "glass-near",
+          "reference_capture": "artifacts/o06/depth-guard-current-release/direct-glass-near.png",
+          "capture": "artifacts/o06/depth-guard-current-release/alpha-0.250-glass-near.png",
+          "shader_sha256": "63400fee1c45788d6f251f379513fc3f6c2c71030f3625a94c30c512dbf0c767",
+          "image_comparison": {
+            "changed_pixels": 0,
+            "total_pixels": 230400,
+            "mean_absolute_channel_error": 0.0,
+            "max_channel_error": 0,
+            "difference_bounds": null
+          }
+        }
+      ]
+    }
+  ],
+  "interpretation": "The current release exact-depth guard matches direct shading exactly in all three fixed-tick cameras. Adding foreground-alpha limits from 0.001 to 0.25 does not change the captures. The older reported behind-view discrepancy was not reproduced with the current release binary and current shader. This sweep does not establish continuous visual acceptance or a timing improvement.",
+  "limitations": [
+    "Offscreen M1 Max/Metal only.",
+    "Three fixed cameras do not establish continuous visual quality.",
+    "No timing conclusion is drawn from capture metadata."
+  ]
+}

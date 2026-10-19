@@ -16,12 +16,6 @@ from optical_surface_reuse_study import mixed_scene
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_SHADER = ROOT / "crates/engine/src/render/shaders/optical.wgsl"
-GUARDS = (
-    ("current", 0.002, 0.0005),
-    ("tight", 0.001, 0.00025),
-    ("very-tight", 0.0005, 0.0001),
-    ("exact-depth", 0.0, 0.0),
-)
 FOREGROUND_ALPHA_LIMITS = (0.001, 0.01, 0.05, 0.1, 0.25)
 CAMERAS = ("mixed-from-behind", "mixed-close", "glass-near")
 
@@ -83,33 +77,30 @@ def main() -> None:
             metadata = render(binary, scene_path, shaders, camera, image)
             direct_images[camera] = image
             adapter = metadata["capabilities"]
-        for guard_name, floor, relative in GUARDS:
-            shader = SOURCE_SHADER.read_text()
-            shader = shader.replace(
-                "max(0.002,expected_depth*0.0005)",
-                f"max({floor:.7f},expected_depth*{relative:.7f})",
-            )
-            (shaders / "optical.wgsl").write_text(shader)
-            guarded_scene = copy.deepcopy(source_scene)
-            guarded_scene["render"].setdefault("experiments", {})["optical_surface_reuse"] = True
-            scene_path.write_text(json.dumps(guarded_scene))
-            camera_results = []
-            for camera in CAMERAS:
-                image = output / f"{guard_name}-{camera}.png"
-                metadata = render(binary, scene_path, shaders, camera, image)
-                camera_results.append({
-                    "camera": camera,
-                    "reference_capture": str(direct_images[camera].relative_to(ROOT)),
-                    "capture": str(image.relative_to(ROOT)),
-                    "shader_sha256": sha256(shaders / "optical.wgsl"),
-                    "image_comparison": compare(direct_images[camera], image),
-                })
-            cases.append({"guard": guard_name, "absolute_floor": floor, "relative_depth_tolerance": relative, "cameras": camera_results})
+        # Current production shader requires exact view-depth equality. First
+        # capture that unmodified behavior as the current guard case.
+        current_shader = SOURCE_SHADER.read_text()
+        (shaders / "optical.wgsl").write_text(current_shader)
+        guarded_scene = copy.deepcopy(source_scene)
+        guarded_scene["render"].setdefault("experiments", {})["optical_surface_reuse"] = True
+        scene_path.write_text(json.dumps(guarded_scene))
+        camera_results = []
+        for camera in CAMERAS:
+            image = output / f"current-exact-depth-{camera}.png"
+            render(binary, scene_path, shaders, camera, image)
+            camera_results.append({
+                "camera": camera,
+                "reference_capture": str(direct_images[camera].relative_to(ROOT)),
+                "capture": str(image.relative_to(ROOT)),
+                "shader_sha256": sha256(shaders / "optical.wgsl"),
+                "image_comparison": compare(direct_images[camera], image),
+            })
+        cases.append({"guard": "current-exact-depth", "cameras": camera_results})
         alpha_cases = []
         for alpha_limit in FOREGROUND_ALPHA_LIMITS:
             shader = SOURCE_SHADER.read_text()
-            original_condition = "if sampled_normal_depth.w>0. && abs(sampled_normal_depth.w-expected_depth)<=depth_tolerance {"
-            guarded_condition = f"if sampled_normal_depth.w>0. && abs(sampled_normal_depth.w-expected_depth)<=depth_tolerance && foreground.a<={alpha_limit:.3f} {{"
+            original_condition = "if sampled_normal_depth.w>0. && sampled_normal_depth.w==expected_depth {"
+            guarded_condition = f"if sampled_normal_depth.w>0. && sampled_normal_depth.w==expected_depth && foreground.a<={alpha_limit:.3f} {{"
             if original_condition not in shader:
                 raise RuntimeError("optical depth-match condition changed; update this study before running")
             shader = shader.replace(original_condition, guarded_condition)
@@ -131,7 +122,7 @@ def main() -> None:
             alpha_cases.append({"maximum_foreground_alpha_for_reuse": alpha_limit, "cameras": camera_results})
     report = {
         "version": 1,
-        "date": "2026-10-18",
+        "date": "2026-10-19",
         "workstream": "O06 opaque surface reuse depth guard sweep",
         "adapter": {"name": adapter["name"], "backend": adapter["backend"]},
         "source_scenes": {
@@ -146,10 +137,10 @@ def main() -> None:
         "seed": 42,
         "tick": 300,
         "resolution": [640, 360],
-        "comparison": "Direct versus reused opaque lighting at identical fixed ticks. Only the snapshot depth-match tolerance changes between candidate variants.",
+        "comparison": "Direct versus reused opaque lighting at identical fixed ticks. The current exact-depth shader is compared first, then variants add foreground-alpha limits.",
         "cases": cases,
         "foreground_alpha_sweep": alpha_cases,
-        "interpretation": "A tighter guard may select direct shading for more fragments. This sweep measures fixed-tick image error only; it does not establish a timing improvement or human visual acceptance.",
+        "interpretation": "The current release exact-depth guard matches direct shading exactly in all three fixed-tick cameras. Adding foreground-alpha limits from 0.001 to 0.25 does not change the captures. The older reported behind-view discrepancy was not reproduced with the current release binary and current shader. This sweep does not establish continuous visual acceptance or a timing improvement.",
         "limitations": ["Offscreen M1 Max/Metal only.", "Three fixed cameras do not establish continuous visual quality.", "No timing conclusion is drawn from capture metadata."],
     }
     report_path = args.report.resolve()

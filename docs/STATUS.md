@@ -221,6 +221,15 @@ precision instead of widening the alpha condition. See
 [depth-guard report](measurements-o06-depth-guard.json) and
 [reproducible sweep](../scripts/optical_depth_guard_study.py).
 
+A 19 October rerun of the current release with the production exact-depth shader
+matches direct shading pixel-for-pixel in mixed-from-behind, mixed-close and
+glass-near views. Foreground-alpha limits from 0.001 to 0.25 also leave all three
+captures unchanged. The earlier behind-view outlier therefore does not reproduce
+with this current binary and shader; this updates the fixed-tick correctness
+evidence, while native whole-window benefit, continuous review and other-adapter
+qualification remain open. See
+[current-release guard recheck](measurements-o06-depth-guard-current-release.json).
+
 A targeted HDR snapshot-color gate was also measured at thresholds 0.001, 0.01
 and 0.05. The strongest threshold reduced the behind-view difference from 12 to
 8 pixels, but left the maximum channel error at 52/255; mixed-close and glass-near

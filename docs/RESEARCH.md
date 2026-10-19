@@ -1275,3 +1275,16 @@ report](measurements-debug-release-profile-parity.json).
 The captures are offscreen and single-adapter, not native playback or
 cross-vendor determinism evidence. See the [report](measurements-debug-release-profile-parity.json)
 and [contact sheet](measurements-debug-release-profile-parity-contact.png).
+
+## O06 current-release behind-view recheck (19 October 2026)
+
+The older native/offscreen O06 reports recorded a sparse behind-smoke error,
+which did not reproduce with the current release binary and production shader.
+At seed 42, tick 300 and 640×360, direct and reused opaque lighting are
+pixel-identical in mixed-from-behind, mixed-close and glass-near views. Additional
+foreground-atmosphere alpha gates from 0.001 through 0.25 preserve those exact
+comparisons. This updates the current fixed-tick correctness evidence, but does
+not establish a native whole-window performance win or continuous visual
+acceptance; keep reuse opt-in and disabled by default. See the
+[current-release recheck](measurements-o06-depth-guard-current-release.json) and
+[runner](../scripts/optical_depth_guard_study.py).
