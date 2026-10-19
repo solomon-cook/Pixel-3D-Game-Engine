@@ -1088,6 +1088,10 @@ This is sampled playback evidence, not owner acceptance or a temporal-quality me
 minimization, DX12 and another-adapter gates remain open. See [native
 verification](measurements-native-window-verification-current-build.json) and its
 [tick-120 capture](measurements-native-window-verification-current-build.png).
+A 6-second, 20 fps fixed-tick clearing-orbit preview at the stable 640×360 grid
+is available for owner review; it is a headless real-renderer sequence, not
+native surface or sustained-performance acceptance. See
+[preview report](measurements-owner-motion-review-preview.json).
 
 These dispositions close measured decisions where the evidence is sufficient; they
 do not convert unresolved visual or platform acceptance into a pass. The overall

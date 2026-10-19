@@ -1099,7 +1099,11 @@ decisions and unresolved visual/backend gates are consolidated in the
   do not substitute occlusion for minimization. The current release viewport was
   also inspected live at tick 423 with the 640×360 grid; the smoke still reads as
   a tall regular stack of puffs, so owner playback acceptance remains open. The
-  tracked results are in [native verification](measurements-native-window-verification-current-build.json), including the [tick-120 capture](measurements-native-window-verification-current-build.png). The runner's original raw files remain under ignored `artifacts/`.
+  6-second 20 fps `clearing-orbit` sequence is now available for owner review as
+  a GIF and full-color APNG at the unchanged 640×360 grid. It uses fixed-tick
+  headless captures and is not native presentation or performance evidence. See
+  [preview metadata](measurements-owner-motion-review-preview.json). The
+  tracked native results are in [native verification](measurements-native-window-verification-current-build.json), including the [tick-120 capture](measurements-native-window-verification-current-build.png). Raw frames remain under ignored `artifacts/`.
 - The verifier used the selected 640×360 scene grid and same-device Metal
   rendering. It does not verify Windows/DX12, another adapter, or target-PC
   performance.

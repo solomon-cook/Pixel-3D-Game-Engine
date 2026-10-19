@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "source_revision": "e94ad0f7c90fe55ef0bcaa9aad7a2bbce8df8315",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal"
+  },
+  "command": "python3 scripts/capture_motion.py --binary target/debug/engine-lab --scene assets/scenes/clearing.json --camera fire-study --seed 42 --profile effect-campfire --route clearing-orbit --route-start 0 --start-tick 300 --frames 120 --stride 3 --output artifacts/owner-motion-review-6s --gif",
+  "scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+  "binary_sha256": "f3c8b4b1108f490173d94033ed377c7afa3e5b1ee8cc5d9935df45e881344baf",
+  "capture": {
+    "resolution": [640, 360],
+    "seed": 42,
+    "camera": "fire-study",
+    "route": "clearing-orbit",
+    "route_start_seconds": 0,
+    "frames": 120,
+    "fps": 20,
+    "start_tick": 300,
+    "last_tick": 657,
+    "stride_ticks": 3,
+    "profile": "effect-campfire"
+  },
+  "artifacts": {
+    "gif": {
+      "path": "artifacts/owner-motion-review-6s/preview.gif",
+      "sha256": "124e26792b0ae3933a9fb4b0ceade80f6369efe756939354109c0f35b396ebb6",
+      "bytes": 5085656,
+      "note": "Palette-quantized motion preview for playback in the app"
+    },
+    "apng": {
+      "path": "artifacts/owner-motion-review-6s/preview.png",
+      "sha256": "58e392c228e3371903ba9821e27d97c517222e3f053dae07deb6a45942650d7e",
+      "bytes": 18783801,
+      "note": "Full-color animated PNG at the captured frame period"
+    },
+    "sequence_metadata": {
+      "path": "artifacts/owner-motion-review-6s/sequence.json",
+      "sha256": "6aca00c38c580257a6e38a6c1a9a16a16819d373b8bafbe62dbd4d3c58932a27"
+    }
+  },
+  "visual_observation": "The inspected opening frame has a tall, regular smoke plume dominating the upper center of the 640x360 image. This observation describes a sampled frame and is not an owner acceptance decision.",
+  "limitations": [
+    "The sequence uses deterministic headless captures from the real Metal renderer, not native surface presentation or vsync.",
+    "A short clip helps review visual continuity but does not establish sustained native performance or cross-adapter behavior.",
+    "Owner visual acceptance remains pending."
+  ]
+}

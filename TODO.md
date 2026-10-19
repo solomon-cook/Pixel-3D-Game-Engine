@@ -88,6 +88,9 @@ The consolidated measured decisions and remaining per-track gates are in the
   opt-in approximations or expanding the emitter cap. The current source
   cross-checks and links as a Windows x64 PE, but still needs execution and
   DX12 rendering on Windows; see [build report](docs/measurements-windows-build-current.json).
+  Owner motion review can use the 6-second 20 fps clearing-orbit preview in
+  [its report](docs/measurements-owner-motion-review-preview.json); the clip is
+  headless and does not close native playback or performance checks.
 
   O07 static and moving-caster scene-scale evidence is recorded in
   [measurements-o07-scale-study.json](docs/measurements-o07-scale-study.json),
