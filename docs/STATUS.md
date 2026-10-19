@@ -1016,6 +1016,12 @@ decisions and unresolved visual/backend gates are consolidated in the
   pixel-fire GPU verification. The verifier reports `verified=true`, `gpu=true`,
   `native=false`. This validates the current host's renderer path; it
   does not close the O01–O08 moving-route, visual-review or cross-adapter gates.
+  It was rerun at source revision `225a0342` after the camera-matrix causality
+  investigation: formatting, warning-denied Clippy, all 42 Rust unit tests,
+  workspace build, clearing/materials scene validation, headless GPU protocol
+  and replay checks, material GPU verification and pixel-fire GPU verification
+  passed. The [current-build report](measurements-gpu-verification-current-build.json)
+  records the result and its headless, single-adapter scope.
   The full GPU verifier was rerun after adding O03 smoke-candidate dispatch/skip
   metrics and the on-demand fire-primitive fingerprint; all 42 Rust unit tests
   and the renderer checks passed on the instrumented build.

@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "source_revision": "225a0342dda10588fbe636e367bd0900ec0dd2c5",
+  "host": {
+    "device": "Apple M1 Max",
+    "device_type": "IntegratedGpu",
+    "backend": "Metal",
+    "resolution": [
+      640,
+      360
+    ]
+  },
+  "command": "python3 scripts/verify.py --gpu",
+  "result": {
+    "verified": true,
+    "gpu": true,
+    "native": false
+  },
+  "checks": {
+    "profile_comparison_tests": 6,
+    "rust_format": "passed",
+    "clippy_warnings_denied": "passed",
+    "rust_unit_tests": {
+      "passed": 42,
+      "failed": 0
+    },
+    "workspace_build": "passed",
+    "scene_validation": [
+      "assets/scenes/clearing.json",
+      "assets/scenes/materials.json"
+    ],
+    "headless_gpu_protocol_and_replay": "passed",
+    "material_gpu": "passed",
+    "pixel_fire_gpu": "passed"
+  },
+  "limitations": [
+    "This is headless rendering evidence on one Metal adapter.",
+    "Native-window minimization, continuous playback, owner visual acceptance, Windows/DX12, other-adapter, and target-hardware gates remain open."
+  ]
+}
