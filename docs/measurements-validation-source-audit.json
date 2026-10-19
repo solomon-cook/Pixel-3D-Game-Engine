@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "purpose": "Audit whether the recorded GPU, Windows cross-target, and native verification runs cover current engine sources after later documentation commits.",
+  "audited_head_revision": "f8ca9a9a5774dbf256c78070ce436a1fabbd6c31",
+  "scope": [
+    "crates",
+    "Cargo.lock",
+    "rust-toolchain.toml",
+    "shaders",
+    "assets"
+  ],
+  "command_template": "git diff --name-only <validation_source_revision>..<audited_head_revision> -- crates Cargo.lock rust-toolchain.toml shaders assets",
+  "validation_records": [
+    {
+      "name": "headless GPU verification",
+      "report": "measurements-gpu-verification-current-build.json",
+      "source_revision": "178a0418fcf6d4970fe0891cff79c7f3c6750e0d",
+      "commands": [
+        "python3 scripts/verify.py --gpu"
+      ],
+      "engine_source_changes_since_report": [],
+      "current_source_match": true
+    },
+    {
+      "name": "Windows GNU release build and MSVC target check",
+      "report": "measurements-windows-build-current.json",
+      "source_revision": "d9a85308afbaa5ff3ed5bd7609e4055b8c4c725f",
+      "commands": [
+        "cargo check --locked --workspace --target x86_64-pc-windows-gnu",
+        "cargo build --locked --release --workspace --target x86_64-pc-windows-gnu",
+        "cargo run --locked -p engine-lab -- describe",
+        "cargo check --locked --workspace --target x86_64-pc-windows-msvc"
+      ],
+      "msvc_check_checkout_revision": "438b444c8a612a3719ad5ffdf01576cb36225710",
+      "engine_source_changes_since_report": [],
+      "current_source_match": true
+    },
+    {
+      "name": "native lifecycle and idle GPU verification",
+      "report": "measurements-native-window-verification-current-build.json",
+      "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
+      "commands": [
+        "python3 scripts/verify_native.py --binary target/release/engine-lab --minimize-timeout 8 --restore-timeout 8",
+        "python3 scripts/verify.py --gpu"
+      ],
+      "engine_source_changes_since_report": [],
+      "current_source_match": true
+    }
+  ],
+  "limitations": [
+    "This compares source paths only. It does not rerun GPU or native validation, execute Windows/DX12, qualify another adapter, or establish sustained target-hardware playback."
+  ]
+}
