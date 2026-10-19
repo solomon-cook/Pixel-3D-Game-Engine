@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "purpose": "Determine whether the O05 fixed-tick invalidation recheck is attributable to the current source and available engine binaries.",
+  "report": "measurements-o05-invalidation-current-build.json",
+  "report_binary_sha256": "4247485106ee2d305f5d07f58e074d5f03f19b9a7cb369b00cf809aa1e4f0363",
+  "report_binary_path": null,
+  "report_source_revision": null,
+  "report_runner_sha256": "de079245457f8712f74e08b2be3cc8d36a4d79e45bc8500d310b659f66dd4826",
+  "checked_in_runner": "../scripts/absorption_cache_invalidation_study.py",
+  "checked_in_runner_sha256": "de079245457f8712f74e08b2be3cc8d36a4d79e45bc8500d310b659f66dd4826",
+  "runner_hash_matches": true,
+  "available_binaries": {
+    "debug": {
+      "path": "target/debug/engine-lab",
+      "sha256": "f3c8b4b1108f490173d94033ed377c7afa3e5b1ee8cc5d9935df45e881344baf",
+      "matches_report_binary": false
+    },
+    "release": {
+      "path": "target/release/engine-lab",
+      "sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+      "matches_report_binary": false
+    },
+    "packaged_macos": {
+      "path": "dist/PixelEngine-macOS/Pixel Engine Lab.app/Contents/MacOS/engine-lab",
+      "sha256": "4f56e6022b1bdff680801ff8acde090324a4989d0620d057892b181b91826245",
+      "matches_report_binary": false
+    }
+  },
+  "current_engine_source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
+  "audited_head_revision": "8eacda3320c862ad91f79a7d1681c267d7eecac3",
+  "engine_scope": [
+    "crates",
+    "Cargo.lock",
+    "rust-toolchain.toml",
+    "shaders",
+    "assets"
+  ],
+  "engine_source_changes_since_current_validation": [],
+  "engine_scope_unchanged_since_current_validation": true,
+  "interpretation": "The fixed-tick report is valid evidence for its recorded executable. Its runner hash matches the checked-in runner, and engine sources have not changed since the current validation revision, but the report has no binary path or source revision and its binary hash matches none of the available executables. Do not use it as independently proven current-source correctness. Rerun the O05 invalidation study with the current release binary and record its path and source revision before closing the current-source correctness gate.",
+  "limitations": [
+    "This audit hashes available executables and checks Git source paths; it does not rerun rendering or verify the historical binary contents."
+  ]
+}

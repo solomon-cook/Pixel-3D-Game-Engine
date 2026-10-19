@@ -925,9 +925,13 @@ as current-build owner acceptance; refresh them only if reconsidering promotion.
 See the [capture currentness audit](measurements-o05-current-review-source-audit.json).
 Historical size/native runs did not establish a total-render win, so keep the
 cache disabled by default. The explicit-source sustained dual-emitter report is
-from revision `4e57d5f`, before 13 engine/shader changes; the later invalidation
-recheck measures correctness only. Current-source sustained performance remains
-open. See the [capture and performance source audit](measurements-o05-current-review-source-audit.json).
+from revision `4e57d5f`, before 13 engine/shader changes. The 19 October
+invalidation recheck records fixed-tick correctness for its exact build only: its
+runner hash matches, but executable path/source revision are absent and its
+binary hash matches none of the available current binaries. Current-source
+correctness and sustained performance remain open pending current-release runs.
+See the [capture and performance source audit](measurements-o05-current-review-source-audit.json)
+and [invalidation provenance audit](measurements-o05-invalidation-provenance-audit.json).
 
 The same route at 8³ also held tick/camera and fire/effect-count parity over 400
 frames. Mean frame RGB MAE was 0.285/255 (p95 0.426/255, maximum channel
