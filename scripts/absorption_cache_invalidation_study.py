@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
 import json
 import os
 from pathlib import Path
@@ -139,12 +140,25 @@ def main() -> int:
     binary, output = args.binary.resolve(), args.output.resolve()
     if not binary.is_file():
         subprocess.run(["cargo", "build", "--release", "-p", "engine-lab"], cwd=ROOT, check=True)
+    source_revision = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True,
+    ).strip()
+    engine_source_status = subprocess.check_output(
+        ["git", "status", "--porcelain", "--", "crates", "Cargo.lock", "rust-toolchain.toml", "shaders", "assets"],
+        cwd=ROOT, text=True,
+    ).splitlines()
     direct = run_variant(binary, output, False, args.resolution)
     cached = run_variant(binary, output, True, args.resolution)
     report = {
         "workstream": "O05 absorption-cache edit, reset and motion freshness study",
-        "date": "2026-10-18",
+        "date": datetime.now(timezone.utc).date().isoformat(),
         "host": {"device": "Apple M1 Max", "backend": "Metal"},
+        "binary_path": str(binary),
+        "binary_sha256": sha256(binary),
+        "workspace_revision_at_run": source_revision,
+        "engine_source_worktree_status": engine_source_status,
+        "runner_path": str(Path(__file__).resolve().relative_to(ROOT)),
+        "runner_sha256": sha256(Path(__file__).resolve()),
         "camera": CAMERA,
         "seed": SEED,
         "resolution": [640, 360],
