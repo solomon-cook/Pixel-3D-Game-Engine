@@ -1224,13 +1224,15 @@ and its [tick-120 capture](measurements-native-window-verification-current-build
 
 ## Current Windows compile gate (19 October 2026)
 
-The current checkout passes the locked workspace check and release link for
-`x86_64-pc-windows-gnu`; the resulting Windows x64 PE matches the previously
-recorded artifact because engine source, lockfile and toolchain are unchanged
-since that link. `engine-lab describe` also emits valid JSON with the required
+The current checkout passes locked workspace checks for
+`x86_64-pc-windows-gnu` and `x86_64-pc-windows-msvc`, plus a release link for
+the GNU target. The resulting Windows x64 PE matches the previously recorded
+artifact because engine source, lockfile and toolchain are unchanged since that
+link. `engine-lab describe` also emits valid JSON with the required
 shared operations and current scene schema on the Mac host. This advances source
-and protocol validation only: Windows execution, DX12 device creation, rendered
-image/motion review and target-hardware performance remain open. See the
+and protocol validation only: the MSVC target was type-checked, not linked.
+Windows execution, DX12 device creation, rendered image/motion review and
+target-hardware performance remain open. See the
 [current Windows build report](measurements-windows-build-current.json).
 
 **Isolated minimization follow-up (19 October 2026):** the native `get_window`

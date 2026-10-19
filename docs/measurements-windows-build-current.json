@@ -31,6 +31,11 @@
     "engine_lab_describe_json": "passed",
     "required_protocol_operations": "capture_frame, describe, get_metrics, inspect_scene, set_object_transform, set_shadow_cache, set_tile_lists, set_simulation_batching",
     "engine_sources_changed_since_prior_windows_pe": false,
-    "toolchain": "Rust 1.99.1"
+    "toolchain": "Rust 1.99.1",
+    "current_source_msvc_target_check": "passed",
+    "msvc_target_command": "cargo check --locked --workspace --target x86_64-pc-windows-msvc",
+    "msvc_target_linked_or_executed": false,
+    "msvc_target_scope": "Windows-specific Rust code type-checks for the MSVC target; no MSVC link, Windows execution, or DX12 validation.",
+    "msvc_check_checkout_revision": "438b444c8a612a3719ad5ffdf01576cb36225710"
   }
 }

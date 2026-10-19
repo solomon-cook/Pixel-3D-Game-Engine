@@ -1216,8 +1216,8 @@ decisions and unresolved visual/backend gates are consolidated in the
   release build and `engine-lab describe` protocol check, including the
   minimize-button field, are recorded in
   [the current macOS build report](measurements-macos-build-current.json). The
-  current checkout passes a Windows GNU workspace check and release link, and
-  its PE hash matches the previously recorded artifact because no engine,
+  current checkout passes locked workspace checks for Windows GNU and MSVC,
+  and a GNU-target release link; its PE hash matches the previously recorded artifact because no engine,
   lockfile or toolchain files changed since that build. See [current Windows
   build report](measurements-windows-build-current.json).
   This Mac cross-build does not execute Windows or establish DX12 rendering,
