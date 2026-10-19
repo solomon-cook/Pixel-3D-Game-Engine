@@ -100,17 +100,19 @@ The paired deterministic sequences have also been compared frame-to-frame around
 every LOD transition (±2 samples): temporal-change-image mean RGB MAE is
 0.0047/0.0073/0.0048 per 255 for campfire/quiet/bonfire. This is sampled numeric
 evidence only; full fire-geometry, ember and particle-light count parity also
-holds at every sample. Continuous playback acceptance remains open. See
-[transition report](measurements-o04-transition-temporal.json) and
+holds at every sample. The owner later accepted motion and visual continuity in
+the full 20-second offscreen review across all three profiles; native playback
+and performance remain separate. See [transition report](measurements-o04-transition-temporal.json) and
 [runner](../scripts/projected_detail_temporal_transition_study.py).
 An in-app browser spot review viewed the campfire baseline and LOD GIFs side by
 side across several seconds; no obvious silhouette break or fire/smoke
-separation appeared in the sampled frames. This does not close full-duration
-human review. A three-pair native-window campfire orbit now lowers the
+separation appeared in the sampled frames. A later owner review accepted the
+full 20-second offscreen motion across campfire, quiet and bonfire. A three-pair
+native-window campfire orbit now lowers the
 atmosphere/fire GPU-stage median by 0.057 ms, with effectively flat paired FPS
 (−0.001); the retained-primitive median moves 81→70 and the projected-detail
 calculation adds about 0.00008 ms CPU. This does not establish a whole-window
-win. Keep LOD disabled by default; continuous human review and portability
+win. Keep LOD disabled by default; native playback/performance and portability
 remain open. See
 [measurements-o04.json](measurements-o04.json),
 [measurements-o04-motion-review.json](measurements-o04-motion-review.json) and
@@ -121,7 +123,8 @@ The 19 October current-release repeat adds three alternating 120-second
 offscreen campfire pairs at 640×360. Candidate-minus-baseline paired medians are
 −0.049 ms frame work and −0.146 ms GPU render, with all three pairs favoring the
 candidate on both metrics. This does not supersede the earlier native result of
-effectively flat FPS, nor does it close visual or platform acceptance. Keep LOD
+effectively flat FPS; portability remains open after the accepted offscreen
+visual review. Keep LOD
 disabled by default. See
 [current-release sustained report](measurements-o04-sustained-current-release.json).
 The 19 October current-build recheck matched fire state at all 14 projected-size
@@ -558,12 +561,14 @@ seed/tick/camera sequence. Mean frame error is 0.342/255, p95 frame mean
 0.373/255, and maximum channel error 29/255. Mean per-frame temporal-change-
 magnitude error is 0.418/255, p95 0.455/255, with maximum channel error 29/255.
 This is one offscreen M1 Max/Metal route, not perceptual or human playback
-acceptance. Three additional 120-frame, 20 fps routes now cover clearing, the
+acceptance by itself. The owner later accepted motion and visual continuity in
+the 20-second, 400-frame eight-variant playback; this remains offscreen only.
+Three additional 120-frame, 20 fps routes now cover clearing, the
 heavy plume/eight-light workload and Material Atelier. Their mean frame errors
 were 0.341/0.384/0.372 per 255; temporal-change-magnitude errors were
 0.190/0.212/0.043 per 255, with maximum channel errors 31/27/10. Sampled frames
-look close, but continuous human playback acceptance remains open. Keep the format
-experimental. Three alternating 120-second native-window pairs on the mixed route
+look close. Keep the format experimental. Three alternating 120-second
+native-window pairs on the mixed route
 measured FPS deltas +1.512/-0.769/+0.151 (median +0.151 fps), a median native
 CPU-frame delta of -0.306 ms and near-zero mixed GPU-stage deltas. This does not
 establish a reliable whole-window speedup. Native visual playback, physical

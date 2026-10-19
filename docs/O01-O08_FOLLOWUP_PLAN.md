@@ -547,7 +547,7 @@ direct fallback and exact-depth reuse guard remove the former sparse 188/255
 reuse outlier; RGBA16F reuse has only one 1/255 changed pixel, and compact HDR
 reuse matches the direct compact-HDR aggregate error. Compact HDR with direct
 lighting has 0.337/255 mean frame error and 0.421/255 temporal-change error on
-this route. Human playback review and fallback/DX12 validation remain open. Three alternating
+this route. The owner later accepted motion and visual continuity in the extended 20-second eight-variant offscreen review; native playback, physical fallback and DX12 validation remain open. Three alternating
 120-second native-window pairs now cover the high-dynamic mixed route. Candidate
 minus baseline FPS deltas were +1.512/-0.769/+0.151 fps (median +0.151); native
 CPU-frame median delta was -0.306 ms and GPU-stage deltas were small and mixed.

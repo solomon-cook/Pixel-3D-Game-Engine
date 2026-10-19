@@ -1043,8 +1043,10 @@ With that correction, RGBA16F reuse has a single 1/255 channel difference on
 one pixel across the route; compact-HDR reuse has the same measured aggregate
 error as direct compact HDR. A guard sweep shows looser depth tolerance brings
 back an 87/255 sparse edge error. Foreground-alpha/radiance and normal-alignment
-gates do not improve exact-depth output. The sampled contact sheet remains
-visually close; continuous playback acceptance remains open. See
+gates do not improve exact-depth output. The sampled contact sheet is limited to still checkpoints. The owner later
+accepted motion and visual continuity in both the six-second and extended
+20-second eight-variant offscreen reviews; native and other-adapter acceptance
+remain open. See
 [factorial temporal report](measurements-o06-o08-factorial-temporal.json) and
 [guard report](measurements-o06-temporal-depth-guard.json), with runners
 [`optical_factorial_temporal_study.py`](../scripts/optical_factorial_temporal_study.py)
