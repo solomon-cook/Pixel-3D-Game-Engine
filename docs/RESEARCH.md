@@ -1294,3 +1294,16 @@ not establish a native whole-window performance win or continuous visual
 acceptance; keep reuse opt-in and disabled by default. See the
 [current-release recheck](measurements-o06-depth-guard-current-release.json) and
 [runner](../scripts/optical_depth_guard_study.py).
+
+## O08 compact-HDR peak error localization (19 October 2026)
+
+The existing 400-frame high-dynamic comparison was reprocessed without rendering
+again. Its maximum RGBA16F-versus-Rg11b10Ufloat difference is 38/255 in one
+red-channel pixel at tick 729, coordinate (434, 294): 45 in the RGBA16F capture
+and 7 in compact HDR. Only that one pixel in the sequence reaches 32/255; pixels
+at least 16/255 apart total 22,596 across the sequence, with at least one such
+pixel in every frame. This localizes the largest spike, but does not make the
+lossy path visually acceptable. Keep compact HDR experimental pending human
+playback review; no whole-window speedup or portability is established. See the
+[peak analysis](measurements-o08-compact-hdr-peak-error-analysis.json) and
+[reproducible analyzer](../scripts/analyze_compact_hdr_temporal_errors.py).

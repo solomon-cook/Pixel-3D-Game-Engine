@@ -291,6 +291,15 @@ mean and 38/255 maximum channel difference. See the
 [current-build report](measurements-o06-o08-factorial-current-build-recheck.json);
 human continuous playback remains open.
 
+The current 400-frame compact-HDR peak was localized from the saved sequence:
+38/255 occurs in one red-channel pixel at tick 729 (x=434, y=294), where the
+RGBA16F and compact-HDR values are 45 and 7. Only one pixel across the route
+reaches 32/255; at least 16/255 occurs in 22,596 pixels across 400 frames. This
+is an error-location result, not visual acceptance, so compact HDR remains
+experimental and disabled by default. See the
+[peak analysis](measurements-o08-compact-hdr-peak-error-analysis.json) and
+[analyzer](../scripts/analyze_compact_hdr_temporal_errors.py).
+
 O01 profiling implementation now includes bounded asynchronous timestamps for
 smoke compute, shadows, opaque geometry, atmosphere/fire, optical resolve and post;
 serial latency and buffered throughput reports; a native vsynced route report;

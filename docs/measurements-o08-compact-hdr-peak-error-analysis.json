@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "workstream": "O08 compact-HDR temporal peak-error localization",
+  "source_report": "docs/measurements-o06-o08-factorial-temporal-full-orbit-current-build.json",
+  "source_report_sha256": "db8f44d7f53f6e3197645da40f3a775591fa911314a1878fc8e99fb9bbcdb9aa",
+  "baseline_sequence": "artifacts/o06-o08/factorial-temporal-full-orbit-current-build/frames/direct_copy_rgba16/sequence.json",
+  "baseline_sequence_sha256": "cc4f4cb84fc504798d97ca93d0b7385a51bedefa348963916619ee974bb66ea5",
+  "compact_hdr_sequence": "artifacts/o06-o08/factorial-temporal-full-orbit-current-build/frames/direct_copy_rg11b10/sequence.json",
+  "compact_hdr_sequence_sha256": "e12c0f53398b5ac99fc417b22b534e8d0ee3a501b8f9269ddbbb27154331060b",
+  "baseline_format": "Rgba16Float",
+  "compact_hdr_format": "Rg11b10Ufloat",
+  "frame_count": 400,
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "tick_range": [
+    300,
+    1497
+  ],
+  "peak_error": {
+    "channel_difference": 38,
+    "frame_index_one_based": 144,
+    "tick": 729,
+    "coordinates_xy": [
+      [
+        434,
+        294
+      ]
+    ],
+    "per_channel_maximum": [
+      38,
+      11,
+      17
+    ],
+    "reference_rgb_at_peak": [
+      [
+        45,
+        0,
+        0
+      ]
+    ],
+    "compact_hdr_rgb_at_peak": [
+      [
+        7,
+        0,
+        0
+      ]
+    ]
+  },
+  "threshold_counts": {
+    "at_least_4_of_255": {
+      "changed_pixels": 1455903,
+      "frames_with_changes": 400
+    },
+    "at_least_8_of_255": {
+      "changed_pixels": 1454946,
+      "frames_with_changes": 400
+    },
+    "at_least_16_of_255": {
+      "changed_pixels": 22596,
+      "frames_with_changes": 400
+    },
+    "at_least_32_of_255": {
+      "changed_pixels": 1,
+      "frames_with_changes": 1
+    }
+  },
+  "interpretation": "The maximum 38/255 difference is confined to the listed pixel(s) and frame; the per-sequence counts show how often large differences occur. This does not substitute for human playback acceptance or demonstrate a performance win.",
+  "limitations": [
+    "Analysis reuses saved offscreen M1 Max/Metal captures; no render was performed.",
+    "Pixel error statistics are not a human visual-quality judgment.",
+    "Results do not establish behavior on other adapters or DX12."
+  ],
+  "analysis_script": "scripts/analyze_compact_hdr_temporal_errors.py",
+  "analysis_script_sha256": "17bcd41cef863fc2ec87ca1a851594a60f9f54c77dd22d2f30037aa9bf356dd0"
+}
