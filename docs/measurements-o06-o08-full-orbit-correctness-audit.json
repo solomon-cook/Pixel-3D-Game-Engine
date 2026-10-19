@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "workstream": "O06 x O08 current-release 400-frame artifact correctness audit",
+  "source_report": "measurements-o06-o08-factorial-temporal-full-orbit-current-build.json",
+  "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
+  "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+  "source_report_sha256": "b2e77d4932cc3fd7d4e79190b11c342efab4af84181982b053cf56ba429d36d7",
+  "sequence_hashes_verified": {
+    "direct_copy_rgba16": "cc4f4cb84fc504798d97ca93d0b7385a51bedefa348963916619ee974bb66ea5",
+    "reuse_copy_rgba16": "6ec81ced231dcb4ca0954f17a5b2422f55f824cc6b559ec9ab999b7c1ff284e4",
+    "direct_no_copy_rgba16": "86941fbb8970110a52dd1aba34dbe55c055d3b0a633950466b4d1be2a6e538d0",
+    "reuse_no_copy_rgba16": "b553dbaf195e151aa5878ee3fb586fb457e5b3cc069829457bff9c5898318b46",
+    "direct_copy_rg11b10": "e12c0f53398b5ac99fc417b22b534e8d0ee3a501b8f9269ddbbb27154331060b",
+    "reuse_copy_rg11b10": "b8c1e4489390614e4a6b895089a171bdadec683b0531a9d0a558b0d0a7322178",
+    "direct_no_copy_rg11b10": "248723a100f5e629c17b86043886a7b3e9f12386b1cf284375d21db0982b7c2f",
+    "reuse_no_copy_rg11b10": "080fe266ec92dd6f1c3d8a0ab95d85856f663d82b18660fe98de629c426fca68"
+  },
+  "frames_per_variant": 400,
+  "tick_camera_alignment_all_variants": true,
+  "effect_count_fields_compared": [
+    "fire_primitives_full",
+    "fire_primitives_rendered",
+    "fire_segments_full",
+    "fire_segments_rendered",
+    "embers",
+    "particle_lights",
+    "flame_fragments"
+  ],
+  "effect_count_parity_all_variants_every_frame": true,
+  "copy_no_copy_exact_image_parity": {
+    "direct_rgba16_copy_vs_no_copy": {
+      "frames_compared": 400,
+      "pixel_identical_frames": 400,
+      "different_frame_indices": []
+    },
+    "reuse_rgba16_copy_vs_no_copy": {
+      "frames_compared": 400,
+      "pixel_identical_frames": 400,
+      "different_frame_indices": []
+    },
+    "direct_rg11b10_copy_vs_no_copy": {
+      "frames_compared": 400,
+      "pixel_identical_frames": 400,
+      "different_frame_indices": []
+    },
+    "reuse_rg11b10_copy_vs_no_copy": {
+      "frames_compared": 400,
+      "pixel_identical_frames": 400,
+      "different_frame_indices": []
+    }
+  },
+  "owner_visual_review": {
+    "status": "accepted",
+    "response": "Acceptable",
+    "scope": "Owner accepted motion and visual continuity in the current 20-second, 400-frame, 20 fps eight-variant playback at 640x360 per panel. This is offscreen image review only; it does not validate native playback/performance, other scenes, or other adapters/DX12.",
+    "reviewed_preview_sha256": "1a17d934cb3a7a72516f3e6b8e58ae00a61320418e1f1702eb471be361750a09"
+  },
+  "limitations": [
+    "Artifact re-analysis only; no rendering, native presentation/performance, other scenes or other adapters were exercised.",
+    "The separate 240-frame report with binary hash 4247485106ee2d30... remains untraceable; these 400-frame results independently cover effect-count parity and copy/no-copy exact image parity for this route."
+  ]
+}

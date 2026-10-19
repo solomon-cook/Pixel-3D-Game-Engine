@@ -1,0 +1,130 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "purpose": "Audit whether recent renderer correctness and fallback rechecks can be attributed to the current validated engine source and release binary.",
+  "current_validation_source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
+  "current_release_binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+  "audited_head_revision": "782d6a8860c2d20354001b70cf417ff8a2c12ffc",
+  "engine_scope": [
+    "crates",
+    "Cargo.lock",
+    "rust-toolchain.toml",
+    "shaders",
+    "assets"
+  ],
+  "engine_source_changes_since_current_validation": [],
+  "records": [
+    {
+      "workstream": "O03 fire-projected-bounds fixed-tick recheck",
+      "report": "docs/measurements-o03-fire-projected-bounds-recheck.json",
+      "binary_sha256": "4247485106ee2d305f5d07f58e074d5f03f19b9a7cb369b00cf809aa1e4f0363",
+      "binary_path": null,
+      "source_revision": null,
+      "matches_current_release_binary": false,
+      "disposition": "not independently attributable to current source: report has no binary path/source revision and hash matches no available current binary"
+    },
+    {
+      "workstream": "O04 projected-detail fixed-tick recheck",
+      "report": "docs/measurements-o04-current-build-recheck.json",
+      "binary_sha256": "4247485106ee2d305f5d07f58e074d5f03f19b9a7cb369b00cf809aa1e4f0363",
+      "binary_path": null,
+      "source_revision": null,
+      "matches_current_release_binary": false,
+      "disposition": "not independently attributable to current source: report has no binary path/source revision and hash matches no available current binary"
+    },
+    {
+      "workstream": "O05 absorption invalidation fixed-tick recheck",
+      "report": "docs/measurements-o05-invalidation-current-build.json",
+      "binary_sha256": "4247485106ee2d305f5d07f58e074d5f03f19b9a7cb369b00cf809aa1e4f0363",
+      "binary_path": null,
+      "source_revision": null,
+      "matches_current_release_binary": false,
+      "disposition": "not independently attributable to current source: report has no binary path/source revision and hash matches no available current binary"
+    },
+    {
+      "workstream": "O06xO08 factorial fixed-tick recheck",
+      "report": "docs/measurements-o06-o08-factorial-current-build-recheck.json",
+      "binary_sha256": "4247485106ee2d305f5d07f58e074d5f03f19b9a7cb369b00cf809aa1e4f0363",
+      "binary_path": null,
+      "source_revision": null,
+      "matches_current_release_binary": false,
+      "disposition": "not independently attributable to current source: report has no binary path/source revision and hash matches no available current binary"
+    },
+    {
+      "workstream": "O08 RG16 forced fallback recheck",
+      "report": "docs/measurements-o08-rg16-fallback-current-build.json",
+      "binary_sha256": "8fa4c64bbf13d062fb2b0e84afad87c78fd3532e180fda6e08e3facd09c2cdb8",
+      "binary_path": null,
+      "source_revision": "222983c7bee96caeff5b169a39240df8c91600cc",
+      "matches_current_release_binary": false,
+      "source_changes_since_report_to_current_validation": [
+        "crates/engine-lab/src/window.rs",
+        "crates/engine/src/effects.rs",
+        "crates/engine/src/render/mod.rs",
+        "crates/engine/src/session.rs"
+      ],
+      "disposition": "source-stale relative to current release: report names an earlier source revision and renderer/session/window changes follow it"
+    },
+    {
+      "workstream": "O03 native fire-bound current release",
+      "report": "docs/measurements-o03-fire-projected-bounds-native-current-build.json",
+      "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+      "source_revision": null,
+      "binary_matches_current_release": true,
+      "disposition": "attributable to current audited release binary"
+    },
+    {
+      "workstream": "O04 full-orbit owner review",
+      "report": "docs/measurements-o04-owner-full-orbit-current-build.json",
+      "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+      "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
+      "binary_matches_current_release": true,
+      "disposition": "attributable to current audited release binary"
+    },
+    {
+      "workstream": "O04 current-release sustained run",
+      "report": "docs/measurements-o04-sustained-current-release.json",
+      "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+      "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
+      "binary_matches_current_release": true,
+      "disposition": "attributable to current audited release binary"
+    },
+    {
+      "workstream": "O06xO08 full-orbit owner review",
+      "report": "docs/measurements-o06-o08-factorial-temporal-full-orbit-current-build.json",
+      "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+      "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
+      "binary_matches_current_release": true,
+      "disposition": "attributable to current audited release binary"
+    },
+    {
+      "workstream": "O07 continuous owner review",
+      "report": "docs/measurements-o07-owner-continuous-current-build.json",
+      "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+      "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
+      "binary_matches_current_release": true,
+      "disposition": "attributable to current audited release binary"
+    },
+    {
+      "workstream": "O07 shadow freshness recheck",
+      "report": "docs/measurements-o07-shadow-freshness-current-release.json",
+      "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+      "source_revision": "178a0418fcf6d4970fe0891cff79c7f3c6750e0d",
+      "binary_matches_current_release": true,
+      "disposition": "attributable to current audited release binary"
+    },
+    {
+      "workstream": "O06xO08 400-frame current-release artifact correctness audit",
+      "report": "docs/measurements-o06-o08-full-orbit-correctness-audit.json",
+      "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+      "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
+      "binary_matches_current_release": true,
+      "disposition": "current-release artifact audit verifies tick/camera alignment, effect-count parity and copy/no-copy byte identity across all four path/format pairs"
+    }
+  ],
+  "conclusion": "The O04, O06xO08 and O07 full-orbit review reports, the O03 current native fire-bound report, and the 400-frame O06xO08 artifact correctness audit listed here carry the current audited release hash. The 4247485106ee2d30... fixed-tick report group has no source revision/path and is not present among current binaries. The O08 RG16 fallback recheck explicitly predates renderer/session/window source changes. Keep those records as exact-build evidence, not current-release proof. Rerun O05 invalidation and sustained performance on the current release; rerun O08 RG16 fallback on the current release before closing that gate. Recheck any O03/O04/O06xO08 fixed-tick claims that rely only on the untraceable group.",
+  "limitations": [
+    "Hash/source audit only; no renderer or adapter execution occurred.",
+    "Current-source release parity is established for the current release binary only; Windows/DX12 and other adapters remain unverified."
+  ]
+}

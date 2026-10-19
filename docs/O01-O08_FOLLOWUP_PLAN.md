@@ -199,23 +199,24 @@ candidate selectable and disabled by default. See the
 [runners](../scripts/fire_bounds_precompute_study.py) and
 [native study runner](../scripts/fire_bounds_native_study.py).
 
-**19 October current-build recheck:** the direct and precomputed paths were
+**19 October fixed-tick recheck (binary provenance unverified):** the direct and precomputed paths were
 compared at 21 fixed-tick camera views across the same four workload families.
 All images, tile memberships, overflow counts and occupancy match; natural fire
 fallback remains 100% in the camera-inside workload. Three alternating pairs of
 two-second routes completed with full 120-frame timing coverage and no skipped or
 late samples, but these short windows are only a protocol check, not sustained
-performance evidence. A paused Session API off/on capture also matches pixels
-and tile metrics exactly. A current-release native recheck completes three
+performance evidence. The report uses binary hash `4247485106ee2d30…` but has
+no binary path or source revision, so these results are not proven current-source
+correctness. A separate current-release native recheck completes three
 alternating 120-second pairs on the clearing orbit. Candidate-minus-direct paired
 medians are +0.009 FPS, +0.003 ms CPU native-frame work and −0.296 ms in the
 atmosphere/fire GPU stage. The small FPS/CPU deltas do not establish a whole-window
 win; retain opt-in selection. A same-binary tick-300 `fire-study` capture is
-pixel-identical with matching tile candidate, overflow and occupancy metrics.
-The owner accepted motion and continuity in the reviewed offscreen clip, whose
-output is preserved by this tested candidate pose. Windows/DX12 and another
-adapter remain open. See [current-build recheck](measurements-o03-fire-projected-bounds-recheck.json)
-and [current-release native report](measurements-o03-fire-projected-bounds-native-current-build.json).
+pixel-identical with matching tile candidate, overflow and occupancy metrics at
+that one pose. Current-release multi-view correctness remains open. Windows/DX12
+and another adapter remain open. See [fixed-tick recheck](measurements-o03-fire-projected-bounds-recheck.json),
+[current-release native report](measurements-o03-fire-projected-bounds-native-current-build.json)
+and [artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json).
 
 ### 2. O02 moving-caster and invalidation routes
 
@@ -331,19 +332,17 @@ window frame-win claim. See
 [native report](measurements-o04-native.json) and
 [native runner](../scripts/projected_detail_native_study.py).
 
-**19 October 2026 current-build recheck:** `scripts/projected_detail_orbit_study.py`
-was rerun against `target/debug/engine-lab` on the M1 Max/Metal at the fixed
-640×360 grid. All 14 camera checkpoints preserved fire-state parity. Candidate
-images matched baseline hashes at full-detail checkpoints; they differed at
-reduced-detail checkpoints only when the removed geometry affected visible
-pixels. Those frames changed 18–105 pixels per 640×360 image, within x=302–336,
-y=169–195 around the fire. The other reduced-detail checkpoints were also
-pixel-identical because removed geometry was occluded from the camera. This is
-a discrete current-build check, not continuous playback
-acceptance or a new performance measurement. The tracked checkpoint and image
-diff summary is in
-[measurements-o04-current-build-recheck.json](measurements-o04-current-build-recheck.json);
-raw captures remain under ignored `artifacts/o04/goal-recheck/slow-orbit/`.
+**19 October 2026 threshold-state recheck (binary provenance unverified):**
+`projected_detail_orbit_study.py` reported fire-state parity at 14 camera
+checkpoints and expected image differences at visible reduced-detail views. Its
+binary hash is `4247485106ee2d30…`, with no binary path or source revision, so it
+is not proven current-release state evidence. The separately recorded current-
+release 400-frame orbit has owner-accepted motion and continuity across all three
+profiles, but does not replace the missing threshold-state provenance. Rerun the
+14-checkpoint matrix on the current release before closing that correctness gate.
+See [the report](measurements-o04-current-build-recheck.json) and [artifact
+provenance audit](measurements-o01-o08-artifact-provenance-audit.json); old raw
+captures remain under ignored `artifacts/o04/goal-recheck/slow-orbit/`.
 
 ### 4. O05 smoke absorption cache
 
@@ -596,7 +595,8 @@ format support and shader/pipeline creation failure.
 
 ### 7. O08 individual candidate decisions
 
-**Complete on M1 Max/Metal:** independent dispositions for lazy optical allocation,
+**Candidate dispositions recorded on M1 Max/Metal; current-source RG16 fallback
+recheck remains open:** independent decisions for lazy optical allocation,
 normal/depth reuse, Rg16Float targets, compact HDR, no-copy overlay and dirty
 fixed-step uploads are recorded in [DECISIONS_O08.md](DECISIONS_O08.md). The memory-saving implemented paths are
 retained with capability gates; compact HDR and no-copy remain independent,
@@ -641,15 +641,18 @@ remain open. See
 [native report](measurements-o08-lazy-optical-native.json) and
 [runner](../scripts/lazy_optical_native_study.py).
 
-The RG16 fallback now has a diagnostic `--force-rg16-fallback` path that exercises
+The RG16 fallback has a diagnostic `--force-rg16-fallback` path that exercises
 RGBA16F effect-target and smoke-volume creation/rendering on a capable adapter.
-Two fixed-tick M1 Max/Metal scenes and all 120 sampled frames across a moving
-fire-camera route match the native RG16 images byte-for-byte. A native-window
-fallback capture also matches its headless counterpart exactly. The fallback
-uses 2,101,248 more known bytes at 640×360. This strengthens local fallback
-evidence but leaves physical unsupported-adapter and DX12 acceptance open. See
+An earlier-source M1 Max/Metal run reports two fixed-tick scenes and all 120
+sampled frames across a moving fire-camera route matching native RG16 output;
+it also reports a native-window capture matching its headless counterpart. The
+report source predates four engine/window changes, so current-source fallback
+correctness needs a release-binary rerun. The fallback uses 2,101,248 more known
+bytes at 640×360. Physical unsupported-adapter and DX12 acceptance also remain
+open. See
 [offscreen report](measurements-o08-rg16-fallback.json),
 [current-build recheck](measurements-o08-rg16-fallback-current-build.json),
+[artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json),
 [native report](measurements-o08-rg16-native-fallback.json), the
 [offscreen runner](../scripts/rg16_fallback_study.py) and
 [native runner](../scripts/verify_native_rg16_fallback.py).
@@ -710,10 +713,11 @@ driver-allocation limitations in the inventory; do not present known allocation 
 physical device residency.
 
 **Exit gate:** every candidate has an independent disposition and verification
-scope. The O08 umbrella stays open while any promoted/default candidate lacks the
-required physical fallback or target-backend validation. Forced fallback on the
-M1 Max validates resource/pipeline creation and fixed-tick output; it does not
-substitute for an adapter that lacks RG16 capabilities.
+scope. The O08 umbrella stays open while current-source fallback correctness,
+required physical fallback or target-backend validation is missing. The existing
+forced-fallback capture is from source `222983c`, before four engine/window
+changes, and must be repeated on the current release. Forced fallback on the
+M1 Max still does not substitute for an adapter that lacks RG16 capabilities.
 
 ## Wave 4 — Scale scene structure and identify the next GPU bottleneck
 
@@ -1121,12 +1125,12 @@ finishes. A compile or a passing unit test does not close visual or hardware gat
 |---|---|---|
 | O01 profiling and counters | M1 Max/Metal stage attribution and output-preserving diagnostics do not support an active-region solver rewrite or a general shader rewrite. Keep counters diagnostic-only. In pinned wgpu 24.0.5 / wgpu-hal 24.0.4, the public API exposes GPU timestamp period and a presentation-clock timestamp but no GPU-query-to-host calibration pair; submit-to-readback remains separate and is not a queue-delay proxy. [Clock-mapping API audit](measurements-o01-clock-mapping-capability.json). A current debug/release parity matrix is exact in 10 of 11 fixed-tick cases. The Materials/hero difference is repeatable per binary; active fire-primitive fingerprints and view matrices match, while two perspective-projection slots differ and propagate to 7/16 view-projection and 15/16 inverse slots. Two-way matrix substitution makes both profiles byte-identical under either shared matrix pair, with each result matching that pair's default profile image; this proves camera-matrix causality for the measured flame-edge difference. [Evidence](measurements-o01-shading-attribution.json), [counters](measurements-o01-shading-counters.json), [debug/release parity and matrix substitution](measurements-debug-release-profile-parity.json). | Continuous playback, native review and another adapter; exact queue delay requires a backend-specific calibrated GPU/host clock mapping with uncertainty bounds. |
 | O02 shadow caching | Per-face invalidation matches forced redraw at fixed checkpoints and lowers the shadow stage in the moving route, but whole-window throughput is mixed. Keep conservative full-map fallback. [Evidence](measurements-o02-moving-route.json), [native](measurements-o02-native-shadow-cache.json). | Windows/DX12 and another adapter. |
-| O03 tiled effects | Retain 16×16 lists and exhaustive per-category overflow fallback; 8×8 storage cost outweighs its small frame-work change. Fire-bound precompute and smoke-candidate materialization remain disabled opt-ins with M1 evidence. [Stress](measurements-o03-stress-route.json), [tile size](measurements-o03-tile-size-sustained.json), [fire bounds](measurements-o03-fire-projected-bounds.json), [fire-bound current recheck](measurements-o03-fire-projected-bounds-recheck.json), [current fire-bound native recheck](measurements-o03-fire-projected-bounds-native-current-build.json), [smoke-candidate correctness](measurements-o03-smoke-candidate-invalidation-recheck.json), [smoke-candidate current sustained](measurements-o03-smoke-candidate-sustained-current-build.json), [smoke-candidate native](measurements-o03-smoke-candidate-native-current-build.json). | Windows/DX12 and another adapter. Current native runs show no reliable whole-window gain for either opt-in; the owner accepted the default clearing preview, and current-release fixed-tick captures preserve their output. |
-| O04 projected fire detail | Keep LOD disabled by default: a current-release three-pair campfire rerun shows -0.049 ms frame-work and -0.146 ms GPU-render medians across pairs, but prior native FPS was effectively flat. Owner accepted motion and continuity in the full 20-second offscreen comparison across all three profiles. [Full-orbit review](measurements-o04-owner-full-orbit-current-build.json), [current-release sustained](measurements-o04-sustained-current-release.json), [profile sustained](measurements-o04-sustained-profiles.json), [current recheck](measurements-o04-current-build-recheck.json). | Native playback/performance follow-up and non-Metal qualification. |
+| O03 tiled effects | Retain 16×16 lists and exhaustive per-category overflow fallback; 8×8 storage cost outweighs its small frame-work change. Fire-bound precompute and smoke-candidate materialization remain disabled opt-ins with M1 evidence. The 21-view fire-bound recheck uses an untraceable 4247… binary; the current release has exact parity at one fixed camera and native timing, not the full 21-view matrix. [Stress](measurements-o03-stress-route.json), [tile size](measurements-o03-tile-size-sustained.json), [fire bounds](measurements-o03-fire-projected-bounds.json), [older-source recheck](measurements-o03-fire-projected-bounds-recheck.json), [current release fire-bound native](measurements-o03-fire-projected-bounds-native-current-build.json), [smoke-candidate correctness](measurements-o03-smoke-candidate-invalidation-recheck.json), [smoke-candidate current sustained](measurements-o03-smoke-candidate-sustained-current-build.json), [smoke-candidate native](measurements-o03-smoke-candidate-native-current-build.json), [artifact audit](measurements-o01-o08-artifact-provenance-audit.json). | Current-release 21-view fire-bound recheck, Windows/DX12 and another adapter. Current native runs show no reliable whole-window gain for either opt-in; the owner accepted the default clearing preview, and current-release single-view fire-bound parity is exact. |
+| O04 projected fire detail | Keep LOD disabled by default: a current-release three-pair campfire rerun shows -0.049 ms frame-work and -0.146 ms GPU-render medians across pairs. Owner accepted motion and continuity in the full 20-second current-release offscreen comparison across all three profiles. The 14-threshold state recheck uses the untraceable 4247… binary; current-release threshold-state parity remains to be rerun. [Full-orbit review](measurements-o04-owner-full-orbit-current-build.json), [current-release sustained](measurements-o04-sustained-current-release.json), [profile sustained](measurements-o04-sustained-profiles.json), [older-source recheck](measurements-o04-current-build-recheck.json), [artifact audit](measurements-o01-o08-artifact-provenance-audit.json). | Current-release threshold-state parity, native playback/performance follow-up and non-Metal qualification. |
 | O05 absorption cache | Keep direct sampling selected and the cache disabled. Historical 8³/16³ and dual-emitter runs did not establish a total-render win; the explicit-source sustained report predates 13 engine/shader changes. The 19 October invalidation recheck has no executable path/source revision, and its binary hash matches none of the current binaries, so current-source correctness is not independently proven. [Size study](measurements-o05-size-study.json), [dual-emitter timing](measurements-multi-emitter-absorption-native-sustained.json), [capture/performance source audit](measurements-o05-current-review-source-audit.json), [invalidation provenance audit](measurements-o05-invalidation-provenance-audit.json), [fixed-tick invalidation](measurements-o05-invalidation-current-build.json). | Rerun correctness and sustained performance with the current release binary. If promotion is reconsidered: current-build owner visual review and other-adapter evidence. |
-| O06 opaque-light reuse | Keep reuse disabled: exact-depth guarding removed the moving-route spike, but sustained comparisons show no reliable whole-render benefit. The earlier behind-view fixed-tick error does not reproduce on the current release; direct/reuse match exactly in three current-build cameras. Owner accepted motion and continuity in both the six-second and extended 20-second eight-variant offscreen reviews. [Full-orbit temporal](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json), [current guard recheck](measurements-o06-depth-guard-current-release.json), [current-release sustained](measurements-o06-exact-depth-sustained-current-release.json), [temporal](measurements-o06-o08-factorial-temporal.json), [current recheck](measurements-o06-o08-factorial-current-build-recheck.json). | Broader optical camera review, native playback/performance follow-up and another adapter. |
+| O06 opaque-light reuse | Keep reuse disabled: exact-depth guarding removed the moving-route spike, but sustained comparisons show no reliable whole-render benefit. The earlier behind-view fixed-tick error does not reproduce on the current release. Owner accepted motion and continuity in both the six-second and extended 20-second current-release eight-variant offscreen reviews; effect counts match every frame in the 400-frame sequence. The separate 240-frame 4247… recheck has no source/binary path provenance. [Full-orbit temporal](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json), [current guard recheck](measurements-o06-depth-guard-current-release.json), [current-release sustained](measurements-o06-exact-depth-sustained-current-release.json), [older-source recheck](measurements-o06-o08-factorial-current-build-recheck.json), [artifact audit](measurements-o01-o08-artifact-provenance-audit.json). | Broader optical camera review, native playback/performance follow-up and another adapter. |
 | O07 culling and instancing | Keep the existing path; shadow-stage savings grow with scene size but whole-frame/native results are mixed and non-monotonic. Do not add indirect or occlusion submission. The owner accepted shadow position and motion in the 20-second three-mode offscreen playback. Exact cache-vs-forced redraw parity holds at all 400 poses. Paired screen masks place the point-light shadow centroid 134 px left of the rock at tick 600 and 65 px right at tick 900, while the sun shadow remains directional; these samples do not show a fixed rock-relative point-shadow offset. [Review](measurements-o07-owner-continuous-current-build.json), [freshness](measurements-o07-shadow-freshness-current-release.json), [shadow projection](measurements-o07-shadow-projection-mask-current-build.json), [scale](measurements-o07-moving-caster.json), [native](measurements-o07-native-scale-study.json). | Native playback/performance follow-up, the rest of the 120-second route and non-Metal qualification. |
-| O08 resource/pass candidates | Keep independent candidate decisions and capability fallbacks. The current-build forced RGBA16F fallback matches two scenes and 120 sampled motion frames exactly on capable Metal hardware; physical unsupported-format fallback and DX12 qualification remain open. Compact HDR's 38/255 full-orbit peak is one pixel in one frame, localized in [peak analysis](measurements-o08-compact-hdr-peak-error-analysis.json); the owner accepted motion and visual continuity for the extended eight-variant offscreen comparison. Keep compact HDR and no-copy experimental because no whole-window benefit or external bandwidth gain is established. [Decisions](DECISIONS_O08.md), [full-orbit temporal](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json), [factorial](measurements-o06-o08-factorial.json), [current temporal recheck](measurements-o06-o08-factorial-current-build-recheck.json), [current RG16 fallback](measurements-o08-rg16-fallback-current-build.json). | Physical unsupported-format fallback and target-backend/DX12 qualification. |
+| O08 resource/pass candidates | Keep independent candidate decisions and capability fallbacks. The 19 October forced RGBA16F fallback report names source `222983c`, before four engine/window changes; its two-scene and 120-frame parity is not current-source proof. Compact HDR's current-release 38/255 full-orbit peak is one pixel in one frame, localized in [peak analysis](measurements-o08-compact-hdr-peak-error-analysis.json); the owner accepted motion and visual continuity for the extended eight-variant current-release offscreen comparison. Keep compact HDR and no-copy experimental because no whole-window benefit or external bandwidth gain is established. [Decisions](DECISIONS_O08.md), [full-orbit temporal](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json), [factorial](measurements-o06-o08-factorial.json), [older-source 240-frame recheck](measurements-o06-o08-factorial-current-build-recheck.json), [RG16 fallback report](measurements-o08-rg16-fallback-current-build.json), [artifact audit](measurements-o01-o08-artifact-provenance-audit.json). | Current-release forced-fallback recheck, physical unsupported-format fallback and target-backend/DX12 qualification. |
 | Bounded two-emitter extension | Fixed-tick ordering, fallback, shader rollback and selected native controls are verified on M1 Max/Metal; cap remains two because the maximum-budget route has mixed whole-render cost. [Correctness](measurements-multi-emitter-overflow.json), [sustained](measurements-multi-emitter-sustained.json). | Continuous playback, broader resource-recreation, sustained native benefit, Windows/DX12 and another adapter. |
 
 ### Native window control gate (19 October 2026)

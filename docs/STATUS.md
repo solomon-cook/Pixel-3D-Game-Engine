@@ -127,13 +127,14 @@ effectively flat FPS; portability remains open after the accepted offscreen
 visual review. Keep LOD
 disabled by default. See
 [current-release sustained report](measurements-o04-sustained-current-release.json).
-The 19 October current-build recheck matched fire state at all 14 projected-size
-checkpoints; baseline and candidate images were identical at full detail, while
-visible reduced-detail changes affected 18–105 pixels per 640×360 image and were
-confined to the fire region; some reduced-detail views were pixel-identical when
-the removed geometry was occluded. This discrete parity check does not replace
-continuous playback review. See the
-[current-build report](measurements-o04-current-build-recheck.json).
+The 19 October 14-checkpoint fire-state recheck uses binary hash
+`4247485106ee2d30…`, with no binary path or source revision; it is not proven to
+match the current release. Its full-detail and reduced-detail image comparisons
+remain exact-build evidence only. The separate 400-frame current-release route
+was visually accepted across all three profiles. Rerun the threshold-state
+matrix on the current release before closing that correctness gate. See the
+[artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json)
+and [recheck report](measurements-o04-current-build-recheck.json).
 The same-tick default-scene capture also confirms projected detail, absorption
 cache, optical reuse, optical no-copy, compact HDR and projected-fire-bound
 precompute are disabled; the absorption cache reports zero bytes. The smoke- and
@@ -309,13 +310,15 @@ current-release three-pair mixed-route rerun measures paired median frame-work
 +0.030 ms and GPU-render +0.113 ms; GPU render is slower in two pairs, so this
 establishes no whole-render benefit. See the [current-release sustained
 report](measurements-o06-exact-depth-sustained-current-release.json).
-The 19 October current-build 240-frame factorial recheck confirms all effect
-counts match. Direct no-copy is pixel-identical to copy for both HDR formats;
-reuse adds one 1/255 pixel difference in RGBA16F and three in compact HDR across
-the full sequence. Compact HDR retains a 0.337/255 frame mean, 0.421/255 temporal
-mean and 38/255 maximum channel difference. See the
-[current-build report](measurements-o06-o08-factorial-current-build-recheck.json);
-human continuous playback remains open.
+The separate 19 October 240-frame factorial recheck uses untraceable binary hash
+`4247485106ee2d30…`; its error metrics are exact-build evidence only. A
+current-release 400-frame artifact audit verifies all effect-count fields across
+all eight variants at every frame and byte-identical copy/no-copy images in all
+four direct/reuse × HDR-format pairs. The owner accepted motion and continuity
+in the same 20-second route. This does not validate native presentation or
+performance. See the [full-orbit report](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json),
+[correctness audit](measurements-o06-o08-full-orbit-correctness-audit.json) and
+[artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json).
 
 The current 400-frame compact-HDR peak was localized from the saved sequence:
 38/255 occurs in one red-channel pixel at tick 729 (x=434, y=294), where the
@@ -436,10 +439,11 @@ select Rg16Float only with the adapter-specific format feature and required
 storage/sample support, falling back to Rgba16Float; they save 1,179,648 bytes.
 Pure capability-selection tests cover the required usages/features and the
 Rgba16Float fallback path. The diagnostic `--force-rg16-fallback` option also
-forces that branch on a capable adapter. On M1 Max/Metal, fallback texture and
-pipeline creation succeeded and two fixed-tick scenes matched the native RG16
-images byte-for-byte. A 120-frame, 20 fps moving fire-camera route also matched
-byte-for-byte at every sampled tick from 120 through 477. Known allocation rises
+forces that branch on a capable adapter. A previous M1 Max/Metal run reported
+fallback texture and pipeline creation, two fixed-tick scenes and a 120-frame,
+20 fps moving route matching native RG16 output byte-for-byte. Its report names
+source revision `222983c`, before four engine/window source changes, so it is not
+current-source proof; rerun the forced fallback on the current release. Known allocation rises
 by 2,101,248 bytes at 640×360.
 This exercises fallback rendering but does not replace physical validation on an
 adapter without these capabilities or Windows/DX12 checks. See
@@ -731,11 +735,13 @@ behavior remain open. See the [offscreen report](measurements-o03-fire-projected
 [current-release native report](measurements-o03-fire-projected-bounds-native-current-build.json),
 [offscreen runner](../scripts/fire_bounds_precompute_study.py), and
 [native runner](../scripts/fire_bounds_native_study.py).
-The 19 October current-build check also matches all 21 fixed-tick views and the
-paused Session API toggle; camera-inside natural fire overflow remains 100%.
-Its three two-second pairs validate capture/timestamp protocol only and are not
-sustained-performance evidence. See the
-[recheck report](measurements-o03-fire-projected-bounds-recheck.json).
+The 19 October 21-view fire-bound check and paused Session toggle use the
+untraceable `4247485106ee2d30…` binary; they are not proven current-release
+correctness. The current release has exact output/tile parity in one fixed
+camera and a three-pair native timing study, but a current-release 21-view matrix
+remains open. Its old three two-second pairs are protocol checks, not sustained
+performance evidence. See the [recheck](measurements-o03-fire-projected-bounds-recheck.json)
+and [artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json).
 The two-emitter maximum-budget correctness runner now generates separate
 camera-inside-plume and near-plane-intersection scenes. Both tiled images match
 exhaustive output exactly; the inside-plume view overflows the fire list in all
@@ -1141,12 +1147,13 @@ decisions and unresolved visual/backend gates are consolidated in the
   GPU, Windows GNU/MSVC and native verification revisions. This ties those
   results to the current source but adds no new runtime or hardware evidence. See
   [source audit](measurements-validation-source-audit.json).
-  A separate current-build RG16 fallback study also forced RGBA16F effect-depth
+  A separate RG16 fallback study forced RGBA16F effect-depth
   and smoke targets: two scenes and all 120 sampled frames from tick 120 through
   477 matched native-RG16 output byte-for-byte, with 2,101,248 additional known
-  bytes at 640×360. This tests fallback creation/rendering on an M1 Max that
-  supports Rg16Float; physical unsupported-adapter and DX12 acceptance remain
-  open. See [current-build report](measurements-o08-rg16-fallback-current-build.json).
+  bytes at 640×360. Its source revision predates four engine/window changes, so
+  it is not current-source proof. Rerun on the current release. Physical
+  unsupported-adapter and DX12 acceptance also remain open. See [report](measurements-o08-rg16-fallback-current-build.json)
+  and [artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json).
   A same-device debug/release fixed-tick matrix matched 10 of 11 scenes/cameras
   byte-for-byte, including clearing, dual-emitter, smoke-candidate and projected-
   detail cases. Materials/hero is repeatable within each binary but differs

@@ -328,12 +328,13 @@ See
 under ignored `artifacts/o03/fire-projected-bounds/` and
 `artifacts/o03/fire-bounds-native/`.
 
-A 19 October current-build recheck repeats the 21-view matrix and verifies a
-paused Session API toggle. Images and tile metrics match exactly; the generated
-camera-inside route still exercises 100% fire fallback. Three two-second pairs
-cover 120 frames each with complete timestamps, but are correctness/protocol
-evidence only. Sustained claims remain based on the separate 120-second report.
-See [the recheck](measurements-o03-fire-projected-bounds-recheck.json).
+A 19 October 21-view recheck reports exact image/tile parity and a paused Session
+toggle, but its `4247485106ee2d30…` binary has no source revision/path and is not
+proven current-release evidence. The generated camera-inside route reports 100%
+fire fallback; the three two-second pairs are protocol evidence, not sustained
+performance. A current-release fixed-tick comparison covers one camera only, so
+the 21-view current-source check remains open. See [the recheck](measurements-o03-fire-projected-bounds-recheck.json)
+and [artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json).
 
 ## Material response beneath pixel treatment (16 October)
 
@@ -883,14 +884,14 @@ profiles; this does not establish native performance. See the [full-orbit visual
 report](measurements-o04-owner-full-orbit-current-build.json) and
 [current-release sustained report](measurements-o04-sustained-current-release.json).
 
-A 19 October current-build recheck at seed 42 and 640×360 compared 14 fixed-tick
-camera checkpoints. Fire counts, bounds, lighting and particle-light state match
-at every checkpoint. Full-detail captures are byte-identical. Some reduced-
-detail captures also match byte-for-byte when removed geometry is occluded; the
-other reduced-detail captures differ in 18–105 fire-region pixels, within the
-bounds reported in the JSON. This run makes no performance claim. Continuous
-playback and non-Metal acceptance remain open. See
-[current-build recheck](measurements-o04-current-build-recheck.json).
+A 19 October 14-checkpoint recheck at seed 42 and 640×360 reports fire-state and
+image parity, but its `4247485106ee2d30…` binary has no source revision/path and
+is not proven current-release evidence. The separate current-release 400-frame
+route was accepted for motion and continuity across all profiles and makes no
+threshold-state claim. Rerun the 14 checkpoints on the current release before
+closing that correctness gate. Continuous playback and non-Metal acceptance
+remain open. See [the recheck](measurements-o04-current-build-recheck.json) and
+[artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json).
 The accompanying seed-42/tick-300 default-scene capture confirms the renderer
 keeps the measured opt-in paths off, including projected detail, absorption
 cache, optical reuse, no-copy, compact HDR and fire-bound precompute. The disabled
@@ -1079,6 +1080,10 @@ adapters. See the
 [full-orbit report](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json),
 [playback](../artifacts/o06-o08/factorial-temporal-full-orbit-current-build/owner-review-current.mp4)
 and [short report](measurements-o06-o08-factorial-temporal-current-build.json).
+An offline audit re-hashed the eight 400-frame sequences, verified every frame's
+tick/camera and effect-count parity, and confirmed copy/no-copy images are
+byte-identical across all 400 frames for direct and reuse in both HDR formats.
+See the [400-frame correctness audit](measurements-o06-o08-full-orbit-correctness-audit.json).
 
 A new three-pair 120-second offscreen comparison for exact-depth reuse shows
 median GPU-render +0.027 ms and optical-resolve +0.023 ms. Serial frame-work
@@ -1273,16 +1278,18 @@ remains untested. Reproduce with
 and build identity, plus the standalone control runner, are in the
 [native verification report](measurements-native-window-verification-current-build.json).
 
-## Current-build RG16 fallback recheck (19 October 2026)
+## Earlier-build RG16 fallback recheck (19 October 2026)
 
-The current debug build reran the forced RGBA16F effect-depth and smoke-volume
-fallback comparison on Apple M1 Max/Metal at the fixed 640×360 pixel grid. The
+The debug build used an M1 Max/Metal adapter and fixed 640×360 pixel grid. The
 profiling-heavy and Materials scenes matched the native Rg16Float path at tick
 120; all 120 sampled frames from tick 120 through 477 on the moving fire-camera
 route also matched byte-for-byte. The fallback adds 2,101,248 known GPU bytes.
-This confirms current-build fallback rendering on capable hardware. It does not
-simulate a device that physically lacks Rg16Float support, nor validate DX12.
-See [the report](measurements-o08-rg16-fallback-current-build.json); the
+Its report identifies source revision `222983c`; four engine/window files
+changed before the current validated source. Treat this as earlier-source
+fallback evidence and rerun on the current release before closing current-source
+fallback correctness. It also does not simulate a device that physically lacks
+Rg16Float support or validate DX12. See [the report](measurements-o08-rg16-fallback-current-build.json),
+[provenance audit](measurements-o01-o08-artifact-provenance-audit.json); the
 original forced-fallback evidence is preserved in
 [measurements-o08-rg16-fallback.json](measurements-o08-rg16-fallback.json).
 
