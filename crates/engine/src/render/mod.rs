@@ -5625,6 +5625,57 @@ mod shadow_cache_tests {
     }
 
     #[test]
+    fn camera_draw_preparation_keeps_unknown_bounds_and_culls_known_misses() {
+        let projection = Mat4::perspective_rh(60_f32.to_radians(), 1., 0.1, 100.);
+        let frustum = Frustum::from_view_projection(projection).unwrap();
+        let transform = Mat4::IDENTITY.to_cols_array_2d();
+        let bounds = assets::Bounds3 {
+            min: [50., -0.5, -5.5],
+            max: [51., 0.5, -4.5],
+        };
+        let objects = [
+            assets::ObjectDrawRange {
+                object_id: "unknown-bounds".into(),
+                material_id: "plain".into(),
+                mesh_index: 0,
+                first_vertex: 0,
+                vertex_count: 3,
+                baked_first_vertex: 0,
+                transform,
+                local_bounds: None,
+                bounds: None,
+                transform_revision: 0,
+            },
+            assets::ObjectDrawRange {
+                object_id: "outside-camera".into(),
+                material_id: "plain".into(),
+                mesh_index: 0,
+                first_vertex: 0,
+                vertex_count: 3,
+                baked_first_vertex: 3,
+                transform,
+                local_bounds: Some(bounds.clone()),
+                bounds: Some(bounds),
+                transform_revision: 0,
+            },
+        ];
+        let meshes = [assets::MeshDrawRange {
+            key: "shared-plain".into(),
+            material_id: "plain".into(),
+            first_vertex: 0,
+            vertex_count: 3,
+        }];
+
+        let draws = prepare_draws(&objects, &meshes, &[], Some(frustum), true, true);
+
+        assert_eq!(draws.visible_objects, 1);
+        assert_eq!(draws.instances.len(), 1);
+        assert_eq!(draws.batches.len(), 1);
+        assert_eq!(draws.batches[0].instance_count, 1);
+        assert_eq!(submitted_vertices(&draws), 3);
+    }
+
+    #[test]
     fn shadow_bounds_mark_only_intersecting_cube_face_and_unknown_bounds_fallback() {
         let directions = [
             Vec3::X,

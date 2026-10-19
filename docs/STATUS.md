@@ -760,7 +760,10 @@ Per-event masks, reasons and CPU encoding samples are in
 [measurements-o02-invalidation.json](measurements-o02-invalidation.json); rerun
 with `python3 scripts/shadow_invalidation_study.py`. This remains discrete
 correctness evidence, not continuous-motion cost or native/cross-platform
-acceptance. Unknown-bound fallback remains verified by unit coverage only.
+acceptance. The `camera_draw_preparation_keeps_unknown_bounds_and_culls_known_misses`
+unit test now exercises the prepared camera draw list: unknown-bound objects stay
+visible while a finite known miss is culled. This is still unit-level evidence,
+not an end-to-end GPU image comparison for unknown-bound geometry.
 
 Three alternating serial pairs now cover a 120-second clearing orbit with a
 radius-5 `fallen-log` orbit around the fire source, sampled at 60 Hz, after a
