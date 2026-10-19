@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,6 +22,7 @@ def main():
     parser.add_argument("--gpu", action="store_true")
     parser.add_argument("--native", action="store_true")
     args = parser.parse_args()
+    run(sys.executable, "scripts/test_profile_compare.py")
     cargo = shutil.which("cargo") or str(Path.home() / ".cargo/bin/cargo")
     for command in [("fmt", "--all", "--check"), ("clippy", "--workspace", "--all-targets", "--", "-D", "warnings"), ("test", "--workspace"), ("build", "--locked")]:
         run(cargo, *command)
@@ -360,11 +362,9 @@ def main():
                 "two-emitter 8^3 absorption cache changed the matched fixed-tick image"
             )
     if args.gpu:
-        import sys
         run(sys.executable, ROOT / "scripts/verify_materials.py", "--binary", binary)
         run(sys.executable, ROOT / "scripts/verify_pixel_fire.py", "--binary", binary)
     if args.native:
-        import sys
         run(sys.executable, ROOT / "scripts/verify_native.py", "--binary", binary)
     print(json.dumps({"verified": True, "gpu": args.gpu,"native":args.native}))
 

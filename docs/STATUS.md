@@ -239,6 +239,10 @@ full sample reports remain in the local ignored `artifacts/o01/` directory. Iden
 baseline/candidate scene inputs characterize run variance and profiling overhead,
 not optimization gains. Exact queue latency, adapters without timestamp support,
 Windows DX12 and RTX-class rendering remain unverified.
+The default `scripts/verify.py` path now runs six `profile_compare` unit tests
+before Rust validation; they cover nearest-rank summaries, missing-stage pair
+alignment, scene-relative GLB paths, route-ID selection and nested source/shader
+fingerprints.
 
 Expanded O01 diagnostic-counter captures now cover three fire profiles and four
 named cameras on M1 Max/Metal. Counts span 26,374–2,309,781 fire-primitive

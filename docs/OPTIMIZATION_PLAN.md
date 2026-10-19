@@ -116,6 +116,9 @@ keep it null with a reason and preserve asynchronous completion-to-readback late
 separately. Windows/DX12 and adapters without timestamp support remain hardware
 acceptance gates. Offscreen and native scopes are recorded separately; no
 target-hardware or optimization gain is claimed.
+The default verifier runs six profile-report and provenance tests before Rust
+validation; the GPU path separately exercises the shared session protocol and
+bounded timestamp-slot behavior.
 The standard GPU verifier now compares a timing-enabled serve capture with a
 timing-disabled standalone capture at the same scene/seed/tick and requires
 byte-identical pixels plus zero timestamp query sets when disabled. It also runs
