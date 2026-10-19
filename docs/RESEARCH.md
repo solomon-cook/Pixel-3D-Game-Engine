@@ -860,6 +860,15 @@ acceptance; retain the disabled default. See
 [native report](measurements-o04-native.json) and
 [runner](../scripts/projected_detail_native_study.py).
 
+A 19 October rerun on the current release repeats three 120-second campfire
+pairs offscreen at 640×360. Candidate-minus-baseline median deltas are
+−0.049 ms frame work and −0.146 ms GPU render; all three pairs favor the
+candidate on both measures. This is a small single-workload result and does not
+replace the native-window comparison, whose paired FPS was effectively flat.
+Keep projected detail disabled by default pending owner playback review and
+non-Metal qualification. See
+[current-release sustained report](measurements-o04-sustained-current-release.json).
+
 A 19 October current-build recheck at seed 42 and 640×360 compared 14 fixed-tick
 camera checkpoints. Fire counts, bounds, lighting and particle-light state match
 at every checkpoint. Full-detail captures are byte-identical. Some reduced-

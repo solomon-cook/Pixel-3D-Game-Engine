@@ -103,6 +103,13 @@ remain open. See
 [measurements-o04-sustained-profiles.json](measurements-o04-sustained-profiles.json),
 [native report](measurements-o04-native.json) and
 [native runner](../scripts/projected_detail_native_study.py).
+The 19 October current-release repeat adds three alternating 120-second
+offscreen campfire pairs at 640×360. Candidate-minus-baseline paired medians are
+−0.049 ms frame work and −0.146 ms GPU render, with all three pairs favoring the
+candidate on both metrics. This does not supersede the earlier native result of
+effectively flat FPS, nor does it close visual or platform acceptance. Keep LOD
+disabled by default. See
+[current-release sustained report](measurements-o04-sustained-current-release.json).
 The 19 October current-build recheck matched fire state at all 14 projected-size
 checkpoints; baseline and candidate images were identical at full detail, while
 visible reduced-detail changes affected 18–105 pixels per 640×360 image and were
