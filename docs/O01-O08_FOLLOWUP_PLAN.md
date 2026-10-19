@@ -1078,7 +1078,12 @@ minimization still fails, so the resize transition alone does not explain it.
 An isolated no-resize/no-fullscreen probe confirms the native minimize button is
 enabled on a focused window, yet the request still leaves `minimized` and
 `occluded` false after eight seconds. This narrows the failure to the native
-minimize request/window path; the AppKit cause remains unknown.
+minimize request/window path. A separate active, key, visible and miniaturizable
+plain AppKit window on the same macOS 27.0.1 host also remains unminimized after
+both `miniaturize` and `performMiniaturize`. Treat this as a host/runtime
+limitation for this build pending a test of actual traffic-light input or a
+different macOS version; it does not prove which of macOS or local session
+policy is responsible.
 This is sampled playback evidence, not owner acceptance or a temporal-quality measurement. Owner visual acceptance,
 minimization, DX12 and another-adapter gates remain open. See [native
 verification](measurements-native-window-verification-current-build.json) and its

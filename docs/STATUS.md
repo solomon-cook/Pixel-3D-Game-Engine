@@ -1086,8 +1086,14 @@ decisions and unresolved visual/backend gates are consolidated in the
   before the request and reports the native minimize button enabled, but still
   sees `minimized: false` and `occluded: false` after eight seconds. The restore
   request has no minimized state to reverse. This localizes the issue to the
-  minimize request/window path without proving whether AppKit rejected it.
-  Current hashes and raw output are in the measurement JSON. The tick-120 scene
+  minimize request/window path without proving whether AppKit rejected it. A
+  standalone AppKit reference window on the same macOS 27.0.1 host was active,
+  key, visible and miniaturizable; both `miniaturize` and
+  `performMiniaturize` still left `isMiniaturized` false. This supports a
+  host/runtime limitation rather than an engine-only setup problem, but the OS
+  version and local session policy are not separated; actual traffic-light
+  clicking and another macOS version remain untested. Current hashes and raw
+  output are in the measurement JSON. The tick-120 scene
   capture was inspected. Keep
   minimization open;
   do not substitute occlusion for minimization. The current release viewport was
@@ -1165,7 +1171,11 @@ motion capture measured effect CPU sampling/upload at a median 0.0103 ms; see me
   rendering, image/motion quality or performance.
 - Base M1/16 GB measurement and native presentation/UI timing. The provisional
   target remains 60 fps at 1080p with a selected 480×270 scene buffer.
-- Fix/qualify native automated minimization and confirm restore behaviour.
+- Native programmatic minimization on the macOS 27.0.1 host is dispositioned as
+  an unresolved host/runtime limitation: both the engine and a plain active
+  AppKit reference window fail to report minimized after their native calls.
+  Recheck with actual traffic-light input or on another supported macOS version
+  before treating the native minimization/restore gate as qualified.
 - Reference-led billow hierarchy, heat/soot transition and multiple source scales;
   this remains further work. Basic thermal controls/independent cooling now run,
   while heat-driven persistent smoke billows are still proposed. FIRE_FIELDS.md

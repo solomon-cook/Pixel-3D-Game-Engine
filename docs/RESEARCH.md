@@ -1125,10 +1125,15 @@ fullscreen transition, yet `set_window minimized=true` still left both
 `minimized` and `occluded` false after eight seconds. The restore request
 therefore had no minimized state to reverse, and focus remained false. This
 rules out an unsettled resize or fullscreen transition as the trigger and
-confirms the failure on an eligible-looking native window; it does not identify
-why AppKit did not miniaturize it. Reproduce with
+confirms the failure on an eligible-looking native window. An independent plain
+AppKit reference also reports its application active, window key and visible,
+and minimize button enabled, but both `miniaturize` and
+`performMiniaturize` leave `isMiniaturized` false. This supports an inference of
+a host/runtime limitation rather than engine-specific Winit window setup, but
+does not distinguish macOS 27.0.1 from local session policy; a real user click
+and another macOS version remain untested. Reproduce with
 [`verify_native_minimize.py`](../scripts/verify_native_minimize.py); raw state
-and build identity are in the
+and build identity, plus the standalone control runner, are in the
 [native verification report](measurements-native-window-verification-current-build.json).
 
 ## Current-build RG16 fallback recheck (19 October 2026)

@@ -74,8 +74,11 @@ The consolidated measured decisions and remaining per-track gates are in the
   acknowledged the minimize request without an OS-reported minimized state. A
   focused no-resize probe reports the native minimize button enabled, yet the
   request still leaves both minimized and occluded false after eight seconds.
-  Keep this native host gate open until the cause is fixed or dispositioned; do
-  not treat focus loss or occlusion as minimization. Evidence: [current native
+  A separate active, key, visible, enabled AppKit control on macOS 27.0.1 also
+  failed both `miniaturize` and `performMiniaturize`. Treat this as a host/runtime
+  limitation for this macOS build, pending real traffic-light input or a
+  different macOS version; do not claim an engine fix or treat focus loss or
+  occlusion as minimization. Evidence: [current native
   verification](docs/measurements-native-window-verification-current-build.json).
 
 - [ ] Execute the remaining O01–O08 correctness, sustained-motion,

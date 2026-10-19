@@ -263,7 +263,7 @@
     "fixed_tick_capture_inspected": "measurements-native-window-verification-current-build.png"
   },
   "open_gates": [
-    "Programmatic macOS minimization remains failing on a focused, enabled window without resize/fullscreen; determine cause or supported disposition",
+    "macOS minimization is not verifiable on this macOS 27.0.1 host: both engine and independent active AppKit windows remain unminimized; revalidate on a different supported macOS version or disposition the host limitation",
     "owner acceptance of continuous native playback",
     "Windows/DX12 rendering",
     "another GPU adapter"
@@ -405,5 +405,25 @@
     "result": "With no resize or fullscreen transition, the focused window reported its minimize button enabled. After set_window minimized=true, OS-reported minimized and occluded both remained false for eight seconds. This rules out resize/fullscreen as prerequisites for reproducing the failure; it does not establish whether AppKit rejected miniaturize or a separate application/window eligibility condition applies.",
     "raw_runner_output": "artifacts/native-minimize-probe.json",
     "raw_stderr": "artifacts/native-minimize-probe.log"
+  },
+  "appkit_reference_minimize_check": {
+    "date": "2026-10-19",
+    "host": "macOS 27.0.1 (26A434), ARM64",
+    "device": "Apple M1 Max",
+    "runner": "scripts/appkit_minimize_reference.swift",
+    "runner_sha256": "c13f5a558836f90d0a2cb08e3ccccbcdd7b40a17028d15a3e0f77df33757aa36",
+    "command": "xcrun swiftc scripts/appkit_minimize_reference.swift -o /tmp/appkit-minimize-reference && /tmp/appkit-minimize-reference",
+    "preconditions": {
+      "application_active": true,
+      "window_key": true,
+      "window_visible": true,
+      "window_miniaturizable": true,
+      "minimize_button_enabled": true
+    },
+    "is_minimized_before": false,
+    "is_minimized_after_miniaturize": false,
+    "is_minimized_after_perform_miniaturize": false,
+    "result": "An independent plain AppKit window also failed to miniaturize through either method while active, key, visible, and enabled. This evidence supports a host/runtime-level disposition rather than an engine-specific window configuration cause, but it does not identify whether the cause is macOS 27.0.1 or local session policy.",
+    "interpretation_limit": "Does not test a user clicking the window traffic-light button or another macOS version."
   }
 }
