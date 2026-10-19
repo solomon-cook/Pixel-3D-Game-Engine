@@ -56,12 +56,12 @@ def main():
                     if stable_since is None:
                         stable_since = time.monotonic()
                     elif time.monotonic() - stable_since >= 0.75:
-                        return state
+                        return state, True
                 else:
                     stable_since = None
                 time.sleep(0.1)
                 state = request("get_window")
-            return state
+            return state, False
 
         try:
             initial = request("get_window")
@@ -72,6 +72,17 @@ def main():
                 time.sleep(0.1)
                 resized = request("get_window")
             resize_verified = resized["physical_size"] != initial["physical_size"]
+            resize_stable = False
+            if resize_verified:
+                # Do not issue the next lifecycle operation during the native
+                # resize animation. A single changed size event is not proof
+                # that AppKit has finished processing the resize.
+                resized, resize_stable = wait_for_size(
+                    resized["physical_size"], timeout=args.restore_timeout
+                )
+                resized = wait_for_state("focused", True, timeout=3.0)
+                assert resize_stable, "window size did not settle before minimization"
+                assert resized["focused"] is True, "window was not focused before minimization"
             request("set_window", minimized=True)
             minimized = wait_for_state("minimized", True, timeout=args.minimize_timeout)
             minimization_verified = minimized["minimized"] is True
@@ -81,7 +92,9 @@ def main():
             fullscreen_verified = fullscreen["fullscreen"] is True
             request("set_window", fullscreen=False)
             restored = wait_for_state("fullscreen", False, timeout=3.0)
-            restored_size = wait_for_size(resized["physical_size"], timeout=args.restore_timeout)
+            restored_size, restored_size_stable = wait_for_size(
+                resized["physical_size"], timeout=args.restore_timeout
+            )
             request("step", ticks=120)
             capture = request("capture_frame", path=str(ROOT / "artifacts/native-acceptance.png"), scale=1)
             assert capture["tick"] == 120
@@ -90,11 +103,14 @@ def main():
             process.wait(timeout=20)
             assert process.returncode == 0
             result = {
-                "native_verified": resize_verified and fullscreen_verified and restored["fullscreen"] is False and restored_size["physical_size"] == resized["physical_size"] and minimization_verified,
+                "native_verified": resize_verified and resize_stable and fullscreen_verified and restored["fullscreen"] is False and restored_size_stable and restored_size["physical_size"] == resized["physical_size"] and minimization_verified,
                 "resize_verified": resize_verified,
+                "resize_stable_before_minimize": resize_stable,
+                "focused_before_minimize": resized["focused"],
                 "fullscreen_verified": fullscreen_verified,
                 "fullscreen_exit_flag": restored["fullscreen"] is False,
                 "window_size_restored": restored_size["physical_size"] == resized["physical_size"],
+                "window_size_restore_stable": restored_size_stable,
                 "fullscreen_restored": restored["fullscreen"] is False and restored_size["physical_size"] == resized["physical_size"],
                 "resize_fullscreen_capture_verified": resize_verified and fullscreen_verified and restored["fullscreen"] is False and restored_size["physical_size"] == resized["physical_size"],
                 "minimization_verified": minimization_verified,

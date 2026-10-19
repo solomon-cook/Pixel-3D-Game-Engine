@@ -1075,8 +1075,15 @@ decisions and unresolved visual/backend gates are consolidated in the
   after resize and false after the request. A direct Session probe reproduced
   the false state after `requested: true`. Concurrent desktop use alone does not
   explain the failure; the root cause of the programmatic minimize failure
-  remains undetermined. Current hashes, native output and both idle-run records
-  are in the measurement JSON. The tick-120 scene capture was inspected. Keep
+  remains undetermined. A follow-up verifier now waits for the resized window to
+  remain at 1800×1200 for 0.75 seconds and confirms it is focused before asking
+  macOS to minimize it. On the same M1 Max/Metal build, this ruled out an
+  unsettled resize as the cause: after another eight-second poll,
+  `minimized: false` and `occluded: false` remained, while fullscreen entry/exit,
+  stable size restoration, tick-120 capture and shutdown passed. The verifier
+  change makes the lifecycle check more reliable but does not fix minimization.
+  Current hashes and raw output are in the measurement JSON. The tick-120 scene
+  capture was inspected. Keep
   minimization open;
   do not substitute occlusion for minimization. The current release viewport was
   also inspected live at tick 423 with the 640×360 grid; the smoke still reads as

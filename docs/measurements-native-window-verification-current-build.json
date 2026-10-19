@@ -263,7 +263,7 @@
     "fixed_tick_capture_inspected": "measurements-native-window-verification-current-build.png"
   },
   "open_gates": [
-    "Programmatic macOS minimization remains failing on the idle M1 Max host; root cause or supported disposition",
+    "Programmatic macOS minimization remains failing after a stable focused resize; root cause or supported disposition",
     "owner acceptance of continuous native playback",
     "Windows/DX12 rendering",
     "another GPU adapter"
@@ -340,5 +340,47 @@
     },
     "activation_probe_frontmost_process": "engine-lab",
     "interpretation": "A second direct Session probe returned requested=true but Winit continued reporting minimized=false. This supports the native verifier result but does not identify whether AppKit rejected the request or the window remained ineligible."
+  },
+  "settled_resize_minimization_recheck": {
+    "date": "2026-10-19",
+    "engine_source_revision": "0662b853c04399e264b26ff30ab9428b2161a256",
+    "verifier": "scripts/verify_native.py with local resize-stability/focus precondition",
+    "verifier_sha256": "4599c0a3f60c7c0612bd68238cf83c6d39dc86af6d5736ae2a292df8312f5033",
+    "binary_profile": "debug",
+    "binary_sha256": "b2b39ebcc9d59594b0e8c7e67a50dbef2d54c436fd9948acbd74b9fa8e56c6a8",
+    "command": "python3 scripts/verify_native.py --binary target/debug/engine-lab --minimize-timeout 8 --restore-timeout 8",
+    "preconditions": {
+      "window_size_stable_for_seconds": 0.75,
+      "focused_before_minimize": true,
+      "physical_size_pixels": [
+        1800,
+        1200
+      ]
+    },
+    "resize": true,
+    "fullscreen_entry": true,
+    "fullscreen_exit": true,
+    "stable_window_size_restore": true,
+    "fixed_tick_capture": {
+      "passed": true,
+      "camera": "hero",
+      "seed": 42,
+      "tick": 120,
+      "pixel_resolution": [
+        640,
+        360
+      ]
+    },
+    "shutdown": true,
+    "minimization": {
+      "request_acknowledged": true,
+      "poll_seconds": 8,
+      "focused_after_request": false,
+      "os_reported_minimized": false,
+      "os_reported_occluded": false
+    },
+    "result": "The minimization failure persists after waiting for a stable resize and confirming the window is focused. Resize, fullscreen entry/exit, stable size restoration, deterministic capture and shutdown passed. The failure is not explained by issuing the minimize request during an unsettled resize; its cause remains undetermined.",
+    "raw_runner_output": "artifacts/native-verification.json",
+    "raw_capture": "artifacts/native-acceptance.png"
   }
 }
