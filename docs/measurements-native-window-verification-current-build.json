@@ -263,10 +263,82 @@
     "fixed_tick_capture_inspected": "measurements-native-window-verification-current-build.png"
   },
   "open_gates": [
-    "macOS automated minimization and restore",
+    "Programmatic macOS minimization remains failing on the idle M1 Max host; root cause or supported disposition",
     "owner acceptance of continuous native playback",
     "Windows/DX12 rendering",
-    "another GPU adapter",
-    "isolated native verification of macOS minimization and restore"
-  ]
+    "another GPU adapter"
+  ],
+  "isolated_current_checkout_debug_native_verification": {
+    "date": "2026-10-19",
+    "source_revision": "a8c640fdd61a2c095e4f7bf580f9702e18f169b7",
+    "host": {
+      "device": "Apple M1 Max",
+      "backend": "Metal",
+      "os_version": "macOS 27.0.1",
+      "os_build": "26A434"
+    },
+    "binary_profile": "debug",
+    "binary_sha256": "b2b39ebcc9d59594b0e8c7e67a50dbef2d54c436fd9948acbd74b9fa8e56c6a8",
+    "command": "python3 scripts/verify.py --gpu --native",
+    "desktop_free_confirmed_by_owner": true,
+    "gpu_verification": {
+      "passed": true,
+      "rust_unit_tests": 42,
+      "material_gpu": true,
+      "pixel_fire_gpu": true
+    },
+    "native_verification": {
+      "overall_passed": false,
+      "resize": true,
+      "fullscreen_entry": true,
+      "fullscreen_exit": true,
+      "window_size_restored_physical_pixels": [
+        1800,
+        1200
+      ],
+      "fixed_tick_capture": {
+        "passed": true,
+        "tick": 120,
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "shutdown": true,
+      "minimize_request_acknowledged": true,
+      "os_reported_minimized": false,
+      "os_reported_occluded": false,
+      "poll_seconds": 5,
+      "focused_after_resize": true,
+      "focused_after_minimize_request": false
+    },
+    "raw_runner_output": "artifacts/native-verification.json",
+    "interpretation": "This idle-desktop rerun reproduces the macOS minimization failure; concurrent desktop use is not a sufficient explanation. Resize, fullscreen entry/exit, stable size restoration, capture and shutdown pass. The reason the Winit/AppKit minimize request does not produce an OS-reported minimized state remains undetermined."
+  },
+  "manual_minimize_probe": {
+    "binary": "target/debug/engine-lab",
+    "binary_sha256": "b2b39ebcc9d59594b0e8c7e67a50dbef2d54c436fd9948acbd74b9fa8e56c6a8",
+    "operations": [
+      "set_window size=[900,600]",
+      "set_window minimized=true",
+      "get_window",
+      "set_window minimized=false",
+      "get_window",
+      "shutdown"
+    ],
+    "minimize_response": {
+      "requested": true
+    },
+    "window_state_after_request": {
+      "focused": false,
+      "minimized": false,
+      "occluded": false,
+      "physical_size": [
+        1800,
+        1200
+      ]
+    },
+    "activation_probe_frontmost_process": "engine-lab",
+    "interpretation": "A second direct Session probe returned requested=true but Winit continued reporting minimized=false. This supports the native verifier result but does not identify whether AppKit rejected the request or the window remained ineligible."
+  }
 }

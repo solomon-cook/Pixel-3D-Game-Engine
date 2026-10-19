@@ -978,10 +978,10 @@ image parity; native fixed-tick cache captures match at six poses, and three
 120-second native pairs show no robust whole-window gain. Continuous native
 playback, broader resource recreation stress, DX12 and another-adapter
 acceptance remain open. A dual-emitter native surface resize/restore study
-preserves the fixed-tick image and renderer inventory. The runner now waits up to
-five seconds for the OS-reported minimize and restore states; macOS still reports
-`minimized: false` after the request, so this gate remains unverified and the
-report correctly fails its full-check flag. See [lifecycle report](measurements-multi-emitter-native-lifecycle.json)
+preserves the fixed-tick image and renderer inventory. The runner waits up to five seconds for the OS-reported minimize and restore
+states; both the earlier run and the owner-confirmed idle current-build rerun
+report `minimized: false` after the request. This is a reproducible minimization
+failure, not an unobserved test; the report correctly fails its full-check flag. See [lifecycle report](measurements-multi-emitter-native-lifecycle.json)
 and [runner](../scripts/two_emitter_native_lifecycle_study.py). A dual-source
 transactional reload study now appends WGSL syntax errors to each of the 13
 runtime shader-directory modules in isolation. At seed 42/tick 120, all failures
@@ -1057,14 +1057,20 @@ deterministic tick-120 capture, command handling and shutdown on M1 Max/Metal.
 A current release Session and a full verification run from a temporary app
 bundle both acknowledged `set_window minimized=true` but left `minimized=false`;
 an 8-second focus-instrumented poll showed focus lost while `minimized` and
-`occluded` stayed false. The owner reported using the desktop concurrently during
-earlier checks, so isolation is not established. The exact current release
+`occluded` stayed false. The owner later confirmed the desktop was free. A full
+current-debug `python3 scripts/verify.py --gpu --native` rerun under macOS
+27.0.1 (26A434) passed the GPU,
+resize, fullscreen, size restoration, capture and shutdown checks, but again
+left `minimized=false` and `occluded=false` after five seconds. It observed
+focus after resize and focus loss after the minimize request. A direct Session
+probe repeated `requested: true` with `minimized=false`; concurrent desktop use
+alone does not explain the failure, whose cause remains undetermined. The exact current release
 executable was then fixed to retain and reapply its last windowed logical size
 after the macOS fullscreen transition. The current release native verifier
 confirms stable restoration to 1800×1200 physical pixels, resize, fullscreen
-entry/exit, capture and shutdown. The eight-second minimization poll still did
-not observe `minimized` or `occluded`; earlier concurrent desktop use means an
-isolated session is not established, so minimization remains open. A live
+entry/exit, capture and shutdown. Neither the idle five-second nor earlier
+eight-second poll observed `minimized` or `occluded`; the automated
+minimization/restore gate remains open as a reproducible failure. A live
 current-release viewport showed a moving tick-423 scene at 640×360, with the
 same tall, regular smoke-puff stack. This is sampled playback evidence, not owner
 acceptance or a temporal-quality measurement. Owner visual acceptance,

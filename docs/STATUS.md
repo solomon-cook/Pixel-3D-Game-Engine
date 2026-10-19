@@ -1067,13 +1067,17 @@ decisions and unresolved visual/backend gates are consolidated in the
   window after the exit flag changed. The host now saves the windowed logical
   size and reapplies it after the fullscreen transition; a rebuilt release
   passed resize, fullscreen entry/exit, a stable 1800×1200 physical-size restore,
-  tick-120 capture and shutdown. The same run still did not observe minimized or
-  occluded state after the minimize request. Earlier concurrent desktop use
-  means isolation is not established; minimization remains open. Current hash,
-  raw output, and run attribution are in the measurement JSON. `verify.py
-  --gpu` passes on the changed checkout (`native: false`), so it does not close
-  this native gate. The tick-120 scene capture was inspected. Keep minimization
-  open;
+  tick-120 capture and shutdown. The owner then confirmed the desktop was free
+  and the full `--gpu --native` verifier was rerun on the current debug build
+  under macOS 27.0.1 (26A434).
+  All GPU, resize, fullscreen, restore-size, capture and shutdown checks passed;
+  minimization again remained false after five seconds, although focus was true
+  after resize and false after the request. A direct Session probe reproduced
+  the false state after `requested: true`. Concurrent desktop use alone does not
+  explain the failure; the root cause of the programmatic minimize failure
+  remains undetermined. Current hashes, native output and both idle-run records
+  are in the measurement JSON. The tick-120 scene capture was inspected. Keep
+  minimization open;
   do not substitute occlusion for minimization. The current release viewport was
   also inspected live at tick 423 with the 640×360 grid; the smoke still reads as
   a tall regular stack of puffs, so owner playback acceptance remains open. The

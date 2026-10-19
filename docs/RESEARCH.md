@@ -1095,17 +1095,22 @@ runner](../scripts/two_emitter_shadow_contribution_study.py).
 
 On the unlocked M1 Max/Metal host, the GPU verifier passes. The native suite
 confirms resize, fullscreen entry/exit flags, request handling, shutdown and a
-fixed tick-120 capture. Minimization remains unverified: `set_window` returned
-`requested: true`, while `is_minimized` stayed false in the current release
-Session, in a temporary signed app bundle, and in an eight-second poll on the
-exact current release executable. The owner reported using the desktop
-concurrently during earlier checks, so isolated-session behavior is not
-established. The current release then exposed and fixed a separate restore-size
+fixed tick-120 capture. The owner later confirmed the desktop was free and the
+current debug `python3 scripts/verify.py --gpu --native` run passed the GPU,
+resize, fullscreen, stable-size restore, capture and shutdown checks, but failed
+the minimization assertion after five seconds. Focus was true after resize,
+then false after `set_window minimized=true`; both minimized and occluded
+remained false. A second direct Session probe also returned `requested: true`
+while `is_minimized` remained false. Concurrent desktop use alone therefore
+does not explain the failure; its root cause remains undetermined. The current
+release then exposed and fixed a separate restore-size
 issue: after fullscreen exit, the reported size remained 5120×2880. The host now
 saves the windowed logical size and retries applying it after the native
 transition. The updated verifier confirms stable return to 1800×1200 physical
-pixels, fullscreen exit, capture and shutdown. Minimization still remains false
-and unoccluded after eight seconds, so its native gate remains open. A live
+pixels, fullscreen exit, capture and shutdown. Minimization remains false and
+unoccluded after the idle five-second and earlier eight-second polls, so its
+native gate remains open. The idle-run evidence is in [the current-build
+report](measurements-native-window-verification-current-build.json). A live
 current-release native viewport reported tick 423 running at 640×360; the smoke
 still forms a tall regular stack of rounded puffs. This is an observed visual
 concern, not owner acceptance or a temporal score. Keep macOS minimization, owner
