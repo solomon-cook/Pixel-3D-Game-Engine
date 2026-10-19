@@ -1123,8 +1123,19 @@ decisions and unresolved visual/backend gates are consolidated in the
   continuity acceptable. This acceptance applies to the offscreen fixed-tick
   preview at the unchanged 640×360 grid; it does not establish native playback
   performance or review the opt-in renderer variants. See
-  [preview metadata](measurements-owner-motion-review-preview.json). The
-  tracked native results are in [native verification](measurements-native-window-verification-current-build.json), including the [tick-120 capture](measurements-native-window-verification-current-build.png). Raw frames remain under ignored `artifacts/`.
+  [preview metadata](measurements-owner-motion-review-preview.json). A separate
+  current-release O04 comparison now captures 120 matched frames at 20 fps with
+  baseline left and projected-detail LOD right; the 6-second offscreen variant
+  review is pending. Its mean changed-pixel count is 28.9 per frame and mean RGB
+  MAE is 0.00247/255, localized to the fire region. See
+  [O04 paired-motion report](measurements-o04-owner-motion-review-current-build.json).
+  The current idle-owner release lifecycle rerun passed resize, stable
+  windowed-size restoration, fullscreen entry/exit, tick-120 capture and
+  shutdown; macOS again returned `minimized: false` after eight seconds. Current
+  `python3 scripts/verify.py --gpu` passed on M1 Max/Metal. See the new entries
+  in [native verification](measurements-native-window-verification-current-build.json),
+  which also links the tracked [tick-120 capture](measurements-native-window-verification-current-build.png).
+  Raw frames remain under ignored `artifacts/`.
 - The verifier used the selected 640×360 scene grid and same-device Metal
   rendering. It does not verify Windows/DX12, another adapter, or target-PC
   performance.

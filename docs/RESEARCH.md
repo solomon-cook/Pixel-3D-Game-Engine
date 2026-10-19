@@ -876,6 +876,16 @@ fire-bound buffers remain reserved for their shared bind groups. This fixed
 10,496-byte reserve is recorded as default renderer cost, not as enabled
 experimental work.
 
+A separate current-release, fixed-tick comparison now pairs baseline and
+`projected_detail_lod` across the same 120 camera poses at 20 fps, 640×360,
+seed 42, starting at tick 300. The LOD path is enabled on every candidate frame
+and disabled on every baseline frame. Mean changed pixels are 28.9 per frame
+(p95 69, max 101), with mean RGB MAE 0.00247/255; the changed bounds stay in the
+fire region. This complements the sampled transition sheets but does not prove
+continuous playback quality or native-window performance. The LOD-specific
+owner review is pending. See
+[current-build motion report](measurements-o04-owner-motion-review-current-build.json).
+
 ## O05 absorption-cache temporal and pause/resume review (18 October)
 
 At medium smoke scale, direct sampling and the 16³ cache were captured at

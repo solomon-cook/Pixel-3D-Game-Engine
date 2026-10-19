@@ -445,5 +445,61 @@
     "verification": "inconclusive",
     "tool_error": "The post-click CUA accessibility/screenshot request failed with ScreenCaptureKit SCStreamErrorDomain code -3811 (failed to start stream).",
     "limitation": "A separate long-running packaged Pixel Engine process with the same app identity/title was present, so the app binding could not prove that the click targeted the current release process. Do not count this as a verified traffic-light minimize test."
+  },
+  "current_release_native_verification_2026_10_19_idle_rerun": {
+    "date": "2026-10-19",
+    "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
+    "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+    "command": "python3 scripts/verify_native.py --binary target/release/engine-lab --minimize-timeout 8 --restore-timeout 8",
+    "owner_reported_desktop_idle": true,
+    "host": {
+      "device": "Apple M1 Max",
+      "backend": "Metal",
+      "macos": "27.0.1 (26A434)"
+    },
+    "pixel_resolution": [640, 360],
+    "checks": {
+      "resize": true,
+      "stable_resize_before_minimize": true,
+      "focused_before_minimize": true,
+      "fullscreen_entry": true,
+      "fullscreen_exit": true,
+      "stable_windowed_size_restore": true,
+      "restored_physical_size": [1800, 1200],
+      "fixed_tick_capture": {
+        "passed": true,
+        "camera": "hero",
+        "seed": 42,
+        "tick": 120,
+        "pixel_resolution": [640, 360]
+      },
+      "command_handling": true,
+      "shutdown": true,
+      "minimization": {
+        "request_acknowledged": true,
+        "poll_seconds": 8,
+        "focused_after_request": false,
+        "os_reported_minimized": false,
+        "os_reported_occluded": false
+      }
+    },
+    "native_lifecycle_result": "Resize, stable size restoration, fullscreen entry/exit, fixed-tick capture, command handling and shutdown passed. The only failing lifecycle assertion was minimization.",
+    "raw_runner_output": "artifacts/native-verification.json",
+    "raw_capture": "artifacts/native-acceptance.png"
+  },
+  "current_checkout_gpu_verification_2026_10_19": {
+    "date": "2026-10-19",
+    "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
+    "command": "python3 scripts/verify.py --gpu",
+    "result": {
+      "verified": true,
+      "gpu": true,
+      "native": false
+    },
+    "host": {
+      "device": "Apple M1 Max",
+      "backend": "Metal"
+    },
+    "scope_note": "GPU checks passed on the current checkout. Native lifecycle results are recorded separately above; this run does not validate Windows/DX12, another adapter, or sustained target-hardware playback."
   }
 }

@@ -300,6 +300,16 @@ acceptance remain open. See
    Keep the feature opt-in until continuous visual review and portability checks
    pass.
 
+**19 October current-release motion comparison:** a matched 120-frame, 20 fps
+clearing orbit at 640×360 compares baseline against `projected_detail_lod` with
+the same seed, scene, ticks and camera poses. Mean changed pixels are 28.9 per
+frame (p95 69; maximum 101), with mean RGB MAE 0.00247/255. Differences are
+localized to the fire region. The owner review of this LOD-specific clip is
+pending; the earlier accepted clearing preview covered the default renderer
+only. The fixed-tick offscreen clip does not verify native playback performance.
+See [current-build report](measurements-o04-owner-motion-review-current-build.json)
+and its recorded preview hashes and artifact paths.
+
 **Remaining exit gate:** repeatable transitions and a measured small M1 Max/Metal
 win are documented. Quiet and bonfire profiles now cross their applicable bands;
 per-frame full primitive, ember and particle-light counts match the baseline.
