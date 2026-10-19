@@ -62,9 +62,9 @@ The consolidated measured decisions and remaining per-track gates are in the
   [batch parity](docs/measurements-o08-batch-parity.json),
   [burst cost](docs/measurements-o08-batch-submit-cost.json),
   [route study](docs/measurements-o08-batch-route.json),
-  [native studies](docs/measurements-o08-batch-native.json,
-  docs/measurements-o08-batch-native-materials.json,
-  docs/measurements-o08-batch-native-profiling-heavy.json) and the
+  [native clearing study](docs/measurements-o08-batch-native.json),
+  [native Material Atelier study](docs/measurements-o08-batch-native-materials.json),
+  [native profiling-heavy study](docs/measurements-o08-batch-native-profiling-heavy.json) and the
   [follow-up plan](docs/OPTIMIZATION_PLAN.md#o08--reduce-memory-traffic-and-unnecessary-gpu-work).
 
 ## Later scaling research

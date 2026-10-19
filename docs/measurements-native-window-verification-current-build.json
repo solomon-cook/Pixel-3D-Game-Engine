@@ -25,6 +25,7 @@
   "runs": [
     {
       "name": "debug GPU plus native verifier",
+      "source_revision": "c0e6c00ae93ce469164394dd987b024be67bf6b0",
       "command": "python3 scripts/verify.py --gpu --native",
       "gpu_verification": "passed",
       "native_verification": "failed only at minimization assertion",
@@ -49,6 +50,7 @@
     },
     {
       "name": "current release direct native Session control",
+      "source_revision": "c0e6c00ae93ce469164394dd987b024be67bf6b0",
       "command": "target/release/engine-lab run --agent-stdio; get_window; set_window minimized=true; get_window",
       "executable_sha256": "c631f966e18ffaec522026de949bdd87d133a73689d4190770756203e32f56a9",
       "initial_window": {
@@ -71,6 +73,7 @@
     },
     {
       "name": "current release verifier from temporary signed app bundle",
+      "source_revision": "c0e6c00ae93ce469164394dd987b024be67bf6b0",
       "command": "python3 scripts/verify_native.py --binary <temporary Pixel Engine Lab.app>/Contents/MacOS/engine-lab",
       "source_executable_sha256": "c631f966e18ffaec522026de949bdd87d133a73689d4190770756203e32f56a9",
       "signed_bundle_executable_sha256": "bdf71f86e73f39179601ab3d6a91155895d9c092001e4cf5422f867fb7b681cc",
@@ -96,6 +99,7 @@
     },
     {
       "name": "current release native lifecycle with focus diagnostics",
+      "source_revision": "222983c7bee96caeff5b169a39240df8c91600cc",
       "command": "python3 scripts/verify_native.py --binary target/release/engine-lab --minimize-timeout 8",
       "executable_sha256": "c631f966e18ffaec522026de949bdd87d133a73689d4190770756203e32f56a9",
       "verifier_default_minimize_timeout_seconds": 5,
