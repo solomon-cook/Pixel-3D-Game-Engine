@@ -1294,9 +1294,14 @@ decisions and unresolved visual/backend gates are consolidated in the
   see the [accepted full-orbit report](measurements-o04-owner-full-orbit-current-build.json).
   The current idle-owner release lifecycle rerun passed resize, stable
   windowed-size restoration, fullscreen entry/exit, tick-120 capture and
-  shutdown; macOS again returned `minimized: false` after eight seconds. Current
-  `python3 scripts/verify.py --gpu` passed on M1 Max/Metal. See the new entries
-  in [native verification](measurements-native-window-verification-current-build.json),
+  shutdown; macOS again returned `minimized: false` after eight seconds. The
+  latest `python3 scripts/verify.py --gpu --native` on the current debug build
+  passed the GPU phase, resize/focus precondition, fullscreen transitions, stable
+  size restore, tick-120 capture and shutdown, but failed the minimization check.
+  This time macOS reported `minimized: false` and `occluded: true` after the
+  request, which does not verify minimization or isolate its cause. The latest
+  hashed run is recorded in
+  [native verification](measurements-native-window-verification-current-build.json),
   which also links the tracked [tick-120 capture](measurements-native-window-verification-current-build.png).
   The latest native/GPU verifier source is `7b2a005`; no engine, dependency-lock
   or toolchain files changed after it, and the release executable hash matches

@@ -519,12 +519,66 @@
     "interpretation": "The engine call matches the pinned Winit macOS implementation. An independent active AppKit reference window also failed to miniaturize on macOS 27.0.1 with the miniaturize button enabled. This supports a host/session limitation, but does not identify its cause or verify another macOS version; leave the gate open."
   },
   "current_source_audit": {
-    "checkout_revision_audited": "735f58b8f436e0097fd7a6d47e5eae45f2017c7d",
-    "latest_native_and_gpu_source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
+    "checkout_revision_audited": "ff7a7e8ea29fe6356cb295c99731c14043227916",
+    "latest_native_and_gpu_source_revision": "ff7a7e8ea29fe6356cb295c99731c14043227916",
     "engine_dependency_toolchain_changes_since_validation": [],
     "release_executable_path": "target/release/engine-lab",
     "release_executable_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
     "matches_latest_idle_native_verification_binary": true,
-    "interpretation": "The nested native lifecycle and GPU verification results apply to the current engine source. The only failing lifecycle check in the idle native run is OS-reported minimization; Windows/DX12, other adapters, and native sustained playback remain separate gates."
+    "latest_debug_executable_sha256": "f3c8b4b1108f490173d94033ed377c7afa3e5b1ee8cc5d9935df45e881344baf",
+    "interpretation": "GPU verification and native lifecycle rerun apply to the current engine source. The latest full native command passes GPU checks and all measured lifecycle checks except OS-reported minimization. The new request led to occlusion without minimized state, so minimization remains unverified; Windows/DX12, other adapters and native sustained playback remain separate gates."
+  },
+  "latest_debug_native_verification_2026_10_19": {
+    "date": "2026-10-19",
+    "source_revision": "ff7a7e8ea29fe6356cb295c99731c14043227916",
+    "binary_path": "target/debug/engine-lab",
+    "binary_sha256": "f3c8b4b1108f490173d94033ed377c7afa3e5b1ee8cc5d9935df45e881344baf",
+    "verifier_path": "scripts/verify_native.py",
+    "verifier_sha256": "4599c0a3f60c7c0612bd68238cf83c6d39dc86af6d5736ae2a292df8312f5033",
+    "command": "python3 scripts/verify.py --gpu --native",
+    "host": {
+      "device": "Apple M1 Max",
+      "backend": "Metal",
+      "macos": "27.0.1 (26A434)"
+    },
+    "pixel_resolution": [
+      640,
+      360
+    ],
+    "gpu_verification": {
+      "passed": true,
+      "verified": true,
+      "gpu": true
+    },
+    "native_checks": {
+      "resize": true,
+      "resize_stable_before_minimize": true,
+      "focused_before_minimize": true,
+      "fullscreen_entry": true,
+      "fullscreen_exit": true,
+      "stable_windowed_size_restore": true,
+      "fixed_tick_capture": {
+        "passed": true,
+        "camera": "hero",
+        "seed": 42,
+        "tick": 120,
+        "pixel_resolution": [
+          640,
+          360
+        ]
+      },
+      "shutdown": true,
+      "minimization": {
+        "request_acknowledged": true,
+        "poll_seconds": 5,
+        "os_reported_minimized": false,
+        "os_reported_occluded": true,
+        "focused_after_request": false
+      }
+    },
+    "overall_result": "failed only at the OS minimization assertion; resize, fullscreen, size restore, capture, GPU checks and shutdown passed",
+    "interpretation": "The new run saw occlusion after the minimize request, unlike the prior idle isolated probe that saw neither minimized nor occluded. This does not prove that the OS minimized the window and does not isolate AppKit behavior from desktop focus/occlusion. Keep minimization open.",
+    "raw_runner_output": "artifacts/native-verification.json",
+    "raw_capture": "artifacts/native-acceptance.png"
   }
 }
