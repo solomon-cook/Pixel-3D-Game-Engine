@@ -457,7 +457,10 @@
       "backend": "Metal",
       "macos": "27.0.1 (26A434)"
     },
-    "pixel_resolution": [640, 360],
+    "pixel_resolution": [
+      640,
+      360
+    ],
     "checks": {
       "resize": true,
       "stable_resize_before_minimize": true,
@@ -465,13 +468,19 @@
       "fullscreen_entry": true,
       "fullscreen_exit": true,
       "stable_windowed_size_restore": true,
-      "restored_physical_size": [1800, 1200],
+      "restored_physical_size": [
+        1800,
+        1200
+      ],
       "fixed_tick_capture": {
         "passed": true,
         "camera": "hero",
         "seed": 42,
         "tick": 120,
-        "pixel_resolution": [640, 360]
+        "pixel_resolution": [
+          640,
+          360
+        ]
       },
       "command_handling": true,
       "shutdown": true,
@@ -508,5 +517,14 @@
     "observed_implementation": "set_minimized(true) calls NSWindow.miniaturize; set_minimized(false) calls NSWindow.deminiaturize; is_minimized reads NSWindow.isMiniaturized.",
     "engine_call_path": "crates/engine-lab/src/window.rs Native::process_line handles set_window.minimized by calling self.window.set_minimized(minimized).",
     "interpretation": "The engine call matches the pinned Winit macOS implementation. An independent active AppKit reference window also failed to miniaturize on macOS 27.0.1 with the miniaturize button enabled. This supports a host/session limitation, but does not identify its cause or verify another macOS version; leave the gate open."
+  },
+  "current_source_audit": {
+    "checkout_revision_audited": "735f58b8f436e0097fd7a6d47e5eae45f2017c7d",
+    "latest_native_and_gpu_source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
+    "engine_dependency_toolchain_changes_since_validation": [],
+    "release_executable_path": "target/release/engine-lab",
+    "release_executable_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+    "matches_latest_idle_native_verification_binary": true,
+    "interpretation": "The nested native lifecycle and GPU verification results apply to the current engine source. The only failing lifecycle check in the idle native run is OS-reported minimization; Windows/DX12, other adapters, and native sustained playback remain separate gates."
   }
 }

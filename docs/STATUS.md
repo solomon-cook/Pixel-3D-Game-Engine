@@ -1206,7 +1206,9 @@ decisions and unresolved visual/backend gates are consolidated in the
   `python3 scripts/verify.py --gpu` passed on M1 Max/Metal. See the new entries
   in [native verification](measurements-native-window-verification-current-build.json),
   which also links the tracked [tick-120 capture](measurements-native-window-verification-current-build.png).
-  Raw frames remain under ignored `artifacts/`.
+  The latest native/GPU verifier source is `7b2a005`; no engine, dependency-lock
+  or toolchain files changed after it, and the release executable hash matches
+  the idle native run. Raw frames remain under ignored `artifacts/`.
 - The verifier used the selected 640×360 scene grid and same-device Metal
   rendering. It does not verify Windows/DX12, another adapter, or target-PC
   performance.
