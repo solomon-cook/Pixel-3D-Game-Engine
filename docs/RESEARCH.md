@@ -1104,9 +1104,10 @@ request, while `is_minimized` and `occluded` both stayed false. The longer wait
 did not resolve the gate. The owner reported using the desktop concurrently;
 other UI activity may have changed focus, making the minimize result
 inconclusive. Repeat in an isolated native session before diagnosing the engine
-request path. A release rebuild from the current checkout passed but produced a
-different executable hash from the binary used in the recorded lifecycle runs;
-the rebuilt binary has not received native lifecycle verification. A live
+request path. A release rebuild from the current checkout passed and now has
+offscreen fixed-tick capture evidence, but its executable hash differs from the
+binary used in the recorded lifecycle runs; the rebuilt binary has not received
+native lifecycle verification. A live
 current-release native viewport reported tick 423
 running at 640×360; the smoke still forms a tall regular stack of rounded puffs.
 This is an observed visual concern, not owner acceptance or a temporal score.
@@ -1125,3 +1126,26 @@ simulate a device that physically lacks Rg16Float support, nor validate DX12.
 See [the report](measurements-o08-rg16-fallback-current-build.json); the
 original forced-fallback evidence is preserved in
 [measurements-o08-rg16-fallback.json](measurements-o08-rg16-fallback.json).
+
+## Debug/release fixed-tick output comparison (19 October 2026)
+
+Eleven M1 Max/Metal captures used seed 42, tick 120 and the selected 640×360
+pixel grid with unchanged scene JSON and named cameras. Ten pairs were
+byte-identical, covering clearing, a heavy plume, two emitters, smoke-candidate
+and projected-detail opt-ins, and four Materials cameras. Materials/hero was the
+only non-identical pair: 87 pixels changed, mean absolute channel error was
+0.00048/255 and the maximum was 108/255 at one flame-edge pixel. Other changed
+pixels were small. Three repeats within each build were byte-identical; tick 300
+and 600 also showed a sparse cross-profile edge divergence. A schema-validated
+Materials scene with its only emitter disabled reduced the difference to four
+pixels at one level. `inspect_effects` reports the same active fire-primitive
+fingerprint, counts, bounds and particle lights across profiles, so the remaining
+difference is downstream of CPU fire-primitive generation. Setting smoke density
+to zero leaves all 87 changed pixels, while disabling the emitter reduces the
+result to four one-level differences; this isolates the outlier to downstream
+fire rendering. The exact projection or shading operation is not isolated.
+Keep the selected grid and renderer defaults;
+record no broad debug/release identity claim until the edge case is understood.
+The captures are offscreen and single-adapter, not native playback or
+cross-vendor determinism evidence. See the [report](measurements-debug-release-profile-parity.json)
+and [contact sheet](measurements-debug-release-profile-parity-contact.png).

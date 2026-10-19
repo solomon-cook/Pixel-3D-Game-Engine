@@ -1,0 +1,355 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "source_revision": "32a07d940353a94e1b51bbed2b383f1b6e5f0c16",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal"
+  },
+  "purpose": "Same-device fixed-tick capture comparison between the current debug and release binaries; this is renderer output evidence, not a performance comparison.",
+  "binary_sha256": {
+    "debug": "1fe06d5f987a4f17020d51cd96a5cbec8f5bb459bfacd8ba37d318e9a6343296",
+    "release": "03924eeaed89c452e893bbb8400c81021006f7ab7c3b7a870012e2f4a9d2b272"
+  },
+  "method": {
+    "resolution": [
+      640,
+      360
+    ],
+    "seed": 42,
+    "tick": 120,
+    "camera": "named camera from each case",
+    "same_scene_json": "used unchanged for both builds",
+    "comparison": "decoded RGB pixel values plus PNG SHA-256"
+  },
+  "cases": [
+    {
+      "case": "profiling-heavy",
+      "scene": "assets/scenes/profiling-heavy.json",
+      "scene_sha256": "f736a0779a868d11c22d761b46a0920eb1b154db6241088c9d09a9fa1ca8a05b",
+      "camera": "fire-study",
+      "seed": 42,
+      "tick": 120,
+      "resolution": [
+        640,
+        360
+      ],
+      "pixel_identical": true,
+      "changed_pixels": 0,
+      "mean_absolute_channel_error": 0.0,
+      "max_channel_error": 0,
+      "debug_image_sha256": "e8f3677cddc428e2689e07ac8c5e7817ded96ef980ae9e96216d737cf4da15bb",
+      "release_image_sha256": "e8f3677cddc428e2689e07ac8c5e7817ded96ef980ae9e96216d737cf4da15bb"
+    },
+    {
+      "case": "materials-hero",
+      "scene": "assets/scenes/materials.json",
+      "scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
+      "camera": "hero",
+      "seed": 42,
+      "tick": 120,
+      "resolution": [
+        640,
+        360
+      ],
+      "pixel_identical": false,
+      "changed_pixels": 87,
+      "mean_absolute_channel_error": 0.000480324074074074,
+      "max_channel_error": 108,
+      "debug_image_sha256": "f330882ca5794f9699c5821284063a185b0b188f7fa9e755bc1604c16ae1927f",
+      "release_image_sha256": "34b2d81ed10f251c9c95c606151cab6eb1b55370ca74c3a5a99454105eca953f"
+    },
+    {
+      "case": "clearing-hero",
+      "scene": "assets/scenes/clearing.json",
+      "scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+      "camera": "hero",
+      "seed": 42,
+      "tick": 120,
+      "resolution": [
+        640,
+        360
+      ],
+      "pixel_identical": true,
+      "changed_pixels": 0,
+      "mean_absolute_channel_error": 0.0,
+      "max_channel_error": 0,
+      "debug_image_sha256": "9ef9d7b40b22b1e68cb40ed46a4a87f0f5a5189e19e9bac4c2c04dcf23021d52",
+      "release_image_sha256": "9ef9d7b40b22b1e68cb40ed46a4a87f0f5a5189e19e9bac4c2c04dcf23021d52"
+    },
+    {
+      "case": "clearing-fire",
+      "scene": "assets/scenes/clearing.json",
+      "scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+      "camera": "fire-study",
+      "seed": 42,
+      "tick": 120,
+      "resolution": [
+        640,
+        360
+      ],
+      "pixel_identical": true,
+      "changed_pixels": 0,
+      "mean_absolute_channel_error": 0.0,
+      "max_channel_error": 0,
+      "debug_image_sha256": "fef439f972e6e18e15cb242a687103548059986222e3d3132767f395d71b915f",
+      "release_image_sha256": "fef439f972e6e18e15cb242a687103548059986222e3d3132767f395d71b915f"
+    },
+    {
+      "case": "dual-emitter",
+      "scene": "assets/scenes/two-emitter-review.json",
+      "scene_sha256": "9ca7aee40dac7a9cde4010f6f90c2623e441c8e0c9a1f19ff2a9c570c1082892",
+      "camera": "dual-wide",
+      "seed": 42,
+      "tick": 120,
+      "resolution": [
+        640,
+        360
+      ],
+      "pixel_identical": true,
+      "changed_pixels": 0,
+      "mean_absolute_channel_error": 0.0,
+      "max_channel_error": 0,
+      "debug_image_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+      "release_image_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206"
+    },
+    {
+      "case": "smoke-candidate-optin",
+      "scene": "assets/scenes/profiling-heavy-smoke-candidate.json",
+      "scene_sha256": "e3a615137f8070e73bb6dd07b4799fed2cb2c23af61cddd0ed953ad11afc2c2f",
+      "camera": "fire-study",
+      "seed": 42,
+      "tick": 120,
+      "resolution": [
+        640,
+        360
+      ],
+      "pixel_identical": true,
+      "changed_pixels": 0,
+      "mean_absolute_channel_error": 0.0,
+      "max_channel_error": 0,
+      "debug_image_sha256": "db45c75950e8f0a541e25f4ac61cc63806a076e82b9eaed1d4f7fdad7e0d1e46",
+      "release_image_sha256": "db45c75950e8f0a541e25f4ac61cc63806a076e82b9eaed1d4f7fdad7e0d1e46"
+    },
+    {
+      "case": "projected-detail-optin",
+      "scene": "assets/scenes/projected-detail-motion-review.json",
+      "scene_sha256": "cfea9e3579b4f6602c4703bdae1b88887180e2b0fe752711544441547435ab77",
+      "camera": "fire-study",
+      "seed": 42,
+      "tick": 120,
+      "resolution": [
+        640,
+        360
+      ],
+      "pixel_identical": true,
+      "changed_pixels": 0,
+      "mean_absolute_channel_error": 0.0,
+      "max_channel_error": 0,
+      "debug_image_sha256": "e25a732da44d81433815ff3239f29471715aa504d50b463363b2dcbb659a4963",
+      "release_image_sha256": "e25a732da44d81433815ff3239f29471715aa504d50b463363b2dcbb659a4963"
+    },
+    {
+      "case": "materials-metal-close",
+      "scene": "assets/scenes/materials.json",
+      "scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
+      "camera": "metal-close",
+      "seed": 42,
+      "tick": 120,
+      "resolution": [
+        640,
+        360
+      ],
+      "pixel_identical": true,
+      "changed_pixels": 0,
+      "mean_absolute_channel_error": 0.0,
+      "max_channel_error": 0,
+      "debug_image_sha256": "41e17c7e1d9f01ff0eb1f948b14bd6de9ab73cb6f086745ca52ffe4c663badd9",
+      "release_image_sha256": "41e17c7e1d9f01ff0eb1f948b14bd6de9ab73cb6f086745ca52ffe4c663badd9"
+    },
+    {
+      "case": "materials-glass-close",
+      "scene": "assets/scenes/materials.json",
+      "scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
+      "camera": "glass-close",
+      "seed": 42,
+      "tick": 120,
+      "resolution": [
+        640,
+        360
+      ],
+      "pixel_identical": true,
+      "changed_pixels": 0,
+      "mean_absolute_channel_error": 0.0,
+      "max_channel_error": 0,
+      "debug_image_sha256": "04bbc11abe6ea8b3373bd9105ca6a23203b40dff0bfd219ab45c05123acaf7a3",
+      "release_image_sha256": "04bbc11abe6ea8b3373bd9105ca6a23203b40dff0bfd219ab45c05123acaf7a3"
+    },
+    {
+      "case": "materials-subsurface-close",
+      "scene": "assets/scenes/materials.json",
+      "scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
+      "camera": "subsurface-close",
+      "seed": 42,
+      "tick": 120,
+      "resolution": [
+        640,
+        360
+      ],
+      "pixel_identical": true,
+      "changed_pixels": 0,
+      "mean_absolute_channel_error": 0.0,
+      "max_channel_error": 0,
+      "debug_image_sha256": "2e9e2fa433aab078c7e8375b6c0d221d51766f4e8af111e4b6f503ba40802f39",
+      "release_image_sha256": "2e9e2fa433aab078c7e8375b6c0d221d51766f4e8af111e4b6f503ba40802f39"
+    },
+    {
+      "case": "materials-orthographic",
+      "scene": "assets/scenes/materials.json",
+      "scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
+      "camera": "orthographic",
+      "seed": 42,
+      "tick": 120,
+      "resolution": [
+        640,
+        360
+      ],
+      "pixel_identical": true,
+      "changed_pixels": 0,
+      "mean_absolute_channel_error": 0.0,
+      "max_channel_error": 0,
+      "debug_image_sha256": "ee31afea9c546ef4d77fbaf2273fb93e6e258f06164c8cf7978d7deae6b5377d",
+      "release_image_sha256": "ee31afea9c546ef4d77fbaf2273fb93e6e258f06164c8cf7978d7deae6b5377d"
+    }
+  ],
+  "materials_hero_repeatability": {
+    "same_build_repeats": {
+      "debug": {
+        "captures": [
+          "f330882ca5794f9699c5821284063a185b0b188f7fa9e755bc1604c16ae1927f",
+          "f330882ca5794f9699c5821284063a185b0b188f7fa9e755bc1604c16ae1927f",
+          "f330882ca5794f9699c5821284063a185b0b188f7fa9e755bc1604c16ae1927f"
+        ],
+        "pixel_identical_repeats": true
+      },
+      "release": {
+        "captures": [
+          "34b2d81ed10f251c9c95c606151cab6eb1b55370ca74c3a5a99454105eca953f",
+          "34b2d81ed10f251c9c95c606151cab6eb1b55370ca74c3a5a99454105eca953f",
+          "34b2d81ed10f251c9c95c606151cab6eb1b55370ca74c3a5a99454105eca953f"
+        ],
+        "pixel_identical_repeats": true
+      }
+    },
+    "cross_profile_ticks": [
+      {
+        "tick": 120,
+        "changed_pixels": 87,
+        "mean_absolute_channel_error": 0.000480324074074074,
+        "max_channel_error": 108,
+        "largest_difference_pixel_xy": [
+          204,
+          167
+        ]
+      },
+      {
+        "tick": 300,
+        "changed_pixels": 86,
+        "mean_absolute_channel_error": 0.0013469328703703705,
+        "max_channel_error": 198
+      },
+      {
+        "tick": 600,
+        "changed_pixels": 105,
+        "mean_absolute_channel_error": 0.0008723958333333332,
+        "max_channel_error": 140
+      }
+    ],
+    "visual_observation": "The largest tick-120 difference is one pixel on the flame edge; other changed pixels are low-amplitude. The contact sheet shows the exact frames and a 4x amplified difference.",
+    "cross_profile_status": "not byte-identical; active fire primitive bytes match, so the remaining divergence is downstream of primitive generation; exact operation not isolated"
+  },
+  "materials_hero_disabled_emitter_control": {
+    "scene_variant": "assets/scenes/materials.json with emitters[0].enabled set to false; the live describe schema lists this field as boolean",
+    "scene_variant_sha256": "2c0d5ce770c0528bd402edcbe5aa6d9d37571f1218bae9bbfff028ddf441b727",
+    "schema_validation": true,
+    "seed": 42,
+    "tick": 120,
+    "resolution": [
+      640,
+      360
+    ],
+    "pixel_identical": false,
+    "changed_pixels": 4,
+    "mean_absolute_channel_error": 5.787037037037037e-06,
+    "max_channel_error": 1,
+    "debug_image_sha256": "3e9a2cda81802aa03fc51eb5657a612ea7f2fcf3b7b735ba90405deefb2cd0ba",
+    "release_image_sha256": "67cfa498c7e4e0cb5982e8ce58f3902abe627718937c0804390006550c2828a1",
+    "interpretation": "Disabling the only emitter removes the large flame-edge outlier and leaves four one-level differences. This implicates the emitter render contribution in the high-error pixel, but does not isolate the exact operation or establish cross-profile parity."
+  },
+  "materials_hero_zero_smoke_control": {
+    "scene_variant": "assets/scenes/materials.json with emitters[0].smoke_density set to 0.0; the live describe schema lists this field as numeric",
+    "scene_variant_sha256": "16384744d3caeaffb73d70d66c399deebeb4d43182460de62b07d7b6d767940c",
+    "schema_validation": true,
+    "seed": 42,
+    "tick": 120,
+    "resolution": [640, 360],
+    "emitter_enabled": true,
+    "pixel_identical": false,
+    "changed_pixels": 87,
+    "mean_absolute_channel_error": 0.00048032407407407415,
+    "max_channel_error": 108,
+    "interpretation": "The Materials/hero divergence is unchanged with smoke density zero. Combined with matching active fire-primitive fingerprints and the near-exact emitter-disabled control, this isolates the visible discrepancy to downstream fire rendering rather than smoke simulation; its precise projection or shading operation remains unknown."
+  },
+  "summary": {
+    "exact_pairs": 10,
+    "total_pairs": 11,
+    "materials_hero_is_the_only_nonidentical_pair": true,
+    "active_fire_primitive_fingerprints_match_across_profiles": true
+  },
+  "limitations": [
+    "Offscreen captures on one adapter only.",
+    "No FPS or performance comparison was made.",
+    "Debug and release builds are individually repeatable in the tested Materials hero capture, but are not pixel-identical to each other there.",
+    "No cross-vendor determinism claim."
+  ],
+  "visualization": "measurements-debug-release-profile-parity-contact.png",
+  "active_fire_geometry_probe": {
+    "command": "engine-lab serve --scene assets/scenes/materials.json --camera hero --seed 42 --resolution 640x360; step 120; inspect_effects; capture_frame",
+    "debug": {
+      "fire_primitive_count": 33,
+      "fire_primitive_fingerprint_fnv1a64": "665db8995c35ff6d",
+      "bounds_min": [
+        -6.006168842315674,
+        -0.6734251976013184,
+        0.726870596408844,
+        0.802521824836731
+      ],
+      "bounds_max": [
+        -5.219862937927246,
+        1.44706392288208,
+        1.3970863819122314,
+        0.0
+      ],
+      "capture_sha256": "f330882ca5794f9699c5821284063a185b0b188f7fa9e755bc1604c16ae1927f"
+    },
+    "release": {
+      "fire_primitive_count": 33,
+      "fire_primitive_fingerprint_fnv1a64": "665db8995c35ff6d",
+      "bounds_min": [
+        -6.006168842315674,
+        -0.6734251976013184,
+        0.726870596408844,
+        0.802521824836731
+      ],
+      "bounds_max": [
+        -5.219862937927246,
+        1.44706392288208,
+        1.3970863819122314,
+        0.0
+      ],
+      "capture_sha256": "34b2d81ed10f251c9c95c606151cab6eb1b55370ca74c3a5a99454105eca953f"
+    },
+    "active_primitive_bytes_match": true,
+    "interpretation": "Counts, bounds and the FNV-1a fingerprint of active CPU-generated fire primitive bytes match across profiles, while the rendered capture remains different. This moves the divergence downstream of fire primitive generation; it does not identify whether the remaining source is camera/global precision, simulation state or shader thresholding."
+  }
+}

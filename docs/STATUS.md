@@ -1017,13 +1017,27 @@ decisions and unresolved visual/backend gates are consolidated in the
   `native=false`. This validates the current host's renderer path; it
   does not close the O01–O08 moving-route, visual-review or cross-adapter gates.
   The full GPU verifier was rerun after adding O03 smoke-candidate dispatch/skip
-  metrics; all checks passed on the instrumented build.
+  metrics and the on-demand fire-primitive fingerprint; all 42 Rust unit tests
+  and the renderer checks passed on the instrumented build.
   A separate current-build RG16 fallback study also forced RGBA16F effect-depth
   and smoke targets: two scenes and all 120 sampled frames from tick 120 through
   477 matched native-RG16 output byte-for-byte, with 2,101,248 additional known
   bytes at 640×360. This tests fallback creation/rendering on an M1 Max that
   supports Rg16Float; physical unsupported-adapter and DX12 acceptance remain
   open. See [current-build report](measurements-o08-rg16-fallback-current-build.json).
+  A same-device debug/release fixed-tick matrix matched 10 of 11 scenes/cameras
+  byte-for-byte, including clearing, dual-emitter, smoke-candidate and projected-
+  detail cases. Materials/hero is repeatable within each binary but differs
+  across profiles: 87 pixels at tick 120, with a single 108/255 flame-edge
+  outlier. Disabling the emitter reduces this to four one-level differences;
+  setting smoke density to zero leaves the 87-pixel divergence unchanged. The
+  `inspect_effects` FNV-1a fingerprint, counts and bounds match across profiles,
+  locating the remaining difference in downstream fire rendering, after CPU
+  primitive generation. Its exact projection/shading operation remains unknown.
+  This is not a cross-profile identity pass; no render defaults or pixel grid
+  were changed.
+  See [report](measurements-debug-release-profile-parity.json) and
+  [contact sheet](measurements-debug-release-profile-parity-contact.png).
 - **Native verification on 19 October, Mac unlocked:** `python3 scripts/verify.py
   --gpu --native` passed all GPU checks, then exited nonzero only at the
   minimization assertion. Native resize, fullscreen entry/exit, fixed tick-120

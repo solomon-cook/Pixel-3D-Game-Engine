@@ -18,9 +18,17 @@
   "current_checkout_release_rebuild": {
     "command": "cargo build --release --locked",
     "result": "passed",
-    "executable_sha256": "ebd2146d8fbb502746383d47dcee67a084c6b1a29b070533d7b2372fb5235da1",
+    "executable_sha256": "03924eeaed89c452e893bbb8400c81021006f7ab7c3b7a870012e2f4a9d2b272",
     "native_lifecycle_rerun": false,
-    "note": "This rebuild produced a different executable hash from the release binary used for the recorded native lifecycle checks; the current checkout rebuild has only compile evidence."
+    "note": "This rebuild produced a different executable hash from the release binary used for the recorded native lifecycle checks. Current-build offscreen fixed-tick captures are recorded; native lifecycle behavior of this exact rebuilt executable remains unverified.",
+    "source_revision": "32a07d940353a94e1b51bbed2b383f1b6e5f0c16",
+    "offscreen_rendering_recheck": {
+      "result": "passed",
+      "report": "measurements-debug-release-profile-parity.json",
+      "debug_release_capture_pairs": 11,
+      "exact_pairs": 10,
+      "native_lifecycle_rerun": false
+    }
   },
   "runs": [
     {

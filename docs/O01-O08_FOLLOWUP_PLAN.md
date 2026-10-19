@@ -1040,7 +1040,7 @@ finishes. A compile or a passing unit test does not close visual or hardware gat
 
 | Track | Evidence-backed disposition | Remaining acceptance |
 |---|---|---|
-| O01 profiling and counters | M1 Max/Metal stage attribution and output-preserving diagnostics do not support an active-region solver rewrite or a general shader rewrite. Keep counters diagnostic-only. [Evidence](measurements-o01-shading-attribution.json), [counters](measurements-o01-shading-counters.json). | Continuous playback, exact queue-latency attribution, native review and another adapter. |
+| O01 profiling and counters | M1 Max/Metal stage attribution and output-preserving diagnostics do not support an active-region solver rewrite or a general shader rewrite. Keep counters diagnostic-only. A current debug/release parity matrix is exact in 10 of 11 fixed-tick cases. The Materials/hero difference is repeatable per binary; active fire-primitive FNV-1a fingerprints match, and the same 87-pixel divergence remains when smoke density is zero, locating it downstream in fire rendering. Its high single-pixel edge error's precise projection/shading cause remains unexplained. [Evidence](measurements-o01-shading-attribution.json), [counters](measurements-o01-shading-counters.json), [debug/release parity](measurements-debug-release-profile-parity.json). | Investigate the Materials/hero cross-profile flame-edge divergence; continuous playback, exact queue-latency attribution, native review and another adapter. |
 | O02 shadow caching | Per-face invalidation matches forced redraw at fixed checkpoints and lowers the shadow stage in the moving route, but whole-window throughput is mixed. Keep conservative full-map fallback. [Evidence](measurements-o02-moving-route.json), [native](measurements-o02-native-shadow-cache.json). | Windows/DX12 and another adapter. |
 | O03 tiled effects | Retain 16×16 lists and exhaustive per-category overflow fallback; 8×8 storage cost outweighs its small frame-work change. Fire-bound precompute and smoke-candidate materialization remain disabled opt-ins with M1 evidence. [Stress](measurements-o03-stress-route.json), [tile size](measurements-o03-tile-size-sustained.json), [fire bounds](measurements-o03-fire-projected-bounds.json), [fire-bound current recheck](measurements-o03-fire-projected-bounds-recheck.json), [smoke-candidate correctness](measurements-o03-smoke-candidate-invalidation-recheck.json), [smoke-candidate current sustained](measurements-o03-smoke-candidate-sustained-current-build.json). | Owner motion review, Windows/DX12 and another adapter; current paired performance is one-device offscreen only. |
 | O04 projected fire detail | Keep LOD disabled by default: profile-dependent GPU changes are small, frame-work is mixed, and native FPS is effectively flat. Current fixed-tick state/image evidence is recorded above. [Sustained](measurements-o04-sustained-profiles.json), [current recheck](measurements-o04-current-build-recheck.json). | Full-duration human playback review and non-Metal qualification. |
@@ -1060,8 +1060,9 @@ acknowledged `set_window minimized=true` but left `minimized=false`; an
 `occluded` stayed false. The owner reported using the desktop concurrently, so
 other UI activity may have changed focus; this minimize result is inconclusive.
 The current checkout release rebuild has a different executable hash from the
-binary used by the recorded native runs and has only compile evidence. Repeat
-the lifecycle check with the rebuilt binary in an isolated native session. A live current-release viewport showed a
+binary used by the recorded native runs. It now has same-device offscreen
+fixed-tick evidence, but not native lifecycle verification. Repeat the lifecycle
+check with the rebuilt binary in an isolated native session. A live current-release viewport showed a
 moving tick-423 scene at 640×360, with the same tall, regular smoke-puff stack.
 This is sampled playback evidence, not owner acceptance or a temporal-quality
 measurement. Automated minimization and owner visual acceptance remain open.
