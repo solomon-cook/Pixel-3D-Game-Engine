@@ -544,7 +544,7 @@ pub fn set_parameter(scene: &mut Scene, path: &str, value: Value, base: &Path) -
 
 pub fn description() -> Value {
     json!({"protocol_version":1,"transport":"JSON lines on stdin/stdout; diagnostics on stderr; one response per request at a frame boundary","scene_schema":Scene::schema(),"commands":{
-        "describe":{},"inspect_scene":{"section":"optional top-level scene field; omitted returns compact overview","id":"optional stable ID within selected array"},"get_metrics":{},"inspect_effects":{"result":"bounded runtime flame counts, bounds and particle light positions/powers with stable event identities"},"get_errors":{},
+        "describe":{},"inspect_scene":{"section":"optional top-level scene field; omitted returns compact overview","id":"optional stable ID within selected array"},"get_metrics":{},"inspect_effects":{"result":"bounded runtime flame counts, active primitive FNV-1a diagnostic fingerprint, bounds and particle light positions/powers with stable event identities"},"get_errors":{},
         "pause":{"paused":"boolean"},"step":{"ticks":"integer 0..36000"},"reset":{"seed":"u32"},
         "set_camera":{"id":"named camera, OR supply camera object matching scene schema"},
         "set_object_transform":{"id":"stable scene object ID","position":"optional [x,y,z]","rotation":"optional [x,y,z] radians, XYZ order","scale":"optional positive [x,y,z]","result":"updated transform and per-object transform revision"},

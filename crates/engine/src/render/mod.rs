@@ -3929,8 +3929,13 @@ impl Renderer {
     }
 
     pub fn effect_state(&self) -> serde_json::Value {
+        let primitive_count =
+            (self.fire_frame.counts[0] as usize).min(self.fire_frame.primitives.len());
+        let fire_primitive_fingerprint =
+            effects::fire_primitive_fingerprint(&self.fire_frame.primitives[..primitive_count]);
         serde_json::json!({"counts":self.fire_frame.counts,"bounds_min":self.fire_frame.bounds_min,
             "bounds_max":self.fire_frame.bounds_max,"lighting":self.fire_frame.lighting,
+            "fire_primitive_fingerprint_fnv1a64":fire_primitive_fingerprint,
             "projected_detail":{"enabled":self.metrics.projected_detail_lod_enabled,
                 "projected_height_px":self.metrics.projected_fire_height_px,
                 "tier":self.metrics.fire_lod_level,

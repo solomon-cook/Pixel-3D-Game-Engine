@@ -23,6 +23,17 @@ pub fn stable_emitter_seed(seed: u32, emitter_id: &str) -> u32 {
     hash
 }
 
+/// Fingerprint active fire primitive bytes for diagnostics and build comparisons.
+/// This is non-cryptographic and makes no cross-platform float-identity promise.
+pub fn fire_primitive_fingerprint(primitives: &[FirePrimitive]) -> String {
+    let mut hash = 0xcbf29ce484222325u64;
+    for byte in bytemuck::cast_slice::<FirePrimitive, u8>(primitives) {
+        hash ^= u64::from(*byte);
+        hash = hash.wrapping_mul(0x100000001b3);
+    }
+    format!("{hash:016x}")
+}
+
 #[derive(Clone, PartialEq, Serialize, Deserialize, JsonSchema)]
 #[serde(default, deny_unknown_fields)]
 pub struct FireSettings {
@@ -862,6 +873,18 @@ mod tests {
             smoke: [0.6, 0.85, 3., 0.45],
             smoke_shading: [0.9, 0.15],
         }
+    }
+    #[test]
+    fn fire_primitive_fingerprint_is_stable_and_content_sensitive() {
+        let frame = FireFrame::sample(&key());
+        let count = frame.counts[0] as usize;
+        let active = &frame.primitives[..count];
+        let fingerprint = fire_primitive_fingerprint(active);
+        assert_eq!(fingerprint, fire_primitive_fingerprint(active));
+
+        let mut changed = active.to_vec();
+        changed[0].center_radius[0] += 0.001;
+        assert_ne!(fingerprint, fire_primitive_fingerprint(&changed));
     }
     #[test]
     fn multi_emitter_sampling_is_stable_ordered_and_source_independent() {
