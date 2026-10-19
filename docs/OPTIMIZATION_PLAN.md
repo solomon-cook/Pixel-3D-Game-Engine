@@ -864,14 +864,16 @@ paired medians remain +0.124 FPS, -0.045 ms CPU native frame, -0.006 ms CPU
 upload and +0.006 ms atmosphere/fire GPU time. Profiling-heavy medians are
 -0.070 FPS, +0.001 ms CPU native frame, +0.004 ms CPU upload and -0.014 ms
 atmosphere/fire GPU. Material Atelier medians are +0.069 FPS, +0.011 ms CPU
-native frame, -0.017 ms CPU upload and -0.007 ms atmosphere/fire GPU, with mixed
-pair signs. Profiling-heavy counters show about 1.38 fewer Globals writes and
-1,173 fewer uploaded bytes per rendered frame. Timing effects differ by route;
-this remains a traffic reduction without a general throughput claim. Two-emitter
-and non-Metal acceptance remain open. See the
+native frame, -0.017 ms CPU upload and -0.007 ms atmosphere/fire GPU. Two-emitter
+medians are +0.044 FPS, -0.019 ms CPU native frame, -0.004 ms CPU upload and
+-0.004 ms atmosphere/fire GPU. Pair signs differ by route. Profiling-heavy
+counters show about 1.38 fewer Globals writes and 1,173 fewer uploaded bytes per
+rendered frame. This remains a traffic reduction without a general throughput
+claim. Windows/DX12 and other-adapter acceptance remain open. See the
 [clearing report](measurements-o08-globals-upload-native.json),
-[profiling-heavy report](measurements-o08-globals-upload-native-profiling-heavy.json)
-and [Material Atelier report](measurements-o08-globals-upload-native-materials.json)
+[profiling-heavy report](measurements-o08-globals-upload-native-profiling-heavy.json),
+[Material Atelier report](measurements-o08-globals-upload-native-materials.json),
+[two-emitter report](measurements-o08-globals-upload-native-two-emitter.json)
 and [runner](../scripts/globals_upload_native_study.py).
 
 **Smoke compute bind-group layout (18 October 2026):** the advection WGSL

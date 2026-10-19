@@ -401,23 +401,21 @@ The native-window clearing route is measured separately below. See
 the per-frame upload counters are included in `describe`, `get_metrics`, route
 benchmarks and native benchmark samples.
 
-Native-window comparisons now cover clearing and profiling-heavy routes on M1
-Max/Metal, each with three alternating 120-second optimized/legacy pairs and
-ten-second warm-ups. All runs exceed 99% render and smoke-compute timestamp
-coverage when compute coverage is divided by actual fixed ticks. Clearing
-optimized-minus-legacy medians are +0.124 FPS, -0.045 ms CPU native frame,
--0.006 ms CPU upload and +0.006 ms atmosphere/fire GPU. Profiling-heavy medians
-are -0.070 FPS, +0.001 ms CPU native frame, +0.004 ms CPU upload and -0.014 ms
-atmosphere/fire GPU. Material Atelier medians are +0.069 FPS, +0.011 ms CPU
-native frame, -0.017 ms CPU upload and -0.007 ms atmosphere/fire GPU; its pair
-results vary in sign. The profiling-heavy counters show about 1.38 fewer
-`Globals` writes and 1,173 fewer uploaded bytes per rendered frame. FPS and
-stage results vary; the evidence supports traffic reduction, not a whole-window
-speedup. Two-emitter coverage and Windows/DX12 or other-adapter validation remain
-open. See the
+Native-window comparisons now cover clearing, profiling-heavy, Material Atelier
+and two-emitter routes on M1 Max/Metal, each with three alternating 120-second
+optimized/legacy pairs and ten-second warm-ups. All runs exceed 99% render and
+smoke-compute timestamp coverage when compute coverage is divided by actual fixed
+ticks. Optimized-minus-legacy medians in route order are +0.124/-0.070/+0.069/
++0.044 FPS, -0.045/+0.001/+0.011/-0.019 ms CPU native frame,
+-0.006/+0.004/-0.017/-0.004 ms CPU upload and +0.006/-0.014/-0.007/-0.004 ms
+atmosphere/fire GPU. Pair signs vary, so the evidence supports traffic reduction,
+not a whole-window speedup. Profiling-heavy counters show about 1.38 fewer
+`Globals` writes and 1,173 fewer uploaded bytes per rendered frame. Windows/DX12
+and other-adapter validation remain open. See the
 [clearing report](measurements-o08-globals-upload-native.json),
 [profiling-heavy report](measurements-o08-globals-upload-native-profiling-heavy.json)
-and [Material Atelier report](measurements-o08-globals-upload-native-materials.json)
+[Material Atelier report](measurements-o08-globals-upload-native-materials.json),
+[two-emitter report](measurements-o08-globals-upload-native-two-emitter.json),
 and [reproducible study](../scripts/globals_upload_native_study.py).
 
 O08 also retargets smoke compute resources from group 1 to group 0 and removes
