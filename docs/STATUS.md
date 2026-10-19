@@ -1082,6 +1082,11 @@ decisions and unresolved visual/backend gates are consolidated in the
   `minimized: false` and `occluded: false` remained, while fullscreen entry/exit,
   stable size restoration, tick-120 capture and shutdown passed. The verifier
   change makes the lifecycle check more reliable but does not fix minimization.
+  A new isolated probe with no resize or fullscreen transition confirms focus
+  before the request and reports the native minimize button enabled, but still
+  sees `minimized: false` and `occluded: false` after eight seconds. The restore
+  request has no minimized state to reverse. This localizes the issue to the
+  minimize request/window path without proving whether AppKit rejected it.
   Current hashes and raw output are in the measurement JSON. The tick-120 scene
   capture was inspected. Keep
   minimization open;

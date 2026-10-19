@@ -263,7 +263,7 @@
     "fixed_tick_capture_inspected": "measurements-native-window-verification-current-build.png"
   },
   "open_gates": [
-    "Programmatic macOS minimization remains failing after a stable focused resize; root cause or supported disposition",
+    "Programmatic macOS minimization remains failing on a focused, enabled window without resize/fullscreen; determine cause or supported disposition",
     "owner acceptance of continuous native playback",
     "Windows/DX12 rendering",
     "another GPU adapter"
@@ -382,5 +382,28 @@
     "result": "The minimization failure persists after waiting for a stable resize and confirming the window is focused. Resize, fullscreen entry/exit, stable size restoration, deterministic capture and shutdown passed. The failure is not explained by issuing the minimize request during an unsettled resize; its cause remains undetermined.",
     "raw_runner_output": "artifacts/native-verification.json",
     "raw_capture": "artifacts/native-acceptance.png"
+  },
+  "isolated_no_resize_minimization_probe": {
+    "date": "2026-10-19",
+    "engine_source_revision": "91947490cb632a1f7c94a47f16d3425472f5ea67",
+    "binary_profile": "debug",
+    "binary_sha256": "f3c8b4b1108f490173d94033ed377c7afa3e5b1ee8cc5d9935df45e881344baf",
+    "runner": "scripts/verify_native_minimize.py",
+    "runner_sha256": "f6257b243b8642a08b01e67334c7c34112f19a4019e9cdf306ef467af30edebb",
+    "command": "python3 scripts/verify_native_minimize.py --binary target/debug/engine-lab --focus-timeout 3 --minimize-timeout 8 --restore-timeout 5",
+    "host": "macOS 27.0.1 ARM64, Apple M1 Max/Metal",
+    "resize_or_fullscreen_used": false,
+    "focused_before_request": true,
+    "minimize_button_enabled": true,
+    "minimized_after_request": false,
+    "occluded_after_request": false,
+    "poll_seconds": 8,
+    "focused_after_request": false,
+    "restored_after_request": false,
+    "focused_after_restore": false,
+    "shutdown": true,
+    "result": "With no resize or fullscreen transition, the focused window reported its minimize button enabled. After set_window minimized=true, OS-reported minimized and occluded both remained false for eight seconds. This rules out resize/fullscreen as prerequisites for reproducing the failure; it does not establish whether AppKit rejected miniaturize or a separate application/window eligibility condition applies.",
+    "raw_runner_output": "artifacts/native-minimize-probe.json",
+    "raw_stderr": "artifacts/native-minimize-probe.log"
   }
 }

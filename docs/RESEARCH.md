@@ -1118,6 +1118,19 @@ playback, DX12 and another-adapter gates open. See
 [native verification](measurements-native-window-verification-current-build.json)
 and its [tick-120 capture](measurements-native-window-verification-current-build.png).
 
+**Isolated minimization follow-up (19 October 2026):** the native `get_window`
+result now includes whether the OS currently enables the minimize button. The
+focused M1 Max/Metal debug window reported this as true, with no resize or
+fullscreen transition, yet `set_window minimized=true` still left both
+`minimized` and `occluded` false after eight seconds. The restore request
+therefore had no minimized state to reverse, and focus remained false. This
+rules out an unsettled resize or fullscreen transition as the trigger and
+confirms the failure on an eligible-looking native window; it does not identify
+why AppKit did not miniaturize it. Reproduce with
+[`verify_native_minimize.py`](../scripts/verify_native_minimize.py); raw state
+and build identity are in the
+[native verification report](measurements-native-window-verification-current-build.json).
+
 ## Current-build RG16 fallback recheck (19 October 2026)
 
 The current debug build reran the forced RGBA16F effect-depth and smoke-volume

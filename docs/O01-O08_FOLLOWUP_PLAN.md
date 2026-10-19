@@ -1075,6 +1075,10 @@ current-release viewport showed a moving tick-423 scene at 640×360, with the
 same tall, regular smoke-puff stack. A follow-up verifier waits for the resized
 window to remain stable for 0.75 seconds and confirms focus before minimizing;
 minimization still fails, so the resize transition alone does not explain it.
+An isolated no-resize/no-fullscreen probe confirms the native minimize button is
+enabled on a focused window, yet the request still leaves `minimized` and
+`occluded` false after eight seconds. This narrows the failure to the native
+minimize request/window path; the AppKit cause remains unknown.
 This is sampled playback evidence, not owner acceptance or a temporal-quality measurement. Owner visual acceptance,
 minimization, DX12 and another-adapter gates remain open. See [native
 verification](measurements-native-window-verification-current-build.json) and its

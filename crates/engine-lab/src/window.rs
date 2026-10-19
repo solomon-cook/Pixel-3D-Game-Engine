@@ -20,7 +20,7 @@ use winit::{
     event::{DeviceEvent, ElementState, MouseButton, WindowEvent},
     event_loop::{ActiveEventLoop, EventLoop},
     keyboard::{KeyCode, PhysicalKey},
-    window::{Fullscreen, Window},
+    window::{Fullscreen, Window, WindowButtons},
 };
 
 pub fn process_line(session: &mut Session, line: &str) -> String {
@@ -675,7 +675,7 @@ impl Native {
         if let Ok(request) = serde_json::from_str::<Request>(line) {
             let result: Result<Value> = match request.method.as_str() {
                 "get_window" => Ok(
-                    json!({"physical_size":[self.window.inner_size().width,self.window.inner_size().height],"scale_factor":self.window.scale_factor(),"focused":self.window.has_focus(),"minimized":self.window.is_minimized(),"occluded":self.occluded,"fullscreen":self.window.fullscreen().is_some()}),
+                    json!({"physical_size":[self.window.inner_size().width,self.window.inner_size().height],"scale_factor":self.window.scale_factor(),"focused":self.window.has_focus(),"minimized":self.window.is_minimized(),"minimize_button_enabled":self.window.enabled_buttons().contains(WindowButtons::MINIMIZE),"occluded":self.occluded,"fullscreen":self.window.fullscreen().is_some()}),
                 ),
                 "set_window" => {
                     #[derive(serde::Deserialize)]

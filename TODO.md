@@ -71,7 +71,9 @@ The consolidated measured decisions and remaining per-track gates are in the
 
   Native resize/fullscreen/size-restore passes on macOS 27.0.1, but an
   idle-desktop current-build verifier run and a direct Session probe both
-  acknowledged the minimize request without an OS-reported minimized state.
+  acknowledged the minimize request without an OS-reported minimized state. A
+  focused no-resize probe reports the native minimize button enabled, yet the
+  request still leaves both minimized and occluded false after eight seconds.
   Keep this native host gate open until the cause is fixed or dispositioned; do
   not treat focus loss or occlusion as minimization. Evidence: [current native
   verification](docs/measurements-native-window-verification-current-build.json).
