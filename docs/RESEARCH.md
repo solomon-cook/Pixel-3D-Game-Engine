@@ -765,6 +765,21 @@ omits per-pose invalidation masks for this native run. It establishes native
 capture parity, not native-window timing or surface-present image inspection. See
 [measurements-o02-visible-caster-native.json](measurements-o02-visible-caster-native.json).
 
+## O04 current-release native timing (19 October 2026)
+
+Projected-detail LOD and direct rendering were compared in the native window
+for three alternating 120-second campfire orbit pairs after 10-second warmups,
+at 640×360 on Apple M1 Max/Metal. The current-release binary and native timing
+coverage are recorded in the report; all six runs have 100% timed render-frame
+coverage. LOD-minus-direct paired medians are -0.047 ms atmosphere/fire GPU
+stage, -0.0041 ms native-frame median and -0.018 fps. The GPU stage improves in
+two pairs, but FPS falls slightly in all three. There is no demonstrated
+whole-window gain; retain the opt-in and keep it disabled by default. This
+native timing applies to campfire only; quiet/bonfire native routes and
+non-Metal systems remain open. See the
+[current-release native report](measurements-o04-native-current-release.json)
+and [runner](../scripts/projected_detail_native_study.py).
+
 ## O05 absorption-cache scale study (18 October)
 
 Direct sampling, 8³ cache and 16³ cache were compared at small, medium and

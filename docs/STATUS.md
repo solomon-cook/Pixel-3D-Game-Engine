@@ -107,26 +107,29 @@ and performance remain separate. See [transition report](measurements-o04-transi
 An in-app browser spot review viewed the campfire baseline and LOD GIFs side by
 side across several seconds; no obvious silhouette break or fire/smoke
 separation appeared in the sampled frames. A later owner review accepted the
-full 20-second offscreen motion across campfire, quiet and bonfire. A three-pair
-native-window campfire orbit now lowers the
-atmosphere/fire GPU-stage median by 0.057 ms, with effectively flat paired FPS
-(−0.001); the retained-primitive median moves 81→70 and the projected-detail
-calculation adds about 0.00008 ms CPU. This does not establish a whole-window
-win. Keep LOD disabled by default; native playback/performance and portability
-remain open. See
+full 20-second offscreen motion across campfire, quiet and bonfire. An earlier
+three-pair native-window campfire result showed a 0.057 ms lower atmosphere/fire
+GPU-stage median and effectively flat FPS; that timing is superseded by the
+current-release recheck below. Keep LOD disabled by default. See
 [measurements-o04.json](measurements-o04.json),
 [measurements-o04-motion-review.json](measurements-o04-motion-review.json) and
 [measurements-o04-sustained-profiles.json](measurements-o04-sustained-profiles.json),
-[native report](measurements-o04-native.json) and
+[historical native report](measurements-o04-native.json) and
 [native runner](../scripts/projected_detail_native_study.py).
 The 19 October current-release repeat adds three alternating 120-second
 offscreen campfire pairs at 640×360. Candidate-minus-baseline paired medians are
 −0.049 ms frame work and −0.146 ms GPU render, with all three pairs favoring the
-candidate on both metrics. This does not supersede the earlier native result of
-effectively flat FPS; portability remains open after the accepted offscreen
-visual review. Keep LOD
+candidate on both metrics. This is separate from the native timing result below
+and does not establish a whole-window gain. Portability remains open. Keep LOD
 disabled by default. See
 [current-release sustained report](measurements-o04-sustained-current-release.json).
+The current-release native-window rerun supersedes the earlier effectively-flat
+FPS result: three alternating 120-second campfire pairs at 640×360 have full
+GPU timestamp coverage. LOD-minus-direct medians are −0.047 ms atmosphere/fire
+GPU time, −0.0041 ms native-frame median and −0.018 fps. GPU-stage time improves
+in two pairs, while FPS is lower in all three; there is no whole-window gain.
+Keep LOD disabled by default. Native quiet/bonfire routes and other adapters
+remain open. See the [current-release native report](measurements-o04-native-current-release.json).
 The earlier 14-checkpoint fire-state recheck uses binary hash
 `4247485106ee2d30…`, with no binary path or source revision, so it remains
 exact-build evidence only. A current-release rerun now compares the full/detail
@@ -1186,6 +1189,7 @@ decisions and unresolved visual/backend gates are consolidated in the
   it is not current-source proof. Rerun on the current release. Physical
   unsupported-adapter and DX12 acceptance also remain open. See [report](measurements-o08-rg16-fallback-current-build.json)
   and [artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json).
+
   A same-device debug/release fixed-tick matrix matched 10 of 11 scenes/cameras
   byte-for-byte, including clearing, dual-emitter, smoke-candidate and projected-
   detail cases. Materials/hero is repeatable within each binary but differs
