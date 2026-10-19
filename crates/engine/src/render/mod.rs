@@ -439,6 +439,9 @@ fn shadow_face_mask_for_bounds(
     matrices: &[Mat4],
 ) -> (Vec<bool>, bool) {
     let mut dirty = vec![false; matrices.len()];
+    if bounds.is_empty() {
+        return (dirty, false);
+    }
     let frusta = matrices
         .iter()
         .map(|matrix| Frustum::from_view_projection(*matrix))
@@ -5713,6 +5716,9 @@ mod shadow_cache_tests {
             shadow_face_mask_for_bounds(&[Some(positive_x)], &invalid_matrices);
         assert_eq!(invalid, [true; 7]);
         assert!(fallback);
+        let (empty, fallback) = shadow_face_mask_for_bounds(&[], &invalid_matrices);
+        assert_eq!(empty, [false; 7]);
+        assert!(!fallback);
     }
 
     fn scene() -> Scene {
