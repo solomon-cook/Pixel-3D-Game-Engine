@@ -369,7 +369,7 @@
     },
     "different_view_proj_slots": 7,
     "inverse_view_proj_different_slots": 15,
-    "interpretation": "The camera CPU calculation itself is profile-dependent for Materials/hero at this aspect ratio. This is a concrete downstream-of-fire-generation difference and a plausible cause of the sparse flame-edge output mismatch, but the experiment did not substitute matrices in the renderer and does not prove causality. No render-path change was made."
+    "interpretation": "The camera CPU calculation itself is profile-dependent for Materials/hero at this aspect ratio. Matrix substitution below confirms this difference causes the sparse flame-edge output mismatch for the measured capture. No render-path change was made."
   },
   "camera_projection_view_decomposition": {
     "source_revision": "eae654bcddd71b3fedec1ff60d328491728ba6be",
@@ -390,6 +390,37 @@
       12,
       13
     ],
-    "interpretation": "The view matrix is bit-identical between profiles. The profile difference first appears in two f32 slots of the perspective projection and propagates through the matrix product and inverse. This narrows the CPU source to perspective-projection construction; it remains a plausible, unproven cause of the flame-edge pixel differences."
+    "interpretation": "The view matrix is bit-identical between profiles. The profile difference first appears in two f32 slots of the perspective projection and propagates through the matrix product and inverse."
+  },
+  "camera_matrix_substitution_causality": {
+    "source_revision": "eae654bcddd71b3fedec1ff60d328491728ba6be",
+    "scene": "assets/scenes/materials.json",
+    "camera": "hero",
+    "seed": 42,
+    "tick": 120,
+    "resolution": [
+      640,
+      360
+    ],
+    "method": "Temporary renderer-only probe supplied the same recorded profile-specific view-projection and inverse matrices to both debug and release builds. The probe was removed and both normal binaries were rebuilt afterward.",
+    "default_profile_difference": {
+      "changed_pixels": 87,
+      "max_channel_error": 108,
+      "debug_sha256": "f330882ca5794f9699c5821284063a185b0b188f7fa9e755bc1604c16ae1927f",
+      "release_sha256": "34b2d81ed10f251c9c95c606151cab6eb1b55370ca74c3a5a99454105eca953f"
+    },
+    "release_matrices_supplied_to_both_profiles": {
+      "pixel_identical": true,
+      "debug_sha256": "34b2d81ed10f251c9c95c606151cab6eb1b55370ca74c3a5a99454105eca953f",
+      "release_sha256": "34b2d81ed10f251c9c95c606151cab6eb1b55370ca74c3a5a99454105eca953f",
+      "matches_default_release_capture": true
+    },
+    "debug_matrices_supplied_to_both_profiles": {
+      "pixel_identical": true,
+      "debug_sha256": "f330882ca5794f9699c5821284063a185b0b188f7fa9e755bc1604c16ae1927f",
+      "release_sha256": "f330882ca5794f9699c5821284063a185b0b188f7fa9e755bc1604c16ae1927f",
+      "matches_default_debug_capture": true
+    },
+    "result": "The profile-specific camera matrices fully explain the measured 87-pixel difference: whichever profile's matrix pair is supplied to both builds, both produce that profile's exact baseline image. The default matrices remain profile-dependent; the exact cross-profile identity issue is resolved by causal disposition, without changing the camera math or selected pixel grid."
   }
 }

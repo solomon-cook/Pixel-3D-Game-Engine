@@ -1036,10 +1036,12 @@ decisions and unresolved visual/backend gates are consolidated in the
   direct Materials/hero matrix probe finds the view matrix identical but two
   perspective-projection slots different; the difference propagates to 7/16
   view-projection and 15/16 inverse-matrix slots in debug versus release. This
-  is a concrete profile-dependent camera input and a plausible source of the
-  flame-edge discrepancy, but causality is not proven because the matrices were
-  not substituted in a renderer capture. This is not a cross-profile identity
-  pass; no render defaults or pixel grid were changed.
+  is a profile-dependent camera input. Two-way substitution of the recorded
+  debug and release matrix pairs into both builds confirms the camera matrices
+  fully explain the 87-pixel difference: both builds produce byte-identical
+  output, matching the corresponding profile's default capture. The normal
+  builds remain profile-dependent, but the cause is isolated; no camera math,
+  render defaults or pixel grid were changed.
   See [report](measurements-debug-release-profile-parity.json) and
   [contact sheet](measurements-debug-release-profile-parity-contact.png).
 - **Native verification on 19 October, Mac unlocked:** `python3 scripts/verify.py
