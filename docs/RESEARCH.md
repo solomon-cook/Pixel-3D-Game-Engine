@@ -928,8 +928,10 @@ Historical size/native runs did not establish a total-render win, so keep the
 cache disabled by default. The explicit-source sustained dual-emitter report is
 from revision `4e57d5f`, before 13 engine/shader changes. The 19 October
 invalidation recheck records fixed-tick correctness for its exact build only: its
-runner hash matches, but executable path/source revision are absent and its
-binary hash matches none of the available current binaries. Current-source
+runner hash matched the runner at the historical audit head, but executable
+path/source revision are absent and its binary hash matches none of the available
+current binaries. The current runner now records binary path/hash, workspace
+revision, engine-source worktree status and its own hash. Current-source
 correctness and sustained performance remain open pending current-release runs.
 See the [capture and performance source audit](measurements-o05-current-review-source-audit.json)
 and [invalidation provenance audit](measurements-o05-invalidation-provenance-audit.json).

@@ -8,8 +8,18 @@
   "report_source_revision": null,
   "report_runner_sha256": "de079245457f8712f74e08b2be3cc8d36a4d79e45bc8500d310b659f66dd4826",
   "checked_in_runner": "../scripts/absorption_cache_invalidation_study.py",
-  "checked_in_runner_sha256": "de079245457f8712f74e08b2be3cc8d36a4d79e45bc8500d310b659f66dd4826",
-  "runner_hash_matches": true,
+  "runner_sha256_at_audit_head": "de079245457f8712f74e08b2be3cc8d36a4d79e45bc8500d310b659f66dd4826",
+  "runner_hash_matched_at_audit_head": true,
+  "current_checked_in_runner_sha256": "439f8df07a746b530ab4c928321c2c52738c4929d038bb268a1c6879db282165",
+  "current_runner_matches_historical_report": false,
+  "current_runner_provenance_fields": [
+    "binary_path",
+    "binary_sha256",
+    "workspace_revision_at_run",
+    "engine_source_worktree_status",
+    "runner_path",
+    "runner_sha256"
+  ],
   "available_binaries": {
     "debug": {
       "path": "target/debug/engine-lab",
@@ -38,7 +48,7 @@
   ],
   "engine_source_changes_since_current_validation": [],
   "engine_scope_unchanged_since_current_validation": true,
-  "interpretation": "The fixed-tick report is valid evidence for its recorded executable. Its runner hash matches the checked-in runner, and engine sources have not changed since the current validation revision, but the report has no binary path or source revision and its binary hash matches none of the available executables. Do not use it as independently proven current-source correctness. Rerun the O05 invalidation study with the current release binary and record its path and source revision before closing the current-source correctness gate.",
+  "interpretation": "The fixed-tick report is valid evidence for its recorded executable. Its runner hash matched the checked-in runner at the audited head, but the current runner has since been improved to write executable path/hash, workspace revision, engine-source worktree status and runner provenance. The historical report has no executable path or source revision and its binary hash matches none of the available executables. Do not use it as independently proven current-source correctness. Rerun the O05 invalidation study with the current release binary; compare its exact binary hash with the current release validation before closing the current-source correctness gate.",
   "limitations": [
     "This audit hashes available executables and checks Git source paths; it does not rerun rendering or verify the historical binary contents."
   ]
