@@ -1100,14 +1100,16 @@ fixed tick-120 capture. Minimization remains unverified: `set_window` returned
 Session, in a temporary signed app bundle, and in an eight-second poll on the
 exact current release executable. The owner reported using the desktop
 concurrently during earlier checks, so isolated-session behavior is not
-established. On the exact current release executable, fullscreen exit reported
-`fullscreen: false` but retained physical dimensions of 5120×2880, compared with
-1800×1200 after resize; restored dimensions are not verified. The executable-hash
-mismatch is closed for basic lifecycle tests, not for minimization or restoration.
-A live current-release native viewport reported tick 423 running at 640×360; the
-smoke still forms a tall regular stack of rounded puffs. This is an observed
-visual concern, not owner acceptance or a temporal score. Keep macOS
-minimize/restore, owner playback, DX12 and another-adapter gates open. See
+established. The current release then exposed and fixed a separate restore-size
+issue: after fullscreen exit, the reported size remained 5120×2880. The host now
+saves the windowed logical size and retries applying it after the native
+transition. The updated verifier confirms stable return to 1800×1200 physical
+pixels, fullscreen exit, capture and shutdown. Minimization still remains false
+and unoccluded after eight seconds, so its native gate remains open. A live
+current-release native viewport reported tick 423 running at 640×360; the smoke
+still forms a tall regular stack of rounded puffs. This is an observed visual
+concern, not owner acceptance or a temporal score. Keep macOS minimization, owner
+playback, DX12 and another-adapter gates open. See
 [native verification](measurements-native-window-verification-current-build.json)
 and its [tick-120 capture](measurements-native-window-verification-current-build.png).
 

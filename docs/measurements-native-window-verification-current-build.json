@@ -18,16 +18,16 @@
   "current_checkout_release_rebuild": {
     "command": "cargo build --release --locked",
     "result": "passed",
-    "executable_sha256": "03924eeaed89c452e893bbb8400c81021006f7ab7c3b7a870012e2f4a9d2b272",
+    "executable_sha256": "cb01d01cf6dbe0f665f6e8802bbc6602cb326ca44e12714f64e99b6eed2f0055",
     "native_lifecycle_rerun": true,
-    "note": "This rebuild produced a different executable hash from the earlier native lifecycle checks. Native lifecycle was rerun on this exact release executable: resize, fullscreen entry/restore, fixed-tick capture and shutdown passed; macOS still did not report the window minimized after the request.",
-    "source_revision": "32a07d940353a94e1b51bbed2b383f1b6e5f0c16",
+    "note": "This rebuild contains the native window-size restore fix. On the exact binary, resize, fullscreen entry/exit and stable prior-size restoration, fixed-tick capture and shutdown passed. macOS still did not report the window minimized after the request.",
+    "source_revision": "eae654bcddd71b3fedec1ff60d328491728ba6be",
     "offscreen_rendering_recheck": {
       "result": "passed",
       "report": "measurements-debug-release-profile-parity.json",
       "debug_release_capture_pairs": 11,
       "exact_pairs": 10,
-      "native_lifecycle_rerun": true
+      "native_lifecycle_rerun": false
     }
   },
   "current_release_native_lifecycle_rerun": {
@@ -70,6 +70,59 @@
       "poll_seconds": 8
     },
     "result": "Current release binary passed resize, fullscreen entry and exit flag, fixed-tick capture, command handling and shutdown. Restored window dimensions were not verified and the reported physical size remained at fullscreen dimensions. The OS did not report minimization within eight seconds; macOS minimize and restore behavior remain open.",
+    "raw_runner_output": "artifacts/native-verification.json",
+    "raw_capture": "artifacts/native-acceptance.png"
+  },
+  "current_checkout_gpu_verification": {
+    "date": "2026-10-19",
+    "source_revision": "eae654bcddd71b3fedec1ff60d328491728ba6be",
+    "command": "python3 scripts/verify.py --gpu",
+    "result": {
+      "verified": true,
+      "gpu": true,
+      "native": false
+    },
+    "host": {
+      "device": "Apple M1 Max",
+      "backend": "Metal"
+    },
+    "note": "Formatting, Clippy, workspace tests, and Metal GPU checks passed on the fullscreen-size restore fix. The command intentionally did not run native lifecycle checks."
+  },
+  "native_window_restore_fix_verification": {
+    "date": "2026-10-19",
+    "source_revision": "eae654bcddd71b3fedec1ff60d328491728ba6be",
+    "executable_sha256": "cb01d01cf6dbe0f665f6e8802bbc6602cb326ca44e12714f64e99b6eed2f0055",
+    "command": "python3 scripts/verify_native.py --binary target/release/engine-lab --minimize-timeout 8 --restore-timeout 8",
+    "window_size_before_fullscreen_physical_pixels": [
+      1800,
+      1200
+    ],
+    "window_size_after_fullscreen_exit_physical_pixels": [
+      1800,
+      1200
+    ],
+    "restoration_stability_check_seconds": 0.75,
+    "resize": true,
+    "fullscreen_entry": true,
+    "fullscreen_exit": true,
+    "stable_window_size_restore": true,
+    "fixed_tick_capture": {
+      "passed": true,
+      "camera": "hero",
+      "seed": 42,
+      "tick": 120,
+      "pixel_resolution": [
+        640,
+        360
+      ]
+    },
+    "shutdown": true,
+    "minimization": {
+      "request_sent": true,
+      "os_reported_minimized": false,
+      "os_reported_occluded": false,
+      "poll_seconds": 8
+    },
     "raw_runner_output": "artifacts/native-verification.json",
     "raw_capture": "artifacts/native-acceptance.png"
   },

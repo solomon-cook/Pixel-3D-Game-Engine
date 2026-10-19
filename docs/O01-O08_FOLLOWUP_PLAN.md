@@ -1059,14 +1059,16 @@ bundle both acknowledged `set_window minimized=true` but left `minimized=false`;
 an 8-second focus-instrumented poll showed focus lost while `minimized` and
 `occluded` stayed false. The owner reported using the desktop concurrently during
 earlier checks, so isolation is not established. The exact current release
-executable has now received another native lifecycle run: basic controls and
-capture passed, but after fullscreen exit its reported physical size remained
-5120×2880 versus 1800×1200 after resize. Restored dimensions and minimization
-remain unverified; do not treat the exit flag alone as a restore pass. A live
+executable was then fixed to retain and reapply its last windowed logical size
+after the macOS fullscreen transition. The current release native verifier
+confirms stable restoration to 1800×1200 physical pixels, resize, fullscreen
+entry/exit, capture and shutdown. The eight-second minimization poll still did
+not observe `minimized` or `occluded`; earlier concurrent desktop use means an
+isolated session is not established, so minimization remains open. A live
 current-release viewport showed a moving tick-423 scene at 640×360, with the
 same tall, regular smoke-puff stack. This is sampled playback evidence, not owner
-acceptance or a temporal-quality measurement. Owner visual acceptance, isolated
-minimization/restore, DX12 and another-adapter gates remain open. See [native
+acceptance or a temporal-quality measurement. Owner visual acceptance,
+minimization, DX12 and another-adapter gates remain open. See [native
 verification](measurements-native-window-verification-current-build.json) and its
 [tick-120 capture](measurements-native-window-verification-current-build.png).
 

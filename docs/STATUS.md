@@ -1054,16 +1054,17 @@ decisions and unresolved visual/backend gates are consolidated in the
   checks, so focus may have changed due to other UI activity. Treat minimization
   as unresolved. After the owner confirmed the Mac was unlocked, the exact
   current release executable was rerun with the native lifecycle verifier.
-  Resize, fullscreen entry and exit flag, fixed-tick capture, command handling
-  and shutdown passed; the OS still reported `minimized: false` and
-  `occluded: false` after an eight-second poll. The physical window size after
-  fullscreen exit remained 5120×2880 versus 1800×1200 after resize, so restored
-  dimensions were not verified. This closes the executable-hash mismatch for
-  basic lifecycle checks but does not establish macOS minimization or restore
-  behavior. The owner had earlier reported concurrent desktop use; this rerun
-  does not establish an isolated desktop session. Hashes, raw output, and run
-  attribution are recorded in the measurement JSON.
-  The tick-120 scene capture was inspected. Keep minimization and restore open;
+  That exposed a fullscreen-exit size issue: macOS kept the fullscreen-sized
+  window after the exit flag changed. The host now saves the windowed logical
+  size and reapplies it after the fullscreen transition; a rebuilt release
+  passed resize, fullscreen entry/exit, a stable 1800×1200 physical-size restore,
+  tick-120 capture and shutdown. The same run still did not observe minimized or
+  occluded state after the minimize request. Earlier concurrent desktop use
+  means isolation is not established; minimization remains open. Current hash,
+  raw output, and run attribution are in the measurement JSON. `verify.py
+  --gpu` passes on the changed checkout (`native: false`), so it does not close
+  this native gate. The tick-120 scene capture was inspected. Keep minimization
+  open;
   do not substitute occlusion for minimization. The current release viewport was
   also inspected live at tick 423 with the 640×360 grid; the smoke still reads as
   a tall regular stack of puffs, so owner playback acceptance remains open. The
