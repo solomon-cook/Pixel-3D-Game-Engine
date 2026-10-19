@@ -236,10 +236,12 @@ lighting-reuse variants match their RGBA16F baseline byte-for-byte for this
 sequence. Compact HDR measures 0.3422/255 mean frame error, 0.4376/255 mean
 temporal-change error and a 29/255 maximum channel difference; lighting reuse
 does not add to that format error. The owner accepted motion and visual
-continuity in the labeled six-second, 20 fps four-panel offscreen review. This
-remains M1 Max/Metal image evidence, not timing or native presentation
-acceptance. See
-[current-release report](measurements-o06-o08-factorial-temporal-current-build.json).
+continuity in the labeled six-second, 20 fps four-panel offscreen review. A
+current-release 400-frame, 20-second eight-variant factorial comparison now
+extends that route; owner review is pending. All effect counts match in every
+variant. This is M1 Max/Metal image evidence, not timing or native presentation
+acceptance. See the [full-orbit report](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json)
+and [six-second report](measurements-o06-o08-factorial-temporal-current-build.json).
 
 The refreshed 240-frame guard report shows the production exact-depth condition
 has one 1/255 difference on one pixel; loosening depth matching restores an
@@ -1006,8 +1008,10 @@ limitations are in [static scale evidence](measurements-o07-scale-study.json) an
 [moving-caster evidence](measurements-o07-moving-caster.json). Native-window
 measurement is complete on this Mac, with mixed whole-window results. The
 fixed-tick moving-caster image route is recorded in
-[continuous-motion evidence](measurements-o07-continuous-motion.json); owner
-continuous-playback review and non-Metal validation remain open.
+[continuous-motion evidence](measurements-o07-continuous-motion.json). A new
+20-second, 400-frame offscreen moving-caster comparison covers all three geometry
+modes; owner playback review is pending. Native performance and non-Metal
+validation remain separate. See [review artifact report](measurements-o07-owner-continuous-current-build.json).
 
 The native benchmark accepts culling/instancing modes and a moving caster, and
 reports per-frame caster positions, shadow invalidation/redraws, GPU render stages
@@ -1148,10 +1152,11 @@ decisions and unresolved visual/backend gates are consolidated in the
   [preview metadata](measurements-owner-motion-review-preview.json). A separate
   current-release O04 comparison now captures 120 matched frames at 20 fps with
   baseline left and projected-detail LOD right. The owner accepted motion and
-  continuity in this six-second, 20 fps offscreen clip; all-profile/full-orbit
-  review and native playback performance remain open. Mean changed pixels are
-  28.9 per frame and mean RGB MAE is 0.00247/255, localized to the fire region. See
-  [O04 paired-motion report](measurements-o04-owner-motion-review-current-build.json).
+  continuity in a 20-second, 400-frame offscreen comparison spanning campfire,
+  quiet and bonfire profiles. Native playback/performance and other-adapter
+  acceptance remain open. The earlier six-second paired-motion metrics remain
+  in [the short review report](measurements-o04-owner-motion-review-current-build.json);
+  see the [accepted full-orbit report](measurements-o04-owner-full-orbit-current-build.json).
   The current idle-owner release lifecycle rerun passed resize, stable
   windowed-size restoration, fullscreen entry/exit, tick-120 capture and
   shutdown; macOS again returned `minimized: false` after eight seconds. Current

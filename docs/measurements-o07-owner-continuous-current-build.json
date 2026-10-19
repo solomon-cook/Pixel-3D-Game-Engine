@@ -1,0 +1,73 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "workstream": "O07 moving-caster continuous owner visual review",
+  "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+  "scene": "assets/scenes/clearing.json",
+  "scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "camera": "hero",
+  "route": "clearing-orbit",
+  "route_duration_seconds": 120,
+  "route_start_seconds": 30,
+  "start_tick": 300,
+  "stride_ticks": 3,
+  "fps": 20,
+  "frames_per_mode": 400,
+  "duration_seconds": 20,
+  "moving_caster": {
+    "id": "rock-0",
+    "radius": 5,
+    "period_seconds": 20
+  },
+  "modes": {
+    "baked": {
+      "path": "artifacts/o07/owner-continuous-20261019/baked/sequence.json",
+      "sha256": "5be4bfc37e9da3d2e3c6e55614da8cbf5bdd2e0e1c2c66e54b382ee1dc1096ab",
+      "mode": "baked",
+      "frames": 400
+    },
+    "instancing-only": {
+      "path": "artifacts/o07/owner-continuous-20261019/instancing-only/sequence.json",
+      "sha256": "4939a5a97040275d48cad0b475324bade6a01af065c57416d47d9d1c55407413",
+      "mode": "instancing-only",
+      "frames": 400
+    },
+    "culling-instancing": {
+      "path": "artifacts/o07/owner-continuous-20261019/culling-instancing/sequence.json",
+      "sha256": "4161cdbfb38fbaef97c7df2821581cb4e341e3bad25c336c6f81d479273a2f05",
+      "mode": "culling-instancing",
+      "frames": 400
+    }
+  },
+  "paired_tick_camera_caster_parity": true,
+  "preview": {
+    "path": "artifacts/o07/owner-continuous-20261019/owner-review.png",
+    "sha256": "210852b54d41494d2df2e788cc823eef1a0a0f682d7b45536369dc046a2d9a80",
+    "frames": 400,
+    "bytes": 79582783
+  },
+  "contact_sheet": {
+    "path": "artifacts/o07/owner-continuous-20261019/owner-review-contact.png",
+    "sha256": "9fbfbe366188409e975c75b6f8a27fc49f50902b8d690f12ef11d1ae7b64ccd8"
+  },
+  "owner_review": {
+    "status": "pending",
+    "scope": "Awaiting owner review of motion and visual continuity across the 20-second, 400-frame offscreen three-mode moving-caster comparison."
+  },
+  "limitations": [
+    "Offscreen captures use the real Metal renderer and do not measure native presentation or performance.",
+    "This is a 20-second segment starting at route time 30 seconds of the 120-second route; the owner review does not cover the full two-minute route.",
+    "Other-adapter and Windows/DX12 acceptance remain open."
+  ]
+}

@@ -1,0 +1,188 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "workstream": "O06\u00d7O08 full-orbit factorial temporal comparison, current release",
+  "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
+  "measurement_head_before_recording": "fbba94575efd5997a72c6642b7246ccf1ada6b34",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+  "capture_script_sha256": "632e74b9f59f88d65d33665fc5eb8ef6220222a8bad55d0133007141a2006b7e",
+  "study_script_sha256": "23b17be24b42255421f0e17972eed8aaf736dce574ded893f9f68d7159b8b1e1",
+  "shader_sha256": "5dcff7826ffc79479843a173477c4187f2e094070ded21bbf942b7ed21f9e690",
+  "scene_sha256": "3020c76e7c948cbfa130a72bcd6c39ece326750bc5f12faaa76013c9a9b7a768",
+  "route": "mixed-smoke-material-orbit",
+  "camera": "mixed-close",
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "start_tick": 300,
+  "end_tick": 1497,
+  "frames": 400,
+  "fps": 20.0,
+  "effect_counts_match_every_frame": true,
+  "variants": {
+    "direct_copy_rgba16": {
+      "scene_sha256": "3020c76e7c948cbfa130a72bcd6c39ece326750bc5f12faaa76013c9a9b7a768",
+      "frame_count": 400,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.0,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 0.0,
+      "temporal_change_magnitude_rgb_mae_mean": 0.0,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "maximum_channel_difference": 0,
+      "maximum_changed_pixels": 0,
+      "sequence_sha256": "cc4f4cb84fc504798d97ca93d0b7385a51bedefa348963916619ee974bb66ea5"
+    },
+    "reuse_copy_rgba16": {
+      "scene_sha256": "4ecfb8418f00ddd2b06fe991beb8e4265dcf7911f1666c3b70ec2be5d1e9c9ac",
+      "frame_count": 400,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 3.6168981481481478e-09,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 1.4467592592592592e-06,
+      "temporal_change_magnitude_rgb_mae_mean": 7.251926111575234e-09,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "maximum_channel_difference": 1,
+      "maximum_changed_pixels": 1,
+      "sequence_sha256": "6ec81ced231dcb4ca0954f17a5b2422f55f824cc6b559ec9ab999b7c1ff284e4"
+    },
+    "direct_no_copy_rgba16": {
+      "scene_sha256": "e12fe40fce0a077d6cd9432acb42491a49b0b11006c519b380c3a817d1cbb3f4",
+      "frame_count": 400,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.0,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 0.0,
+      "temporal_change_magnitude_rgb_mae_mean": 0.0,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "maximum_channel_difference": 0,
+      "maximum_changed_pixels": 0,
+      "sequence_sha256": "86941fbb8970110a52dd1aba34dbe55c055d3b0a633950466b4d1be2a6e538d0"
+    },
+    "reuse_no_copy_rgba16": {
+      "scene_sha256": "10fa9f03d1c9392f755e4acb3f4dcbe0a0299706e5294f059c8b7d02fc4a6802",
+      "frame_count": 400,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 3.6168981481481478e-09,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 1.4467592592592592e-06,
+      "temporal_change_magnitude_rgb_mae_mean": 7.251926111575234e-09,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "maximum_channel_difference": 1,
+      "maximum_changed_pixels": 1,
+      "sequence_sha256": "b553dbaf195e151aa5878ee3fb586fb457e5b3cc069829457bff9c5898318b46"
+    },
+    "direct_copy_rg11b10": {
+      "scene_sha256": "d73a3ebd12160bb380914b71939101358e99177987c8254db1ea6923449b640b",
+      "frame_count": 400,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.3411757450810185,
+      "frame_rgb_mae_p95": 0.37723958333333335,
+      "frame_rgb_mae_max": 0.3869574652777778,
+      "temporal_change_magnitude_rgb_mae_mean": 0.4208297109962406,
+      "temporal_change_magnitude_rgb_mae_p95": 0.4641869212962963,
+      "maximum_channel_difference": 38,
+      "maximum_changed_pixels": 131755,
+      "sequence_sha256": "e12c0f53398b5ac99fc417b22b534e8d0ee3a501b8f9269ddbbb27154331060b"
+    },
+    "reuse_copy_rg11b10": {
+      "scene_sha256": "53c150b4663c4ae494f6a98e66a7f4f2209cf8b275467dc546c04c3703781a8f",
+      "frame_count": 400,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.34117575231481484,
+      "frame_rgb_mae_p95": 0.37723958333333335,
+      "frame_rgb_mae_max": 0.3869574652777778,
+      "temporal_change_magnitude_rgb_mae_mean": 0.42082971824816673,
+      "temporal_change_magnitude_rgb_mae_p95": 0.4641869212962963,
+      "maximum_channel_difference": 38,
+      "maximum_changed_pixels": 131755,
+      "sequence_sha256": "b8c1e4489390614e4a6b895089a171bdadec683b0531a9d0a558b0d0a7322178"
+    },
+    "direct_no_copy_rg11b10": {
+      "scene_sha256": "78417f05f21ce136212290e34b8b955bd23149154515d2e1b8b43aa96207d8d0",
+      "frame_count": 400,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.3411757450810185,
+      "frame_rgb_mae_p95": 0.37723958333333335,
+      "frame_rgb_mae_max": 0.3869574652777778,
+      "temporal_change_magnitude_rgb_mae_mean": 0.4208297109962406,
+      "temporal_change_magnitude_rgb_mae_p95": 0.4641869212962963,
+      "maximum_channel_difference": 38,
+      "maximum_changed_pixels": 131755,
+      "sequence_sha256": "248723a100f5e629c17b86043886a7b3e9f12386b1cf284375d21db0982b7c2f"
+    },
+    "reuse_no_copy_rg11b10": {
+      "scene_sha256": "4c98509af60fd55f201120068e7d33c714106ba61aeae4f515dc7fbb2c6978d7",
+      "frame_count": 400,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.34117575231481484,
+      "frame_rgb_mae_p95": 0.37723958333333335,
+      "frame_rgb_mae_max": 0.3869574652777778,
+      "temporal_change_magnitude_rgb_mae_mean": 0.42082971824816673,
+      "temporal_change_magnitude_rgb_mae_p95": 0.4641869212962963,
+      "maximum_channel_difference": 38,
+      "maximum_changed_pixels": 131755,
+      "sequence_sha256": "080fe266ec92dd6f1c3d8a0ab95d85856f663d82b18660fe98de629c426fca68"
+    }
+  },
+  "raw_sequences": {
+    "direct_copy_rgba16": {
+      "path": "artifacts/o06-o08/factorial-temporal-full-orbit-current-build/frames/direct_copy_rgba16/sequence.json",
+      "sha256": "cc4f4cb84fc504798d97ca93d0b7385a51bedefa348963916619ee974bb66ea5"
+    },
+    "reuse_copy_rgba16": {
+      "path": "artifacts/o06-o08/factorial-temporal-full-orbit-current-build/frames/reuse_copy_rgba16/sequence.json",
+      "sha256": "6ec81ced231dcb4ca0954f17a5b2422f55f824cc6b559ec9ab999b7c1ff284e4"
+    },
+    "direct_no_copy_rgba16": {
+      "path": "artifacts/o06-o08/factorial-temporal-full-orbit-current-build/frames/direct_no_copy_rgba16/sequence.json",
+      "sha256": "86941fbb8970110a52dd1aba34dbe55c055d3b0a633950466b4d1be2a6e538d0"
+    },
+    "reuse_no_copy_rgba16": {
+      "path": "artifacts/o06-o08/factorial-temporal-full-orbit-current-build/frames/reuse_no_copy_rgba16/sequence.json",
+      "sha256": "b553dbaf195e151aa5878ee3fb586fb457e5b3cc069829457bff9c5898318b46"
+    },
+    "direct_copy_rg11b10": {
+      "path": "artifacts/o06-o08/factorial-temporal-full-orbit-current-build/frames/direct_copy_rg11b10/sequence.json",
+      "sha256": "e12c0f53398b5ac99fc417b22b534e8d0ee3a501b8f9269ddbbb27154331060b"
+    },
+    "reuse_copy_rg11b10": {
+      "path": "artifacts/o06-o08/factorial-temporal-full-orbit-current-build/frames/reuse_copy_rg11b10/sequence.json",
+      "sha256": "b8c1e4489390614e4a6b895089a171bdadec683b0531a9d0a558b0d0a7322178"
+    },
+    "direct_no_copy_rg11b10": {
+      "path": "artifacts/o06-o08/factorial-temporal-full-orbit-current-build/frames/direct_no_copy_rg11b10/sequence.json",
+      "sha256": "248723a100f5e629c17b86043886a7b3e9f12386b1cf284375d21db0982b7c2f"
+    },
+    "reuse_no_copy_rg11b10": {
+      "path": "artifacts/o06-o08/factorial-temporal-full-orbit-current-build/frames/reuse_no_copy_rg11b10/sequence.json",
+      "sha256": "080fe266ec92dd6f1c3d8a0ab95d85856f663d82b18660fe98de629c426fca68"
+    }
+  },
+  "study_report_sha256": "c51ff842498a9bdeb5bd582b2914354d220891701a7b22b5ef71a800dd026550",
+  "preview": {
+    "path": "artifacts/o06-o08/factorial-temporal-full-orbit-current-build/owner-review.png",
+    "sha256": "1668fe0262c289e698869fa6b18aafee841b3adf21e94d97a66773349476245b",
+    "frames": 400,
+    "bytes": 342357380
+  },
+  "contact_sheet": {
+    "path": "artifacts/o06-o08/factorial-temporal-full-orbit-current-build/owner-review-contact.png",
+    "sha256": "c9e0707bd8abfe1e584651b98b9cbe55ea807c8da88c4acc644aceb72f4a342a"
+  },
+  "owner_review": {
+    "status": "pending",
+    "scope": "The opened 20-second, 20 fps eight-variant O06\u00d7O08 sequence at 640x360 awaits owner review for motion and visual continuity."
+  },
+  "limitations": [
+    "Offscreen M1 Max/Metal image evidence only; no native presentation or performance validation.",
+    "This is one mixed fire/smoke/reflector/glass route; camera stress, other scenes and other-adapter/DX12 behavior are not covered."
+  ]
+}

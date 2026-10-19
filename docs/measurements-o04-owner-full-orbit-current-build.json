@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "workstream": "O04 projected-fire LOD full-orbit, all-profile owner visual review",
+  "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
+  "measurement_head_before_recording": "fbba94575efd5997a72c6642b7246ccf1ada6b34",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+  "scene": "assets/scenes/projected-detail-motion-review.json",
+  "scene_sha256": "cfea9e3579b4f6602c4703bdae1b88887180e2b0fe752711544441547435ab77",
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "camera": "fire-study",
+  "route": "projected-detail-review-orbit",
+  "route_duration_seconds": 20,
+  "route_start_seconds": 0,
+  "start_tick": 300,
+  "stride_ticks": 3,
+  "fps": 20,
+  "frames_per_variant_per_profile": 400,
+  "profiles": {
+    "campfire": "effect-campfire",
+    "quiet": "effect-quiet",
+    "bonfire": "effect-bonfire"
+  },
+  "variants": {
+    "baseline": {
+      "projected_detail_lod": false
+    },
+    "lod": {
+      "projected_detail_lod": true
+    }
+  },
+  "paired_tick_camera_parity": true,
+  "sequences": {
+    "campfire": {
+      "baseline": {
+        "path": "artifacts/o04/owner-full-orbit-20261019/campfire/baseline/sequence.json",
+        "sha256": "202f7712f61dc8a55b9108d6972a3cc81d2f75e0841a79f798506ff4cad9b714"
+      },
+      "lod": {
+        "path": "artifacts/o04/owner-full-orbit-20261019/campfire/lod/sequence.json",
+        "sha256": "b029288325b227baed9bdd376567bd74d476ff98da4f45e98bd5aabcbafb38c8"
+      }
+    },
+    "quiet": {
+      "baseline": {
+        "path": "artifacts/o04/owner-full-orbit-20261019/quiet/baseline/sequence.json",
+        "sha256": "afc6c34ec949eacdd5d7a5aea87510af161bfa204ad196c68125d52f52c7a278"
+      },
+      "lod": {
+        "path": "artifacts/o04/owner-full-orbit-20261019/quiet/lod/sequence.json",
+        "sha256": "afc56308a05cebc65d37a57f999424941e9db6d1a1565fa91f08ac2f84a3ccae"
+      }
+    },
+    "bonfire": {
+      "baseline": {
+        "path": "artifacts/o04/owner-full-orbit-20261019/bonfire/baseline/sequence.json",
+        "sha256": "35b2a58915842cc37b0ecb8009b7c99b9a2274c3270eb02329a421616caacab6"
+      },
+      "lod": {
+        "path": "artifacts/o04/owner-full-orbit-20261019/bonfire/lod/sequence.json",
+        "sha256": "b25fc7201a9c85d7805ac5d49f5e67ffeb2ab53ed53b6c8e63f3aeffd62bf1ae"
+      }
+    }
+  },
+  "owner_review": {
+    "status": "accepted",
+    "date": "2026-10-19",
+    "response": "Acceptable",
+    "scope": "Owner accepted motion and visual continuity across the full 400-frame, 20-second offscreen baseline-versus-LOD comparison for campfire, quiet and bonfire profiles at 640x360, 20 fps."
+  },
+  "artifacts": {
+    "preview": {
+      "path": "artifacts/o04/owner-full-orbit-20261019/owner-review.png",
+      "sha256": "40c609cd00c519f0677a1e41c3668039d4ad8426c353857053f4b2d763be2e0d",
+      "frames": 400,
+      "bytes": 91486326
+    },
+    "contact_sheet": {
+      "path": "artifacts/o04/owner-full-orbit-20261019/owner-review-contact.png",
+      "sha256": "827e7ef636568cfa0be951c3408c3e8a6f4f25f14fc5f8797042216b03dc4c15"
+    }
+  },
+  "interpretation": "The full-orbit visual gate for all three O04 fire profiles is accepted on the M1 Max/Metal offscreen renderer. Projected-detail LOD remains disabled by default because this acceptance does not establish native presentation/performance or other-adapter behavior; native FPS was effectively flat in the prior sustained comparison.",
+  "limitations": [
+    "Fixed-tick offscreen capture uses the real Metal renderer but does not verify native window presentation or performance.",
+    "Windows/DX12, other-adapter and target-hardware acceptance remain open."
+  ]
+}

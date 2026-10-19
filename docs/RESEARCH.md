@@ -469,7 +469,11 @@ small number of changed pixels at quantization edges; culling adds none in the
 reviewed cameras. The measured work is therefore an engine optimization tradeoff,
 not a claim of visual identity or universal speedup. See
 [measurements-o07-culling.json](measurements-o07-culling.json) for paired data,
-images and platform limits.
+images and platform limits. A new 20-second, 400-frame offscreen comparison
+compares baked, instancing-only and culling+instancing with matched tick, camera
+and moving-caster states across one segment of the 120-second route. Owner
+playback review is pending; native performance and other-adapter acceptance
+remain separate. See [current review artifact report](measurements-o07-owner-continuous-current-build.json).
 
 ## Coarse smoke transmittance cache (17 October)
 
@@ -865,9 +869,11 @@ pairs offscreen at 640×360. Candidate-minus-baseline median deltas are
 −0.049 ms frame work and −0.146 ms GPU render; all three pairs favor the
 candidate on both measures. This is a small single-workload result and does not
 replace the native-window comparison, whose paired FPS was effectively flat.
-Keep projected detail disabled by default pending broader route and non-Metal
-qualification; the owner accepted motion and continuity in the six-second
-offscreen clip. See
+Keep projected detail disabled by default: prior native FPS was effectively flat
+and non-Metal qualification remains open. The owner accepted motion and continuity
+in the separate 20-second, 400-frame offscreen comparison across all three fire
+profiles; this does not establish native performance. See the [full-orbit visual
+report](measurements-o04-owner-full-orbit-current-build.json) and
 [current-release sustained report](measurements-o04-sustained-current-release.json).
 
 A 19 October current-build recheck at seed 42 and 640×360 compared 14 fixed-tick
@@ -891,10 +897,11 @@ A separate current-release, fixed-tick comparison now pairs baseline and
 seed 42, starting at tick 300. The LOD path is enabled on every candidate frame
 and disabled on every baseline frame. Mean changed pixels are 28.9 per frame
 (p95 69, max 101), with mean RGB MAE 0.00247/255; the changed bounds stay in the
-fire region. This complements the sampled transition sheets. The owner accepted motion and
-visual continuity in the six-second, 20 fps offscreen clip; that review does not
-cover all three fire profiles, the full 400-frame orbit or native-window
-performance. See [current-build motion report](measurements-o04-owner-motion-review-current-build.json).
+fire region. This complements the sampled transition sheets. The owner later
+accepted motion and visual continuity in the full 400-frame, 20-second offscreen
+comparison across campfire, quiet and bonfire profiles. Native-window performance
+remains a separate gate. See [full-orbit review](measurements-o04-owner-full-orbit-current-build.json)
+and [paired-motion report](measurements-o04-owner-motion-review-current-build.json).
 
 ## O05 absorption-cache temporal and pause/resume review (18 October)
 
@@ -1042,9 +1049,11 @@ RGBA16F direct/no-copy and lighting-reuse variants matched the direct/copy
 baseline byte-for-byte on the route. Compact HDR measured 0.3422/255 mean frame
 error, 0.4376/255 mean temporal-change error and 29/255 maximum channel error;
 the same image error appears with and without lighting reuse. The owner accepted motion and visual continuity in the labeled six-second,
-20 fps four-panel offscreen review. This does not establish native presentation
-quality or performance, nor qualify other adapters. See
-[current-release report](measurements-o06-o08-factorial-temporal-current-build.json).
+20 fps four-panel offscreen review. A current-release 400-frame, 20-second
+eight-variant sequence preserves effect counts in every variant; extended owner
+review is pending. Neither offscreen sequence establishes native presentation
+quality/performance or qualifies other adapters. See the [full-orbit report](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json)
+and [short report](measurements-o06-o08-factorial-temporal-current-build.json).
 
 A new three-pair 120-second offscreen comparison for exact-depth reuse shows
 median GPU-render +0.027 ms and optical-resolve +0.023 ms. Serial frame-work

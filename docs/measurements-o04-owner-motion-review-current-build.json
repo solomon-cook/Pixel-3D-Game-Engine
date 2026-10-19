@@ -1538,13 +1538,13 @@
   },
   "limitations": [
     "Fixed-tick offscreen captures from the real Metal renderer do not measure native window presentation or performance.",
-    "Owner accepted motion/continuity in this offscreen clip; native presentation/performance, all-profile playback and full-orbit review remain separate gates."
+    "This report records only the six-second clip; the separate full-orbit report records accepted 20-second playback across all three profiles. Native performance and other-adapter acceptance remain open."
   ],
   "owner_review": {
     "status": "accepted",
     "date": "2026-10-19",
     "response": "Acceptable",
     "scope": "The owner accepted motion and visual continuity in this six-second, 20 fps baseline-versus-projected-detail LOD offscreen comparison at 640x360.",
-    "limitations": "This review does not measure native window presentation or performance and does not cover all three fire profiles or the full 400-frame orbit."
+    "limitations": "This six-second review does not measure native window presentation/performance. The separate 20-second all-profile report covers the full 400-frame orbit."
   }
 }

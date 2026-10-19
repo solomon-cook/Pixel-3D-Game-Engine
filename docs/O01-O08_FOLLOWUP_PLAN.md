@@ -310,20 +310,21 @@ acceptance remain open. See
 clearing orbit at 640×360 compares baseline against `projected_detail_lod` with
 the same seed, scene, ticks and camera poses. Mean changed pixels are 28.9 per
 frame (p95 69; maximum 101), with mean RGB MAE 0.00247/255. Differences are
-localized to the fire region. The owner accepted motion and visual continuity in
-the six-second, 20 fps LOD-specific offscreen clip. The clip does not cover all
-three fire profiles or the full 400-frame orbit and does not verify native
-playback performance.
-See [current-build report](measurements-o04-owner-motion-review-current-build.json)
-and its recorded preview hashes and artifact paths.
+localized to the fire region. The owner later accepted motion and visual continuity
+in the full 400-frame, 20-second offscreen comparison across campfire, quiet and
+bonfire profiles. Native playback performance remains separate. See the
+[full-orbit report](measurements-o04-owner-full-orbit-current-build.json), the
+[short current-build report](measurements-o04-owner-motion-review-current-build.json)
+and their recorded preview hashes and artifact paths.
 
 **Remaining exit gate:** repeatable transitions and a measured small M1 Max/Metal
 win are documented. Quiet and bonfire profiles now cross their applicable bands;
 per-frame full primitive, ember and particle-light counts match the baseline.
-Sustained profile-specific timing is recorded on M1 Max/Metal. Continuous
-playback review and Windows/DX12 or other GPU qualification remain open. Native
-timing is measured, but fewer primitives and a small stage-level change are not a
-whole-window frame-win claim. See
+Sustained profile-specific timing is recorded on M1 Max/Metal. The owner accepted motion and continuity in the full 400-frame, 20-second
+offscreen comparison across all three profiles; Windows/DX12 or other-GPU
+qualification and native playback/performance remain open. Native timing is
+measured, but fewer primitives and a small stage-level change are not a whole-
+window frame-win claim. See
 [measurements-o04-motion-review.json](measurements-o04-motion-review.json),
 [transition temporal report](measurements-o04-transition-temporal.json) and
 [measurements-o04-sustained-profiles.json](measurements-o04-sustained-profiles.json),
@@ -476,12 +477,15 @@ new workload or backend measurement that demonstrates a total-cost opportunity.
    compact HDR has 0.3422/255 mean frame error, 0.4376/255 mean temporal-change
    error and a 29/255 peak channel difference, shared by direct and reuse
    variants. The owner accepted motion and visual continuity in the six-second,
-   20 fps four-panel offscreen review. A current-release sustained mixed-route
-   rerun measured paired median frame-work +0.030 ms and GPU-render +0.113 ms,
-   with GPU-render slower in two pairs. This establishes no total-render gain.
-   See [current-release sustained report](measurements-o06-exact-depth-sustained-current-release.json).
-   The motion review remains image-quality evidence only; native playback and
-   other-adapter acceptance remain open. See
+   20 fps four-panel offscreen review. A current-release 400-frame, 20-second
+   eight-variant factorial preserves effect counts in every variant; extended
+   owner review is pending. The current-release sustained mixed-route rerun
+   measured paired median frame-work +0.030 ms and GPU-render +0.113 ms, with
+   GPU-render slower in two pairs. This establishes no total-render gain. See
+   [full-orbit temporal report](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json)
+   and [current-release sustained report](measurements-o06-exact-depth-sustained-current-release.json).
+   These are image-quality/offscreen timing results; native playback and other-
+   adapter acceptance remain open. See
    [current-release report](measurements-o06-o08-factorial-temporal-current-build.json).
 
    A follow-up three-pair 120-second offscreen timing comparison using exact
@@ -732,9 +736,10 @@ to baked rendering, culling+instancing changed frame work by approximately 0,
 −0.255 ms. Thus culling saves shadow-stage work as scene size grows, but the
 whole-frame result is not monotonic and turns slower at 2,208 objects. Keep the
 current path; these data do not justify indirect drawing or occlusion culling.
-Native-window measurement is complete on this Mac. Owner continuous-playback
-review and non-Metal acceptance remain open; fixed-tick moving-caster visual
-evidence is recorded below.
+Native-window measurement is complete on this Mac. A 20-second, 400-frame
+offscreen moving-caster comparison covers all three geometry modes; owner review
+is pending. It covers a segment of the 120-second route. Native performance and
+non-Metal acceptance remain open. See [review artifact report](measurements-o07-owner-continuous-current-build.json).
 
 `benchmark-native` now exposes the same culling, instancing and moving-caster
 controls and records per-frame caster positions and shadow-cache changes alongside
@@ -1090,11 +1095,11 @@ finishes. A compile or a passing unit test does not close visual or hardware gat
 | O01 profiling and counters | M1 Max/Metal stage attribution and output-preserving diagnostics do not support an active-region solver rewrite or a general shader rewrite. Keep counters diagnostic-only. A current debug/release parity matrix is exact in 10 of 11 fixed-tick cases. The Materials/hero difference is repeatable per binary; active fire-primitive fingerprints and view matrices match, while two perspective-projection slots differ and propagate to 7/16 view-projection and 15/16 inverse slots. Two-way matrix substitution makes both profiles byte-identical under either shared matrix pair, with each result matching that pair's default profile image; this proves camera-matrix causality for the measured flame-edge difference. [Evidence](measurements-o01-shading-attribution.json), [counters](measurements-o01-shading-counters.json), [debug/release parity and matrix substitution](measurements-debug-release-profile-parity.json). | Continuous playback, exact queue-latency attribution, native review and another adapter. |
 | O02 shadow caching | Per-face invalidation matches forced redraw at fixed checkpoints and lowers the shadow stage in the moving route, but whole-window throughput is mixed. Keep conservative full-map fallback. [Evidence](measurements-o02-moving-route.json), [native](measurements-o02-native-shadow-cache.json). | Windows/DX12 and another adapter. |
 | O03 tiled effects | Retain 16×16 lists and exhaustive per-category overflow fallback; 8×8 storage cost outweighs its small frame-work change. Fire-bound precompute and smoke-candidate materialization remain disabled opt-ins with M1 evidence. [Stress](measurements-o03-stress-route.json), [tile size](measurements-o03-tile-size-sustained.json), [fire bounds](measurements-o03-fire-projected-bounds.json), [fire-bound current recheck](measurements-o03-fire-projected-bounds-recheck.json), [current fire-bound native recheck](measurements-o03-fire-projected-bounds-native-current-build.json), [smoke-candidate correctness](measurements-o03-smoke-candidate-invalidation-recheck.json), [smoke-candidate current sustained](measurements-o03-smoke-candidate-sustained-current-build.json), [smoke-candidate native](measurements-o03-smoke-candidate-native-current-build.json). | Windows/DX12 and another adapter. Current native runs show no reliable whole-window gain for either opt-in; the owner accepted the default clearing preview, and current-release fixed-tick captures preserve their output. |
-| O04 projected fire detail | Keep LOD disabled by default: a current-release three-pair campfire rerun shows -0.049 ms frame-work and -0.146 ms GPU-render medians across pairs, but prior native FPS was effectively flat. Owner accepted motion and continuity in the six-second, 20 fps LOD-specific offscreen clip; broader route review remains open. [Current-release sustained](measurements-o04-sustained-current-release.json), [profile sustained](measurements-o04-sustained-profiles.json), [current recheck](measurements-o04-current-build-recheck.json). | Broader all-profile/full-orbit playback review, native playback/performance follow-up and non-Metal qualification. |
+| O04 projected fire detail | Keep LOD disabled by default: a current-release three-pair campfire rerun shows -0.049 ms frame-work and -0.146 ms GPU-render medians across pairs, but prior native FPS was effectively flat. Owner accepted motion and continuity in the full 20-second offscreen comparison across all three profiles. [Full-orbit review](measurements-o04-owner-full-orbit-current-build.json), [current-release sustained](measurements-o04-sustained-current-release.json), [profile sustained](measurements-o04-sustained-profiles.json), [current recheck](measurements-o04-current-build-recheck.json). | Native playback/performance follow-up and non-Metal qualification. |
 | O05 absorption cache | Close the performance decision as a non-promoted experiment: tested 8³/16³ and dual-emitter routes show no total-render win. Preserve direct sampling as default. [Size study](measurements-o05-size-study.json), [dual-emitter timing](measurements-multi-emitter-absorption-native-sustained.json), [current invalidation recheck](measurements-o05-invalidation-current-build.json). | Continuous human review and other-adapter evidence only if promotion is reconsidered. |
-| O06 opaque-light reuse | Keep reuse disabled: exact-depth guarding removed the moving-route spike, but both the earlier and current-release sustained comparisons show no reliable whole-render benefit; a behind-view fixed-tick image error remains. Owner accepted motion and continuity in the six-second four-panel offscreen review. [Current-release sustained](measurements-o06-exact-depth-sustained-current-release.json), [earlier sustained](measurements-o06-exact-depth-sustained.json), [temporal](measurements-o06-o08-factorial-temporal.json), [current recheck](measurements-o06-o08-factorial-current-build-recheck.json). | Broader optical camera/playback review, native playback/performance follow-up and another adapter. |
-| O07 culling and instancing | Keep the existing path; shadow-stage savings grow with scene size but whole-frame/native results are mixed and non-monotonic. Do not add indirect or occlusion submission based on these runs. [Scale](measurements-o07-moving-caster.json), [native](measurements-o07-native-scale-study.json). | Owner continuous-playback review and non-Metal qualification. |
-| O08 resource/pass candidates | Keep independent candidate decisions and capability fallbacks. The current-build forced RGBA16F fallback matches two scenes and 120 sampled motion frames exactly on capable Metal hardware; physical unsupported-format fallback and DX12 qualification remain open. Compact HDR and no-copy remain experimental; known logical savings do not prove physical bandwidth or speed. [Decisions](DECISIONS_O08.md), [factorial](measurements-o06-o08-factorial.json), [current temporal recheck](measurements-o06-o08-factorial-current-build-recheck.json), [current RG16 fallback](measurements-o08-rg16-fallback-current-build.json). | Physical unsupported-format fallback and target-backend/DX12 qualification; continuous-temporal review for experimental paths. |
+| O06 opaque-light reuse | Keep reuse disabled: exact-depth guarding removed the moving-route spike, but both the earlier and current-release sustained comparisons show no reliable whole-render benefit; a behind-view fixed-tick image error remains. Owner accepted motion and continuity in the six-second four-panel offscreen review; extended 20-second eight-variant review is pending. [Full-orbit temporal](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json), [current-release sustained](measurements-o06-exact-depth-sustained-current-release.json), [earlier sustained](measurements-o06-exact-depth-sustained.json), [temporal](measurements-o06-o08-factorial-temporal.json), [current recheck](measurements-o06-o08-factorial-current-build-recheck.json). | Broader optical camera/playback review, native playback/performance follow-up and another adapter. |
+| O07 culling and instancing | Keep the existing path; shadow-stage savings grow with scene size but whole-frame/native results are mixed and non-monotonic. Do not add indirect or occlusion submission based on these runs. A 20-second offscreen moving-caster review across baked, instancing-only and culling+instancing is prepared; owner review is pending. [Review](measurements-o07-owner-continuous-current-build.json), [scale](measurements-o07-moving-caster.json), [native](measurements-o07-native-scale-study.json). | Owner playback review, native playback/performance follow-up, broader route review and non-Metal qualification. |
+| O08 resource/pass candidates | Keep independent candidate decisions and capability fallbacks. The current-build forced RGBA16F fallback matches two scenes and 120 sampled motion frames exactly on capable Metal hardware; physical unsupported-format fallback and DX12 qualification remain open. Compact HDR and no-copy remain experimental; known logical savings do not prove physical bandwidth or speed. The owner accepted the six-second factorial motion review; the 20-second eight-variant review is pending. [Decisions](DECISIONS_O08.md), [full-orbit temporal](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json), [factorial](measurements-o06-o08-factorial.json), [current temporal recheck](measurements-o06-o08-factorial-current-build-recheck.json), [current RG16 fallback](measurements-o08-rg16-fallback-current-build.json). | Physical unsupported-format fallback and target-backend/DX12 qualification; extended human playback review. |
 | Bounded two-emitter extension | Fixed-tick ordering, fallback, shader rollback and selected native controls are verified on M1 Max/Metal; cap remains two because the maximum-budget route has mixed whole-render cost. [Correctness](measurements-multi-emitter-overflow.json), [sustained](measurements-multi-emitter-sustained.json). | Continuous playback, broader resource-recreation, sustained native benefit, Windows/DX12 and another adapter. |
 
 ### Native window control gate (19 October 2026)
