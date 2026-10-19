@@ -177,6 +177,13 @@ correctness, not sustained performance or continuous visual acceptance. See the
 [current-release report](measurements-o05-invalidation-current-release.json),
 [contact sheet](../artifacts/o05/o05-current-release-invalidation-contact.png)
 and [historical provenance audit](measurements-o05-invalidation-provenance-audit.json).
+A fresh current-release 400-frame direct-versus-16³ route records exact
+fire/effect-count parity, 0.096/255 mean frame RGB error and 0.104/255 mean
+temporal-change-magnitude error. Its 20-second, 20 fps side-by-side playback is
+open for owner review; the cache remains disabled pending that review and has no
+whole-frame performance case. This is offscreen evidence only. See the
+[current-release temporal report](measurements-o05-temporal-current-release.json)
+and [playback](../artifacts/o05/current-release-temporal16/owner-review-current.webp).
 The capture scripts record binary hashes,
 workspace revision, engine-source worktree status and runner hashes, and the sustained-run summarizer
 rejects timing records without a matching binary hash. The current-release GPU

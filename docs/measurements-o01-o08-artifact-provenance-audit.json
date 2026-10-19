@@ -143,6 +143,17 @@
       "disposition": "current-release Metal sustained size study: all 36 runs use the audited release binary; 16-cubed screen-filling cache reduces GPU-render time in all three pairs, while whole-frame work is flat and other cache/scale conditions are mixed"
     },
     {
+      "workstream": "O05 current-release 400-frame direct-versus-16-cubed temporal capture",
+      "report": "docs/measurements-o05-temporal-current-release.json",
+      "binary_path": "target/release/engine-lab",
+      "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+      "workspace_revision_at_run": "cc5ea61b89afa4a136e44fb4b7210afd69858980",
+      "engine_source_worktree_status": [],
+      "runner_sha256": "184c800c72a5a126e3af673af258cfc8e2161df1b9b8dc602f4e0f2b5299b40b",
+      "matches_current_release_binary": true,
+      "disposition": "400-frame current-release Metal capture has exact fire/effect-count parity and low image/temporal-change error; continuous owner visual review is pending, and no native performance or whole-render win is claimed"
+    },
+    {
       "workstream": "O08 RG16 forced-fallback offscreen current-release recheck",
       "report": "docs/measurements-o08-rg16-fallback-current-release.json",
       "binary_path": "target/release/engine-lab",
@@ -187,7 +198,7 @@
       "disposition": "current-release M1 Max/Metal projected-detail experiment matches inspected fire-state fields at all 14 threshold and return checkpoints; continuous visual acceptance is documented separately"
     }
   ],
-  "conclusion": "The O04, O06xO08 and O07 full-orbit review reports, the O03 current native fire-bound report, and the 400-frame O06xO08 artifact correctness audit carry the current audited release hash. The current-release O05 invalidation rerun closes discrete cache freshness, and the current-release O05 sustained size study uses the same audited release binary and closes the offscreen sustained-timing gate on M1 Max/Metal. Only the 16-cubed screen-filling condition shows a repeatable GPU-render reduction; whole-frame work is effectively flat, so keep direct sampling default and caching opt-in. The 4247485106ee2d30... fixed-tick report group remains untraceable and is not present among current binaries; the older O08 RG16 fallback report predates renderer/session/window source changes, but a current-release offscreen and native rerun now match the audited release binary. Keep older records as exact-build evidence, not current-release proof. Recheck remaining untraceable O03/O04/O06xO08 fixed-tick claims as needed. Windows/DX12, other adapters and native-window platform gates remain open.",
+  "conclusion": "The O04, O06xO08 and O07 full-orbit review reports, the O03 current native fire-bound report, and the 400-frame O06xO08 artifact correctness audit carry the current audited release hash. The current-release O05 invalidation rerun closes discrete cache freshness, and the current-release O05 sustained size study uses the same audited release binary and closes the offscreen sustained-timing gate on M1 Max/Metal. Only the 16-cubed screen-filling condition shows a repeatable GPU-render reduction; whole-frame work is effectively flat, so keep direct sampling default and caching opt-in. A current-release 400-frame temporal capture now matches fire/effect state throughout; continuous owner review is pending and no visual acceptance is claimed yet. The 4247485106ee2d30... fixed-tick report group remains untraceable and is not present among current binaries; the older O08 RG16 fallback report predates renderer/session/window source changes, but a current-release offscreen and native rerun now match the audited release binary. Keep older records as exact-build evidence, not current-release proof. Recheck remaining untraceable O03/O04/O06xO08 fixed-tick claims as needed. Windows/DX12, other adapters and native-window platform gates remain open.",
   "limitations": [
     "Hash/source audit only; no renderer or adapter execution occurred.",
     "Current-source release parity is established for the current release binary only; Windows/DX12 and other adapters remain unverified."

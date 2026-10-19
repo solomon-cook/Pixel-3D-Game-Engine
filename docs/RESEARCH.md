@@ -1015,6 +1015,20 @@ sustained timing. See [report](measurements-o05-invalidation-current-release.jso
 [contact sheet](../artifacts/o05/o05-current-release-invalidation-contact.png)
 and [artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json).
 
+## O05 current-release temporal recheck (19 October 2026)
+
+A current-release 400-frame, 20-second direct-versus-16³ medium-smoke route
+(seed 42, ticks 300–1497, 640×360, 20 fps) matches fire/effect counts on all
+frames. Mean frame RGB MAE is 0.096/255, p95 0.177/255, maximum channel error
+19/255; temporal-change-magnitude MAE averages 0.104/255. The captured release
+binary hash is `740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c`.
+The continuous playback is awaiting owner visual acceptance. This is offscreen
+evidence; it does not establish native playback performance or a whole-render
+win. Keep direct sampling default and cache opt-in/disabled. See the
+[current-release temporal report](measurements-o05-temporal-current-release.json),
+[playback](../artifacts/o05/current-release-temporal16/owner-review-current.webp)
+and [artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json).
+
 ## O06 camera-inside and near-plane follow-up (18 October)
 
 The optical pass previously discarded transmissive backfaces, so an inside-glass
