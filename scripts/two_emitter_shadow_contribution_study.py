@@ -96,7 +96,7 @@ def capture(binary: Path, scene_path: Path, camera: str, output: Path, shaders: 
     return {"image": path_reference(output), "sha256": sha256(output)}
 
 
-def make_contact_sheet(output: Path) -> Path:
+def make_contact_sheet(output: Path, destination: Path) -> Path:
     from PIL import Image, ImageDraw
 
     sample = Image.open(output / "point_shadows" / f"{CAMERAS[0]}.png").convert("RGB")
@@ -113,7 +113,8 @@ def make_contact_sheet(output: Path) -> Path:
             x, y = column * width, row * (height + label_height)
             draw.text((x + 6, y + 5), f"{camera} - {mode}", fill="white")
             sheet.paste(image, (x, y + label_height))
-    path = output / "contact-sheet.png"
+    path = destination.resolve()
+    path.parent.mkdir(parents=True, exist_ok=True)
     sheet.save(path)
     return path
 
@@ -125,6 +126,7 @@ def main() -> int:
     parser.add_argument("--binary", type=Path, default=ROOT / "target/release/engine-lab")
     parser.add_argument("--output", type=Path, default=ROOT / "artifacts/two-emitter-shadow-contribution")
     parser.add_argument("--report", type=Path, default=ROOT / "docs/measurements-multi-emitter-shadow-contribution.json")
+    parser.add_argument("--contact-sheet", type=Path, default=ROOT / "docs/measurements-multi-emitter-shadow-contribution-contact.png")
     args = parser.parse_args()
     binary, output, report_path = args.binary.resolve(), args.output.resolve(), args.report.resolve()
     if not binary.is_file():
@@ -159,10 +161,11 @@ def main() -> int:
         view["changed"] = view["point_shadows"]["sha256"] != view["point_shadows_disabled"]["sha256"]
         views[camera] = view
 
-    contact_sheet = make_contact_sheet(output)
+    contact_sheet = make_contact_sheet(output, args.contact_sheet)
 
     report = {
         "version": 1,
+        "date": "2026-10-19",
         "workstream": "O02/O07 two-emitter primary-light shadow contribution",
         "scope": "Source-one-only opaque world-pass point-shadow contribution; direct light, sun shadow, smoke and volume shadow sampling remain unchanged.",
         "host": {"gpu": "Apple M1 Max", "backend": "Metal", "native_window": False},
