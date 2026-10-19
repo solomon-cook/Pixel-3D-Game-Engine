@@ -25,6 +25,7 @@ fallbacks. Other memory layout work remains proposed. Measurements are recorded 
 [docs/measurements-o04-sustained-profiles.json](docs/measurements-o04-sustained-profiles.json),
 [docs/measurements-o04-transition-temporal.json](docs/measurements-o04-transition-temporal.json) and
 [docs/measurements-o05.json](docs/measurements-o05.json),
+[docs/measurements-o05-size-current-release.json](docs/measurements-o05-size-current-release.json),
 [docs/measurements-o05-temporal.json](docs/measurements-o05-temporal.json),
 [docs/measurements-o05-temporal-cache8.json](docs/measurements-o05-temporal-cache8.json),
 [docs/measurements-multi-emitter-absorption-moving-route.json](docs/measurements-multi-emitter-absorption-moving-route.json),

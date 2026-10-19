@@ -762,15 +762,24 @@ matched exactly at tick 300. The 16³ still was closer to direct sampling by
 per-channel mean absolute RGB error in every scale: small 0.014/0.007/0.008,
 medium 0.080/0.044/0.040 and screen-filling 0.251/0.155/0.119 (R/G/B, 0–255).
 
-The cache reduced the targeted atmosphere/fire GPU interval by 0.058–0.101 ms.
-However, the GPU build interval costs 0.025–0.033 ms and the total GPU render
-median was slower by 0.025–0.044 ms in all six comparisons. CPU cache construction
-costs 0.034–0.043 ms per frame. Whole-frame medians favored the candidate, but
-that did not agree with total GPU render and was not used as a win claim. Keep the
-cache opt-in and disabled by default. Small-to-large quality improves with 16³,
-but no total-render workload range is established. Continuous temporal error,
-live edit invalidation and other GPU backends remain open. Full paired data and
-capture hashes: [measurements-o05-size-study.json](measurements-o05-size-study.json).
+The cache reduced the targeted atmosphere/fire GPU interval by 0.058–0.101 ms,
+but the GPU build interval cost 0.025–0.033 ms and total GPU render was 0.025–0.044
+ms slower in all six comparisons. A current-release rerun on 19 October used
+three alternating 120-second pairs for each size and scale (36 serial runs) at
+640×360 on M1 Max/Metal. The 16³ screen-filling variant lowered GPU-render time
+in all three pairs by 0.104, 0.312 and 0.032 ms; the other five size/scale
+conditions were small or mixed. Whole-frame work at screen-filling 16³ changed
+by -0.002, +0.125 and -0.008 ms, while CPU cache encoding increased by 0.018,
+0.048 and 0.001 ms. This gives the cache a repeatable GPU-stage use case at high
+coverage on this host, but no demonstrated total-frame win. Keep direct sampling
+as the default and caching disabled unless explicitly opted in. At all three
+scales 16³ is closer to direct than 8³ in fixed-tick image error, at 32 KiB
+instead of 4 KiB. The former current-source sustained timing gap is closed for
+these Metal workloads; native presentation, continuous owner review, Windows/
+DX12 and other adapters remain unverified. See the
+[current-release paired report](measurements-o05-size-current-release.json),
+[historical study](measurements-o05-size-study.json) and raw ignored captures
+under `artifacts/o05/current-release-size-study/`.
 
 ## O05 edit and discrete-motion freshness (18 October)
 

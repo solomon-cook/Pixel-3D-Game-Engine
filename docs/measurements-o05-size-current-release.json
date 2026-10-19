@@ -1,0 +1,1086 @@
+{
+  "version": 1,
+  "workstream": "O05 smoke absorption cache size study",
+  "date": "2026-10-19",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal"
+  },
+  "provenance": {
+    "revision": "893663c7eace3b789984b529927baf67418ad51b",
+    "dirty_paths": [],
+    "binary_path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/release/engine-lab",
+    "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+    "study_script_sha256": "00114a9262445bf9dff522387e2f3d03942505662f37c10aa4520479109e8d0d",
+    "profile_compare_script_sha256": "d1bcbd63cc63cc3063859df94e21faa8d3bec2728d452f7091991214ad053855",
+    "capture_motion_script_sha256": "632e74b9f59f88d65d33665fc5eb8ef6220222a8bad55d0133007141a2006b7e"
+  },
+  "seed": 42,
+  "simulation_start_tick": 300,
+  "resolution": [
+    640,
+    360
+  ],
+  "route": {
+    "id": "absorption-cache-orbit",
+    "duration_seconds": 20,
+    "benchmark_repetitions": 6
+  },
+  "method": "Matched direct/8^3/16^3 variants at each fixed camera scale; capture error is measured at identical tick, camera and scene state. The experiment changes only cache setting/resolution.",
+  "capture_results": {
+    "small": {
+      "fire_state_parity": {
+        "direct": true,
+        "cache8": true,
+        "cache16": true
+      },
+      "captures": {
+        "direct": {
+          "cache_bytes": 0,
+          "cpu_cache_encode_ms": 0.0,
+          "sha256": "1b994c11f8552110da43cd62a0a084e9cd52470a65eca344b45b57360bd65ea3",
+          "absolute_rgb_error_vs_direct": null
+        },
+        "cache8": {
+          "cache_bytes": 4096,
+          "cpu_cache_encode_ms": 0.022292,
+          "sha256": "5dbc0ab91d4ac4496b52f65245b4e6526e169c6236d3f28d453bcd3c36c56d05",
+          "absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 3809,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.03993923611111111,
+              0.021553819444444445,
+              0.020069444444444445
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              18,
+              12,
+              11
+            ]
+          }
+        },
+        "cache16": {
+          "cache_bytes": 32768,
+          "cpu_cache_encode_ms": 0.026959,
+          "sha256": "4021406399516ef5764481869ced8d73417ded8d76a9e77d9f7e9a49ebf622f3",
+          "absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 2095,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.013550347222222222,
+              0.007317708333333333,
+              0.007573784722222222
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              15,
+              9,
+              11
+            ]
+          }
+        }
+      }
+    },
+    "medium": {
+      "fire_state_parity": {
+        "direct": true,
+        "cache8": true,
+        "cache16": true
+      },
+      "captures": {
+        "direct": {
+          "cache_bytes": 0,
+          "cpu_cache_encode_ms": 0.0,
+          "sha256": "1daed31bd9f964c3cd37c95d51478bf6066df0c14d97e6ea6bca26ac9551e688",
+          "absolute_rgb_error_vs_direct": null
+        },
+        "cache8": {
+          "cache_bytes": 4096,
+          "cpu_cache_encode_ms": 0.033417,
+          "sha256": "611a913e56d06a18840e6baccf66f1f4b627377cca424e1f9232a46a6a25d5ba",
+          "absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 16615,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.31003038194444443,
+              0.1744704861111111,
+              0.13935329861111112
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              20,
+              14,
+              11
+            ]
+          }
+        },
+        "cache16": {
+          "cache_bytes": 32768,
+          "cpu_cache_encode_ms": 0.024167,
+          "sha256": "86bb6a81bc11e96fa92204ebaddc4b8afa6b88ac7f03b0d0688fd3c0d386c165",
+          "absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 9884,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.0797265625,
+              0.04408420138888889,
+              0.039874131944444446
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              16,
+              9,
+              11
+            ]
+          }
+        }
+      }
+    },
+    "screen-filling": {
+      "fire_state_parity": {
+        "direct": true,
+        "cache8": true,
+        "cache16": true
+      },
+      "captures": {
+        "direct": {
+          "cache_bytes": 0,
+          "cpu_cache_encode_ms": 0.0,
+          "sha256": "761e5ec3696f604eab782ec5240c059db1b566316ca490000c77d60c78319e89",
+          "absolute_rgb_error_vs_direct": null
+        },
+        "cache8": {
+          "cache_bytes": 4096,
+          "cpu_cache_encode_ms": 0.09466699999999999,
+          "sha256": "dc0abe157369aed1297ac55619073ec239f2b13f4ba4bdac84f3de5713d07a5c",
+          "absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 42370,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              1.2884505208333332,
+              0.7632161458333333,
+              0.5104166666666666
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              20,
+              15,
+              10
+            ]
+          }
+        },
+        "cache16": {
+          "cache_bytes": 32768,
+          "cpu_cache_encode_ms": 0.13366699999999998,
+          "sha256": "d67d1556119d21bd088e3c6a46e110e93951e109382522cd5f9ff652bea05a0c",
+          "absolute_rgb_error_vs_direct": {
+            "changed_pixel_count": 27617,
+            "pixel_count": 230400,
+            "mean_absolute_rgb_error_0_255": [
+              0.2510112847222222,
+              0.1546310763888889,
+              0.11923611111111111
+            ],
+            "maximum_absolute_rgb_error_0_255": [
+              17,
+              10,
+              10
+            ]
+          }
+        }
+      }
+    }
+  },
+  "benchmark": {
+    "warmup_seconds": 10,
+    "duration_seconds_per_run": 120,
+    "pairs": 3,
+    "mode": "serial",
+    "report_count": 36,
+    "comparisons": {
+      "small_cache8": {
+        "comparison_file": "benchmarks/small/cache8/comparison.json",
+        "comparison_sha256": "ac6e0265fa26529b18c4d1d7eddd6954c3b6e42d6db5c286f6b8b12d85bf1ea7",
+        "pairs": {
+          "gpu_render": {
+            "baseline_run_medians_ms": [
+              2.728001,
+              2.696792,
+              2.720084
+            ],
+            "candidate_run_medians_ms": [
+              2.7011670000000003,
+              2.728125,
+              2.6962919999999997
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              -0.02683399999999958,
+              0.031333000000000055,
+              -0.023792000000000257
+            ],
+            "paired_delta_median_ms": -0.023792000000000257,
+            "baseline_median_of_run_medians_ms": 2.720084,
+            "candidate_median_of_run_medians_ms": 2.7011670000000003,
+            "baseline_run_p95_ms": [
+              4.7809989999999996,
+              4.74725,
+              4.753083
+            ],
+            "candidate_run_p95_ms": [
+              4.8347929999999995,
+              4.901792,
+              4.523626
+            ]
+          },
+          "frame_work": {
+            "baseline_run_medians_ms": [
+              4.234624999999999,
+              4.209957999999999,
+              4.057042
+            ],
+            "candidate_run_medians_ms": [
+              4.234208,
+              4.237,
+              4.133416
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              -0.00041699999999966764,
+              0.027042000000000677,
+              0.07637400000000039
+            ],
+            "paired_delta_median_ms": 0.027042000000000677,
+            "baseline_median_of_run_medians_ms": 4.209957999999999,
+            "candidate_median_of_run_medians_ms": 4.234208,
+            "baseline_run_p95_ms": [
+              8.383875000000002,
+              8.375499999999999,
+              8.171792
+            ],
+            "candidate_run_p95_ms": [
+              8.198208000000001,
+              8.316708,
+              7.548
+            ]
+          },
+          "cpu_encode": {
+            "baseline_run_medians_ms": [
+              0.286709,
+              0.302708,
+              0.27408299999999997
+            ],
+            "candidate_run_medians_ms": [
+              0.321625,
+              0.312959,
+              0.27433300000000005
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              0.034916,
+              0.01025100000000001,
+              0.0002500000000000835
+            ],
+            "paired_delta_median_ms": 0.01025100000000001,
+            "baseline_median_of_run_medians_ms": 0.286709,
+            "candidate_median_of_run_medians_ms": 0.312959,
+            "baseline_run_p95_ms": [
+              1.1523330000000003,
+              1.1080419999999997,
+              0.979292
+            ],
+            "candidate_run_p95_ms": [
+              1.11425,
+              1.112999,
+              0.9095420000000001
+            ]
+          },
+          "cpu_upload": {
+            "baseline_run_medians_ms": [
+              0.129584,
+              0.13608199999999998,
+              0.12375
+            ],
+            "candidate_run_medians_ms": [
+              0.13474999999999998,
+              0.132707,
+              0.115043
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              0.005165999999999976,
+              -0.003374999999999989,
+              -0.008706999999999993
+            ],
+            "paired_delta_median_ms": -0.003374999999999989,
+            "baseline_median_of_run_medians_ms": 0.129584,
+            "candidate_median_of_run_medians_ms": 0.132707,
+            "baseline_run_p95_ms": [
+              0.437582,
+              0.451126,
+              0.4155
+            ],
+            "candidate_run_p95_ms": [
+              0.416083,
+              0.416334,
+              0.34066799999999997
+            ]
+          }
+        },
+        "candidate_cache_build_measurements": [
+          {
+            "cpu_build_median_ms": 0.023292,
+            "cpu_build_p95_ms": 0.059125000000000004,
+            "gpu_build_median_ms": 0.024749999999999998,
+            "gpu_build_p95_ms": 0.16974999999999998
+          },
+          {
+            "cpu_build_median_ms": 0.023,
+            "cpu_build_p95_ms": 0.058375,
+            "gpu_build_median_ms": 0.024834,
+            "gpu_build_p95_ms": 0.169208
+          },
+          {
+            "cpu_build_median_ms": 0.020375,
+            "cpu_build_p95_ms": 0.050832999999999996,
+            "gpu_build_median_ms": 0.024749999999999998,
+            "gpu_build_p95_ms": 0.14375
+          }
+        ]
+      },
+      "small_cache16": {
+        "comparison_file": "benchmarks/small/cache16/comparison.json",
+        "comparison_sha256": "9f07530a6043e89b832cfe673cbb3698b1454be6e057c98197a8a4ec386919d3",
+        "pairs": {
+          "gpu_render": {
+            "baseline_run_medians_ms": [
+              2.7160409999999997,
+              2.707457,
+              2.747292
+            ],
+            "candidate_run_medians_ms": [
+              2.710124,
+              2.698667,
+              2.717082
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              -0.005916999999999728,
+              -0.008789999999999853,
+              -0.030209999999999848
+            ],
+            "paired_delta_median_ms": -0.008789999999999853,
+            "baseline_median_of_run_medians_ms": 2.7160409999999997,
+            "candidate_median_of_run_medians_ms": 2.710124,
+            "baseline_run_p95_ms": [
+              4.253,
+              4.248459,
+              4.422416999999999
+            ],
+            "candidate_run_p95_ms": [
+              4.462541,
+              4.47725,
+              4.533249
+            ]
+          },
+          "frame_work": {
+            "baseline_run_medians_ms": [
+              4.142209,
+              4.142875,
+              4.197792
+            ],
+            "candidate_run_medians_ms": [
+              4.13425,
+              4.138958,
+              4.15625
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              -0.007959000000000493,
+              -0.003917000000000392,
+              -0.041541999999999746
+            ],
+            "paired_delta_median_ms": -0.007959000000000493,
+            "baseline_median_of_run_medians_ms": 4.142875,
+            "candidate_median_of_run_medians_ms": 4.138958,
+            "baseline_run_p95_ms": [
+              7.50125,
+              8.168750000000001,
+              8.505166999999998
+            ],
+            "candidate_run_p95_ms": [
+              7.427916,
+              7.514792,
+              7.505958
+            ]
+          },
+          "cpu_encode": {
+            "baseline_run_medians_ms": [
+              0.27116700000000005,
+              0.270334,
+              0.27
+            ],
+            "candidate_run_medians_ms": [
+              0.290958,
+              0.28941700000000004,
+              0.285876
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              0.019790999999999948,
+              0.019083000000000017,
+              0.015876
+            ],
+            "paired_delta_median_ms": 0.019083000000000017,
+            "baseline_median_of_run_medians_ms": 0.270334,
+            "candidate_median_of_run_medians_ms": 0.28941700000000004,
+            "baseline_run_p95_ms": [
+              0.9360829999999999,
+              1.0277910000000001,
+              1.1079590000000001
+            ],
+            "candidate_run_p95_ms": [
+              0.9372909999999999,
+              0.9552510000000001,
+              0.99225
+            ]
+          },
+          "cpu_upload": {
+            "baseline_run_medians_ms": [
+              0.119791,
+              0.1195,
+              0.12046000000000001
+            ],
+            "candidate_run_medians_ms": [
+              0.121084,
+              0.12021,
+              0.117249
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              0.0012930000000000025,
+              0.0007100000000000023,
+              -0.0032110000000000055
+            ],
+            "paired_delta_median_ms": 0.0007100000000000023,
+            "baseline_median_of_run_medians_ms": 0.119791,
+            "candidate_median_of_run_medians_ms": 0.12021,
+            "baseline_run_p95_ms": [
+              0.381626,
+              0.422167,
+              0.456208
+            ],
+            "candidate_run_p95_ms": [
+              0.352874,
+              0.361251,
+              0.389417
+            ]
+          }
+        },
+        "candidate_cache_build_measurements": [
+          {
+            "cpu_build_median_ms": 0.021417,
+            "cpu_build_p95_ms": 0.052583,
+            "gpu_build_median_ms": 0.031,
+            "gpu_build_p95_ms": 0.22349999999999998
+          },
+          {
+            "cpu_build_median_ms": 0.021542000000000002,
+            "cpu_build_p95_ms": 0.052334,
+            "gpu_build_median_ms": 0.030917,
+            "gpu_build_p95_ms": 0.20975
+          },
+          {
+            "cpu_build_median_ms": 0.02125,
+            "cpu_build_p95_ms": 0.053625,
+            "gpu_build_median_ms": 0.031833,
+            "gpu_build_p95_ms": 0.225208
+          }
+        ]
+      },
+      "medium_cache8": {
+        "comparison_file": "benchmarks/medium/cache8/comparison.json",
+        "comparison_sha256": "f8c68adb2b26bc07f84dbb1e2f526c9a4fe30244d6e259f059bee273597f2415",
+        "pairs": {
+          "gpu_render": {
+            "baseline_run_medians_ms": [
+              2.867542,
+              2.785875,
+              2.80275
+            ],
+            "candidate_run_medians_ms": [
+              2.851916,
+              2.831084,
+              2.82725
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              -0.015625999999999696,
+              0.04520900000000028,
+              0.024499999999999744
+            ],
+            "paired_delta_median_ms": 0.024499999999999744,
+            "baseline_median_of_run_medians_ms": 2.80275,
+            "candidate_median_of_run_medians_ms": 2.831084,
+            "baseline_run_p95_ms": [
+              4.744958,
+              4.479791,
+              4.5039169999999995
+            ],
+            "candidate_run_p95_ms": [
+              4.676042,
+              4.714874999999999,
+              4.733166000000001
+            ]
+          },
+          "frame_work": {
+            "baseline_run_medians_ms": [
+              4.271834,
+              3.676666,
+              3.711875
+            ],
+            "candidate_run_medians_ms": [
+              4.1943340000000005,
+              3.745917,
+              3.763625
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              -0.07749999999999968,
+              0.06925099999999995,
+              0.051750000000000185
+            ],
+            "paired_delta_median_ms": 0.051750000000000185,
+            "baseline_median_of_run_medians_ms": 3.711875,
+            "candidate_median_of_run_medians_ms": 3.763625,
+            "baseline_run_p95_ms": [
+              8.759959,
+              8.131875,
+              8.296709
+            ],
+            "candidate_run_p95_ms": [
+              8.444708,
+              8.405332999999999,
+              8.1625
+            ]
+          },
+          "cpu_encode": {
+            "baseline_run_medians_ms": [
+              0.266167,
+              0.25525,
+              0.264084
+            ],
+            "candidate_run_medians_ms": [
+              0.279209,
+              0.28529099999999996,
+              0.2885
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              0.013041999999999998,
+              0.030040999999999984,
+              0.024415999999999993
+            ],
+            "paired_delta_median_ms": 0.024415999999999993,
+            "baseline_median_of_run_medians_ms": 0.264084,
+            "candidate_median_of_run_medians_ms": 0.28529099999999996,
+            "baseline_run_p95_ms": [
+              1.064624,
+              0.958708,
+              1.021875
+            ],
+            "candidate_run_p95_ms": [
+              1.103751,
+              1.109666,
+              1.022874
+            ]
+          },
+          "cpu_upload": {
+            "baseline_run_medians_ms": [
+              0.11449999999999999,
+              0.110916,
+              0.114124
+            ],
+            "candidate_run_medians_ms": [
+              0.11375,
+              0.113041,
+              0.11433399999999999
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              -0.0007499999999999868,
+              0.002125000000000002,
+              0.00020999999999998797
+            ],
+            "paired_delta_median_ms": 0.00020999999999998797,
+            "baseline_median_of_run_medians_ms": 0.114124,
+            "candidate_median_of_run_medians_ms": 0.11375,
+            "baseline_run_p95_ms": [
+              0.40762400000000004,
+              0.374751,
+              0.39195800000000003
+            ],
+            "candidate_run_p95_ms": [
+              0.38900099999999993,
+              0.39799999999999996,
+              0.375208
+            ]
+          }
+        },
+        "candidate_cache_build_measurements": [
+          {
+            "cpu_build_median_ms": 0.021707999999999998,
+            "cpu_build_p95_ms": 0.061167000000000006,
+            "gpu_build_median_ms": 0.025084,
+            "gpu_build_p95_ms": 0.132458
+          },
+          {
+            "cpu_build_median_ms": 0.022416000000000002,
+            "cpu_build_p95_ms": 0.062291000000000006,
+            "gpu_build_median_ms": 0.024999999999999998,
+            "gpu_build_p95_ms": 0.138458
+          },
+          {
+            "cpu_build_median_ms": 0.022875,
+            "cpu_build_p95_ms": 0.063125,
+            "gpu_build_median_ms": 0.025082999999999998,
+            "gpu_build_p95_ms": 0.162666
+          }
+        ]
+      },
+      "medium_cache16": {
+        "comparison_file": "benchmarks/medium/cache16/comparison.json",
+        "comparison_sha256": "f15cf2cf0f6017e9185d30a739045f162355fbc7c49d3c40db1d79339e7f0337",
+        "pairs": {
+          "gpu_render": {
+            "baseline_run_medians_ms": [
+              2.8054999999999994,
+              2.818251,
+              2.796208
+            ],
+            "candidate_run_medians_ms": [
+              2.797917,
+              2.7919590000000003,
+              2.8055
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              -0.007582999999999451,
+              -0.02629199999999976,
+              0.009291999999999856
+            ],
+            "paired_delta_median_ms": -0.007582999999999451,
+            "baseline_median_of_run_medians_ms": 2.8054999999999994,
+            "candidate_median_of_run_medians_ms": 2.797917,
+            "baseline_run_p95_ms": [
+              4.549207999999999,
+              4.5344169999999995,
+              4.458917
+            ],
+            "candidate_run_p95_ms": [
+              4.725416,
+              4.667791,
+              4.698958999999999
+            ]
+          },
+          "frame_work": {
+            "baseline_run_medians_ms": [
+              3.7243329999999997,
+              3.705167,
+              3.686042
+            ],
+            "candidate_run_medians_ms": [
+              3.754084,
+              3.7504999999999997,
+              3.7578329999999998
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              0.029751000000000527,
+              0.045332999999999846,
+              0.07179099999999972
+            ],
+            "paired_delta_median_ms": 0.045332999999999846,
+            "baseline_median_of_run_medians_ms": 3.705167,
+            "candidate_median_of_run_medians_ms": 3.754084,
+            "baseline_run_p95_ms": [
+              8.245875,
+              8.123375000000001,
+              8.317417
+            ],
+            "candidate_run_p95_ms": [
+              8.134167,
+              8.3515,
+              8.309459
+            ]
+          },
+          "cpu_encode": {
+            "baseline_run_medians_ms": [
+              0.26575,
+              0.261875,
+              0.26341599999999993
+            ],
+            "candidate_run_medians_ms": [
+              0.290626,
+              0.28012500000000007,
+              0.285708
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              0.02487600000000001,
+              0.018250000000000044,
+              0.02229200000000009
+            ],
+            "paired_delta_median_ms": 0.02229200000000009,
+            "baseline_median_of_run_medians_ms": 0.26341599999999993,
+            "candidate_median_of_run_medians_ms": 0.285708,
+            "baseline_run_p95_ms": [
+              1.048292,
+              1.0542500000000001,
+              1.018584
+            ],
+            "candidate_run_p95_ms": [
+              1.0599159999999999,
+              1.134667,
+              1.080875
+            ]
+          },
+          "cpu_upload": {
+            "baseline_run_medians_ms": [
+              0.114374,
+              0.11458299999999999,
+              0.111873
+            ],
+            "candidate_run_medians_ms": [
+              0.11450000000000002,
+              0.111543,
+              0.115208
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              0.000126000000000015,
+              -0.003039999999999987,
+              0.0033350000000000046
+            ],
+            "paired_delta_median_ms": 0.000126000000000015,
+            "baseline_median_of_run_medians_ms": 0.114374,
+            "candidate_median_of_run_medians_ms": 0.11450000000000002,
+            "baseline_run_p95_ms": [
+              0.38487499999999997,
+              0.39562600000000003,
+              0.386332
+            ],
+            "candidate_run_p95_ms": [
+              0.366,
+              0.39087399999999994,
+              0.37870800000000004
+            ]
+          }
+        },
+        "candidate_cache_build_measurements": [
+          {
+            "cpu_build_median_ms": 0.023042,
+            "cpu_build_p95_ms": 0.06245900000000001,
+            "gpu_build_median_ms": 0.03225,
+            "gpu_build_p95_ms": 0.229875
+          },
+          {
+            "cpu_build_median_ms": 0.021707999999999998,
+            "cpu_build_p95_ms": 0.061167000000000006,
+            "gpu_build_median_ms": 0.031958,
+            "gpu_build_p95_ms": 0.2405
+          },
+          {
+            "cpu_build_median_ms": 0.022042,
+            "cpu_build_p95_ms": 0.064583,
+            "gpu_build_median_ms": 0.032583,
+            "gpu_build_p95_ms": 0.243333
+          }
+        ]
+      },
+      "screen-filling_cache8": {
+        "comparison_file": "benchmarks/screen-filling/cache8/comparison.json",
+        "comparison_sha256": "2b43947d570827cc6d87189dbf908d2bb374ab417d3bef81a9a80590600c3705",
+        "pairs": {
+          "gpu_render": {
+            "baseline_run_medians_ms": [
+              3.20925,
+              3.2139589999999996,
+              3.2292919999999996
+            ],
+            "candidate_run_medians_ms": [
+              3.2353750000000003,
+              3.169459,
+              3.0841659999999997
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              0.026125000000000398,
+              -0.04449999999999976,
+              -0.14512599999999987
+            ],
+            "paired_delta_median_ms": -0.04449999999999976,
+            "baseline_median_of_run_medians_ms": 3.2139589999999996,
+            "candidate_median_of_run_medians_ms": 3.169459,
+            "baseline_run_p95_ms": [
+              4.994334,
+              4.926667,
+              4.9902489999999995
+            ],
+            "candidate_run_p95_ms": [
+              5.0817499999999995,
+              4.958083,
+              5.414459
+            ]
+          },
+          "frame_work": {
+            "baseline_run_medians_ms": [
+              4.9662500000000005,
+              4.967292,
+              4.982292
+            ],
+            "candidate_run_medians_ms": [
+              5.009375,
+              4.947292,
+              4.566332999999999
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              0.04312499999999986,
+              -0.019999999999999574,
+              -0.41595900000000086
+            ],
+            "paired_delta_median_ms": -0.019999999999999574,
+            "baseline_median_of_run_medians_ms": 4.967292,
+            "candidate_median_of_run_medians_ms": 4.947292,
+            "baseline_run_p95_ms": [
+              9.7655,
+              9.652291,
+              9.865667
+            ],
+            "candidate_run_p95_ms": [
+              9.884833,
+              9.173041999999999,
+              9.37
+            ]
+          },
+          "cpu_encode": {
+            "baseline_run_medians_ms": [
+              0.268542,
+              0.26708299999999996,
+              0.277709
+            ],
+            "candidate_run_medians_ms": [
+              0.297,
+              0.28920799999999997,
+              0.29470799999999997
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              0.028457999999999983,
+              0.022125000000000006,
+              0.016998999999999986
+            ],
+            "paired_delta_median_ms": 0.022125000000000006,
+            "baseline_median_of_run_medians_ms": 0.268542,
+            "candidate_median_of_run_medians_ms": 0.29470799999999997,
+            "baseline_run_p95_ms": [
+              1.179167,
+              1.1805839999999999,
+              1.234834
+            ],
+            "candidate_run_p95_ms": [
+              1.241208,
+              1.2251249999999998,
+              1.2086260000000002
+            ]
+          },
+          "cpu_upload": {
+            "baseline_run_medians_ms": [
+              0.119083,
+              0.118292,
+              0.122625
+            ],
+            "candidate_run_medians_ms": [
+              0.12170799999999998,
+              0.117583,
+              0.12275000000000001
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              0.0026249999999999885,
+              -0.0007090000000000013,
+              0.000125000000000014
+            ],
+            "paired_delta_median_ms": 0.000125000000000014,
+            "baseline_median_of_run_medians_ms": 0.119083,
+            "candidate_median_of_run_medians_ms": 0.12170799999999998,
+            "baseline_run_p95_ms": [
+              0.43233199999999994,
+              0.453959,
+              0.45266700000000004
+            ],
+            "candidate_run_p95_ms": [
+              0.46624999999999994,
+              0.433584,
+              0.428584
+            ]
+          }
+        },
+        "candidate_cache_build_measurements": [
+          {
+            "cpu_build_median_ms": 0.0235,
+            "cpu_build_p95_ms": 0.07662500000000001,
+            "gpu_build_median_ms": 0.024832999999999997,
+            "gpu_build_p95_ms": 0.132542
+          },
+          {
+            "cpu_build_median_ms": 0.023041,
+            "cpu_build_p95_ms": 0.068459,
+            "gpu_build_median_ms": 0.024624999999999998,
+            "gpu_build_p95_ms": 0.123875
+          },
+          {
+            "cpu_build_median_ms": 0.023042,
+            "cpu_build_p95_ms": 0.072541,
+            "gpu_build_median_ms": 0.024416,
+            "gpu_build_p95_ms": 0.135542
+          }
+        ]
+      },
+      "screen-filling_cache16": {
+        "comparison_file": "benchmarks/screen-filling/cache16/comparison.json",
+        "comparison_sha256": "8a7081e271495ac5a08c4aae98a430cf10f1f31f618bf71d640b33bb0c75be9e",
+        "pairs": {
+          "gpu_render": {
+            "baseline_run_medians_ms": [
+              3.1033749999999998,
+              3.355625,
+              3.441958
+            ],
+            "candidate_run_medians_ms": [
+              2.999416,
+              3.0440009999999997,
+              3.4097500000000003
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              -0.10395899999999969,
+              -0.3116240000000001,
+              -0.03220799999999979
+            ],
+            "paired_delta_median_ms": -0.10395899999999969,
+            "baseline_median_of_run_medians_ms": 3.355625,
+            "candidate_median_of_run_medians_ms": 3.0440009999999997,
+            "baseline_run_p95_ms": [
+              5.825583999999999,
+              4.602416,
+              4.224291
+            ],
+            "candidate_run_p95_ms": [
+              6.126041,
+              5.923417,
+              4.290374999999999
+            ]
+          },
+          "frame_work": {
+            "baseline_run_medians_ms": [
+              4.486625,
+              4.327542,
+              4.475792
+            ],
+            "candidate_run_medians_ms": [
+              4.4845,
+              4.452083,
+              4.468125
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              -0.0021250000000003766,
+              0.12454099999999979,
+              -0.0076670000000005345
+            ],
+            "paired_delta_median_ms": -0.0021250000000003766,
+            "baseline_median_of_run_medians_ms": 4.475792,
+            "candidate_median_of_run_medians_ms": 4.468125,
+            "baseline_run_p95_ms": [
+              9.385124999999999,
+              6.930083,
+              7.395
+            ],
+            "candidate_run_p95_ms": [
+              10.601167,
+              9.124625,
+              7.074625
+            ]
+          },
+          "cpu_encode": {
+            "baseline_run_medians_ms": [
+              0.291875,
+              0.255124,
+              0.300708
+            ],
+            "candidate_run_medians_ms": [
+              0.31016600000000005,
+              0.302791,
+              0.30120800000000003
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              0.018291000000000057,
+              0.04766699999999996,
+              0.000500000000000056
+            ],
+            "paired_delta_median_ms": 0.018291000000000057,
+            "baseline_median_of_run_medians_ms": 0.291875,
+            "candidate_median_of_run_medians_ms": 0.302791,
+            "baseline_run_p95_ms": [
+              1.256083,
+              0.831083,
+              1.116667
+            ],
+            "candidate_run_p95_ms": [
+              1.2001249999999999,
+              1.18225,
+              1.1394579999999999
+            ]
+          },
+          "cpu_upload": {
+            "baseline_run_medians_ms": [
+              0.130374,
+              0.11237599999999999,
+              0.12775
+            ],
+            "candidate_run_medians_ms": [
+              0.129208,
+              0.125001,
+              0.12149999999999998
+            ],
+            "paired_candidate_minus_baseline_ms": [
+              -0.0011660000000000004,
+              0.012625000000000011,
+              -0.006250000000000019
+            ],
+            "paired_delta_median_ms": -0.0011660000000000004,
+            "baseline_median_of_run_medians_ms": 0.12775,
+            "candidate_median_of_run_medians_ms": 0.125001,
+            "baseline_run_p95_ms": [
+              0.472875,
+              0.32775,
+              0.43787499999999996
+            ],
+            "candidate_run_p95_ms": [
+              0.464417,
+              0.41991599999999996,
+              0.395041
+            ]
+          }
+        },
+        "candidate_cache_build_measurements": [
+          {
+            "cpu_build_median_ms": 0.02425,
+            "cpu_build_p95_ms": 0.076167,
+            "gpu_build_median_ms": 0.029207999999999998,
+            "gpu_build_p95_ms": 0.250875
+          },
+          {
+            "cpu_build_median_ms": 0.02375,
+            "cpu_build_p95_ms": 0.07525,
+            "gpu_build_median_ms": 0.029249999999999998,
+            "gpu_build_p95_ms": 0.220291
+          },
+          {
+            "cpu_build_median_ms": 0.024459,
+            "cpu_build_p95_ms": 0.083917,
+            "gpu_build_median_ms": 0.029834,
+            "gpu_build_p95_ms": 0.360666
+          }
+        ]
+      }
+    },
+    "raw_output_directory": "artifacts/o05/current-release-size-study/"
+  },
+  "limitations": [
+    "The absorption lookup cost is included in atmosphere/fire GPU timing and is not separately timestamped.",
+    "Native-window and non-Metal acceptance are not established.",
+    "Offscreen serial benchmarks exclude native presentation, inspector, vsync and native window scheduling.",
+    "The user-authorized idle native engine-lab window remained open; no native-window performance result is claimed.",
+    "One Apple M1 Max/Metal host only; Windows/DX12 and other adapters remain unverified.",
+    "Three pairs per condition are evidence for this workload, not a general adaptive-cache threshold or target-hardware guarantee."
+  ],
+  "conclusion": "The 16^3 cache shows a repeatable GPU-render reduction only at the screen-filling scale (-0.104, -0.312 and -0.032 ms paired across all three runs; median paired delta -0.104 ms). Whole-frame deltas remain effectively flat (-0.002, +0.125, -0.008 ms), while CPU cache encoding increases (+0.018, +0.048, +0.001 ms). All other cache/scale combinations have small mixed GPU changes and no consistent whole-frame gain. Keep direct sampling as default and cache disabled unless a game explicitly opts in; do not claim a total-frame win. At every fixed scale, 16^3 is closer to direct than 8^3 in the captured image while using 32 KiB versus 4 KiB."
+}

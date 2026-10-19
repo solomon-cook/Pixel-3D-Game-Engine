@@ -152,13 +152,19 @@ binding in the recreated volume group; off/on/off captures now succeed with the
 expected 0/4096/0-byte cache lifecycle. The audit did not compare image parity.
 A sustained three-scale study compares direct, 8³ and 16³ at
 640×360 using three paired 120-second orbit runs per tier. At all scales 16³ is
-closer to direct in fixed-tick mean RGB error. The cache reduced the targeted
-atmosphere/fire GPU stage by 0.058–0.101 ms, but adds 0.025–0.033 ms GPU build
-work and the total GPU render median was 0.025–0.044 ms slower in all six
-comparisons. The 18 October runs did not show a useful total-render win, so keep
-the cache off by default. The explicit-source sustained dual-emitter report is
-from revision `4e57d5f`, before 13 engine/shader changes; current-source sustained
-cost remains open. A 19 October current-release invalidation rerun now compares
+closer to direct in fixed-tick mean RGB error. The historical 18 October study
+reduced the targeted atmosphere/fire GPU stage by 0.058–0.101 ms, but the build
+cost outweighed it. A 19 October current-release rerun covers three alternating
+120-second pairs for each size and smoke scale (36 runs total) on the release
+binary. At screen-filling smoke, 16³ lowers paired GPU-render medians by 0.104,
+0.312 and 0.032 ms, but paired whole-frame work is -0.002, +0.125 and -0.008 ms
+and CPU cache encoding adds 0.018, 0.048 and 0.001 ms. Every other scale/size
+has small mixed GPU changes and no consistent whole-frame gain. Keep direct
+sampling selected and cache disabled by default; no general or total-frame win
+is established. Full paired data and provenance are in the
+[current-release study](measurements-o05-size-current-release.json); the
+historical comparison remains in [the original size study](measurements-o05-size-study.json).
+A 19 October current-release invalidation rerun now compares
 direct with 8³ and 16³ at 13 edit, light, ember-motion, shader-reload and reset
 checkpoints. Fire state matches at all checkpoints for both sizes. Mean RGB MAE
 is 0.217/255 for 8³ and 0.067/255 for 16³; 16³ has lower image error at all 13
@@ -169,10 +175,10 @@ correctness, not sustained performance or continuous visual acceptance. See the
 [current-release report](measurements-o05-invalidation-current-release.json),
 [contact sheet](../artifacts/o05/o05-current-release-invalidation-contact.png)
 and [historical provenance audit](measurements-o05-invalidation-provenance-audit.json).
-The capture scripts now record binary hashes,
+The capture scripts record binary hashes,
 workspace revision, engine-source worktree status and runner hashes, and the sustained-run summarizer
-rejects timing records without a matching binary hash. This makes future
-measurements attributable; it does not substitute for the pending GPU run. See
+rejects timing records without a matching binary hash. The current-release GPU
+run now closes the pending sustained-timing gate on M1 Max/Metal. See
 [source audit](measurements-o05-current-review-source-audit.json),
 [measurements-o05.json](measurements-o05.json) and the detailed
 [size study](measurements-o05-size-study.json). A 400-frame, 20 fps medium-smoke
