@@ -12,13 +12,13 @@ use std::{
     collections::{HashSet, VecDeque},
     io::{BufRead, Write},
     sync::{mpsc, Arc},
-    time::Instant,
+    time::{Duration, Instant},
 };
 use winit::{
     application::ApplicationHandler,
     dpi::LogicalSize,
     event::{DeviceEvent, ElementState, MouseButton, WindowEvent},
-    event_loop::{ActiveEventLoop, EventLoop},
+    event_loop::{ActiveEventLoop, ControlFlow, EventLoop},
     keyboard::{KeyCode, PhysicalKey},
     window::{Fullscreen, Window, WindowButtons},
 };
@@ -564,7 +564,17 @@ impl ApplicationHandler for App {
             WindowEvent::Occluded(occluded) => {
                 n.occluded = occluded;
                 n.last = Instant::now();
-                if !occluded {
+                if occluded && n.benchmark.is_some() {
+                    let abort_result = n.abort_benchmark("window_occluded");
+                    self.error = Some(match abort_result {
+                        Ok(()) => "native benchmark aborted because its window became occluded"
+                            .to_owned(),
+                        Err(error) => format!(
+                            "native benchmark window became occluded and writing its incomplete report failed: {error:#}"
+                        ),
+                    });
+                    event_loop.exit();
+                } else if !occluded {
                     n.window.request_redraw();
                 }
             }
@@ -633,8 +643,27 @@ impl ApplicationHandler for App {
             _ => {}
         }
     }
-    fn about_to_wait(&mut self, _: &ActiveEventLoop) {
+    fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
         if let Some(n) = &mut self.native {
+            let benchmark_timed_out = n.benchmark.as_ref().is_some_and(|benchmark| {
+                !benchmark.finished
+                    && benchmark.started.elapsed()
+                        >= Duration::from_secs_f64(
+                            benchmark.config.warmup + benchmark.config.duration + 10.0,
+                        )
+            });
+            if benchmark_timed_out {
+                let abort_result = n.abort_benchmark("frame_timeout");
+                self.error = Some(match abort_result {
+                    Ok(()) => "native benchmark aborted because no frame completed before its deadline"
+                        .to_owned(),
+                    Err(error) => format!(
+                        "native benchmark exceeded its frame deadline and writing its incomplete report failed: {error:#}"
+                    ),
+                });
+                event_loop.exit();
+                return;
+            }
             if let Some([width, height]) = n.pending_window_restore {
                 let logical_size = LogicalSize::new(width, height);
                 let expected = logical_size.to_physical::<u32>(n.window.scale_factor());
@@ -667,10 +696,52 @@ impl ApplicationHandler for App {
             if !n.occluded && !n.window.is_minimized().unwrap_or(false) {
                 n.window.request_redraw();
             }
+            if n.benchmark
+                .as_ref()
+                .is_some_and(|benchmark| !benchmark.finished)
+            {
+                event_loop.set_control_flow(ControlFlow::WaitUntil(
+                    Instant::now() + Duration::from_millis(100),
+                ));
+            }
         }
     }
 }
 impl Native {
+    fn abort_benchmark(&mut self, reason: &str) -> Result<()> {
+        let Some(benchmark) = self.benchmark.as_ref() else {
+            return Ok(());
+        };
+        if benchmark.finished {
+            return Ok(());
+        }
+
+        let mut report = native_benchmark_report(
+            benchmark,
+            &self.session,
+            self.config.present_mode,
+            self.native_gpu_timing.as_ref().map(|timer| timer.skipped),
+        );
+        report["completion_status"] = json!("aborted");
+        report["abort_reason"] = json!(reason);
+        let output = &benchmark.config.output;
+        if let Some(parent) = output
+            .parent()
+            .filter(|parent| !parent.as_os_str().is_empty())
+        {
+            std::fs::create_dir_all(parent)?;
+        }
+        std::fs::write(output, serde_json::to_vec_pretty(&report)?)?;
+        eprintln!(
+            "{}",
+            json!({"event":"native_benchmark_aborted","reason":reason,"report":output})
+        );
+        if let Some(benchmark) = &mut self.benchmark {
+            benchmark.finished = true;
+        }
+        Ok(())
+    }
+
     fn process_line(&mut self, line: &str) -> String {
         if let Ok(request) = serde_json::from_str::<Request>(line) {
             let result: Result<Value> = match request.method.as_str() {
@@ -1215,6 +1286,7 @@ fn native_benchmark_report(
         .sum::<u64>();
     json!({
         "version":1,
+        "completion_status":"completed",
         "mode":"native_vsync_route",
         "scope":"native surface route; frame wall includes surface acquisition, UI encoding, queue submission and present call; CPU spans overlap and are not additive",
         "route":benchmark.route,
