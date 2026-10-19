@@ -1097,17 +1097,21 @@ decisions and unresolved visual/backend gates are consolidated in the
   capture was inspected. Keep
   minimization open;
   do not substitute occlusion for minimization. The current release viewport was
-  also inspected live at tick 423 with the 640×360 grid; the smoke still reads as
-  a tall regular stack of puffs, so owner playback acceptance remains open. The
-  6-second 20 fps `clearing-orbit` sequence is now available for owner review as
-  a GIF and full-color APNG at the unchanged 640×360 grid. It uses fixed-tick
-  headless captures and is not native presentation or performance evidence. See
+  also inspected live at tick 423 with the 640×360 grid; the smoke reads as a
+  tall regular stack of puffs in that sampled live view. The owner reviewed the
+  6-second 20 fps `clearing-orbit` GIF/APNG and found its motion and visual
+  continuity acceptable. This acceptance applies to the offscreen fixed-tick
+  preview at the unchanged 640×360 grid; it does not establish native playback
+  performance or review the opt-in renderer variants. See
   [preview metadata](measurements-owner-motion-review-preview.json). The
   tracked native results are in [native verification](measurements-native-window-verification-current-build.json), including the [tick-120 capture](measurements-native-window-verification-current-build.png). Raw frames remain under ignored `artifacts/`.
 - The verifier used the selected 640×360 scene grid and same-device Metal
   rendering. It does not verify Windows/DX12, another adapter, or target-PC
   performance.
-- macOS ARM64 and Windows x64 GNU release builds succeed. The current source,
+- macOS ARM64 and Windows x64 GNU release builds succeed. The current macOS
+  release build and `engine-lab describe` protocol check, including the
+  minimize-button field, are recorded in
+  [the current macOS build report](measurements-macos-build-current.json). The current source,
   including the native minimize-button diagnostic, cross-checks and links as a
   Windows x64 PE executable; see [current Windows build report](measurements-windows-build-current.json).
   This Mac cross-build does not execute Windows or establish DX12 rendering,

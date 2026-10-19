@@ -1084,13 +1084,17 @@ both `miniaturize` and `performMiniaturize`. Treat this as a host/runtime
 limitation for this build pending a test of actual traffic-light input or a
 different macOS version; it does not prove which of macOS or local session
 policy is responsible.
-This is sampled playback evidence, not owner acceptance or a temporal-quality measurement. Owner visual acceptance,
-minimization, DX12 and another-adapter gates remain open. See [native
+This is sampled playback evidence, not a temporal-quality measurement. The owner
+reviewed the separate 6-second offscreen preview and accepted its motion and
+visual continuity; that does not verify native playback performance or the
+opt-in renderer variants. Minimization, DX12 and another-adapter gates remain
+open. See [native
 verification](measurements-native-window-verification-current-build.json) and its
 [tick-120 capture](measurements-native-window-verification-current-build.png).
 A 6-second, 20 fps fixed-tick clearing-orbit preview at the stable 640×360 grid
-is available for owner review; it is a headless real-renderer sequence, not
-native surface or sustained-performance acceptance. See
+was accepted by the owner for motion and visual continuity. It is a headless
+real-renderer sequence, not native surface or sustained-performance acceptance.
+See
 [preview report](measurements-owner-motion-review-preview.json).
 
 These dispositions close measured decisions where the evidence is sufficient; they

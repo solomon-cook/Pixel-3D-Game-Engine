@@ -1113,11 +1113,13 @@ native gate remains open. The idle-run evidence is in [the current-build
 report](measurements-native-window-verification-current-build.json). A live
 current-release native viewport reported tick 423 running at 640×360; the smoke
 still forms a tall regular stack of rounded puffs. This is an observed visual
-concern, not owner acceptance or a temporal score. A fixed-tick 6-second,
-20 fps route preview is now available for owner review at the selected 640×360
-grid; it remains offscreen evidence and does not replace native playback review.
+characteristic, not a temporal score. The owner reviewed a fixed-tick 6-second,
+20 fps route preview at the selected 640×360 grid and found its motion and visual
+continuity acceptable. That review covers the offscreen clip only; it does not
+replace native playback/performance review or review opt-in renderer variants.
 See [preview metadata](measurements-owner-motion-review-preview.json). Keep
-macOS minimization, owner playback, DX12 and another-adapter gates open. See
+macOS minimization, native playback/performance, DX12 and another-adapter gates
+open. See
 [native verification](measurements-native-window-verification-current-build.json)
 and its [tick-120 capture](measurements-native-window-verification-current-build.png).
 

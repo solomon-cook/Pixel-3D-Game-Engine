@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "source_revision": "feecc361e7ae52cd5b75b19f11ddb8c8ad750a3e",
+  "host": {
+    "device": "Apple M1 Max",
+    "platform": "macOS",
+    "backend": "Metal"
+  },
+  "command": "cargo build --locked --release --workspace && target/release/engine-lab describe",
+  "result": "passed",
+  "protocol_check": {
+    "version": 1,
+    "get_window_minimize_field": "whether the native window currently enables its minimize button"
+  },
+  "binary": {
+    "path": "target/release/engine-lab",
+    "sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c"
+  },
+  "limitations": [
+    "This confirms a macOS release build and live protocol description only; it does not verify native playback performance or Windows/DX12 runtime behavior."
+  ]
+}

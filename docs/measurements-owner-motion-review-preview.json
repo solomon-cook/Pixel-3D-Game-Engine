@@ -41,9 +41,14 @@
     }
   },
   "visual_observation": "The inspected opening frame has a tall, regular smoke plume dominating the upper center of the 640x360 image. This observation describes a sampled frame and is not an owner acceptance decision.",
+  "owner_review": {
+    "date": "2026-10-19",
+    "response": "Looks acceptable",
+    "scope": "Accepted the 6-second offscreen preview motion and visual continuity only; this does not review native playback performance or opt-in renderer variants."
+  },
   "limitations": [
     "The sequence uses deterministic headless captures from the real Metal renderer, not native surface presentation or vsync.",
-    "A short clip helps review visual continuity but does not establish sustained native performance or cross-adapter behavior.",
-    "Owner visual acceptance remains pending."
+    "Owner acceptance applies only to this sampled offscreen clip and does not establish sustained native performance or cross-adapter behavior.",
+    "Opt-in renderer variants were not part of this review."
   ]
 }
