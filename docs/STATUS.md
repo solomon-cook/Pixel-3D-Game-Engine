@@ -257,6 +257,13 @@ normal/view-based interface orientation and total-internal-reflection fallback.
 M1 Max/Metal fixed-tick inside-glass and near-plane camera stress pairs match
 direct/reuse captures byte-for-byte; see
 [measurements-o06-camera-stress.json](measurements-o06-camera-stress.json).
+A current-release deterministic 40-pose camera sweep now moves from inside the
+transmissive sphere through its surface and around to the outside at tick 300.
+Direct and reuse captures match byte-for-byte at all 40 poses; their per-frame
+temporal deltas also match across all 39 transitions. The owner review of this
+specific path is pending, so image parity does not yet close the continuous
+visual gate. See [report](measurements-o06-camera-sweep-current-release.json)
+and [side-by-side playback](../artifacts/o06/camera-sweep-current-release/direct-vs-reuse.gif).
 Three paired 120-second M1 Max/Metal routes in both Material Atelier and a mixed
 smoke/fire/material scene reduced GPU-render medians by 0.169 ms and 0.081 ms,
 respectively; optical-resolve medians fell by 0.166 ms and 0.076 ms. CPU frame-work

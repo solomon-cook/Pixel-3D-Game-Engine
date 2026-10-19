@@ -1,0 +1,1969 @@
+{
+  "workstream": "O06 current-release deterministic inside-to-outside glass camera sweep",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal",
+    "os": "macOS-27.0.1-arm64-arm-64bit"
+  },
+  "source_scene": "assets/scenes/materials.json",
+  "source_scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
+  "binary_path": "target/release/engine-lab",
+  "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+  "source_revision": "b812cb89ad11ad1f1e004beb7d2e0fa7d4374704",
+  "study_script": "scripts/optical_camera_sweep_study.py",
+  "study_script_sha256": "7d4d9a46ea6385d0abb82e0b9905bc6ae967f6272c947b9fdfa386e6465af030",
+  "optical_shader_sha256": "5dcff7826ffc79479843a173477c4187f2e094070ded21bbf942b7ed21f9e690",
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "tick": 300,
+  "camera_path": {
+    "frames": 40,
+    "center": [
+      0.0,
+      1.35,
+      1.7000000000000002
+    ],
+    "radius_start": 0.75,
+    "radius_end": 1.25,
+    "sphere_world_radius": 1.05,
+    "motion": "one horizontal orbit while camera radius moves linearly from inside to outside the transmissive sphere; camera always targets sphere center"
+  },
+  "direct_vs_reuse": {
+    "frames": [
+      {
+        "frame": 0,
+        "t": 0.0,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.0,
+            1.35,
+            2.45
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 1,
+        "t": 0.02564102564102564,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.12236501552611197,
+            1.35,
+            2.4529421875250748
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 2,
+        "t": 0.05128205128205128,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.24562068749986007,
+            1.35,
+            2.4357237786897734
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 3,
+        "t": 0.07692307692307693,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.366416347188356,
+            1.35,
+            2.3981480202265697
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 4,
+        "t": 0.10256410256410256,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.48136399378043176,
+            1.35,
+            2.3405791373425493
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 5,
+        "t": 0.1282051282051282,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.5871327616196438,
+            1.35,
+            2.263948672408456
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 6,
+        "t": 0.15384615384615385,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.6805443506428311,
+            1.35,
+            2.1697458482584557
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 7,
+        "t": 0.1794871794871795,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.7586667111151286,
+            1.35,
+            2.059991830408975
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 8,
+        "t": 0.20512820512820512,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.8189032618395673,
+            1.35,
+            1.9371982224415913
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 9,
+        "t": 0.23076923076923078,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.859074987200239,
+            1.35,
+            1.8043105886824913
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 10,
+        "t": 0.2564102564102564,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.877492902240417,
+            1.35,
+            1.6646382449039114
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 11,
+        "t": 0.28205128205128205,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.8730185938068923,
+            1.35,
+            1.5217719779816017
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 12,
+        "t": 0.3076923076923077,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.8451108347348942,
+            1.35,
+            1.3794917367115545
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 13,
+        "t": 0.3333333333333333,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.7938566201357354,
+            1.35,
+            1.2416666666666671
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 14,
+        "t": 0.358974358974359,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.719985381185961,
+            1.35,
+            1.1121501316581432
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 15,
+        "t": 0.38461538461538464,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.6248655818038262,
+            1.35,
+            0.9946725642233856
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 16,
+        "t": 0.41025641025641024,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.5104833852118101,
+            1.35,
+            0.8927351106024015
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 17,
+        "t": 0.4358974358974359,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.37940357749276504,
+            1.35,
+            0.8095070769712664
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 18,
+        "t": 0.46153846153846156,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.23471343997433544,
+            1.35,
+            0.7477301406013722
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 19,
+        "t": 0.48717948717948717,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            0.07995075737879835,
+            1.35,
+            0.7096321617897274
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 20,
+        "t": 0.5128205128205128,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -0.08098238005465311,
+            1.35,
+            0.6968532219418528
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 21,
+        "t": 0.5384615384615384,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -0.24391788860077968,
+            1.35,
+            0.710386224546524
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 22,
+        "t": 0.5641025641025641,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -0.40452964222738497,
+            1.35,
+            0.7505340357110856
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 23,
+        "t": 0.5897435897435898,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -0.5584482670437921,
+            1.35,
+            0.8168847183100094
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 24,
+        "t": 0.6153846153846154,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -0.7013797346777643,
+            1.35,
+            0.9083059394344126
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 25,
+        "t": 0.6410256410256411,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -0.8292245424693483,
+            1.35,
+            1.022959117151103
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 26,
+        "t": 0.6666666666666666,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -0.9381941874331415,
+            1.35,
+            1.1583333333333332
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 27,
+        "t": 0.6923076923076923,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -1.0249216506359355,
+            1.35,
+            1.3112984892033743
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 28,
+        "t": 0.717948717948718,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -1.086562710277643,
+            1.35,
+            1.4781766344663096
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 29,
+        "t": 0.7435897435897436,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -1.1208850941027224,
+            1.35,
+            1.6548298748772587
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 30,
+        "t": 0.7692307692307693,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -1.126342760995869,
+            1.35,
+            1.8367627718281554
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 31,
+        "t": 0.7948717948717948,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -1.1021329614231774,
+            1.35,
+            2.0192367053913136
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 32,
+        "t": 0.8205128205128205,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -1.048234158105636,
+            1.35,
+            2.197393292397133
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 33,
+        "t": 0.8461538461538461,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -0.9654233811444818,
+            1.35,
+            2.3663836452038556
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 34,
+        "t": 0.8717948717948718,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -0.8552721330679853,
+            1.35,
+            2.521500034610743
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 35,
+        "t": 0.8974358974358975,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -0.7201205346955261,
+            1.35,
+            2.6583063894644536
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 36,
+        "t": 0.9230769230769231,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -0.563029996899181,
+            1.35,
+            2.772764031079851
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 37,
+        "t": 0.9487179487179487,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -0.3877153001030856,
+            1.35,
+            2.8613491052045177
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 38,
+        "t": 0.9743589743589743,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -0.198457546189409,
+            1.35,
+            2.921158337750751
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 39,
+        "t": 1.0,
+        "camera": {
+          "id": "glass-orbit-sweep",
+          "position": [
+            -3.061616997868383e-16,
+            1.35,
+            2.95
+          ],
+          "target": [
+            0.0,
+            1.35,
+            1.7000000000000002
+          ],
+          "projection": {
+            "kind": "perspective",
+            "fov_degrees": 48.0
+          }
+        },
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "changed_pixel_frames": 0,
+    "mean_changed_pixels": 0,
+    "max_changed_pixels": 0,
+    "mean_rgb_mae_0_255": 0.0
+  },
+  "temporal_delta_comparison": {
+    "frame_pairs": [
+      {
+        "frame": 1,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 2,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 3,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 4,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 5,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 6,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 7,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 8,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 9,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 10,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 11,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 12,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 13,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 14,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 15,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 16,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 17,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 18,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 19,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 20,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 21,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 22,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 23,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 24,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 25,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 26,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 27,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 28,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 29,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 30,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 31,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 32,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 33,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 34,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 35,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 36,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 37,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 38,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "frame": 39,
+        "changed_pixels": 0,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          0,
+          0,
+          0
+        ]
+      }
+    ],
+    "pairs_with_changed_pixels": 0,
+    "mean_changed_pixels": 0,
+    "max_channel_error_0_255": 0
+  },
+  "artifacts": {
+    "playback": {
+      "path": "artifacts/o06/camera-sweep-current-release/direct-vs-reuse.gif",
+      "sha256": "66eeff6b56b3515f4cfb0fa5f8c9c1e10469587399b899526737badd6dcdd381"
+    },
+    "contact_sheet": {
+      "path": "artifacts/o06/camera-sweep-current-release/contact.png",
+      "sha256": "3466d174a425492b0a8facd84e5f625299359d619aafcdaee59acd7013e60df2"
+    }
+  },
+  "limitations": [
+    "Fixed-tick camera-pose sweep compares captures, not native playback performance.",
+    "Single scene, material and M1 Max/Metal adapter; Windows/DX12 and other adapters remain unverified.",
+    "The comparison checks direct/reuse parity, not owner approval of the art direction."
+  ]
+}

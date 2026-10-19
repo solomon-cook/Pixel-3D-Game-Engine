@@ -1,0 +1,99 @@
+{
+  "workstream": "O06 inside-glass and near-plane optical stress",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal"
+  },
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "tick": 300,
+  "cameras": {
+    "glass-inside-oblique": {
+      "id": "glass-inside-oblique",
+      "position": [
+        0.0,
+        1.35,
+        2.55
+      ],
+      "target": [
+        1.0,
+        1.35,
+        2.55
+      ],
+      "projection": {
+        "kind": "perspective",
+        "fov_degrees": 48.0
+      }
+    },
+    "glass-near-plane": {
+      "id": "glass-near-plane",
+      "position": [
+        0.0,
+        1.35,
+        2.85
+      ],
+      "target": [
+        0.0,
+        1.35,
+        1.7
+      ],
+      "projection": {
+        "kind": "perspective",
+        "fov_degrees": 48.0
+      }
+    }
+  },
+  "source_scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
+  "stress_scene_sha256": "36e8659ca6221ffbf228f9fd2c9ba2ea06392b994138a4bea01502c3c6295c87",
+  "shader_source_sha256": "5dcff7826ffc79479843a173477c4187f2e094070ded21bbf942b7ed21f9e690",
+  "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+  "study_script_sha256": "258a4fc1ee668fc7df9c7754450eca3079c012ea5b614cf95c0170b496f039bb",
+  "cases": {
+    "glass-inside-oblique": {
+      "changed_pixels": 0,
+      "pixel_count": 230400,
+      "mean_absolute_rgb_error_0_255": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "maximum_absolute_rgb_error_0_255": [
+        0,
+        0,
+        0
+      ],
+      "direct_sha256": "5f14b02f704c4959a1885fc6280de7d75f80bc2216099aa411fad8e19c9be7b7",
+      "reuse_sha256": "5f14b02f704c4959a1885fc6280de7d75f80bc2216099aa411fad8e19c9be7b7"
+    },
+    "glass-near-plane": {
+      "changed_pixels": 0,
+      "pixel_count": 230400,
+      "mean_absolute_rgb_error_0_255": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "maximum_absolute_rgb_error_0_255": [
+        0,
+        0,
+        0
+      ],
+      "direct_sha256": "86cf13581aac778f9ce05bd29d4d41ccea387d703929c5ffd01ecf82f0e494ba",
+      "reuse_sha256": "86cf13581aac778f9ce05bd29d4d41ccea387d703929c5ffd01ecf82f0e494ba"
+    }
+  },
+  "fix": "Transmissive backfaces are no longer discarded. The geometric normal/view relation selects entry versus exit and the refraction ratio; total internal reflection falls back to reflection.",
+  "visual_review": "The inside-to-oblique capture renders the environment through the exit interface. The near-plane sample shows no direct/reuse image difference. Contact sheet is sampled fixed-tick evidence.",
+  "limitations": [
+    "Two still cameras only; continuous inside-glass motion is not reviewed.",
+    "M1 Max/Metal only; Windows/DX12 and other adapters remain unverified.",
+    "The near-plane camera is 0.1 world units outside the glass sphere surface, approximating the renderer's 0.1 near clip distance."
+  ],
+  "contact_sheet": {
+    "path": "artifacts/o06/camera-stress-current-release/contact.png",
+    "sha256": "f3506736a3c254ab48e7f2b933a1f831d9244d4834b92921cc7dbbaf08e1799c"
+  }
+}

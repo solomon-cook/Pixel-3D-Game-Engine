@@ -1087,6 +1087,20 @@ continuous motion, native-window performance and other adapters remain open.
 Reproduce with `scripts/optical_camera_stress_study.py`; report:
 [measurements-o06-camera-stress.json](measurements-o06-camera-stress.json).
 
+## O06 current-release glass camera sweep (19 October 2026)
+
+The current-release direct and opaque-light-reuse paths were compared at 40
+matched 640×360 camera poses, seed 42, tick 300. The camera makes one orbit
+while moving radially from inside the transmissive sphere to outside its
+surface. Direct and reuse images are byte-identical at all 40 poses; comparing
+consecutive-frame deltas also finds zero changed pixels across all 39 pairs.
+This establishes current-release image and sampled temporal-delta parity for the
+path, not owner approval of the visual transition or native performance. The
+owner motion review is pending; Windows/DX12 and other adapters remain open.
+See the [measurement](measurements-o06-camera-sweep-current-release.json),
+[runner](../scripts/optical_camera_sweep_study.py) and
+[side-by-side playback](../artifacts/o06/camera-sweep-current-release/direct-vs-reuse.gif).
+
 ## Opaque heat cue over low terrain (18 October)
 
 The two-source opaque heat A/B initially produced identical images with the
