@@ -1,7 +1,7 @@
 {
   "version": 1,
   "date": "2026-10-19",
-  "source_revision": "3f6aec9cf21610c379023d4af4a9eee44bfd1af7",
+  "source_revision": "d9a85308afbaa5ff3ed5bd7609e4055b8c4c725f",
   "host": {
     "device": "Apple M1 Max",
     "operating_system": "macOS 27.0.1",
@@ -10,7 +10,8 @@
   "target": "x86_64-pc-windows-gnu",
   "commands": [
     "cargo check --locked --workspace --target x86_64-pc-windows-gnu",
-    "cargo build --locked --release --workspace --target x86_64-pc-windows-gnu"
+    "cargo build --locked --release --workspace --target x86_64-pc-windows-gnu",
+    "cargo run --locked -p engine-lab -- describe"
   ],
   "result": "passed",
   "artifact": {
@@ -18,10 +19,18 @@
     "file_type": "PE32+ executable, x86-64, Windows",
     "sha256": "6cd325e371f3b6850387a0454993722c99e14dce54735c121640a7224961cfc4"
   },
-  "scope": "Confirms current source cross-compiles and links into a Windows x64 executable. This Mac run does not execute the binary, create a DX12 device, render, or establish image, motion, performance, or target-hardware acceptance.",
+  "scope": "The current checkout passed the locked workspace check and release link for x86_64 Windows GNU, and the Mac-hosted engine-lab describe output was valid with the required shared operations and authoritative scene schema. The release PE is byte-identical to the earlier artifact because engine source, Cargo.lock and rust-toolchain.toml are unchanged since its prior link. This does not execute Windows, create a DX12 device, render, or establish Windows image, motion, performance, or target-hardware acceptance.",
   "open_gates": [
     "Windows execution and DX12 rendering",
     "Windows image and motion review",
     "Windows performance on target hardware"
-  ]
+  ],
+  "validation": {
+    "current_source_workspace_check": "passed",
+    "current_source_release_link": "passed",
+    "engine_lab_describe_json": "passed",
+    "required_protocol_operations": "capture_frame, describe, get_metrics, inspect_scene, set_object_transform, set_shadow_cache, set_tile_lists, set_simulation_batching",
+    "engine_sources_changed_since_prior_windows_pe": false,
+    "toolchain": "Rust 1.99.1"
+  }
 }

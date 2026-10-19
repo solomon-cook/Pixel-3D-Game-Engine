@@ -1210,9 +1210,11 @@ decisions and unresolved visual/backend gates are consolidated in the
 - macOS ARM64 and Windows x64 GNU release builds succeed. The current macOS
   release build and `engine-lab describe` protocol check, including the
   minimize-button field, are recorded in
-  [the current macOS build report](measurements-macos-build-current.json). The current source,
-  including the native minimize-button diagnostic, cross-checks and links as a
-  Windows x64 PE executable; see [current Windows build report](measurements-windows-build-current.json).
+  [the current macOS build report](measurements-macos-build-current.json). The
+  current checkout passes a Windows GNU workspace check and release link, and
+  its PE hash matches the previously recorded artifact because no engine,
+  lockfile or toolchain files changed since that build. See [current Windows
+  build report](measurements-windows-build-current.json).
   This Mac cross-build does not execute Windows or establish DX12 rendering,
   image/motion quality or target-hardware performance. Initial repository CI
   passed on both hosted platforms, but predates this current source revision.

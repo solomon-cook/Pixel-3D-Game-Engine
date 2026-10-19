@@ -94,9 +94,10 @@ The consolidated measured decisions and remaining per-track gates are in the
   optical-combination, operation-counter and
   cross-adapter gates in
   [O01-O08_FOLLOWUP_PLAN.md](docs/O01-O08_FOLLOWUP_PLAN.md) before promoting
-  opt-in approximations or expanding the emitter cap. The current source
-  cross-checks and links as a Windows x64 PE, but still needs execution and
-  DX12 rendering on Windows; see [build report](docs/measurements-windows-build-current.json).
+  opt-in approximations or expanding the emitter cap. Current-source `cargo check`
+  and release linking succeed for x86_64 Windows GNU, producing a Windows x64 PE;
+  the binary still needs execution and DX12 rendering on Windows. See the
+  [current build report](docs/measurements-windows-build-current.json).
   The owner accepted motion and visual continuity in the 6-second 20 fps
   clearing-orbit preview in [its report](docs/measurements-owner-motion-review-preview.json).
   Separate six-second, 20 fps offscreen reviews of projected-detail LOD and the
