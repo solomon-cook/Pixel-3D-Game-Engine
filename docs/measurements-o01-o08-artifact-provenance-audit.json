@@ -4,7 +4,7 @@
   "purpose": "Audit whether recent renderer correctness and fallback rechecks can be attributed to the current validated engine source and release binary.",
   "current_validation_source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
   "current_release_binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
-  "audited_head_revision": "782d6a8860c2d20354001b70cf417ff8a2c12ffc",
+  "audited_head_revision": "1cddb80a5c926852ec23d366c4c05d815c56a28e",
   "engine_scope": [
     "crates",
     "Cargo.lock",
@@ -120,9 +120,19 @@
       "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
       "binary_matches_current_release": true,
       "disposition": "current-release artifact audit verifies tick/camera alignment, effect-count parity and copy/no-copy byte identity across all four path/format pairs"
+    },
+    {
+      "workstream": "O05 absorption-cache current-release invalidation rerun",
+      "report": "docs/measurements-o05-invalidation-current-release.json",
+      "binary_path": "target/release/engine-lab",
+      "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+      "workspace_revision_at_run": "1cddb80a5c926852ec23d366c4c05d815c56a28e",
+      "engine_source_worktree_status": [],
+      "matches_current_release_binary": true,
+      "disposition": "current-release discrete invalidation comparison: fire state matches at all 13 checkpoints for both 8-cubed and 16-cubed cache sizes; this does not establish sustained performance or continuous visual acceptance"
     }
   ],
-  "conclusion": "The O04, O06xO08 and O07 full-orbit review reports, the O03 current native fire-bound report, and the 400-frame O06xO08 artifact correctness audit listed here carry the current audited release hash. The 4247485106ee2d30... fixed-tick report group has no source revision/path and is not present among current binaries. The O08 RG16 fallback recheck explicitly predates renderer/session/window source changes. Keep those records as exact-build evidence, not current-release proof. Rerun O05 invalidation and sustained performance on the current release; rerun O08 RG16 fallback on the current release before closing that gate. Recheck any O03/O04/O06xO08 fixed-tick claims that rely only on the untraceable group.",
+  "conclusion": "The O04, O06xO08 and O07 full-orbit review reports, the O03 current native fire-bound report, and the 400-frame O06xO08 artifact correctness audit carry the current audited release hash. The current-release O05 invalidation rerun now also matches the audited release binary and closes discrete invalidation correctness. The 4247485106ee2d30... fixed-tick report group remains untraceable and is not present among current binaries; the O08 RG16 fallback report explicitly predates renderer/session/window source changes. Keep those historical records as exact-build evidence, not current-release proof. O05 sustained performance remains open; rerun O08 RG16 fallback on the current release before closing that gate. Recheck any O03/O04/O06xO08 fixed-tick claims that rely only on the untraceable group.",
   "limitations": [
     "Hash/source audit only; no renderer or adapter execution occurred.",
     "Current-source release parity is established for the current release binary only; Windows/DX12 and other adapters remain unverified."

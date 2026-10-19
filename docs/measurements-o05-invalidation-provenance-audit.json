@@ -48,8 +48,9 @@
   ],
   "engine_source_changes_since_current_validation": [],
   "engine_scope_unchanged_since_current_validation": true,
-  "interpretation": "The fixed-tick report is valid evidence for its recorded executable. Its runner hash matched the checked-in runner at the audited head, but the current runner has since been improved to write executable path/hash, workspace revision, engine-source worktree status and runner provenance. The historical report has no executable path or source revision and its binary hash matches none of the available executables. Do not use it as independently proven current-source correctness. Rerun the O05 invalidation study with the current release binary; compare its exact binary hash with the current release validation before closing the current-source correctness gate.",
+  "interpretation": "The historical fixed-tick report is valid evidence for its recorded executable. Its runner hash matched the checked-in runner at the audited head, but the current runner was improved to record executable path/hash, workspace revision, engine-source worktree status and runner provenance. The historical report has no executable path or source revision and its binary hash matches none of the available executables. The current-release rerun in measurements-o05-invalidation-current-release.json supersedes it for discrete invalidation correctness; current-source sustained performance remains open.",
   "limitations": [
     "This audit hashes available executables and checks Git source paths; it does not rerun rendering or verify the historical binary contents."
-  ]
+  ],
+  "superseded_for_current_source_correctness_by": "docs/measurements-o05-invalidation-current-release.json"
 }

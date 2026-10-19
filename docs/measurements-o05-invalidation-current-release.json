@@ -1,0 +1,577 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "workstream": "O05 current-release absorption-cache invalidation correctness",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "binary_path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/release/engine-lab",
+  "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+  "workspace_revision_at_run": "1cddb80a5c926852ec23d366c4c05d815c56a28e",
+  "engine_source_worktree_status": [],
+  "runner_path": "scripts/absorption_cache_invalidation_study.py",
+  "runner_sha256": "439f8df07a746b530ab4c928321c2c52738c4929d038bb268a1c6879db282165",
+  "scene": "assets/scenes/clearing.json",
+  "scene_sha256": "e8ad8350d1fbdf1194b9ec26b5ebe5c080244ac3bc722ebaa0fdf13cc554746f",
+  "camera": "smoke-close",
+  "seed": 42,
+  "resolution": [
+    640,
+    360
+  ],
+  "method": "Direct and cached serve sessions use the same scene, seed, fixed ticks and ordered paused edits. Density edits are followed by one explicit fixed tick while still paused so the smoke volume is recomputed; captures are compared at each matching checkpoint.",
+  "run_reports": {
+    "8": "artifacts/o05/current-release-invalidation-8/report.json",
+    "16": "artifacts/o05/current-release-invalidation-16/report.json"
+  },
+  "summary_by_cache_resolution": {
+    "8": {
+      "cache_resolution": [
+        8,
+        8,
+        8
+      ],
+      "checkpoints": 13,
+      "fire_state_parity_all_checkpoints": true,
+      "candidate_cache_bytes": [
+        4096
+      ],
+      "mean_changed_pixels_per_checkpoint": 19736.23076923077,
+      "mean_rgb_mae_0_255_across_checkpoints": 0.21719439992877493,
+      "maximum_channel_error_0_255": 21
+    },
+    "16": {
+      "cache_resolution": [
+        16,
+        16,
+        16
+      ],
+      "checkpoints": 13,
+      "fire_state_parity_all_checkpoints": true,
+      "candidate_cache_bytes": [
+        32768
+      ],
+      "mean_changed_pixels_per_checkpoint": 11878.384615384615,
+      "mean_rgb_mae_0_255_across_checkpoints": 0.06713764245014245,
+      "maximum_channel_error_0_255": 18
+    }
+  },
+  "comparison": {
+    "lower_mean_rgb_error_checkpoints": 13,
+    "fewer_changed_pixels_checkpoints": 13
+  },
+  "checkpoints_by_cache_resolution": {
+    "8": [
+      {
+        "id": "tick_300",
+        "fire_state_identical": true,
+        "direct_image_sha256": "b375ce559971ebb3cd66bf8f483de7d39860c4f156052066b54e5e9c3e73a852",
+        "cached_image_sha256": "74f0f5eaa18de2f60e18b835af03d006498ed2f827ab40faa07ccabcfb39fef7",
+        "changed_pixel_count": 18474,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.30727430555555557,
+          0.17623697916666667,
+          0.13832465277777778
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          19,
+          16,
+          11
+        ],
+        "candidate_cache_bytes": 4096
+      },
+      {
+        "id": "paused_density_change",
+        "fire_state_identical": true,
+        "direct_image_sha256": "4175d0eb675da09143f6c8304fd211747601c382dd5d5a86cc4db1998e3364bf",
+        "cached_image_sha256": "e1ae0ce3252192b49307e4e5811ca71dbddcc14ef394148e1d4c39be79b019a3",
+        "changed_pixel_count": 18509,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.31772569444444443,
+          0.18031684027777778,
+          0.14299913194444444
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          20,
+          17,
+          11
+        ],
+        "candidate_cache_bytes": 4096
+      },
+      {
+        "id": "rapid_density_edits",
+        "fire_state_identical": true,
+        "direct_image_sha256": "557a015ee6f9e97b83542c2838762dbcce4592730e5fc708f525b8bd4a08ec77",
+        "cached_image_sha256": "06014216ab29b950398214c74aae042aa3502a14a4bbb3273d50f87fce238193",
+        "changed_pixel_count": 18541,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.32479600694444444,
+          0.18327690972222221,
+          0.14641493055555554
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          20,
+          17,
+          11
+        ],
+        "candidate_cache_bytes": 4096
+      },
+      {
+        "id": "primary_light_motion",
+        "fire_state_identical": true,
+        "direct_image_sha256": "9c953531e94c0dbe48641b9e1b13a191a03f517e00367c6ee990158fbd9900e2",
+        "cached_image_sha256": "4374dcb8e5b2b425b3214d39676fbe5d5b9b835ff338095b34bc5d8dc00f9c4c",
+        "changed_pixel_count": 20591,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.37154947916666664,
+          0.211953125,
+          0.16426215277777778
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          19,
+          17,
+          11
+        ],
+        "candidate_cache_bytes": 4096
+      },
+      {
+        "id": "primary_light_range",
+        "fire_state_identical": true,
+        "direct_image_sha256": "68edd6879b7657ad222994e5efe32dabe03be3a6e9eaacf9f5a2eb32da534e29",
+        "cached_image_sha256": "215245e03374df990b1cbc6f2b6e89fac57e9f273b91ccda08cab8ccc7cbdb02",
+        "changed_pixel_count": 20573,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.37172743055555557,
+          0.21180989583333334,
+          0.1646701388888889
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          19,
+          17,
+          11
+        ],
+        "candidate_cache_bytes": 4096
+      },
+      {
+        "id": "live_flicker",
+        "fire_state_identical": true,
+        "direct_image_sha256": "7fb36560d433f108e14f3eeaf01e7da42a4488dc5ca46554c3a3d65a611c2a72",
+        "cached_image_sha256": "703bef374b3eb74fbd32e503840da217eda6f3030c1351459fa301df5ac012a9",
+        "changed_pixel_count": 20596,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.33632378472222224,
+          0.1905078125,
+          0.15930121527777777
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          19,
+          16,
+          11
+        ],
+        "candidate_cache_bytes": 4096
+      },
+      {
+        "id": "pause_confirmation",
+        "fire_state_identical": true,
+        "direct_image_sha256": "7fb36560d433f108e14f3eeaf01e7da42a4488dc5ca46554c3a3d65a611c2a72",
+        "cached_image_sha256": "703bef374b3eb74fbd32e503840da217eda6f3030c1351459fa301df5ac012a9",
+        "changed_pixel_count": 20596,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.33632378472222224,
+          0.1905078125,
+          0.15930121527777777
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          19,
+          16,
+          11
+        ],
+        "candidate_cache_bytes": 4096
+      },
+      {
+        "id": "shader_reload",
+        "fire_state_identical": true,
+        "direct_image_sha256": "04c6ee226300edb74e2a2db807e204374fb1dfdfb6e0af1f04a63d5826881675",
+        "cached_image_sha256": "b70e5577518cb1da236d20c8bbd79a8633b45921d31e9b4d5bd1f8218fbeaadd",
+        "changed_pixel_count": 17175,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.23879340277777777,
+          0.13885850694444443,
+          0.10752170138888889
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          21,
+          16,
+          11
+        ],
+        "candidate_cache_bytes": 4096
+      },
+      {
+        "id": "reset_seed_42_tick_300",
+        "fire_state_identical": true,
+        "direct_image_sha256": "da8d5234c9bbd9ac384e057fce2c06d74d78c9ab33a34af5150c5fb327a94d96",
+        "cached_image_sha256": "72a86a5cab213b43394a11b48a49151bf5e1e43c8b01c127d9d9d52a3396418b",
+        "changed_pixel_count": 20586,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.3480902777777778,
+          0.19399739583333334,
+          0.1726779513888889
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          19,
+          16,
+          11
+        ],
+        "candidate_cache_bytes": 4096
+      },
+      {
+        "id": "ember_motion_1",
+        "fire_state_identical": true,
+        "direct_image_sha256": "f4c5b2f8b539ae7b16a3a083cbd0219d4818817b0907dc82306bfcca1bc71941",
+        "cached_image_sha256": "9003817f222b5d77cccadeb385a9d7e5508e450da4630a7dba7aceadb4889891",
+        "changed_pixel_count": 20610,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.2948263888888889,
+          0.16927083333333334,
+          0.14745225694444444
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          19,
+          15,
+          11
+        ],
+        "candidate_cache_bytes": 4096
+      },
+      {
+        "id": "ember_motion_2",
+        "fire_state_identical": true,
+        "direct_image_sha256": "12ebf2747af557112882fa243d8bce8a13e5c3e67c24c1102f182834f8d73230",
+        "cached_image_sha256": "0a66555cdc9648c28c4ce37987e32cf16364fa56206ca47bb45000c3065d71da",
+        "changed_pixel_count": 21567,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.35003038194444447,
+          0.1996484375,
+          0.17022569444444444
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          19,
+          12,
+          11
+        ],
+        "candidate_cache_bytes": 4096
+      },
+      {
+        "id": "ember_motion_3",
+        "fire_state_identical": true,
+        "direct_image_sha256": "4579815c333a27e46c2114858cb764fa941a7c7628a83caac3dc2cc57c967ed4",
+        "cached_image_sha256": "aee595f3a62344730a4830a37ff249fe749eb8fdf6b7eb37e9d25e6351e43bff",
+        "changed_pixel_count": 21578,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.3241102430555556,
+          0.18338541666666666,
+          0.1609157986111111
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          20,
+          14,
+          12
+        ],
+        "candidate_cache_bytes": 4096
+      },
+      {
+        "id": "ember_motion_4",
+        "fire_state_identical": true,
+        "direct_image_sha256": "04c6ee226300edb74e2a2db807e204374fb1dfdfb6e0af1f04a63d5826881675",
+        "cached_image_sha256": "b70e5577518cb1da236d20c8bbd79a8633b45921d31e9b4d5bd1f8218fbeaadd",
+        "changed_pixel_count": 17175,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.23879340277777777,
+          0.13885850694444443,
+          0.10752170138888889
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          21,
+          16,
+          11
+        ],
+        "candidate_cache_bytes": 4096
+      }
+    ],
+    "16": [
+      {
+        "id": "tick_300",
+        "fire_state_identical": true,
+        "direct_image_sha256": "b375ce559971ebb3cd66bf8f483de7d39860c4f156052066b54e5e9c3e73a852",
+        "cached_image_sha256": "01b37a143d91311a57da10553fca12b4128c8141ed1dd3d334700a3b473a8f7e",
+        "changed_pixel_count": 9675,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.08005642361111111,
+          0.04681857638888889,
+          0.04021267361111111
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          16,
+          9,
+          11
+        ],
+        "candidate_cache_bytes": 32768
+      },
+      {
+        "id": "paused_density_change",
+        "fire_state_identical": true,
+        "direct_image_sha256": "4175d0eb675da09143f6c8304fd211747601c382dd5d5a86cc4db1998e3364bf",
+        "cached_image_sha256": "af2fbb4b85dcdf3b451d387493038b452526bf7850447af465c290042bbbaac0",
+        "changed_pixel_count": 9910,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.07907552083333333,
+          0.04639322916666667,
+          0.03990017361111111
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          16,
+          9,
+          11
+        ],
+        "candidate_cache_bytes": 32768
+      },
+      {
+        "id": "rapid_density_edits",
+        "fire_state_identical": true,
+        "direct_image_sha256": "557a015ee6f9e97b83542c2838762dbcce4592730e5fc708f525b8bd4a08ec77",
+        "cached_image_sha256": "b052e5262e7d453a350db033462425118492648cc9d85fefdb752b33d8db15b8",
+        "changed_pixel_count": 9975,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.07815538194444445,
+          0.04645399305555555,
+          0.040230034722222224
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          16,
+          9,
+          11
+        ],
+        "candidate_cache_bytes": 32768
+      },
+      {
+        "id": "primary_light_motion",
+        "fire_state_identical": true,
+        "direct_image_sha256": "9c953531e94c0dbe48641b9e1b13a191a03f517e00367c6ee990158fbd9900e2",
+        "cached_image_sha256": "099899e2cb969c648660440fee72c71d4ff68d61b2080c56779894c3f5e81303",
+        "changed_pixel_count": 11538,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.08851128472222222,
+          0.05310329861111111,
+          0.0444140625
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          16,
+          9,
+          11
+        ],
+        "candidate_cache_bytes": 32768
+      },
+      {
+        "id": "primary_light_range",
+        "fire_state_identical": true,
+        "direct_image_sha256": "68edd6879b7657ad222994e5efe32dabe03be3a6e9eaacf9f5a2eb32da534e29",
+        "cached_image_sha256": "9946a2e1375eec172f7c22a80d2482dc5db8d78a06dcb00dfd8dc0ec37dee721",
+        "changed_pixel_count": 11608,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.08973090277777777,
+          0.05358072916666667,
+          0.04503038194444445
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          16,
+          9,
+          11
+        ],
+        "candidate_cache_bytes": 32768
+      },
+      {
+        "id": "live_flicker",
+        "fire_state_identical": true,
+        "direct_image_sha256": "7fb36560d433f108e14f3eeaf01e7da42a4488dc5ca46554c3a3d65a611c2a72",
+        "cached_image_sha256": "d0da71372e32ce8d5b0d271689cbd84d75aade994bbda296d0521a588d22e65f",
+        "changed_pixel_count": 11339,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.08166232638888889,
+          0.04893663194444445,
+          0.04182291666666667
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          17,
+          10,
+          11
+        ],
+        "candidate_cache_bytes": 32768
+      },
+      {
+        "id": "pause_confirmation",
+        "fire_state_identical": true,
+        "direct_image_sha256": "7fb36560d433f108e14f3eeaf01e7da42a4488dc5ca46554c3a3d65a611c2a72",
+        "cached_image_sha256": "d0da71372e32ce8d5b0d271689cbd84d75aade994bbda296d0521a588d22e65f",
+        "changed_pixel_count": 11339,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.08166232638888889,
+          0.04893663194444445,
+          0.04182291666666667
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          17,
+          10,
+          11
+        ],
+        "candidate_cache_bytes": 32768
+      },
+      {
+        "id": "shader_reload",
+        "fire_state_identical": true,
+        "direct_image_sha256": "04c6ee226300edb74e2a2db807e204374fb1dfdfb6e0af1f04a63d5826881675",
+        "cached_image_sha256": "7b6d89b7dd2e3f0bdc81b8a5a6c8599f7019da27c46fcd2966a374a11518132c",
+        "changed_pixel_count": 16654,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.1647829861111111,
+          0.0896875,
+          0.08007378472222222
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          16,
+          9,
+          11
+        ],
+        "candidate_cache_bytes": 32768
+      },
+      {
+        "id": "reset_seed_42_tick_300",
+        "fire_state_identical": true,
+        "direct_image_sha256": "da8d5234c9bbd9ac384e057fce2c06d74d78c9ab33a34af5150c5fb327a94d96",
+        "cached_image_sha256": "e64ad969b03ee01708e832d72a016b786242ef52c67d0302a691360d1f068e7d",
+        "changed_pixel_count": 11495,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.09038194444444445,
+          0.052508680555555555,
+          0.04648871527777778
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          18,
+          10,
+          11
+        ],
+        "candidate_cache_bytes": 32768
+      },
+      {
+        "id": "ember_motion_1",
+        "fire_state_identical": true,
+        "direct_image_sha256": "f4c5b2f8b539ae7b16a3a083cbd0219d4818817b0907dc82306bfcca1bc71941",
+        "cached_image_sha256": "4829f8a8b7b2c3f69149e9a62b01c993a455d63f5555b5fe3245d702e05b5d00",
+        "changed_pixel_count": 12007,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.09951822916666667,
+          0.05670572916666667,
+          0.0505078125
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          17,
+          9,
+          11
+        ],
+        "candidate_cache_bytes": 32768
+      },
+      {
+        "id": "ember_motion_2",
+        "fire_state_identical": true,
+        "direct_image_sha256": "12ebf2747af557112882fa243d8bce8a13e5c3e67c24c1102f182834f8d73230",
+        "cached_image_sha256": "30f46d20c86806eb77642566b10349f67b30a3b08ca77f8f061ed86c59dc97b2",
+        "changed_pixel_count": 12931,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.09364583333333333,
+          0.057565104166666665,
+          0.048138020833333336
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          18,
+          10,
+          11
+        ],
+        "candidate_cache_bytes": 32768
+      },
+      {
+        "id": "ember_motion_3",
+        "fire_state_identical": true,
+        "direct_image_sha256": "4579815c333a27e46c2114858cb764fa941a7c7628a83caac3dc2cc57c967ed4",
+        "cached_image_sha256": "24f4fa92b7b795090df847cc4bc2a45f3fa4eb1a0999662ebbe3d15669dd8d5d",
+        "changed_pixel_count": 9294,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.06381510416666666,
+          0.04009982638888889,
+          0.033394097222222224
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          17,
+          10,
+          12
+        ],
+        "candidate_cache_bytes": 32768
+      },
+      {
+        "id": "ember_motion_4",
+        "fire_state_identical": true,
+        "direct_image_sha256": "04c6ee226300edb74e2a2db807e204374fb1dfdfb6e0af1f04a63d5826881675",
+        "cached_image_sha256": "7b6d89b7dd2e3f0bdc81b8a5a6c8599f7019da27c46fcd2966a374a11518132c",
+        "changed_pixel_count": 16654,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.1647829861111111,
+          0.0896875,
+          0.08007378472222222
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          16,
+          9,
+          11
+        ],
+        "candidate_cache_bytes": 32768
+      }
+    ]
+  },
+  "visual_inspection": {
+    "contact_sheet": "artifacts/o05/o05-current-release-invalidation-contact.png",
+    "finding": "At the reviewed checkpoints, both caches retain the scene composition; 16^3 is visually closer to direct sampling than 8^3, especially in smoke. This is an internal offscreen inspection, not owner acceptance."
+  },
+  "disposition": "Current-release invalidation behavior preserves identical fire state at all 13 checkpoints for both cache sizes. Cached images are approximate, and 16^3 has lower image error at all 13 checkpoints while using 28,672 more cache bytes than 8^3. Keep disabled by default pending sustained performance and an owner visual review if promotion is reconsidered.",
+  "limitations": [
+    "Discrete checkpoints do not establish continuous temporal image quality.",
+    "Offscreen headless capture does not establish native playback or performance.",
+    "No sustained performance study or owner visual review was run here.",
+    "Metal only; other adapters and Windows/DX12 remain unverified.",
+    "A separate native engine-lab process remained live during capture; no cache-build or performance timing is interpreted from this correctness rerun."
+  ]
+}

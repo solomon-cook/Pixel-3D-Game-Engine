@@ -972,6 +972,26 @@ default. Evidence is in
 [measurements-o05-refresh-policy.json](measurements-o05-refresh-policy.json);
 the reproducible study is `scripts/absorption_cache_refresh_study.py`.
 
+## O05 current-release invalidation recheck (19 October 2026)
+
+The updated invalidation runner compared direct sampling with 8³ and 16³ caches
+on the release binary at 640×360, seed 42 and the `smoke-close` camera. It
+matched fire state at all 13 fixed-tick checkpoints for both sizes, including
+density edits, primary-light changes, ember motion, shader reload and reset.
+The binary hash is `740bc2c4…`, matching the audited release; the report records
+the binary path, workspace revision and a clean engine-source worktree. The
+8³/16³ caches use 4,096/32,768 bytes. Mean RGB MAE over the 13 checkpoints is
+0.217/255 and 0.067/255, with maximum channel errors of 21/255 and 18/255;
+16³ has lower RGB error and fewer changed pixels at every checkpoint. I
+inspected direct/8³/16³ contact-sheet samples; the differences are subtle at
+that scale, but this is not owner acceptance or continuous visual review. The
+rerun closes discrete current-release invalidation correctness. It does not
+measure sustained cost or justify promotion; historical timing showed no
+whole-render benefit, so keep the cache disabled pending current-release
+sustained timing. See [report](measurements-o05-invalidation-current-release.json),
+[contact sheet](../artifacts/o05/o05-current-release-invalidation-contact.png)
+and [artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json).
+
 ## O06 camera-inside and near-plane follow-up (18 October)
 
 The optical pass previously discarded transmissive backfaces, so an inside-glass
