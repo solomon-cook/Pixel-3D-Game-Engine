@@ -1027,6 +1027,15 @@ visually close; continuous playback acceptance remains open. See
 [`optical_factorial_temporal_study.py`](../scripts/optical_factorial_temporal_study.py)
 and [`optical_reuse_temporal_guard_study.py`](../scripts/optical_reuse_temporal_guard_study.py).
 
+A 19 October current-release 120-frame/20 fps rerun preserved all effect counts.
+RGBA16F direct/no-copy and lighting-reuse variants matched the direct/copy
+baseline byte-for-byte on the route. Compact HDR measured 0.3422/255 mean frame
+error, 0.4376/255 mean temporal-change error and 29/255 maximum channel error;
+the same image error appears with and without lighting reuse. The labeled
+four-panel review animation is available for owner review; it is still pending
+and does not establish native presentation quality or performance. See
+[current-release report](measurements-o06-o08-factorial-temporal-current-build.json).
+
 A new three-pair 120-second offscreen comparison for exact-depth reuse shows
 median GPU-render +0.027 ms and optical-resolve +0.023 ms. Serial frame-work
 has a mixed -0.024 ms median delta; this is not a whole-GPU-render win. Keep the

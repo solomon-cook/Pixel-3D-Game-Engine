@@ -463,6 +463,15 @@ new workload or backend measurement that demonstrates a total-cost opportunity.
    [factorial](../scripts/optical_factorial_temporal_study.py) and
    [guard](../scripts/optical_reuse_temporal_guard_study.py).
 
+   **19 October current-release review sequence:** 120 matched frames at 20 fps
+   on the same 640×360 route preserve all effect counts. Lighting reuse and
+   direct/no-copy are byte-identical to baseline across the RGBA16F sequence;
+   compact HDR has 0.3422/255 mean frame error, 0.4376/255 mean temporal-change
+   error and a 29/255 peak channel difference, shared by direct and reuse
+   variants. The paired four-panel playback review is pending. This is offscreen
+   image-quality evidence only. See
+   [current-release report](measurements-o06-o08-factorial-temporal-current-build.json).
+
    A follow-up three-pair 120-second offscreen timing comparison using exact
    depth shows median GPU-render +0.027 ms and optical-resolve +0.023 ms; the
    median serial frame-work delta is -0.024 ms with mixed pair results. This

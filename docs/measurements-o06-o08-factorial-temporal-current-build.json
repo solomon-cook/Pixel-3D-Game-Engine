@@ -1,0 +1,175 @@
+{
+  "date": "2026-10-19",
+  "workstream": "O06 x O08 factorial temporal comparison",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "route": "mixed-smoke-material-orbit",
+  "camera": "mixed-close",
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "start_tick": 300,
+  "end_tick": 657,
+  "frames": 120,
+  "fps": 20.0,
+  "baseline": "direct_copy_rgba16",
+  "baseline_scene_sha256": "3020c76e7c948cbfa130a72bcd6c39ece326750bc5f12faaa76013c9a9b7a768",
+  "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+  "capture_script_sha256": "632e74b9f59f88d65d33665fc5eb8ef6220222a8bad55d0133007141a2006b7e",
+  "study_script_sha256": "23b17be24b42255421f0e17972eed8aaf736dce574ded893f9f68d7159b8b1e1",
+  "shader_sha256": "5dcff7826ffc79479843a173477c4187f2e094070ded21bbf942b7ed21f9e690",
+  "variants": {
+    "direct_copy_rgba16": {
+      "scene_sha256": "3020c76e7c948cbfa130a72bcd6c39ece326750bc5f12faaa76013c9a9b7a768",
+      "frame_count": 120,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.0,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 0.0,
+      "temporal_change_magnitude_rgb_mae_mean": 0.0,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "maximum_channel_difference": 0,
+      "maximum_changed_pixels": 0,
+      "sequence_sha256": "5f5f367bf9bf50fa8647dc596546b26fa9a084f9d343144a9f68715f5c994d40"
+    },
+    "reuse_copy_rgba16": {
+      "scene_sha256": "4ecfb8418f00ddd2b06fe991beb8e4265dcf7911f1666c3b70ec2be5d1e9c9ac",
+      "frame_count": 120,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.0,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 0.0,
+      "temporal_change_magnitude_rgb_mae_mean": 0.0,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "maximum_channel_difference": 0,
+      "maximum_changed_pixels": 0,
+      "sequence_sha256": "dfad68fc4157093a5858f8ca8e80e979bd3021a60ec1838601a6d80e5cd78d3d"
+    },
+    "direct_no_copy_rgba16": {
+      "scene_sha256": "e12fe40fce0a077d6cd9432acb42491a49b0b11006c519b380c3a817d1cbb3f4",
+      "frame_count": 120,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.0,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 0.0,
+      "temporal_change_magnitude_rgb_mae_mean": 0.0,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "maximum_channel_difference": 0,
+      "maximum_changed_pixels": 0,
+      "sequence_sha256": "e109ef521e16ca3d2ec4d05f77999881502fef7d112570db4996f551b81778c3"
+    },
+    "reuse_no_copy_rgba16": {
+      "scene_sha256": "10fa9f03d1c9392f755e4acb3f4dcbe0a0299706e5294f059c8b7d02fc4a6802",
+      "frame_count": 120,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.0,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 0.0,
+      "temporal_change_magnitude_rgb_mae_mean": 0.0,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "maximum_channel_difference": 0,
+      "maximum_changed_pixels": 0,
+      "sequence_sha256": "da97eb39ef6a484dab9238abcb87de842f3cd630d589937aedd3b7902d6fcd0a"
+    },
+    "direct_copy_rg11b10": {
+      "scene_sha256": "d73a3ebd12160bb380914b71939101358e99177987c8254db1ea6923449b640b",
+      "frame_count": 120,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.3422159770447531,
+      "frame_rgb_mae_p95": 0.38015335648148146,
+      "frame_rgb_mae_max": 0.3869574652777778,
+      "temporal_change_magnitude_rgb_mae_mean": 0.4375657242063492,
+      "temporal_change_magnitude_rgb_mae_p95": 0.4685691550925926,
+      "maximum_channel_difference": 29,
+      "maximum_changed_pixels": 131755,
+      "sequence_sha256": "329dd4f0ffc6172c041f0cc3ee18c85c9c751ad580b6d7a7981ffa56b4d0e3ca"
+    },
+    "reuse_copy_rg11b10": {
+      "scene_sha256": "53c150b4663c4ae494f6a98e66a7f4f2209cf8b275467dc546c04c3703781a8f",
+      "frame_count": 120,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.34221598910108025,
+      "frame_rgb_mae_p95": 0.38015335648148146,
+      "frame_rgb_mae_max": 0.3869574652777778,
+      "temporal_change_magnitude_rgb_mae_mean": 0.4375657242063492,
+      "temporal_change_magnitude_rgb_mae_p95": 0.4685691550925926,
+      "maximum_channel_difference": 29,
+      "maximum_changed_pixels": 131755,
+      "sequence_sha256": "1a4e567737ddfafb3a2e3f0bac30fd09248b5d610c5fb5b2918a6ba65c2c0b17"
+    },
+    "direct_no_copy_rg11b10": {
+      "scene_sha256": "78417f05f21ce136212290e34b8b955bd23149154515d2e1b8b43aa96207d8d0",
+      "frame_count": 120,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.3422159770447531,
+      "frame_rgb_mae_p95": 0.38015335648148146,
+      "frame_rgb_mae_max": 0.3869574652777778,
+      "temporal_change_magnitude_rgb_mae_mean": 0.4375657242063492,
+      "temporal_change_magnitude_rgb_mae_p95": 0.4685691550925926,
+      "maximum_channel_difference": 29,
+      "maximum_changed_pixels": 131755,
+      "sequence_sha256": "52f4386ae2fd19a4918c951b0b05e12426e0c308eb69d8330fb97cdeb5614ae5"
+    },
+    "reuse_no_copy_rg11b10": {
+      "scene_sha256": "4c98509af60fd55f201120068e7d33c714106ba61aeae4f515dc7fbb2c6978d7",
+      "frame_count": 120,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.34221598910108025,
+      "frame_rgb_mae_p95": 0.38015335648148146,
+      "frame_rgb_mae_max": 0.3869574652777778,
+      "temporal_change_magnitude_rgb_mae_mean": 0.4375657242063492,
+      "temporal_change_magnitude_rgb_mae_p95": 0.4685691550925926,
+      "maximum_channel_difference": 29,
+      "maximum_changed_pixels": 131755,
+      "sequence_sha256": "c4ed80627f008b1fb5f278a06916d1d8338298cfd23987b4ef4b6a2e331cd1c5"
+    }
+  },
+  "worst_mean_error_variant": "reuse_copy_rg11b10",
+  "contact_sheet": {
+    "path": "artifacts/o06-o08/factorial-temporal-current-build/worst-variant-contact.png",
+    "sha256": "0973e31b5b3672f1453117466ff194991cbcc83718682d4ee803ac0d86165eec"
+  },
+  "limitations": [
+    "One offscreen M1 Max/Metal route; native-window and other-adapter results are not included.",
+    "The contact sheet samples five frames from the highest-mean-error variant; it does not replace continuous human playback review.",
+    "This is image-quality evidence only and does not establish timing, bandwidth, or promotion thresholds.",
+    "The paired owner-review animation is offscreen and does not measure native presentation or performance; owner review is pending."
+  ],
+  "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
+  "measurement_head_after_documentation_commit": "ed2f740",
+  "owner_review": {
+    "status": "pending",
+    "question": "Review the 6-second 20 fps 2x2 comparison for visual continuity across lighting reuse, no-copy and compact-HDR variants."
+  },
+  "artifacts": {
+    "owner_review_apng": {
+      "path": "artifacts/o06-o08/factorial-temporal-current-build/owner-review.png",
+      "sha256": "bbb0a14f81cad0e18bf6486a97b6b133a852201f28b3682fa7622b3d91396f05"
+    },
+    "owner_review_gif": {
+      "path": "artifacts/o06-o08/factorial-temporal-current-build/owner-review.gif",
+      "sha256": "246834c1100cd817f972926d145af6e47811ca93ae2a03b62557d038a5033e72"
+    },
+    "owner_review_contact_sheet": {
+      "path": "artifacts/o06-o08/factorial-temporal-current-build/owner-review-contact.png",
+      "sha256": "13fbc2aa9700ec4bf47f8a6d334ba94c539c3376ce86dd33076c0b0b947c873c"
+    }
+  },
+  "visual_sample_inspection": {
+    "sampled_frame_indices": [
+      0,
+      29,
+      59,
+      89,
+      119
+    ],
+    "artifact": "artifacts/o06-o08/factorial-temporal-current-build/worst-variant-contact.png",
+    "result": "The inspected sampled contact sheet shows matching scene composition and no obvious geometry or silhouette break between baseline and the worst compact-HDR/reuse variant. The compact-HDR panel has subtle format-related tonal differences.",
+    "scope_limit": "Five sampled frames do not replace continuous owner playback review; native presentation and performance are not evaluated."
+  }
+}

@@ -32,6 +32,14 @@ confirm the cleanup. Median CPU-upload time is lower by 0.007–0.009 ms, while
 whole-frame p95 varies and GPU-render time is flat, so this is not recorded as a
 throughput gain. See [the upload study](measurements-o08-smoke-config-upload.json).
 
+A current-release 120-frame O06×O08 factorial playback recheck preserves effect
+counts across all eight combinations. Direct/no-copy and optical-light reuse
+remain byte-identical to the RGBA16F baseline for this sequence. Compact HDR
+retains measurable image and temporal error (0.3422/255 and 0.4376/255 mean
+RGB error, with a 29/255 channel peak) and stays experimental; the paired
+owner-review animation is pending. See
+[current-release temporal report](measurements-o06-o08-factorial-temporal-current-build.json).
+
 The render `Globals` buffer is also no longer rewritten during smoke simulation:
 the compute shader reads its tick inputs from the source-local configuration and
 does not consume group 0. The render pass still uploads `Globals` once per frame.

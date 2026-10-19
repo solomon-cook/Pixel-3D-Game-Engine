@@ -223,6 +223,16 @@ mean frame error and 0.421/255 mean temporal-change error. The earlier 188/255
 peak is gone. See [factorial temporal report](measurements-o06-o08-factorial-temporal.json)
 and [runner](../scripts/optical_factorial_temporal_study.py).
 
+A 19 October current-release, 120-frame rerun keeps the same eight-way
+factorial and confirms effect-count parity at every tick. Direct/no-copy and
+lighting-reuse variants match their RGBA16F baseline byte-for-byte for this
+sequence. Compact HDR measures 0.3422/255 mean frame error, 0.4376/255 mean
+temporal-change error and a 29/255 maximum channel difference; lighting reuse
+does not add to that format error. A labeled four-panel playback review is
+pending. This remains offscreen M1 Max/Metal image evidence, not timing or native
+presentation acceptance. See
+[current-release report](measurements-o06-o08-factorial-temporal-current-build.json).
+
 The refreshed 240-frame guard report shows the production exact-depth condition
 has one 1/255 difference on one pixel; loosening depth matching restores an
 87/255 peak. Alpha, radiance and normal-alignment gates do not improve the exact
