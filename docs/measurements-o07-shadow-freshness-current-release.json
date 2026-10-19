@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "workstream": "O07 current-release moving-caster shadow freshness against forced redraw",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "date": "2026-10-19",
+  "source_revision": "178a0418fcf6d4970fe0891cff79c7f3c6750e0d",
+  "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+  "scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "camera": "hero",
+  "route": "clearing-orbit",
+  "route_start_seconds": 30.0,
+  "moving_caster": "rock-0",
+  "caster_orbit_radius": 5.0,
+  "caster_orbit_period_seconds": 20.0,
+  "start_tick": 300,
+  "stride_ticks": 3,
+  "frames": 400,
+  "comparison": "same Session pose: cached shadow maps versus force_redraw=true; compare final RGBA capture",
+  "effect_counts_match_every_frame": true,
+  "summary": {
+    "exact_image_pairs": 400,
+    "frames_with_image_difference": 0,
+    "max_changed_pixels": 0,
+    "max_channel_difference": 0,
+    "cache_redrew_at_every_pose": true
+  },
+  "limitations": [
+    "Headless real Metal renderer; this verifies current shadow-cache output against full redraw, not human visual quality or native presentation.",
+    "One scene, moving caster, camera route, adapter, and fixed 640x360 grid."
+  ],
+  "owner_review": "pending: cache freshness does not establish correct perceived light/shadow projection; review uses the linked current 20-second motion preview"
+}

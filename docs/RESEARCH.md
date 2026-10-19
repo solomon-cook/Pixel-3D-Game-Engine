@@ -1051,8 +1051,11 @@ error, 0.4376/255 mean temporal-change error and 29/255 maximum channel error;
 the same image error appears with and without lighting reuse. The owner accepted motion and visual continuity in the labeled six-second,
 20 fps four-panel offscreen review. A current-release 400-frame, 20-second
 eight-variant sequence preserves effect counts in every variant; extended owner
-review is pending. Neither offscreen sequence establishes native presentation
-quality/performance or qualifies other adapters. See the [full-orbit report](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json)
+review is pending. An actual 20-second, 4×2 MP4 is now assembled from those same
+400 fixed-tick frames at 640×360 per panel. Neither offscreen sequence establishes
+native presentation quality/performance or qualifies other adapters. See the
+[full-orbit report](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json),
+[playback](../artifacts/o06-o08/factorial-temporal-full-orbit-current-build/owner-review-current.mp4)
 and [short report](measurements-o06-o08-factorial-temporal-current-build.json).
 
 A new three-pair 120-second offscreen comparison for exact-depth reuse shows
@@ -1147,6 +1150,31 @@ performance, owner visual acceptance or cross-adapter validation. Reproduce with
 [the report](measurements-multi-emitter-shadow-contribution.json), [the contact
 sheet](measurements-multi-emitter-shadow-contribution-contact.png) and [the
 runner](../scripts/two_emitter_shadow_contribution_study.py).
+
+## O07 moving-caster shadow freshness and playback review (19 October 2026)
+
+The owner noted that the floating rock's shadow appeared to keep the same
+light-to-rock relationship as the rock orbited the fire, then suggested the
+reviewed file may have been old. A fresh 20-second, 400-frame side-by-side
+playback has been assembled from the recorded baked, instancing-only and
+culling+instancing frame sequences. Independently, the real Metal renderer was
+captured at the same 400 rock poses with normal shadow caching and forced full
+shadow redraw. All 400 image pairs are byte-identical, and effect counts match;
+the cache also redrew shadow maps at every pose. This rules out stale cached maps
+for this route. A temporary visibility shader then separated the directional sun
+(red) from the fire point light (green) and masked stone surfaces (blue). At the
+visible tick-600 and tick-900 poses, moving the caster changed 3,929/2,028
+non-stone ground pixels in the fire-light visibility channel and 870/541 in the
+sun channel; at tick 300 neither shadow entered the fixed camera view. The point
+shadow centroid moves from x≈72 to x≈471 as the rock moves around the fire. The
+sun is directional, so its shadow keeps a fixed world direction and can supply a
+steady-looking component alongside the moving fire shadow. No stale-cache or
+shadow-projection defect was reproduced in these samples. The owner still needs
+to judge the normal rendered playback. See [playback metadata](measurements-o07-owner-continuous-current-build.json),
+[freshness report](measurements-o07-shadow-freshness-current-release.json),
+[shadow mask report](measurements-o07-shadow-projection-mask-current-build.json),
+[runner](../scripts/o07_shadow_mask_isolation.py), and the ignored preview at
+`artifacts/o07/owner-continuous-20261019/owner-review-current.mp4`.
 
 ## Native lifecycle and live playback recheck (19 October 2026)
 

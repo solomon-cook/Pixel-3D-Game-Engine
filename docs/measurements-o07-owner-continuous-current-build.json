@@ -63,11 +63,24 @@
   },
   "owner_review": {
     "status": "pending",
-    "scope": "Awaiting owner review of motion and visual continuity across the 20-second, 400-frame offscreen three-mode moving-caster comparison."
+    "scope": "Awaiting owner review of the 20-second, 400-frame side-by-side motion preview across baked, instancing-only, and culling+instancing modes."
   },
   "limitations": [
     "Offscreen captures use the real Metal renderer and do not measure native presentation or performance.",
     "This is a 20-second segment starting at route time 30 seconds of the 120-second route; the owner review does not cover the full two-minute route.",
     "Other-adapter and Windows/DX12 acceptance remain open."
-  ]
+  ],
+  "motion_review_preview": {
+    "path": "artifacts/o07/owner-continuous-20261019/owner-review-current.mp4",
+    "sha256": "7bd7f11d6a38a64f0c0491db58b34f5b6e3c77b48cfea2f6e12b6bbeb71260e8",
+    "frames": 400,
+    "duration_seconds": 20,
+    "fps": 20,
+    "resolution": [
+      1920,
+      360
+    ],
+    "layout": "three 640x360 views side by side in order: baked, instancing-only, culling-instancing",
+    "source_frames": "same captured frame sequences and source revision as preview/contact_sheet"
+  }
 }

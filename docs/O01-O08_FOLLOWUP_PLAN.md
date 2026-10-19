@@ -478,8 +478,10 @@ new workload or backend measurement that demonstrates a total-cost opportunity.
    error and a 29/255 peak channel difference, shared by direct and reuse
    variants. The owner accepted motion and visual continuity in the six-second,
    20 fps four-panel offscreen review. A current-release 400-frame, 20-second
-   eight-variant factorial preserves effect counts in every variant; extended
-   owner review is pending. The current-release sustained mixed-route rerun
+   eight-variant factorial preserves effect counts in every variant; an actual
+   20-second 4×2 playback is prepared, and extended owner review is pending. See
+   [playback](../artifacts/o06-o08/factorial-temporal-full-orbit-current-build/owner-review-current.mp4).
+   The current-release sustained mixed-route rerun
    measured paired median frame-work +0.030 ms and GPU-render +0.113 ms, with
    GPU-render slower in two pairs. This establishes no total-render gain. See
    [full-orbit temporal report](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json)
@@ -737,9 +739,14 @@ to baked rendering, culling+instancing changed frame work by approximately 0,
 whole-frame result is not monotonic and turns slower at 2,208 objects. Keep the
 current path; these data do not justify indirect drawing or occlusion culling.
 Native-window measurement is complete on this Mac. A 20-second, 400-frame
-offscreen moving-caster comparison covers all three geometry modes; owner review
-is pending. It covers a segment of the 120-second route. Native performance and
-non-Metal acceptance remain open. See [review artifact report](measurements-o07-owner-continuous-current-build.json).
+side-by-side motion preview covers all three geometry modes; owner review is
+pending. At all 400 moving-rock poses, cached and forced-redraw images match
+exactly, ruling out stale shadow maps for this route but not confirming perceived
+light-direction placement. It covers a segment of the 120-second route. Native
+performance and non-Metal acceptance remain open. See [review artifact
+report](measurements-o07-owner-continuous-current-build.json), [shadow
+freshness](measurements-o07-shadow-freshness-current-release.json) and the
+ignored preview at `artifacts/o07/owner-continuous-20261019/owner-review-current.mp4`.
 
 `benchmark-native` now exposes the same culling, instancing and moving-caster
 controls and records per-frame caster positions and shadow-cache changes alongside
@@ -1098,7 +1105,7 @@ finishes. A compile or a passing unit test does not close visual or hardware gat
 | O04 projected fire detail | Keep LOD disabled by default: a current-release three-pair campfire rerun shows -0.049 ms frame-work and -0.146 ms GPU-render medians across pairs, but prior native FPS was effectively flat. Owner accepted motion and continuity in the full 20-second offscreen comparison across all three profiles. [Full-orbit review](measurements-o04-owner-full-orbit-current-build.json), [current-release sustained](measurements-o04-sustained-current-release.json), [profile sustained](measurements-o04-sustained-profiles.json), [current recheck](measurements-o04-current-build-recheck.json). | Native playback/performance follow-up and non-Metal qualification. |
 | O05 absorption cache | Close the performance decision as a non-promoted experiment: tested 8³/16³ and dual-emitter routes show no total-render win. Preserve direct sampling as default. [Size study](measurements-o05-size-study.json), [dual-emitter timing](measurements-multi-emitter-absorption-native-sustained.json), [current invalidation recheck](measurements-o05-invalidation-current-build.json). | Continuous human review and other-adapter evidence only if promotion is reconsidered. |
 | O06 opaque-light reuse | Keep reuse disabled: exact-depth guarding removed the moving-route spike, but both the earlier and current-release sustained comparisons show no reliable whole-render benefit; a behind-view fixed-tick image error remains. Owner accepted motion and continuity in the six-second four-panel offscreen review; extended 20-second eight-variant review is pending. [Full-orbit temporal](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json), [current-release sustained](measurements-o06-exact-depth-sustained-current-release.json), [earlier sustained](measurements-o06-exact-depth-sustained.json), [temporal](measurements-o06-o08-factorial-temporal.json), [current recheck](measurements-o06-o08-factorial-current-build-recheck.json). | Broader optical camera/playback review, native playback/performance follow-up and another adapter. |
-| O07 culling and instancing | Keep the existing path; shadow-stage savings grow with scene size but whole-frame/native results are mixed and non-monotonic. Do not add indirect or occlusion submission based on these runs. A 20-second offscreen moving-caster review across baked, instancing-only and culling+instancing is prepared; owner review is pending. [Review](measurements-o07-owner-continuous-current-build.json), [scale](measurements-o07-moving-caster.json), [native](measurements-o07-native-scale-study.json). | Owner playback review, native playback/performance follow-up, broader route review and non-Metal qualification. |
+| O07 culling and instancing | Keep the existing path; shadow-stage savings grow with scene size but whole-frame/native results are mixed and non-monotonic. Do not add indirect or occlusion submission. The 20-second three-mode playback is ready; exact cache-vs-forced redraw parity holds at all 400 poses, and a source-separated mask shows the point-light ground shadow moving with the rock at camera-visible poses while the sun shadow remains directional. Owner review is pending. [Review](measurements-o07-owner-continuous-current-build.json), [freshness](measurements-o07-shadow-freshness-current-release.json), [shadow projection](measurements-o07-shadow-projection-mask-current-build.json), [scale](measurements-o07-moving-caster.json), [native](measurements-o07-native-scale-study.json). | Owner playback review, native playback/performance follow-up, broader route review and non-Metal qualification. |
 | O08 resource/pass candidates | Keep independent candidate decisions and capability fallbacks. The current-build forced RGBA16F fallback matches two scenes and 120 sampled motion frames exactly on capable Metal hardware; physical unsupported-format fallback and DX12 qualification remain open. Compact HDR and no-copy remain experimental; known logical savings do not prove physical bandwidth or speed. The owner accepted the six-second factorial motion review; the 20-second eight-variant review is pending. [Decisions](DECISIONS_O08.md), [full-orbit temporal](measurements-o06-o08-factorial-temporal-full-orbit-current-build.json), [factorial](measurements-o06-o08-factorial.json), [current temporal recheck](measurements-o06-o08-factorial-current-build-recheck.json), [current RG16 fallback](measurements-o08-rg16-fallback-current-build.json). | Physical unsupported-format fallback and target-backend/DX12 qualification; extended human playback review. |
 | Bounded two-emitter extension | Fixed-tick ordering, fallback, shader rollback and selected native controls are verified on M1 Max/Metal; cap remains two because the maximum-budget route has mixed whole-render cost. [Correctness](measurements-multi-emitter-overflow.json), [sustained](measurements-multi-emitter-sustained.json). | Continuous playback, broader resource-recreation, sustained native benefit, Windows/DX12 and another adapter. |
 

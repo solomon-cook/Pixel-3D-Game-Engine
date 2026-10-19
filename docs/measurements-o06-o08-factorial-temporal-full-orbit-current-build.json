@@ -179,10 +179,40 @@
   },
   "owner_review": {
     "status": "pending",
-    "scope": "The opened 20-second, 20 fps eight-variant O06\u00d7O08 sequence at 640x360 awaits owner review for motion and visual continuity."
+    "scope": "Awaiting owner review of the current 20-second, 400-frame, 20 fps eight-variant playback at 640x360 per panel."
   },
   "limitations": [
     "Offscreen M1 Max/Metal image evidence only; no native presentation or performance validation.",
     "This is one mixed fire/smoke/reflector/glass route; camera stress, other scenes and other-adapter/DX12 behavior are not covered."
-  ]
+  ],
+  "motion_review_preview": {
+    "path": "artifacts/o06-o08/factorial-temporal-full-orbit-current-build/owner-review-current.mp4",
+    "sha256": "1a17d934cb3a7a72516f3e6b8e58ae00a61320418e1f1702eb471be361750a09",
+    "frames": 400,
+    "duration_seconds": 20,
+    "fps": 20,
+    "resolution": [
+      2560,
+      720
+    ],
+    "layout": {
+      "columns": 4,
+      "rows": 2,
+      "panel_resolution": [
+        640,
+        360
+      ],
+      "order": [
+        "direct_copy_rgba16",
+        "reuse_copy_rgba16",
+        "direct_no_copy_rgba16",
+        "reuse_no_copy_rgba16",
+        "direct_copy_rg11b10",
+        "reuse_copy_rg11b10",
+        "direct_no_copy_rg11b10",
+        "reuse_no_copy_rg11b10"
+      ]
+    },
+    "source_frames": "frames subdirectories listed in layout order"
+  }
 }
