@@ -1334,9 +1334,13 @@ successfully with assets/shaders/notices. The self-contained Mac bundle rendered
 the material scene from outside the checkout. Native Mac commands successfully
 resized to 1440×900 logical pixels, entered fullscreen, returned to the original
 window size, changed a material, captured a frame and shut down. The inspector
-and material scene were visually inspected in the native window. The earlier
-minimization gate is still unresolved; no full native-suite pass or Windows
-DX12 visual validation is claimed.
+and material scene were visually inspected in the native window. On macOS
+27.0.1, the acknowledged minimize request reaches Winit's AppKit
+`NSWindow.miniaturize` path, but neither the engine window nor an independent
+active AppKit reference window becomes miniaturized. No engine-specific cause is
+identified; keep this host-limited gate open pending a repeat on another
+supported macOS version or session. No full native-suite pass or Windows/DX12
+visual validation is claimed.
 
 ## Solid pixel fire and heat distortion
 

@@ -501,5 +501,12 @@
       "backend": "Metal"
     },
     "scope_note": "GPU checks passed on the current checkout. Native lifecycle results are recorded separately above; this run does not validate Windows/DX12, another adapter, or sustained target-hardware playback."
+  },
+  "winit_backend_inspection_2026_10_19": {
+    "dependency": "winit 0.30.13 (Cargo.lock)",
+    "source": "https://github.com/rust-windowing/winit/blob/v0.30.13/src/platform_impl/macos/window_delegate.rs#L1237-L1252",
+    "observed_implementation": "set_minimized(true) calls NSWindow.miniaturize; set_minimized(false) calls NSWindow.deminiaturize; is_minimized reads NSWindow.isMiniaturized.",
+    "engine_call_path": "crates/engine-lab/src/window.rs Native::process_line handles set_window.minimized by calling self.window.set_minimized(minimized).",
+    "interpretation": "The engine call matches the pinned Winit macOS implementation. An independent active AppKit reference window also failed to miniaturize on macOS 27.0.1 with the miniaturize button enabled. This supports a host/session limitation, but does not identify its cause or verify another macOS version; leave the gate open."
   }
 }
