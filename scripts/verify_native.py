@@ -77,6 +77,7 @@ def main():
                 "fullscreen_restored": restored["fullscreen"] is False,
                 "resize_fullscreen_capture_verified": resize_verified and fullscreen_verified and restored["fullscreen"] is False,
                 "minimization_verified": minimization_verified,
+                "occluded_after_minimize_request": minimized.get("occluded"),
                 "initial": initial,
                 "resized": resized,
                 "minimized": minimized,

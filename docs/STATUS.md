@@ -965,8 +965,11 @@ Atelier comparison scene are implemented. See MATERIALS.md for explicit limits.
 - Native resize, fullscreen entry/exit, tick-120 frame capture, command handling
   and shutdown passed on this run. Automated minimization remains unresolved on
   this macOS host: the OS reports `minimized: false` after a two-second state poll.
-  `verify.py --native` saves the partial result and correctly fails the minimization
-  gate; do not report full native acceptance.
+  `get_window` now reports Winit's occlusion event separately from the OS
+  minimized state, and the latest probe reported both false after the minimize
+  request. Fullscreen confirmation was intermittent across consecutive runs.
+  `verify.py --native` saves partial results and correctly fails when either
+  transition is not OS-confirmed; do not report full native acceptance.
 - macOS ARM64 and Windows x64 GNU release builds succeeded. Windows PE executable
   was cross-compiled here. Initial repository CI passed on both hosted platforms;
   that result predates this effect-profile update and is not a visual GPU test.
