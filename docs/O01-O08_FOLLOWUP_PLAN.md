@@ -1052,21 +1052,23 @@ finishes. A compile or a passing unit test does not close visual or hardware gat
 
 ### Native window control gate (19 October 2026)
 
-The unlocked-host retry passed resize, fullscreen entry and exit, deterministic
-tick-120 capture, command handling and shutdown on M1 Max/Metal. A current
-release Session and a full verification run from a temporary app bundle both
-acknowledged `set_window minimized=true` but left `minimized=false`; an
-8-second focus-instrumented poll showed focus lost while `minimized` and
-`occluded` stayed false. The owner reported using the desktop concurrently, so
-other UI activity may have changed focus; this minimize result is inconclusive.
-The current checkout release rebuild has a different executable hash from the
-binary used by the recorded native runs. It now has same-device offscreen
-fixed-tick evidence, but not native lifecycle verification. Repeat the lifecycle
-check with the rebuilt binary in an isolated native session. A live current-release viewport showed a
-moving tick-423 scene at 640×360, with the same tall, regular smoke-puff stack.
-This is sampled playback evidence, not owner acceptance or a temporal-quality
-measurement. Automated minimization and owner visual acceptance remain open.
-See [native verification](measurements-native-window-verification-current-build.json) and its [tick-120 capture](measurements-native-window-verification-current-build.png).
+The unlocked-host retry passed resize, fullscreen entry and exit flags,
+deterministic tick-120 capture, command handling and shutdown on M1 Max/Metal.
+A current release Session and a full verification run from a temporary app
+bundle both acknowledged `set_window minimized=true` but left `minimized=false`;
+an 8-second focus-instrumented poll showed focus lost while `minimized` and
+`occluded` stayed false. The owner reported using the desktop concurrently during
+earlier checks, so isolation is not established. The exact current release
+executable has now received another native lifecycle run: basic controls and
+capture passed, but after fullscreen exit its reported physical size remained
+5120×2880 versus 1800×1200 after resize. Restored dimensions and minimization
+remain unverified; do not treat the exit flag alone as a restore pass. A live
+current-release viewport showed a moving tick-423 scene at 640×360, with the
+same tall, regular smoke-puff stack. This is sampled playback evidence, not owner
+acceptance or a temporal-quality measurement. Owner visual acceptance, isolated
+minimization/restore, DX12 and another-adapter gates remain open. See [native
+verification](measurements-native-window-verification-current-build.json) and its
+[tick-120 capture](measurements-native-window-verification-current-build.png).
 
 These dispositions close measured decisions where the evidence is sufficient; they
 do not convert unresolved visual or platform acceptance into a pass. The overall

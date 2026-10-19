@@ -1093,26 +1093,23 @@ runner](../scripts/two_emitter_shadow_contribution_study.py).
 
 ## Native lifecycle and live playback recheck (19 October 2026)
 
-On the unlocked M1 Max/Metal host, the GPU verifier still passes. The native
-suite confirms resize, fullscreen entry/exit, request handling, shutdown and a
+On the unlocked M1 Max/Metal host, the GPU verifier passes. The native suite
+confirms resize, fullscreen entry/exit flags, request handling, shutdown and a
 fixed tick-120 capture. Minimization remains unverified: `set_window` returned
 `requested: true`, while `is_minimized` stayed false in the current release
-Session and in a full native verifier run using a temporary signed app bundle
-with the current release executable. A focus-instrumented release recheck waited
-eight seconds: focus changed from true after resize to false after the minimize
-request, while `is_minimized` and `occluded` both stayed false. The longer wait
-did not resolve the gate. The owner reported using the desktop concurrently;
-other UI activity may have changed focus, making the minimize result
-inconclusive. Repeat in an isolated native session before diagnosing the engine
-request path. A release rebuild from the current checkout passed and now has
-offscreen fixed-tick capture evidence, but its executable hash differs from the
-binary used in the recorded lifecycle runs; the rebuilt binary has not received
-native lifecycle verification. A live
-current-release native viewport reported tick 423
-running at 640×360; the smoke still forms a tall regular stack of rounded puffs.
-This is an observed visual concern, not owner acceptance or a temporal score.
-Keep the macOS minimize/restore, owner playback, DX12 and another-adapter gates
-open. See [native verification](measurements-native-window-verification-current-build.json) and its [tick-120 capture](measurements-native-window-verification-current-build.png).
+Session, in a temporary signed app bundle, and in an eight-second poll on the
+exact current release executable. The owner reported using the desktop
+concurrently during earlier checks, so isolated-session behavior is not
+established. On the exact current release executable, fullscreen exit reported
+`fullscreen: false` but retained physical dimensions of 5120×2880, compared with
+1800×1200 after resize; restored dimensions are not verified. The executable-hash
+mismatch is closed for basic lifecycle tests, not for minimization or restoration.
+A live current-release native viewport reported tick 423 running at 640×360; the
+smoke still forms a tall regular stack of rounded puffs. This is an observed
+visual concern, not owner acceptance or a temporal score. Keep macOS
+minimize/restore, owner playback, DX12 and another-adapter gates open. See
+[native verification](measurements-native-window-verification-current-build.json)
+and its [tick-120 capture](measurements-native-window-verification-current-build.png).
 
 ## Current-build RG16 fallback recheck (19 October 2026)
 
