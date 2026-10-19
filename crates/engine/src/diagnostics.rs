@@ -47,6 +47,10 @@ pub struct FrameMetrics {
     pub absorption_cache_builds: u64,
     pub absorption_cache_skips: u64,
     pub smoke_absorption_cache_enabled: bool,
+    /// Cumulative candidate-bound dispatches and clean enabled renders since renderer creation.
+    pub smoke_candidate_cache_builds: u64,
+    pub smoke_candidate_cache_skips: u64,
+    pub smoke_candidate_cache_enabled: bool,
     pub cpu_upload_ms: f64,
     pub smoke_config_uploads_this_frame: u32,
     pub smoke_config_upload_bytes_this_frame: u64,

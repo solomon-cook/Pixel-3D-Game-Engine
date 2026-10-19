@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-19",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "gpu": "IntegratedGpu"
+  },
+  "command": "python3 scripts/verify.py --gpu --native",
+  "gpu_verification": "passed",
+  "native_window": {
+    "overall_verified": false,
+    "resize_verified": true,
+    "fullscreen_entry_verified": true,
+    "fullscreen_exit_verified": true,
+    "fixed_tick_capture_verified": true,
+    "capture_camera": "hero",
+    "resolution": [
+      640,
+      360
+    ],
+    "seed": 42,
+    "tick": 120,
+    "minimization_verified": false,
+    "minimize_request_state": {
+      "fullscreen": false,
+      "minimized": false,
+      "occluded": false,
+      "physical_size": [
+        1800,
+        1200
+      ],
+      "scale_factor": 2.0
+    },
+    "interpretation": "The native control request returned, but macOS reported minimized=false and occluded=false after the two-second poll. This does not verify minimization; do not substitute occlusion for it."
+  },
+  "visual_review": "The fixed-tick rendered scene capture was inspected. This is a capture review, not owner acceptance of continuous native playback.",
+  "artifacts": {
+    "ignored_runtime_report": "artifacts/native-verification.json",
+    "ignored_capture": "artifacts/native-acceptance.png",
+    "runner": "scripts/verify_native.py"
+  }
+}

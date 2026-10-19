@@ -1,0 +1,148 @@
+{
+  "study": "O03 smoke-candidate live toggle and invalidation current-build check",
+  "date": "2026-10-19",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal"
+  },
+  "scene": "assets/scenes/smoke-candidate-review.json",
+  "camera": "dual-wide",
+  "seed": 42,
+  "resolution": [
+    640,
+    360
+  ],
+  "method": "Separate direct and cached serve sessions start from the same scene and seed and receive the same ordered fixed ticks, live parameter edits, shader reload, and reset/replay. The cached session stays enabled while dirty events occur, so toggles do not mask invalidation. Frame metrics report scheduled cache dispatches and clean enabled skips. A third session checks live enable/disable toggles at one fixed state.",
+  "checkpoints": {
+    "initial_tick_120": {
+      "tick_match": true,
+      "fire_state_match": true,
+      "pixel_identical": true,
+      "direct_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+      "cached_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+      "candidate_buffer_bytes": 2304,
+      "direct_cache_enabled": false,
+      "cached_cache_enabled": true,
+      "direct_cache_builds": 0,
+      "cached_cache_builds": 1,
+      "direct_cache_skips": 0,
+      "cached_cache_skips": 1
+    },
+    "unchanged_paused_render": {
+      "tick_match": true,
+      "fire_state_match": true,
+      "pixel_identical": true,
+      "direct_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+      "cached_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+      "candidate_buffer_bytes": 2304,
+      "direct_cache_enabled": false,
+      "cached_cache_enabled": true,
+      "direct_cache_builds": 0,
+      "cached_cache_builds": 1,
+      "direct_cache_skips": 0,
+      "cached_cache_skips": 3
+    },
+    "paused_emitter_density_edit": {
+      "tick_match": true,
+      "fire_state_match": true,
+      "pixel_identical": true,
+      "direct_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+      "cached_sha256": "821508697254a940fa92edbceade5b5cc92c0fc2623f320ff7bd3d70e6d2a206",
+      "candidate_buffer_bytes": 2304,
+      "direct_cache_enabled": false,
+      "cached_cache_enabled": true,
+      "direct_cache_builds": 0,
+      "cached_cache_builds": 2,
+      "direct_cache_skips": 0,
+      "cached_cache_skips": 4
+    },
+    "paused_linked_light_edit": {
+      "tick_match": true,
+      "fire_state_match": true,
+      "pixel_identical": true,
+      "direct_sha256": "602d3492eb34c33bd002875ce41d738906ca99be1a7bb0ebbb3d2a542074305a",
+      "cached_sha256": "602d3492eb34c33bd002875ce41d738906ca99be1a7bb0ebbb3d2a542074305a",
+      "candidate_buffer_bytes": 2304,
+      "direct_cache_enabled": false,
+      "cached_cache_enabled": true,
+      "direct_cache_builds": 0,
+      "cached_cache_builds": 3,
+      "direct_cache_skips": 0,
+      "cached_cache_skips": 5
+    },
+    "simulation_step": {
+      "tick_match": true,
+      "fire_state_match": true,
+      "pixel_identical": true,
+      "direct_sha256": "9c2ba0b84460ca4b500f227b4e7b08713a4b3f8a138aaa8e19f0250b0bd12623",
+      "cached_sha256": "9c2ba0b84460ca4b500f227b4e7b08713a4b3f8a138aaa8e19f0250b0bd12623",
+      "candidate_buffer_bytes": 2304,
+      "direct_cache_enabled": false,
+      "cached_cache_enabled": true,
+      "direct_cache_builds": 0,
+      "cached_cache_builds": 4,
+      "direct_cache_skips": 0,
+      "cached_cache_skips": 6
+    },
+    "successful_shader_reload": {
+      "tick_match": true,
+      "fire_state_match": true,
+      "pixel_identical": true,
+      "direct_sha256": "9c2ba0b84460ca4b500f227b4e7b08713a4b3f8a138aaa8e19f0250b0bd12623",
+      "cached_sha256": "9c2ba0b84460ca4b500f227b4e7b08713a4b3f8a138aaa8e19f0250b0bd12623",
+      "candidate_buffer_bytes": 2304,
+      "direct_cache_enabled": false,
+      "cached_cache_enabled": true,
+      "direct_cache_builds": 0,
+      "cached_cache_builds": 5,
+      "direct_cache_skips": 0,
+      "cached_cache_skips": 7
+    },
+    "reset_and_fixed_tick_replay": {
+      "tick_match": true,
+      "fire_state_match": true,
+      "pixel_identical": true,
+      "direct_sha256": "6350d09af3ac017aad185a3f5c041049267975c18512a1a6a1e1787f53e35ace",
+      "cached_sha256": "6350d09af3ac017aad185a3f5c041049267975c18512a1a6a1e1787f53e35ace",
+      "candidate_buffer_bytes": 2304,
+      "direct_cache_enabled": false,
+      "cached_cache_enabled": true,
+      "direct_cache_builds": 0,
+      "cached_cache_builds": 6,
+      "direct_cache_skips": 0,
+      "cached_cache_skips": 8
+    }
+  },
+  "live_toggle_check": {
+    "enable_response": {
+      "path": "render.experiments.smoke_candidate_cache",
+      "updated": true
+    },
+    "disable_response": {
+      "path": "render.experiments.smoke_candidate_cache",
+      "updated": true
+    },
+    "direct_cached_pixel_identical": true,
+    "direct_again_pixel_identical": true,
+    "tick_match": true,
+    "direct_builds": 0,
+    "cached_builds": 1,
+    "direct_again_builds": 1
+  },
+  "all_checks_pass": true,
+  "limitations": [
+    "Headless M1 Max/Metal only; native-window playback, Windows/DX12, and other adapters are not covered.",
+    "Sampled state parity and shader-reload refresh are checked; continuous playback and visual acceptance are not established.",
+    "Build counts record compute-dispatch encoding in the submitted command buffer, not GPU completion time or performance benefit."
+  ],
+  "provenance": {
+    "engine_binary_sha256": "6b743639cc21042c277681e5ffbbd2cf2ebad55fc2d618c70c94a279253c0897",
+    "engine_render_source_sha256": "c0fa6f6216215693cf16bd2a2663031729748c5d404dc013202868613c72e86d",
+    "engine_metrics_source_sha256": "a4bb82b11152aba25fa1e2d0b29b1dbfba8e1d20209965965cb087066107fb52",
+    "runner": "scripts/smoke_candidate_invalidation_study.py",
+    "runner_sha256": "2e4b5a539331a4dae674f24c889e03fcfa3ea66e43684d44aee60ddf05710cd2",
+    "repository_revision": "196b0ec37eadeab2c45a0d9b2fdeec1e75f45fb6",
+    "raw_artifacts": "artifacts/o03/smoke-candidate-invalidation-current-build/"
+  },
+  "schema_default_off_verified": true
+}

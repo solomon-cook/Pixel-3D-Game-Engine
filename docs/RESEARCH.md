@@ -319,6 +319,13 @@ remain open. The all-overflow camera retains 100% fire fallback. See
 under ignored `artifacts/o03/fire-projected-bounds/` and
 `artifacts/o03/fire-bounds-native/`.
 
+A 19 October current-build recheck repeats the 21-view matrix and verifies a
+paused Session API toggle. Images and tile metrics match exactly; the generated
+camera-inside route still exercises 100% fire fallback. Three two-second pairs
+cover 120 frames each with complete timestamps, but are correctness/protocol
+evidence only. Sustained claims remain based on the separate 120-second report.
+See [the recheck](measurements-o03-fire-projected-bounds-recheck.json).
+
 ## Material response beneath pixel treatment (16 October)
 
 Hypothesis: independent HDR metalness/refraction/scattering parameters retain
@@ -758,6 +765,14 @@ expected approximation without an obvious new defect, but do not establish
 continuous temporal quality, wall-clock resume behavior, or native-window behavior. See
 [measurements-o05-invalidation.json](measurements-o05-invalidation.json).
 
+A 19 October current-build rerun repeats those 13 checkpoints for each cache
+size. Fire state remains identical, disabled allocation remains zero, and
+enabled cache residency is 4,096/32,768 bytes. The mean per-channel RGB errors
+across checkpoints are 0.320/0.182/0.149 for 8³ and 0.097/0.056/0.049 for 16³;
+maximum channel errors are 21/17/12 and 18/10/12. These discrete readings do not
+replace full temporal or backend validation. See
+[the current-build report](measurements-o05-invalidation-current-build.json).
+
 ## O06 sustained opaque lighting reuse (18 October)
 
 Three paired 120-second routes on Material Atelier and three on a mixed
@@ -797,6 +812,15 @@ copy. This is Metal offscreen evidence only; temporal, native-window and additio
 adapter checks remain open. Full paired timing and capture data:
 [measurements-o06-o08-factorial.json](measurements-o06-o08-factorial.json).
 
+A 19 October rerun of the eight-way matrix on the current binary preserves effect
+counts in every variant. Direct/no-copy matches direct/copy byte-for-byte for
+both HDR formats. Reuse changes one RGBA16F pixel by 1/255 and three compact-HDR
+pixels across three frames by 1/255. Compact-HDR aggregate error remains
+0.337/255 per-frame mean and 0.421/255 temporal-change mean, with a 38/255
+maximum channel difference. This is temporal evidence, not a performance claim
+or full-duration human acceptance. See
+[current-build report](measurements-o06-o08-factorial-current-build-recheck.json).
+
 ## O04 projected-detail motion review (18 October)
 
 A route-aware capture script drives the named camera from validated scene
@@ -827,6 +851,22 @@ stage deltas are −0.057/−0.062/−0.041 ms. Native FPS deltas are −0.102/+
 acceptance; retain the disabled default. See
 [native report](measurements-o04-native.json) and
 [runner](../scripts/projected_detail_native_study.py).
+
+A 19 October current-build recheck at seed 42 and 640×360 compared 14 fixed-tick
+camera checkpoints. Fire counts, bounds, lighting and particle-light state match
+at every checkpoint. Full-detail captures are byte-identical. Some reduced-
+detail captures also match byte-for-byte when removed geometry is occluded; the
+other reduced-detail captures differ in 18–105 fire-region pixels, within the
+bounds reported in the JSON. This run makes no performance claim. Continuous
+playback and non-Metal acceptance remain open. See
+[current-build recheck](measurements-o04-current-build-recheck.json).
+The accompanying seed-42/tick-300 default-scene capture confirms the renderer
+keeps the measured opt-in paths off, including projected detail, absorption
+cache, optical reuse, no-copy, compact HDR and fire-bound precompute. The disabled
+absorption cache uses zero bytes; 2,304-byte smoke-candidate and 8,192-byte
+fire-bound buffers remain reserved for their shared bind groups. This fixed
+10,496-byte reserve is recorded as default renderer cost, not as enabled
+experimental work.
 
 ## O05 absorption-cache temporal and pause/resume review (18 October)
 
@@ -992,7 +1032,7 @@ that experiment defaults off. Simulation steps, reset, validated live parameter
 edits, and shader reload mark the data dirty. Camera-only changes do not, because
 the stored bounds are world-space.
 
-On M1 Max/Metal, two alternating three-pair, 120-second comparisons found the
+On M1 Max/Metal, the original implementation-revision comparisons found the
 candidate GPU-render median 0.017 ms lower on the dual-emitter review route and
 0.013 ms higher on the heavy single-plume route. CPU tile-list encoding increased
 0.041/0.044 ms; paired whole-frame work increased 0.062/0.090 ms. The GPU-stage
@@ -1001,6 +1041,37 @@ default. Same-tick direct/cached dual-emitter captures are byte-identical. Keep
 the direct path as default and the buffer path as an experiment. Reports:
 [measurements-o03-smoke-candidates.json](measurements-o03-smoke-candidates.json);
 raw comparisons are under ignored `artifacts/o03/smoke-candidate-*-selectable/`.
+The newer same-source release-profile comparison below isolates the runtime
+toggle on the current instrumented binary and is the applicable current-build
+performance evidence; the original figures remain as revision-history data.
+
+### Current-build toggle and invalidation check (19 October)
+
+The fixed-tick live recheck runs matched direct and cached serve sessions through
+tick 120, a paused campfire smoke-density edit, a linked fire-light position
+edit, one further simulation step, successful shader reload, and reset/replay to
+tick 120. Fire-state JSON and rendered pixels matched at all seven checkpoints.
+A separate same-session direct/cache/direct toggle at tick 120 also preserved
+the image and received the expected Session acknowledgments. This is current
+M1 Max/Metal sampled-path evidence. New cumulative frame counters report six
+dispatch encodes across the six dirty cached states and skip counts on unchanged
+enabled renders; the toggle session encodes one build only while enabled. The
+2,304-byte candidate-buffer inventory remains reserved allocation. These
+counters show scheduled command-buffer work, not GPU completion time or cost.
+Keep the path opt-in: these current checks establish correctness and actual
+dispatch scheduling, but not enough evidence for promotion. A same-source
+release-profile rebenchmark compared the toggle directly on two-emitter and
+heavy-plume routes, three alternating pairs of 120 seconds each after 10-second
+warm-ups. All six runs per route covered 7,200 timed frames with zero skipped or
+late GPU samples. Two-emitter paired medians: frame work −0.016 ms, GPU render
+−0.046 ms, CPU tile-list encoding +0.040 ms. Heavy-plume medians: frame work
+−0.398 ms, GPU render −0.070 ms, CPU tile-list encoding +0.012 ms; one GPU-render
+pair regressed. These M1 Max/Metal offscreen results vary by stage and workload.
+Native playback, continuous owner review, Windows/DX12, and other adapters
+remain open. See
+[current check](measurements-o03-smoke-candidate-invalidation-recheck.json) and
+[current sustained report](measurements-o03-smoke-candidate-sustained-current-build.json),
+[runner](../scripts/smoke_candidate_invalidation_study.py).
 
 ## O02/O07 source-specific point-shadow contribution (19 October 2026)
 

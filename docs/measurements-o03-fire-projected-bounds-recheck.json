@@ -1,0 +1,370 @@
+{
+  "date": "2026-10-19",
+  "workstream": "O03 projected fire bounds current-build recheck",
+  "adapter": "Apple M1 Max / Metal",
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "fixed_tick": 300,
+  "binary_sha256": "4247485106ee2d305f5d07f58e074d5f03f19b9a7cb369b00cf809aa1e4f0363",
+  "runner_sha256": "b40f0b52dbb110c855fa1e1cad11d36a3f5a22729e05934e1a5f75f030cc1438",
+  "profile_compare_sha256": "d1bcbd63cc63cc3063859df94e21faa8d3bec2728d452f7091991214ad053855",
+  "protocol": {
+    "duration_seconds": 2,
+    "warmup_seconds": 0,
+    "pairs": 3,
+    "run_frames": 120,
+    "purpose": "current-build correctness, fallback and Session-toggle recheck; short timing windows are not sustained-performance evidence"
+  },
+  "workloads": [
+    {
+      "id": "clearing",
+      "camera": "hero",
+      "route": "clearing-orbit",
+      "fixed_tick_view_count": 4,
+      "all_views_exact": true,
+      "fixed_tick_views": [
+        {
+          "camera": "hero",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "2dff062612f8b8ab832c331d0a207e8af26362f6e308e6d3098861f93915da68",
+          "precomputed_sha256": "2dff062612f8b8ab832c331d0a207e8af26362f6e308e6d3098861f93915da68",
+          "tick": 300,
+          "fire_overflow_tiles": 0
+        },
+        {
+          "camera": "smoke-close",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "b375ce559971ebb3cd66bf8f483de7d39860c4f156052066b54e5e9c3e73a852",
+          "precomputed_sha256": "b375ce559971ebb3cd66bf8f483de7d39860c4f156052066b54e5e9c3e73a852",
+          "tick": 300,
+          "fire_overflow_tiles": 0
+        },
+        {
+          "camera": "orthographic",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "3f2b97c4b67fd5b63f38d38dc900429347229bf951cfd079a3d6c87e8b063301",
+          "precomputed_sha256": "3f2b97c4b67fd5b63f38d38dc900429347229bf951cfd079a3d6c87e8b063301",
+          "tick": 300,
+          "fire_overflow_tiles": 0
+        },
+        {
+          "camera": "fire-study",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "a68223f7703540ed867517667097b6e60e3a0175006a59f9f64a98a4b0200a0c",
+          "precomputed_sha256": "a68223f7703540ed867517667097b6e60e3a0175006a59f9f64a98a4b0200a0c",
+          "tick": 300,
+          "fire_overflow_tiles": 0
+        }
+      ],
+      "paired_run_count": 6,
+      "all_runs_complete": true,
+      "fire_fallback_rates": [
+        0.0
+      ],
+      "expected_overflow_behavior": true
+    },
+    {
+      "id": "heavy-plume",
+      "camera": "hero",
+      "route": "clearing-orbit",
+      "fixed_tick_view_count": 4,
+      "all_views_exact": true,
+      "fixed_tick_views": [
+        {
+          "camera": "hero",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "3fd0fd8ce023781727221c5f31e6cb867b44717f2ec28506fe748f30c8d0fb61",
+          "precomputed_sha256": "3fd0fd8ce023781727221c5f31e6cb867b44717f2ec28506fe748f30c8d0fb61",
+          "tick": 300,
+          "fire_overflow_tiles": 0
+        },
+        {
+          "camera": "smoke-close",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "028ff6417cfcd7ceef004b11173776fa026a5ba43794779528395780d5bc915b",
+          "precomputed_sha256": "028ff6417cfcd7ceef004b11173776fa026a5ba43794779528395780d5bc915b",
+          "tick": 300,
+          "fire_overflow_tiles": 0
+        },
+        {
+          "camera": "orthographic",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "4d1bbae1db34daf45b6002e11e6a0dbb7f55605bc97e9c0e8568c1526732dd24",
+          "precomputed_sha256": "4d1bbae1db34daf45b6002e11e6a0dbb7f55605bc97e9c0e8568c1526732dd24",
+          "tick": 300,
+          "fire_overflow_tiles": 0
+        },
+        {
+          "camera": "fire-study",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "de04a1a44bc2c5264253a2b441d0affe5c0dddc4e97d4c1221d7830e4f50ef53",
+          "precomputed_sha256": "de04a1a44bc2c5264253a2b441d0affe5c0dddc4e97d4c1221d7830e4f50ef53",
+          "tick": 300,
+          "fire_overflow_tiles": 0
+        }
+      ],
+      "paired_run_count": 6,
+      "all_runs_complete": true,
+      "fire_fallback_rates": [
+        0.0
+      ],
+      "expected_overflow_behavior": true
+    },
+    {
+      "id": "material-atelier",
+      "camera": "hero",
+      "route": "material-orbit",
+      "fixed_tick_view_count": 5,
+      "all_views_exact": true,
+      "fixed_tick_views": [
+        {
+          "camera": "hero",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "00af3f931f783279293ded0bbca575c79c63e5ca2c15bcd3ce56975391c0b996",
+          "precomputed_sha256": "00af3f931f783279293ded0bbca575c79c63e5ca2c15bcd3ce56975391c0b996",
+          "tick": 300,
+          "fire_overflow_tiles": 0
+        },
+        {
+          "camera": "metal-close",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "0196aef78025ee18d57410c4540996002ea3b9df78f9b74e655ca23717a767aa",
+          "precomputed_sha256": "0196aef78025ee18d57410c4540996002ea3b9df78f9b74e655ca23717a767aa",
+          "tick": 300,
+          "fire_overflow_tiles": 0
+        },
+        {
+          "camera": "glass-close",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "c04831e657fabaf0059bbe8e7cbcbec861aa14a4f70de78bf4c007496886b12c",
+          "precomputed_sha256": "c04831e657fabaf0059bbe8e7cbcbec861aa14a4f70de78bf4c007496886b12c",
+          "tick": 300,
+          "fire_overflow_tiles": 0
+        },
+        {
+          "camera": "subsurface-close",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "2e9e2fa433aab078c7e8375b6c0d221d51766f4e8af111e4b6f503ba40802f39",
+          "precomputed_sha256": "2e9e2fa433aab078c7e8375b6c0d221d51766f4e8af111e4b6f503ba40802f39",
+          "tick": 300,
+          "fire_overflow_tiles": 0
+        },
+        {
+          "camera": "orthographic",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "2c9d9028bb6033c666c1d5ec26f8a3db86f3d51c609a385281dad4b390d48d78",
+          "precomputed_sha256": "2c9d9028bb6033c666c1d5ec26f8a3db86f3d51c609a385281dad4b390d48d78",
+          "tick": 300,
+          "fire_overflow_tiles": 0
+        }
+      ],
+      "paired_run_count": 6,
+      "all_runs_complete": true,
+      "fire_fallback_rates": [
+        0.0
+      ],
+      "expected_overflow_behavior": true
+    },
+    {
+      "id": "camera-inside-overflow",
+      "camera": "camera-inside-plume",
+      "route": "camera-inside-hold",
+      "fixed_tick_view_count": 8,
+      "all_views_exact": true,
+      "fixed_tick_views": [
+        {
+          "camera": "hero",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "1253a9315dd357b5bbc818b1a2bd70e045b23bfd7db0eb6c73990855f26bec19",
+          "precomputed_sha256": "1253a9315dd357b5bbc818b1a2bd70e045b23bfd7db0eb6c73990855f26bec19",
+          "tick": 300,
+          "fire_overflow_tiles": 29
+        },
+        {
+          "camera": "smoke-close",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "4c85d9302420567f33c5fcfd98216f4aad62eb002ef3e3d1101f7bc25e44e2dd",
+          "precomputed_sha256": "4c85d9302420567f33c5fcfd98216f4aad62eb002ef3e3d1101f7bc25e44e2dd",
+          "tick": 300,
+          "fire_overflow_tiles": 82
+        },
+        {
+          "camera": "orthographic",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "04ff94d9638bdac700c6ff4af674bc3007d7c9a56d3f03445fa10d34da890ce1",
+          "precomputed_sha256": "04ff94d9638bdac700c6ff4af674bc3007d7c9a56d3f03445fa10d34da890ce1",
+          "tick": 300,
+          "fire_overflow_tiles": 19
+        },
+        {
+          "camera": "fire-study",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "3c17ac943b8163886fe20a5c7a642823517fe06ffa2151574dd09a17af1028b7",
+          "precomputed_sha256": "3c17ac943b8163886fe20a5c7a642823517fe06ffa2151574dd09a17af1028b7",
+          "tick": 300,
+          "fire_overflow_tiles": 171
+        },
+        {
+          "camera": "dual-wide",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "563a2b2646a2cc839ae3e6731b69b00653716e4a47af64e796242a8cd14df086",
+          "precomputed_sha256": "563a2b2646a2cc839ae3e6731b69b00653716e4a47af64e796242a8cd14df086",
+          "tick": 300,
+          "fire_overflow_tiles": 16
+        },
+        {
+          "camera": "stress-close",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "79b74585c7deb6125e8abb472e9f11907b921adf417c3898275992f9dc321ff4",
+          "precomputed_sha256": "79b74585c7deb6125e8abb472e9f11907b921adf417c3898275992f9dc321ff4",
+          "tick": 300,
+          "fire_overflow_tiles": 74
+        },
+        {
+          "camera": "camera-inside-plume",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "53589a9296a5d45e04a967d6cdd393286fb82d2c2026a6a3980cb7364a9743b7",
+          "precomputed_sha256": "53589a9296a5d45e04a967d6cdd393286fb82d2c2026a6a3980cb7364a9743b7",
+          "tick": 300,
+          "fire_overflow_tiles": 920
+        },
+        {
+          "camera": "near-plane-intersection",
+          "exact_pixels": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct_sha256": "d7d35792db3b4452a6b2d26b87c297d1b2eee450fa20e2e1767a89098093353c",
+          "precomputed_sha256": "d7d35792db3b4452a6b2d26b87c297d1b2eee450fa20e2e1767a89098093353c",
+          "tick": 300,
+          "fire_overflow_tiles": 920
+        }
+      ],
+      "paired_run_count": 6,
+      "all_runs_complete": true,
+      "fire_fallback_rates": [
+        1.0
+      ],
+      "expected_overflow_behavior": true
+    }
+  ],
+  "fixed_tick_view_count": 21,
+  "fixed_tick_parity_all_workloads": true,
+  "paired_protocol_all_workloads": true,
+  "session_api_toggle_parity": {
+    "toggle_on_response": {
+      "id": 1,
+      "result": {
+        "enabled": true,
+        "force_overflow": false,
+        "precompute_fire_bounds": true
+      }
+    },
+    "toggle_off_response": {
+      "id": 3,
+      "result": {
+        "enabled": true,
+        "force_overflow": false,
+        "precompute_fire_bounds": false
+      }
+    },
+    "direct_flag": false,
+    "precomputed_flag": true,
+    "same_tick": true,
+    "pixel_identical": true,
+    "tile_candidates_identical": true,
+    "tile_overflow_identical": true,
+    "tile_max_occupancy_identical": true,
+    "direct_sha256": "7918f80029ce0413058a39e3f91f82e093477ad8d053f132e13cb69ebfdb6f63",
+    "precomputed_sha256": "7918f80029ce0413058a39e3f91f82e093477ad8d053f132e13cb69ebfdb6f63"
+  },
+  "limitations": [
+    "This short paired protocol does not replace the full 120-second performance study.",
+    "Native-window, Windows/DX12 and other-adapter acceptance are not established by this report."
+  ],
+  "raw_artifact_directory": "artifacts/o03/goal-recheck/fire-projected-bounds/"
+}

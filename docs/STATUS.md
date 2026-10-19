@@ -103,6 +103,18 @@ remain open. See
 [measurements-o04-sustained-profiles.json](measurements-o04-sustained-profiles.json),
 [native report](measurements-o04-native.json) and
 [native runner](../scripts/projected_detail_native_study.py).
+The 19 October current-build recheck matched fire state at all 14 projected-size
+checkpoints; baseline and candidate images were identical at full detail, while
+visible reduced-detail changes affected 18–105 pixels per 640×360 image and were
+confined to the fire region; some reduced-detail views were pixel-identical when
+the removed geometry was occluded. This discrete parity check does not replace
+continuous playback review. See the
+[current-build report](measurements-o04-current-build-recheck.json).
+The same-tick default-scene capture also confirms projected detail, absorption
+cache, optical reuse, optical no-copy, compact HDR and projected-fire-bound
+precompute are disabled; the absorption cache reports zero bytes. The smoke- and
+fire-bounds candidate buffers are nevertheless reserved at 2,304 and 8,192 bytes
+respectively (10,496 bytes total), with their optional compute paths disabled.
 
 O05 has an opt-in primary fire-light absorption cache at 8³ or 16³. It rebuilds
 after smoke simulation updates or scene/shader/reset changes, and skips repeated
@@ -146,7 +158,12 @@ Continuous human playback review, Windows/DX12 and other-GPU qualification remai
 open. Both cache sizes passed 13 discrete
 direct/cache checkpoints spanning paused density edits, primary-light changes,
 flicker, moving embers, shader reload and reset, with exact fire-state parity;
-see [invalidation study](measurements-o05-invalidation.json).
+see [invalidation study](measurements-o05-invalidation.json). A 19 October
+current-build recheck repeats all 13 checkpoints at both sizes; the disabled path
+uses zero cache bytes, while 8³ and 16³ use 4,096 and 32,768 bytes. Mean per-
+channel error is 0.320/0.182/0.149 for 8³ and 0.097/0.056/0.049 for 16³; this
+does not establish continuous playback or performance. See the
+[recheck report](measurements-o05-invalidation-current-build.json).
 
 O06 now has an opt-in opaque-reflector lighting reuse path. It reverses the
 matching same-pixel foreground atmosphere contribution from the HDR snapshot and
@@ -219,6 +236,13 @@ See the [native report](measurements-o06-native-exact-depth.json),
 [guard report](measurements-o06-temporal-depth-guard.json),
 [sustained comparison](measurements-o06-exact-depth-sustained.json), and
 [guard runner](../scripts/optical_reuse_temporal_guard_study.py).
+The 19 October current-build 240-frame factorial recheck confirms all effect
+counts match. Direct no-copy is pixel-identical to copy for both HDR formats;
+reuse adds one 1/255 pixel difference in RGBA16F and three in compact HDR across
+the full sequence. Compact HDR retains a 0.337/255 frame mean, 0.421/255 temporal
+mean and 38/255 maximum channel difference. See the
+[current-build report](measurements-o06-o08-factorial-current-build-recheck.json);
+human continuous playback remains open.
 
 O01 profiling implementation now includes bounded asynchronous timestamps for
 smoke compute, shadows, opaque geometry, atmosphere/fire, optical resolve and post;
@@ -534,9 +558,32 @@ An opt-in smoke-candidate cache computes deterministic parent bounds on the GPU
 once per dirty rendered state and shares them between tile building and shading.
 The direct path remains selected by default: two 120-second paired workloads
 found small/mixed GPU-render changes, about 0.04 ms added CPU tile-list encoding,
-and whole-frame regressions. Exact same-tick direct/cached output matches on
+and whole-frame regressions in the earlier implementation-revision comparison.
+Exact same-tick direct/cached output matches on
 M1 Max/Metal; DX12, other adapters and native playback remain open. See
 [candidate report](measurements-o03-smoke-candidates.json).
+The 19 October current-build check adds seven matched direct/cached serve-session
+checkpoints spanning fixed-step advance, emitter and linked-light edits,
+successful shader reload, and reset/replay; fire state and pixels match at each
+checkpoint. A separate live Session toggle returns the expected accepted
+responses and is pixel-identical direct/cache/direct at a fixed tick. This is
+sampled M1 Max/Metal correctness, not continuous playback or visual acceptance.
+The known 2,304-byte candidate-buffer allocation is reserved even when disabled.
+New frame metrics report six dispatch encodes across the six dirty cached states,
+clean enabled skips, and one dispatch in the live enable/disable check. This
+confirms command scheduling, not GPU completion time or performance benefit.
+The fresh same-source release pairs below show small workload-specific changes,
+not a consistent enough result for default promotion. See the
+[current-build report](measurements-o03-smoke-candidate-invalidation-recheck.json)
+and [reproduction runner](../scripts/smoke_candidate_invalidation_study.py).
+The current instrumented release build has also been remeasured in same-source
+paired variants: three 120-second pairs per route for two-emitter and heavy-plume
+scenes, with complete 7,200/7,200 timing coverage and no skipped or late samples.
+Median frame-work/GPU-render deltas were −0.016/−0.046 ms for two-emitter and
+−0.398/−0.070 ms for heavy plume. CPU tile-list encoding increased +0.040 ms on
+two-emitter and +0.012 ms on heavy plume; one heavy GPU-render pair regressed.
+These offscreen M1 Max/Metal gains are modest and route-dependent, so the cache
+remains disabled by default. See the [current sustained report](measurements-o03-smoke-candidate-sustained-current-build.json).
 
 Four exact-tick view sets (hero perspective, close smoke, orthographic and glass
 close-up) matched byte-for-byte among tiled, exhaustive and forced-fallback modes.
@@ -578,6 +625,11 @@ acceptance remain open. See the [offscreen report](measurements-o03-fire-project
 [native report](measurements-o03-fire-projected-bounds-native.json),
 [offscreen runner](../scripts/fire_bounds_precompute_study.py), and
 [native runner](../scripts/fire_bounds_native_study.py).
+The 19 October current-build check also matches all 21 fixed-tick views and the
+paused Session API toggle; camera-inside natural fire overflow remains 100%.
+Its three two-second pairs validate capture/timestamp protocol only and are not
+sustained-performance evidence. See the
+[recheck report](measurements-o03-fire-projected-bounds-recheck.json).
 The two-emitter maximum-budget correctness runner now generates separate
 camera-inside-plume and near-plane-intersection scenes. Both tiled images match
 exhaustive output exactly; the inside-plume view overflows the fire list in all
@@ -954,22 +1006,30 @@ Atelier comparison scene are implemented. See MATERIALS.md for explicit limits.
 
 ## Verification on this host
 
-- Rust formatting, Clippy with warnings denied, 40 unit tests, asset decoding,
-  schema discovery and scene validation passed.
-- Metal GPU integration passed: deterministic same-device replay, malformed
-  commands/invalid edits, capture completion, orthographic rendering, visible
-  self-shadow/glow mutations, profile/particle/HDR palette edits, and invalid world/
-  fire shader rollback. Additional checks exercise moving coloured lights and
-  the independent fire-breakup controls. Legacy scene defaults and invalid profile references pass
-  the unit checks.
-- Native resize, fullscreen entry/exit, tick-120 frame capture, command handling
-  and shutdown passed on this run. Automated minimization remains unresolved on
-  this macOS host: the OS reports `minimized: false` after a two-second state poll.
-  `get_window` now reports Winit's occlusion event separately from the OS
-  minimized state, and the latest probe reported both false after the minimize
-  request. Fullscreen confirmation was intermittent across consecutive runs.
-  `verify.py --native` saves partial results and correctly fails when either
-  transition is not OS-confirmed; do not report full native acceptance.
+The O01–O08 completion audit remains open beyond M1 Max/Metal. Per-track measured
+decisions and unresolved visual/backend gates are consolidated in the
+[follow-up exit-gate table](O01-O08_FOLLOWUP_PLAN.md#current-exit-gate-dispositions-19-october-2026).
+
+- **19 October 2026, Apple M1 Max / Metal:** `python3 scripts/verify.py --gpu`
+  passed formatting, Clippy with warnings denied, 41 Rust unit tests, build,
+  scene validation, baseline GPU verification, material GPU verification and
+  pixel-fire GPU verification. The verifier reports `verified=true`, `gpu=true`,
+  `native=false`. This validates the current host's renderer path; it
+  does not close the O01–O08 moving-route, visual-review or cross-adapter gates.
+  The full GPU verifier was rerun after adding O03 smoke-candidate dispatch/skip
+  metrics; all checks passed on the instrumented build.
+- **Native verification on 19 October, Mac unlocked:** `python3 scripts/verify.py
+  --gpu --native` passed all GPU checks, then exited nonzero only at the
+  minimization assertion. Native resize, fullscreen entry/exit, fixed tick-120
+  capture, command handling and shutdown passed. The scene capture was inspected.
+  After the two-second poll, macOS reported both `minimized: false` and
+  `occluded: false`; the request therefore does not verify minimization. Keep
+  that gate open and do not substitute occlusion for minimization. The tracked
+  summary is [native verification](measurements-native-window-verification-current-build.json);
+  raw JSON and PNG remain in ignored `artifacts/`.
+- The verifier used the selected 640×360 scene grid and same-device Metal
+  rendering. It does not verify Windows/DX12, another adapter, or target-PC
+  performance.
 - macOS ARM64 and Windows x64 GNU release builds succeeded. Windows PE executable
   was cross-compiled here. Initial repository CI passed on both hosted platforms;
   that result predates this effect-profile update and is not a visual GPU test.

@@ -4666,7 +4666,9 @@ impl Renderer {
             bytemuck::cast_slice(&[0u32; 12]),
         );
         let tile_build_started = Instant::now();
+        self.metrics.smoke_candidate_cache_enabled = scene.render.experiments.smoke_candidate_cache;
         if self.smoke_candidate_dirty && scene.render.experiments.smoke_candidate_cache {
+            self.metrics.smoke_candidate_cache_builds += 1;
             let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {
                 label: Some("materialize smoke-lobe bounds"),
                 timestamp_writes: None,
@@ -4683,6 +4685,8 @@ impl Renderer {
                 0,
                 72 * 16,
             );
+        } else if scene.render.experiments.smoke_candidate_cache {
+            self.metrics.smoke_candidate_cache_skips += 1;
         }
         {
             let mut pass = encoder.begin_compute_pass(&wgpu::ComputePassDescriptor {

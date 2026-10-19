@@ -1,0 +1,181 @@
+{
+  "date": "2026-10-19",
+  "workstream": "O06 x O08 current-build factorial temporal recheck",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "route": "mixed-smoke-material-orbit",
+  "camera": "mixed-close",
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "start_tick": 300,
+  "end_tick": 1017,
+  "frames": 240,
+  "fps": 20.0,
+  "baseline": "direct_copy_rgba16",
+  "baseline_scene_sha256": "3020c76e7c948cbfa130a72bcd6c39ece326750bc5f12faaa76013c9a9b7a768",
+  "binary_sha256": "4247485106ee2d305f5d07f58e074d5f03f19b9a7cb369b00cf809aa1e4f0363",
+  "capture_script_sha256": "632e74b9f59f88d65d33665fc5eb8ef6220222a8bad55d0133007141a2006b7e",
+  "study_script_sha256": "23b17be24b42255421f0e17972eed8aaf736dce574ded893f9f68d7159b8b1e1",
+  "shader_sha256": "5dcff7826ffc79479843a173477c4187f2e094070ded21bbf942b7ed21f9e690",
+  "variants": {
+    "direct_copy_rgba16": {
+      "scene_sha256": "3020c76e7c948cbfa130a72bcd6c39ece326750bc5f12faaa76013c9a9b7a768",
+      "frame_count": 240,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.0,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 0.0,
+      "temporal_change_magnitude_rgb_mae_mean": 0.0,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "maximum_channel_difference": 0,
+      "maximum_changed_pixels": 0,
+      "sequence_sha256": "e74515755e36c6c40877994313f524a90561a176e6c4bd20bba1483dda08e66b"
+    },
+    "reuse_copy_rgba16": {
+      "scene_sha256": "4ecfb8418f00ddd2b06fe991beb8e4265dcf7911f1666c3b70ec2be5d1e9c9ac",
+      "frame_count": 240,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 6.028163580246913e-09,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 1.4467592592592592e-06,
+      "temporal_change_magnitude_rgb_mae_mean": 1.2106772044010537e-08,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "maximum_channel_difference": 1,
+      "maximum_changed_pixels": 1,
+      "sequence_sha256": "e4012d4605a4584f7ef708b20d5adba0648d8de26ed5ffae38a125c00f15375e"
+    },
+    "direct_no_copy_rgba16": {
+      "scene_sha256": "e12fe40fce0a077d6cd9432acb42491a49b0b11006c519b380c3a817d1cbb3f4",
+      "frame_count": 240,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.0,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 0.0,
+      "temporal_change_magnitude_rgb_mae_mean": 0.0,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "maximum_channel_difference": 0,
+      "maximum_changed_pixels": 0,
+      "sequence_sha256": "9b0831a3721e4c2222f98dce17c4524f6f7366d51a176957dbbbd394e7aca691"
+    },
+    "reuse_no_copy_rgba16": {
+      "scene_sha256": "10fa9f03d1c9392f755e4acb3f4dcbe0a0299706e5294f059c8b7d02fc4a6802",
+      "frame_count": 240,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 6.028163580246913e-09,
+      "frame_rgb_mae_p95": 0.0,
+      "frame_rgb_mae_max": 1.4467592592592592e-06,
+      "temporal_change_magnitude_rgb_mae_mean": 1.2106772044010537e-08,
+      "temporal_change_magnitude_rgb_mae_p95": 0.0,
+      "maximum_channel_difference": 1,
+      "maximum_changed_pixels": 1,
+      "sequence_sha256": "a5294ff46a1f501e619015e06270e9d21c73f5827eebbefe7873ab3475164d94"
+    },
+    "direct_copy_rg11b10": {
+      "scene_sha256": "d73a3ebd12160bb380914b71939101358e99177987c8254db1ea6923449b640b",
+      "frame_count": 240,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.336739559220679,
+      "frame_rgb_mae_p95": 0.37841145833333334,
+      "frame_rgb_mae_max": 0.3869574652777778,
+      "temporal_change_magnitude_rgb_mae_mean": 0.42078439776073145,
+      "temporal_change_magnitude_rgb_mae_p95": 0.4658955439814815,
+      "maximum_channel_difference": 38,
+      "maximum_changed_pixels": 131755,
+      "sequence_sha256": "4713f0814e34cce1c571e1e24f364caa863c6f032b85a2c09a637bf4a78b1d3e"
+    },
+    "reuse_copy_rg11b10": {
+      "scene_sha256": "53c150b4663c4ae494f6a98e66a7f4f2209cf8b275467dc546c04c3703781a8f",
+      "frame_count": 240,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.3367395652488426,
+      "frame_rgb_mae_p95": 0.37841145833333334,
+      "frame_rgb_mae_max": 0.3869574652777778,
+      "temporal_change_magnitude_rgb_mae_mean": 0.42078439776073145,
+      "temporal_change_magnitude_rgb_mae_p95": 0.4658955439814815,
+      "maximum_channel_difference": 38,
+      "maximum_changed_pixels": 131755,
+      "sequence_sha256": "cca93e324aab4e1579054f4ad31c3da0a0cbce2d660624eebaea29f76c488a26"
+    },
+    "direct_no_copy_rg11b10": {
+      "scene_sha256": "78417f05f21ce136212290e34b8b955bd23149154515d2e1b8b43aa96207d8d0",
+      "frame_count": 240,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.336739559220679,
+      "frame_rgb_mae_p95": 0.37841145833333334,
+      "frame_rgb_mae_max": 0.3869574652777778,
+      "temporal_change_magnitude_rgb_mae_mean": 0.42078439776073145,
+      "temporal_change_magnitude_rgb_mae_p95": 0.4658955439814815,
+      "maximum_channel_difference": 38,
+      "maximum_changed_pixels": 131755,
+      "sequence_sha256": "cfbf9e288085e001c498d9b95e87ab19fa57165c7d5c5c961ec5ce6ebd292731"
+    },
+    "reuse_no_copy_rg11b10": {
+      "scene_sha256": "4c98509af60fd55f201120068e7d33c714106ba61aeae4f515dc7fbb2c6978d7",
+      "frame_count": 240,
+      "effect_counts_match_every_frame": true,
+      "frame_rgb_mae_mean": 0.3367395652488426,
+      "frame_rgb_mae_p95": 0.37841145833333334,
+      "frame_rgb_mae_max": 0.3869574652777778,
+      "temporal_change_magnitude_rgb_mae_mean": 0.42078439776073145,
+      "temporal_change_magnitude_rgb_mae_p95": 0.4658955439814815,
+      "maximum_channel_difference": 38,
+      "maximum_changed_pixels": 131755,
+      "sequence_sha256": "1e1cedeb7ec2ddfd5963b0052ae824a15b14ea70541d9feff25e98cc1a5536ab"
+    }
+  },
+  "worst_mean_error_variant": "reuse_copy_rg11b10",
+  "contact_sheet": {
+    "path": "artifacts/o06-o08/goal-recheck/factorial-temporal/worst-variant-contact.png",
+    "sha256": "22ee0d65a514711510ac4dc3dd77dd8fc2daf369a352ac69f32415dcd3cfa100"
+  },
+  "limitations": [
+    "One offscreen M1 Max/Metal route; native-window and other-adapter results are not included.",
+    "The contact sheet samples five frames from the highest-mean-error variant; it does not replace continuous human playback review.",
+    "This is image-quality evidence only and does not establish timing, bandwidth, or promotion thresholds.",
+    "Headless offscreen sequence; contact-sheet samples do not replace full-duration human playback review.",
+    "Native-window, Windows/DX12 and other-adapter behavior are not established."
+  ],
+  "purpose": "Refresh 240-frame fixed-tick effect parity and image/temporal error on the current build; this study measures no runtime performance.",
+  "raw_artifact_directory": "artifacts/o06-o08/goal-recheck/factorial-temporal/",
+  "pairwise_comparisons": {
+    "direct_vs_no_copy": {
+      "rgba16f": {
+        "frames": 240,
+        "changed_frames": 0,
+        "changed_pixels_total": 0,
+        "maximum_channel_difference": 0,
+        "mean_absolute_channel_error": 0.0
+      },
+      "rg11b10ufloat": {
+        "frames": 240,
+        "changed_frames": 0,
+        "changed_pixels_total": 0,
+        "maximum_channel_difference": 0,
+        "mean_absolute_channel_error": 0.0
+      }
+    },
+    "reuse_vs_direct": {
+      "rgba16f_copy_and_no_copy": {
+        "frames": 240,
+        "changed_frames": 1,
+        "changed_pixels_total": 1,
+        "maximum_channel_difference": 1,
+        "mean_absolute_channel_error": 6e-09
+      },
+      "rg11b10ufloat_copy_and_no_copy": {
+        "frames": 240,
+        "changed_frames": 3,
+        "changed_pixels_total": 3,
+        "maximum_channel_difference": 1,
+        "mean_absolute_channel_error": 1.8e-08
+      }
+    }
+  },
+  "pairwise_note": "Direct/copy versus direct/no-copy outputs are byte-identical for both HDR formats. Reuse differs from the matched direct path by one 1/255 channel value on one pixel for RGBA16F and three pixels across three frames for compact HDR."
+}

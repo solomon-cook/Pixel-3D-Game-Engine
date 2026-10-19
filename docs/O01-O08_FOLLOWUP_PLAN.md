@@ -135,9 +135,36 @@ WGSL path remains the selectable default; `render.experiments.smoke_candidate_ca
 enables the cached variant. Same-tick two-emitter captures match byte-for-byte.
 Three alternating 120-second pairs on two-emitter and heavy single-plume routes
 found small/mixed GPU-stage changes, about +0.04 ms CPU tile-list encoding, and
-whole-frame median regressions of +0.062 and +0.090 ms. Keep the experiment
+whole-frame median regressions of +0.062 and +0.090 ms in the implementation-
+revision comparison. Keep the experiment
 disabled by default; do not claim a frame win. Cross-adapter and native playback
 remain open. See [the report](measurements-o03-smoke-candidates.json).
+
+The 19 October current-build recheck adds live Session toggle and invalidation
+coverage. Separate direct and cached serve sessions received the same fixed
+ticks, emitter and linked-light edits, successful shader reload, and reset/replay;
+all seven matched captures had identical fire state and pixels. A separate
+same-state Session toggle also matched direct/cached/direct output. This confirms
+sampled correctness after the tested dirty events on M1 Max/Metal, not continuous
+visual acceptance or cross-platform behavior. The 2,304-byte resource inventory
+is a reserved allocation. New frame counters report six dirty-state dispatch
+encodes and clean enabled skips; the same-state toggle check encodes one
+dispatch only while enabled. These counters confirm scheduling, not GPU
+completion time or performance benefit. Keep the cache opt-in because sustained
+whole-frame results remain mixed/regressive. See
+[current-build check](measurements-o03-smoke-candidate-invalidation-recheck.json)
+and [runner](../scripts/smoke_candidate_invalidation_study.py).
+
+A same-source release-profile rebenchmark now isolates the experiment toggle in
+both two-emitter and heavy-plume scenes. Each used three alternating 120-second
+pairs after 10-second warm-ups, with all 7,200 timed frames covered and no late
+or skipped GPU samples. The two-emitter paired medians were −0.016 ms frame
+work, −0.046 ms GPU render and +0.040 ms CPU tile-list encoding. Heavy-plume
+medians were −0.398 ms frame work and −0.070 ms GPU render, with +0.012 ms CPU
+tile-list encoding; one GPU-render pair was slower. These current-build results
+are smaller or mixed by stage, and remain one-device offscreen evidence. Keep
+the cache opt-in pending native review, broader adapters, and owner playback.
+See [current sustained report](measurements-o03-smoke-candidate-sustained-current-build.json).
 
 **Projected fire-bound reuse candidate (18 October 2026):** a separate opt-in GPU
 pass now computes all 512 conservative fire bounds once per frame, replacing the
@@ -163,6 +190,16 @@ candidate selectable and disabled by default. See the
 [native report](measurements-o03-fire-projected-bounds-native.json), and
 [runners](../scripts/fire_bounds_precompute_study.py) and
 [native study runner](../scripts/fire_bounds_native_study.py).
+
+**19 October current-build recheck:** the direct and precomputed paths were
+compared at 21 fixed-tick camera views across the same four workload families.
+All images, tile memberships, overflow counts and occupancy match; natural fire
+fallback remains 100% in the camera-inside workload. Three alternating pairs of
+two-second routes completed with full 120-frame timing coverage and no skipped or
+late samples, but these short windows are only a protocol check, not sustained
+performance evidence. A paused Session API off/on capture also matches pixels
+and tile metrics exactly. Keep the existing 120-second reports as the performance
+evidence. See [current-build recheck](measurements-o03-fire-projected-bounds-recheck.json).
 
 ### 2. O02 moving-caster and invalidation routes
 
@@ -260,6 +297,20 @@ whole-window frame-win claim. See
 [native report](measurements-o04-native.json) and
 [native runner](../scripts/projected_detail_native_study.py).
 
+**19 October 2026 current-build recheck:** `scripts/projected_detail_orbit_study.py`
+was rerun against `target/debug/engine-lab` on the M1 Max/Metal at the fixed
+640×360 grid. All 14 camera checkpoints preserved fire-state parity. Candidate
+images matched baseline hashes at full-detail checkpoints; they differed at
+reduced-detail checkpoints only when the removed geometry affected visible
+pixels. Those frames changed 18–105 pixels per 640×360 image, within x=302–336,
+y=169–195 around the fire. The other reduced-detail checkpoints were also
+pixel-identical because removed geometry was occluded from the camera. This is
+a discrete current-build check, not continuous playback
+acceptance or a new performance measurement. The tracked checkpoint and image
+diff summary is in
+[measurements-o04-current-build-recheck.json](measurements-o04-current-build-recheck.json);
+raw captures remain under ignored `artifacts/o04/goal-recheck/slow-orbit/`.
+
 ### 4. O05 smoke absorption cache
 
 1. **Complete:** the disabled path now allocates no absorption field and does no
@@ -311,6 +362,16 @@ whole-window frame-win claim. See
    [8³ temporal](measurements-o05-temporal-cache8.json) and
    [two-second pause/resume](measurements-o05-pause-resume.json) plus
    [extended pause/resume](measurements-o05-pause-resume-extended.json).
+
+**19 October current-build recheck:** both cache sizes again preserve fire state
+at all 13 edit, light, ember-motion, shader-reload and reset checkpoints. The
+disabled path reports zero cache bytes; enabled 8³ and 16³ paths report 4,096
+and 32,768 bytes. Across checkpoints the mean per-channel RGB errors are
+0.320/0.182/0.149 for 8³ and 0.097/0.056/0.049 for 16³; maximum per-channel
+errors are 21/17/12 and 18/10/12, respectively. This is discrete, headless
+freshness/approximation evidence, not performance or continuous-playback
+acceptance. See
+[current-build report](measurements-o05-invalidation-current-build.json).
 
 **Exit gate — closed as a non-promoted experiment (18 October 2026):** the tested
 8³/16³ single-emitter workloads and the sustained two-emitter route show no
@@ -444,6 +505,16 @@ the [reproducible capture/analysis runner](../scripts/compact_hdr_temporal_study
 Additional workload evidence and its runner are in
 [measurements-o08-compact-hdr-workloads.json](measurements-o08-compact-hdr-workloads.json)
 and [compact_hdr_workload_study.py](../scripts/compact_hdr_workload_study.py).
+
+**19 October current-build factorial recheck:** all eight direct/reuse, copy/no-
+copy and HDR variants again preserve effect counts across 240 frames at 20 fps.
+Direct/copy and direct/no-copy images match byte-for-byte for both formats.
+Reuse differs from matched direct output by one 1/255 channel value on one pixel
+in RGBA16F and by three such pixels across three frames in compact HDR. Compact
+HDR frame and temporal error remain around 0.337/0.421 per 255 with a 38/255
+maximum channel difference. This is a headless temporal check, not performance
+or full human playback acceptance. The contact sheet and hashes are preserved in
+[the current-build report](measurements-o06-o08-factorial-current-build-recheck.json).
 
 **Exit gate:** select a combination only when it improves a declared target (memory,
 traffic or runtime) without violating image/temporal tolerances. Logical byte savings
@@ -963,3 +1034,31 @@ Maintain per-candidate states for implementation, automated correctness, visual
 review, performance decision and target-adapter verification. Update
 [STATUS.md](STATUS.md), [TODO.md](../TODO.md) and the measurement JSON as each gate
 finishes. A compile or a passing unit test does not close visual or hardware gates.
+
+### Current exit-gate dispositions (19 October 2026)
+
+| Track | Evidence-backed disposition | Remaining acceptance |
+|---|---|---|
+| O01 profiling and counters | M1 Max/Metal stage attribution and output-preserving diagnostics do not support an active-region solver rewrite or a general shader rewrite. Keep counters diagnostic-only. [Evidence](measurements-o01-shading-attribution.json), [counters](measurements-o01-shading-counters.json). | Continuous playback, exact queue-latency attribution, native review and another adapter. |
+| O02 shadow caching | Per-face invalidation matches forced redraw at fixed checkpoints and lowers the shadow stage in the moving route, but whole-window throughput is mixed. Keep conservative full-map fallback. [Evidence](measurements-o02-moving-route.json), [native](measurements-o02-native-shadow-cache.json). | Windows/DX12 and another adapter. |
+| O03 tiled effects | Retain 16×16 lists and exhaustive per-category overflow fallback; 8×8 storage cost outweighs its small frame-work change. Fire-bound precompute and smoke-candidate materialization remain disabled opt-ins with M1 evidence. [Stress](measurements-o03-stress-route.json), [tile size](measurements-o03-tile-size-sustained.json), [fire bounds](measurements-o03-fire-projected-bounds.json), [fire-bound current recheck](measurements-o03-fire-projected-bounds-recheck.json), [smoke-candidate correctness](measurements-o03-smoke-candidate-invalidation-recheck.json), [smoke-candidate current sustained](measurements-o03-smoke-candidate-sustained-current-build.json). | Owner motion review, Windows/DX12 and another adapter; current paired performance is one-device offscreen only. |
+| O04 projected fire detail | Keep LOD disabled by default: profile-dependent GPU changes are small, frame-work is mixed, and native FPS is effectively flat. Current fixed-tick state/image evidence is recorded above. [Sustained](measurements-o04-sustained-profiles.json), [current recheck](measurements-o04-current-build-recheck.json). | Full-duration human playback review and non-Metal qualification. |
+| O05 absorption cache | Close the performance decision as a non-promoted experiment: tested 8³/16³ and dual-emitter routes show no total-render win. Preserve direct sampling as default. [Size study](measurements-o05-size-study.json), [dual-emitter timing](measurements-multi-emitter-absorption-native-sustained.json), [current invalidation recheck](measurements-o05-invalidation-current-build.json). | Continuous human review and other-adapter evidence only if promotion is reconsidered. |
+| O06 opaque-light reuse | Keep reuse disabled: exact-depth guarding removed the moving-route spike, but sustained GPU-render timing is slower and a behind-view fixed-tick image error remains. [Sustained](measurements-o06-exact-depth-sustained.json), [temporal](measurements-o06-o08-factorial-temporal.json), [current recheck](measurements-o06-o08-factorial-current-build-recheck.json). | Broader optical camera/playback review and another adapter. |
+| O07 culling and instancing | Keep the existing path; shadow-stage savings grow with scene size but whole-frame/native results are mixed and non-monotonic. Do not add indirect or occlusion submission based on these runs. [Scale](measurements-o07-moving-caster.json), [native](measurements-o07-native-scale-study.json). | Owner continuous-playback review and non-Metal qualification. |
+| O08 resource/pass candidates | Keep independent candidate decisions and capability fallbacks. Compact HDR and no-copy remain experimental; known logical savings do not prove physical bandwidth or speed. [Decisions](DECISIONS_O08.md), [factorial](measurements-o06-o08-factorial.json), [current temporal recheck](measurements-o06-o08-factorial-current-build-recheck.json). | Physical unsupported-format fallback and target-backend/DX12 qualification; continuous-temporal review for experimental paths. |
+| Bounded two-emitter extension | Fixed-tick ordering, fallback, shader rollback and selected native controls are verified on M1 Max/Metal; cap remains two because the maximum-budget route has mixed whole-render cost. [Correctness](measurements-multi-emitter-overflow.json), [sustained](measurements-multi-emitter-sustained.json). | Continuous playback, broader resource-recreation, sustained native benefit, Windows/DX12 and another adapter. |
+
+### Native window control gate (19 October 2026)
+
+The unlocked-host retry passed resize, fullscreen entry and exit, deterministic
+tick-120 capture, command handling and shutdown on M1 Max/Metal. The captured
+scene was inspected. The minimize request still left both `minimized` and
+`occluded` false after two seconds, so automated macOS minimization remains open;
+this is not explained by the earlier locked desktop. See
+[native verification](measurements-native-window-verification-current-build.json).
+
+These dispositions close measured decisions where the evidence is sufficient; they
+do not convert unresolved visual or platform acceptance into a pass. The overall
+follow-up remains open until the listed external acceptance gates are either
+verified or explicitly retired with new evidence.
