@@ -1,0 +1,146 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "workstream": "O02/O07 two-emitter primary-light shadow contribution",
+  "scope": "Source-one-only opaque world-pass point-shadow contribution; direct light, sun shadow, smoke and volume shadow sampling remain unchanged.",
+  "host": {
+    "gpu": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "scene": "assets/scenes/two-emitter-review.json",
+  "scene_sha256": "9ca7aee40dac7a9cde4010f6f90c2623e441c8e0c9a1f19ff2a9c570c1082892",
+  "variant_scene": "artifacts/two-emitter-shadow-contribution/watchfire-only.json",
+  "variant_scene_sha256": "b854ab641ee70cad0d28738953bd7165e532b8986ee7c604916e0e10ac9a9f00",
+  "enabled_emitters": [
+    "watchfire"
+  ],
+  "disabled_emitters": [
+    "campfire"
+  ],
+  "seed": 42,
+  "tick": 300,
+  "resolution": [
+    640,
+    360
+  ],
+  "shader_change": "world.wgsl fire_visibility returns full visibility for the valid source slots 0 and 1; the original lookup remains in an out-of-range branch for shader-counter hook compatibility",
+  "world_shader_sha256": {
+    "reference": "d46fa8eac927ee81e1d6f7980d26a287864596fa6a782fdf8013c41ac77ecdc0",
+    "point_shadows_disabled": "444df818b1e6294e1638db92221bbce9767bca226feca4bc9aca06d2e6954b1c"
+  },
+  "binary_sha256": "d22ac996ceed21e07022ca6cdb3aaa35abfd30996711979b4f693251c875bcd5",
+  "script_sha256": "29dfb2a4c0130abdc9c01325a3bb2b8253af01ea865adbf172c62a9f96c1e78d",
+  "source_revision": "985f0a8729e465018de5b7148698d545abd1c49e",
+  "views": {
+    "dual-wide": {
+      "point_shadows": {
+        "image": "artifacts/two-emitter-shadow-contribution/point_shadows/dual-wide.png",
+        "sha256": "3a835a32cb97fc46616231027dd84dedee139191635db9a99fe35c57effbb283"
+      },
+      "point_shadows_disabled": {
+        "image": "artifacts/two-emitter-shadow-contribution/point_shadows_disabled/dual-wide.png",
+        "sha256": "762ddeaa62245d62984b306c584239b9eed34b29680ba91e38f0b9c1c64d7f9e"
+      },
+      "difference": {
+        "changed_pixel_count": 34136,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.3002690972222222,
+          0.17359375,
+          0.7068229166666666
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          155,
+          72,
+          143
+        ]
+      },
+      "changed": true
+    },
+    "smoke-close": {
+      "point_shadows": {
+        "image": "artifacts/two-emitter-shadow-contribution/point_shadows/smoke-close.png",
+        "sha256": "f1809c72a4b58e4f328820826517556298d6d10859711c9658e5caf60f8a6f95"
+      },
+      "point_shadows_disabled": {
+        "image": "artifacts/two-emitter-shadow-contribution/point_shadows_disabled/smoke-close.png",
+        "sha256": "c0558b4c38b1ad19f2a66ee1f16e75b1ddbf7e1af6397b5bfdc2aa5aa1e80c09"
+      },
+      "difference": {
+        "changed_pixel_count": 6729,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.24305989583333334,
+          0.07751302083333333,
+          0.30701388888888886
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          178,
+          102,
+          162
+        ]
+      },
+      "changed": true
+    },
+    "watchfire-study": {
+      "point_shadows": {
+        "image": "artifacts/two-emitter-shadow-contribution/point_shadows/watchfire-study.png",
+        "sha256": "203f2120c11519963755dda2061421920b02baab3270a37bd15aa4004392362f"
+      },
+      "point_shadows_disabled": {
+        "image": "artifacts/two-emitter-shadow-contribution/point_shadows_disabled/watchfire-study.png",
+        "sha256": "4fa1c56e823625c712f677e23ae88ea4f7fd3a8a9fcfea399185c064b5c2f2bd"
+      },
+      "difference": {
+        "changed_pixel_count": 8024,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          0.3558203125,
+          0.12227430555555556,
+          0.44483072916666666
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          179,
+          103,
+          162
+        ]
+      },
+      "changed": true
+    },
+    "heat-ground-study": {
+      "point_shadows": {
+        "image": "artifacts/two-emitter-shadow-contribution/point_shadows/heat-ground-study.png",
+        "sha256": "83335352fbec51817f81cb0af605da468204aeb1ce4b3bcb5c8e1d6c4817f3ec"
+      },
+      "point_shadows_disabled": {
+        "image": "artifacts/two-emitter-shadow-contribution/point_shadows_disabled/heat-ground-study.png",
+        "sha256": "b4ed7018890895f40ffdbaf742eb7e572135af0d1f2caed75d8ef53b9496b346"
+      },
+      "difference": {
+        "changed_pixel_count": 1754,
+        "pixel_count": 230400,
+        "mean_absolute_rgb_error_0_255": [
+          1.054782986111111,
+          0.4923871527777778,
+          0.9838368055555555
+        ],
+        "maximum_absolute_rgb_error_0_255": [
+          188,
+          110,
+          172
+        ]
+      },
+      "changed": true
+    }
+  },
+  "contact_sheet": {
+    "path": "docs/measurements-multi-emitter-shadow-contribution-contact.png",
+    "sha256": "0a51762772ae5051921cb727e0ba79d26525d5a61d5b257ed9c6240ded8866a8"
+  },
+  "all_views_changed": true,
+  "limitations": [
+    "Diagnostic shader variant only suppresses source primary-light shadow lookup in opaque world shading; it is not a no-shadows renderer mode.",
+    "Fixed-tick M1 Max/Metal captures only; no continuous playback, performance conclusion, owner visual acceptance or DX12/other-adapter validation."
+  ]
+}

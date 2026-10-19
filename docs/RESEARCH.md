@@ -1001,3 +1001,21 @@ default. Same-tick direct/cached dual-emitter captures are byte-identical. Keep
 the direct path as default and the buffer path as an experiment. Reports:
 [measurements-o03-smoke-candidates.json](measurements-o03-smoke-candidates.json);
 raw comparisons are under ignored `artifacts/o03/smoke-candidate-*-selectable/`.
+
+## O02/O07 source-specific point-shadow contribution (19 October 2026)
+
+Hypothesis: the second emitter's cube-array point shadow contributes to opaque
+world shading independently of its direct light. To isolate that term, the
+two-emitter review scene enables only `watchfire`; a diagnostic copy of
+`world.wgsl` returns full visibility for valid source slots while retaining the
+same scene, primary-light intensity, sun shadow, smoke and volume-shadow paths.
+The ordinary renderer remains the reference. At seed 42/tick 300 on M1 Max/Metal,
+all four views changed: 34,136 pixels in `dual-wide`, 6,729 in `smoke-close`,
+8,024 in `watchfire-study` and 1,754 in `heat-ground-study`. Mean RGB error was
+0.394/0.209/0.308/0.844 per 255, respectively. The contact sheet shows localized
+illumination changes on nearby terrain and objects. This closes the focused
+source-one opaque point-shadow contribution check, not continuous playback,
+performance, owner visual acceptance or cross-adapter validation. Reproduce with
+[the report](measurements-multi-emitter-shadow-contribution.json), [the contact
+sheet](measurements-multi-emitter-shadow-contribution-contact.png) and [the
+runner](../scripts/two_emitter_shadow_contribution_study.py).

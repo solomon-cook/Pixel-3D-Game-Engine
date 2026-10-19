@@ -133,7 +133,16 @@ and [runner](../scripts/two_emitter_absorption_sustained_study.py).
   [temporal comparison](measurements-multi-emitter-heat-response-temporal.json),
   [native comparison](measurements-multi-emitter-heat-response-native.json), and
   [native contact sheet](measurements-multi-emitter-heat-response-native-contact.png).
-  Focused shadow-only visual differences remain unisolated.
+  The source-one opaque point-shadow contribution is now isolated in four
+  fixed-tick views: `watchfire` alone remains enabled, with the same direct light,
+  while a diagnostic `world.wgsl` returns full visibility for the two valid source
+  slots. All four captures change (1,754–34,136 pixels); mean RGB error peaks at
+  0.844/255 in the ground-focused view. Sun shadows and smoke/volume shadow
+  sampling remain unchanged. This confirms point-shadow contribution on M1
+  Max/Metal, not a playback or performance result. See the
+  [report](measurements-multi-emitter-shadow-contribution.json),
+  [contact sheet](measurements-multi-emitter-shadow-contribution-contact.png) and
+  [runner](../scripts/two_emitter_shadow_contribution_study.py).
   The fixed-tick `profiling-heavy.json` hero capture remains pixel-identical at
   640×360 (SHA-256 `9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48`).
   See [atmosphere evidence](measurements-multi-emitter-atmosphere.json).

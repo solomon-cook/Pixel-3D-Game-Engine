@@ -946,6 +946,17 @@ and [the report](measurements-multi-emitter-overflow.json). No additional list
 allocation or dispatch was introduced; the existing buffer layout is now addressed
 consistently.
 
+**Source-specific opaque shadow contribution (19 October 2026):** a watchfire-only
+two-source scene now compares the normal world shader with a diagnostic variant
+that returns full visibility for valid primary-light source slots. Direct-light
+intensity, sun shadows and smoke/volume shadow paths remain unchanged. All four
+fixed-tick views change: 1,754–34,136 pixels at seed 42/tick 300, with the
+ground-focused view showing the largest mean RGB difference (0.844/255). This
+confirms the source-one point-shadow contribution on M1 Max/Metal; it does not
+establish performance or playback quality. See the [report](measurements-multi-emitter-shadow-contribution.json),
+[contact sheet](measurements-multi-emitter-shadow-contribution-contact.png) and
+[runner](../scripts/two_emitter_shadow_contribution_study.py).
+
 ## Program completion record
 
 Maintain per-candidate states for implementation, automated correctness, visual
