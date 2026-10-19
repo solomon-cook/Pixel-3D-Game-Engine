@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
@@ -120,6 +121,11 @@ def main() -> int:
     if not binary.is_file():
         parser.error(f"engine-lab binary does not exist: {binary}")
     output.mkdir(parents=True, exist_ok=True)
+    workspace_revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    engine_source_status = subprocess.check_output(
+        ["git", "status", "--porcelain", "--", "crates", "Cargo.lock", "rust-toolchain.toml", "shaders", "assets"],
+        cwd=ROOT, text=True,
+    ).splitlines()
 
     workloads = []
     for workload_id, source_scene, camera, route in WORKLOADS:
@@ -233,9 +239,11 @@ def main() -> int:
     report = {
         "version": 1,
         "workstream": "O03 once-per-frame projected fire bounds",
-        "date": "2026-10-18",
+        "date": datetime.now(timezone.utc).date().isoformat(),
         "binary": str(binary),
         "binary_sha256": sha256(binary),
+        "workspace_revision_at_run": workspace_revision,
+        "engine_source_worktree_status": engine_source_status,
         "runner_sha256": sha256(Path(__file__).resolve()),
         "profile_compare_sha256": sha256(ROOT / "scripts/profile_compare.py"),
         "duration_seconds": args.duration,

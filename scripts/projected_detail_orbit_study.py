@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+from datetime import datetime, timezone
 import hashlib
 import json
 import math
@@ -123,6 +124,11 @@ def main() -> int:
     output.mkdir(parents=True, exist_ok=True)
     if not binary.is_file():
         parser.error(f"engine-lab binary does not exist: {binary}")
+    workspace_revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    engine_source_status = subprocess.check_output(
+        ["git", "status", "--porcelain", "--", "crates", "Cargo.lock", "rust-toolchain.toml", "shaders", "assets"],
+        cwd=ROOT, text=True,
+    ).splitlines()
 
     baseline_scene, candidate_scene = write_scenes(output)
     captures = {}
@@ -148,6 +154,13 @@ def main() -> int:
 
     report = {
         "workstream": "O04 projected detail slow orbit",
+        "date": datetime.now(timezone.utc).date().isoformat(),
+        "binary_path": str(binary),
+        "binary_sha256": hashlib.sha256(binary.read_bytes()).hexdigest(),
+        "workspace_revision_at_run": workspace_revision,
+        "engine_source_worktree_status": engine_source_status,
+        "runner_path": str(Path(__file__).resolve().relative_to(ROOT)),
+        "runner_sha256": hashlib.sha256(Path(__file__).resolve().read_bytes()).hexdigest(),
         "seed": 42,
         "simulation_start_tick": 300,
         "camera_route": "20-second circular orbit, repeated six times in the 120-second benchmark",

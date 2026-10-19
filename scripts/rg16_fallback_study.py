@@ -2,6 +2,7 @@
 """Exercise the RGBA16F effect-target fallback on an adapter with Rg16Float."""
 
 import argparse
+from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
@@ -73,6 +74,11 @@ def main() -> None:
     binary = args.binary.resolve()
     output_dir = args.output.resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
+    workspace_revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    engine_source_status = subprocess.check_output(
+        ["git", "status", "--porcelain", "--", "crates", "Cargo.lock", "rust-toolchain.toml", "shaders", "assets"],
+        cwd=ROOT, text=True,
+    ).splitlines()
     results = []
     for name, scene_name, camera in CASES:
         scene = ROOT / scene_name
@@ -134,7 +140,7 @@ def main() -> None:
         })
     report = {
         "version": 1,
-        "date": "2026-10-18",
+        "date": datetime.now(timezone.utc).date().isoformat(),
         "purpose": "Render the RGBA16F effect-depth and smoke-volume fallback on an adapter that normally selects Rg16Float.",
         "adapter": {
             "name": results[0]["adapter"],
@@ -142,6 +148,9 @@ def main() -> None:
             "fallback_kind": "forced capability-selection fallback; not evidence from hardware lacking Rg16Float support",
         },
         "binary_sha256": sha256(binary),
+        "binary_path": str(binary),
+        "workspace_revision_at_run": workspace_revision,
+        "engine_source_worktree_status": engine_source_status,
         "cases": results,
         "moving_route": {
             "scene": "assets/scenes/profiling-heavy.json",
