@@ -15,6 +15,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--binary", type=Path, default=ROOT / "target/debug/engine-lab")
     parser.add_argument("--minimize-timeout", type=float, default=5.0)
+    parser.add_argument("--restore-timeout", type=float, default=5.0)
     args = parser.parse_args()
     (ROOT / "artifacts").mkdir(exist_ok=True)
     with (ROOT / "artifacts/native-check.log").open("w") as log:
@@ -46,6 +47,22 @@ def main():
                 state = request("get_window")
             return state
 
+        def wait_for_size(expected, timeout):
+            deadline = time.monotonic() + timeout
+            state = request("get_window")
+            stable_since = time.monotonic() if state.get("physical_size") == expected else None
+            while time.monotonic() < deadline:
+                if state.get("physical_size") == expected:
+                    if stable_since is None:
+                        stable_since = time.monotonic()
+                    elif time.monotonic() - stable_since >= 0.75:
+                        return state
+                else:
+                    stable_since = None
+                time.sleep(0.1)
+                state = request("get_window")
+            return state
+
         try:
             initial = request("get_window")
             request("set_window", size=[900, 600])
@@ -64,6 +81,7 @@ def main():
             fullscreen_verified = fullscreen["fullscreen"] is True
             request("set_window", fullscreen=False)
             restored = wait_for_state("fullscreen", False, timeout=3.0)
+            restored_size = wait_for_size(resized["physical_size"], timeout=args.restore_timeout)
             request("step", ticks=120)
             capture = request("capture_frame", path=str(ROOT / "artifacts/native-acceptance.png"), scale=1)
             assert capture["tick"] == 120
@@ -72,11 +90,13 @@ def main():
             process.wait(timeout=20)
             assert process.returncode == 0
             result = {
-                "native_verified": resize_verified and fullscreen_verified and restored["fullscreen"] is False and minimization_verified,
+                "native_verified": resize_verified and fullscreen_verified and restored["fullscreen"] is False and restored_size["physical_size"] == resized["physical_size"] and minimization_verified,
                 "resize_verified": resize_verified,
                 "fullscreen_verified": fullscreen_verified,
-                "fullscreen_restored": restored["fullscreen"] is False,
-                "resize_fullscreen_capture_verified": resize_verified and fullscreen_verified and restored["fullscreen"] is False,
+                "fullscreen_exit_flag": restored["fullscreen"] is False,
+                "window_size_restored": restored_size["physical_size"] == resized["physical_size"],
+                "fullscreen_restored": restored["fullscreen"] is False and restored_size["physical_size"] == resized["physical_size"],
+                "resize_fullscreen_capture_verified": resize_verified and fullscreen_verified and restored["fullscreen"] is False and restored_size["physical_size"] == resized["physical_size"],
                 "minimization_verified": minimization_verified,
                 "occluded_after_minimize_request": minimized.get("occluded"),
                 "initial": initial,
@@ -84,12 +104,14 @@ def main():
                 "minimized": minimized,
                 "fullscreen": fullscreen,
                 "restored": restored,
+                "restored_size": restored_size,
                 "capture": capture,
             }
             (ROOT / "artifacts/native-verification.json").write_text(json.dumps(result, indent=2) + "\n")
             print(json.dumps(result))
             assert resize_verified, "OS did not confirm resize (see artifacts/native-verification.json)"
             assert fullscreen_verified and restored["fullscreen"] is False, "OS did not confirm fullscreen transitions (see artifacts/native-verification.json)"
+            assert restored_size["physical_size"] == resized["physical_size"], "OS did not restore the prior windowed size (see artifacts/native-verification.json)"
             assert minimization_verified, "OS did not confirm minimization; other native checks passed (see artifacts/native-verification.json)"
         finally:
             if process.poll() is None:

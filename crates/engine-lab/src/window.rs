@@ -40,6 +40,11 @@ pub fn process_line(session: &mut Session, line: &str) -> String {
 }
 struct Native {
     window: Arc<Window>,
+    windowed_size: [f64; 2],
+    pending_window_restore: Option<[f64; 2]>,
+    window_restore_started_at: Option<Instant>,
+    last_window_restore_attempt: Option<Instant>,
+    windowed_size_seen_at: Option<Instant>,
     surface: wgpu::Surface<'static>,
     config: wgpu::SurfaceConfiguration,
     session: Session,
@@ -366,6 +371,8 @@ impl App {
             self.options.force_rg16_fallback,
         ))?;
         let size = window.inner_size();
+        let logical_size = size.to_logical::<f64>(window.scale_factor());
+        let windowed_size = [logical_size.width, logical_size.height];
         let mut config = surface
             .get_default_config(&renderer.adapter, size.width.max(1), size.height.max(1))
             .context("surface has no compatible format")?;
@@ -477,6 +484,11 @@ impl App {
             };
         self.native = Some(Native {
             window,
+            windowed_size,
+            pending_window_restore: None,
+            window_restore_started_at: None,
+            last_window_restore_attempt: None,
+            windowed_size_seen_at: None,
             surface,
             config,
             session,
@@ -561,6 +573,10 @@ impl ApplicationHandler for App {
                     n.config.width = size.width;
                     n.config.height = size.height;
                     n.surface.configure(&n.session.renderer.device, &n.config);
+                    if n.pending_window_restore.is_none() && n.window.fullscreen().is_none() {
+                        let logical_size = size.to_logical::<f64>(n.window.scale_factor());
+                        n.windowed_size = [logical_size.width, logical_size.height];
+                    }
                 }
                 n.window.request_redraw();
             }
@@ -583,12 +599,7 @@ impl ApplicationHandler for App {
                             KeyCode::Escape => n.looking = false,
                             KeyCode::Tab => n.inspector = !n.inspector,
                             KeyCode::F11 => {
-                                let mode = if n.window.fullscreen().is_some() {
-                                    None
-                                } else {
-                                    Some(Fullscreen::Borderless(None))
-                                };
-                                n.window.set_fullscreen(mode);
+                                n.set_fullscreen(n.window.fullscreen().is_none());
                             }
                             KeyCode::Space => {
                                 let _ = n
@@ -623,7 +634,36 @@ impl ApplicationHandler for App {
         }
     }
     fn about_to_wait(&mut self, _: &ActiveEventLoop) {
-        if let Some(n) = &self.native {
+        if let Some(n) = &mut self.native {
+            if let Some([width, height]) = n.pending_window_restore {
+                let logical_size = LogicalSize::new(width, height);
+                let expected = logical_size.to_physical::<u32>(n.window.scale_factor());
+                if n.window.inner_size() == expected {
+                    if n.window_restore_started_at.is_some_and(|started| {
+                        started.elapsed() >= std::time::Duration::from_secs(2)
+                    }) && n
+                        .windowed_size_seen_at
+                        .is_some_and(|seen| seen.elapsed() >= std::time::Duration::from_millis(750))
+                    {
+                        n.pending_window_restore = None;
+                        n.window_restore_started_at = None;
+                        n.last_window_restore_attempt = None;
+                        n.windowed_size_seen_at = None;
+                    } else if n.windowed_size_seen_at.is_none() {
+                        n.windowed_size_seen_at = Some(Instant::now());
+                    }
+                } else {
+                    n.windowed_size_seen_at = None;
+                    if n.window_restore_started_at.is_some_and(|started| {
+                        started.elapsed() >= std::time::Duration::from_secs(2)
+                    }) && n
+                        .last_window_restore_attempt
+                        .is_none_or(|last| last.elapsed() >= std::time::Duration::from_millis(250))
+                    {
+                        n.request_windowed_restore();
+                    }
+                }
+            }
             if !n.occluded && !n.window.is_minimized().unwrap_or(false) {
                 n.window.request_redraw();
             }
@@ -655,14 +695,16 @@ impl Native {
                             }
                         }
                         if let Some([w, h]) = p.size {
-                            let _ = self.window.request_inner_size(LogicalSize::new(w, h));
+                            self.windowed_size = [w as f64, h as f64];
+                            if self.window.fullscreen().is_none() && p.fullscreen != Some(true) {
+                                let _ = self.window.request_inner_size(LogicalSize::new(w, h));
+                            }
                         }
                         if let Some(minimized) = p.minimized {
                             self.window.set_minimized(minimized);
                         }
                         if let Some(fullscreen) = p.fullscreen {
-                            self.window
-                                .set_fullscreen(fullscreen.then_some(Fullscreen::Borderless(None)));
+                            self.set_fullscreen(fullscreen);
                         }
                         Ok(json!({"requested":true}))
                     })()
@@ -673,6 +715,39 @@ impl Native {
         }
         process_line(&mut self.session, line)
     }
+    fn set_fullscreen(&mut self, fullscreen: bool) {
+        if fullscreen {
+            if self.window.fullscreen().is_none() {
+                let size = self
+                    .window
+                    .inner_size()
+                    .to_logical::<f64>(self.window.scale_factor());
+                self.windowed_size = [size.width, size.height];
+                self.pending_window_restore = None;
+                self.window_restore_started_at = None;
+                self.last_window_restore_attempt = None;
+                self.windowed_size_seen_at = None;
+            }
+            self.window
+                .set_fullscreen(Some(Fullscreen::Borderless(None)));
+        } else if self.window.fullscreen().is_some() {
+            self.pending_window_restore = Some(self.windowed_size);
+            self.window_restore_started_at = Some(Instant::now());
+            self.last_window_restore_attempt = None;
+            self.windowed_size_seen_at = None;
+            self.window.set_fullscreen(None);
+        }
+    }
+
+    fn request_windowed_restore(&mut self) {
+        if let Some([width, height]) = self.pending_window_restore {
+            let _ = self
+                .window
+                .request_inner_size(LogicalSize::new(width, height));
+            self.last_window_restore_attempt = Some(Instant::now());
+        }
+    }
+
     fn draw(&mut self) -> Result<()> {
         if self.occluded
             || self.window.is_minimized().unwrap_or(false)
