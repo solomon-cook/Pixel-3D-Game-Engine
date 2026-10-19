@@ -122,14 +122,21 @@ and [runner](../scripts/two_emitter_absorption_sustained_study.py).
   post heat pass now carries each source's heat output/cooling/lift and can sample
   the second temperature volume using its source-local shape/distortion settings.
   Source-count guards leave the one-emitter paths unchanged. Opaque materials
-  with `heat_response` sample both source-local temperature fields. The two-source
-  review scene exercises the renderer on Metal, though source-one heat's visual
-  contribution and shadow-only differences still need focused A/B captures.
+  with `heat_response` sample both source-local temperature fields. The original
+  [heat evidence](measurements-multi-emitter-heat.json) is an initial
+  single-emitter implementation snapshot; its limitation that validation only
+  permits one emitter is superseded by later two-source evidence. A source-one-only
+  A/B now changes 168–5,695 pixels across six still views; a focused 120-second
+  orbit shows the ground heat cue through 2,400 frames, and a native fixed-tick A/B
+  confirms it at five poses. These establish contribution on M1 Max/Metal, not
+  owner playback acceptance. See the [focused route](measurements-multi-emitter-heat-response-ground-orbit.json),
+  [temporal comparison](measurements-multi-emitter-heat-response-temporal.json),
+  [native comparison](measurements-multi-emitter-heat-response-native.json), and
+  [native contact sheet](measurements-multi-emitter-heat-response-native-contact.png).
+  Focused shadow-only visual differences remain unisolated.
   The fixed-tick `profiling-heavy.json` hero capture remains pixel-identical at
   640×360 (SHA-256 `9faedb7b757c5043e8bf006f3e1bbffa0d4240e8ef6f0a2a85260612212a4a48`).
   See [atmosphere evidence](measurements-multi-emitter-atmosphere.json).
-  The fixed-tick heat-path parity check is in
-  [heat evidence](measurements-multi-emitter-heat.json).
 - Inked smoke now has source-local puff bounds and shading. The tile list
   reserves 36 candidates per source (72 total), with independent overflow
   fallback; secondary puffs sample their own smoke field, buoyancy, bubble
