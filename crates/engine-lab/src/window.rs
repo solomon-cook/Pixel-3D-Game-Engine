@@ -696,9 +696,10 @@ impl ApplicationHandler for App {
             if !n.occluded && !n.window.is_minimized().unwrap_or(false) {
                 n.window.request_redraw();
             }
-            if n.benchmark
-                .as_ref()
-                .is_some_and(|benchmark| !benchmark.finished)
+            if (n.occluded || n.window.is_minimized().unwrap_or(false))
+                && n.benchmark
+                    .as_ref()
+                    .is_some_and(|benchmark| !benchmark.finished)
             {
                 event_loop.set_control_flow(ControlFlow::WaitUntil(
                     Instant::now() + Duration::from_millis(100),
