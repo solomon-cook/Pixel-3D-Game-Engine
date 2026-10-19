@@ -266,7 +266,7 @@
       }
     ],
     "visual_observation": "The largest tick-120 difference is one pixel on the flame edge; other changed pixels are low-amplitude. The contact sheet shows the exact frames and a 4x amplified difference.",
-    "cross_profile_status": "not byte-identical; active fire primitive bytes match, so the remaining divergence is downstream of primitive generation; exact operation not isolated"
+    "cross_profile_status": "not byte-identical; active fire primitive bytes match and debug/release camera matrices differ, identifying a profile-dependent render input while leaving its causal contribution to the edge pixels unproven"
   },
   "materials_hero_disabled_emitter_control": {
     "scene_variant": "assets/scenes/materials.json with emitters[0].enabled set to false; the live describe schema lists this field as boolean",
@@ -298,7 +298,7 @@
     "changed_pixels": 87,
     "mean_absolute_channel_error": 0.00048032407407407415,
     "max_channel_error": 108,
-    "interpretation": "The Materials/hero divergence is unchanged with smoke density zero. Combined with matching active fire-primitive fingerprints and the near-exact emitter-disabled control, this isolates the visible discrepancy to downstream fire rendering rather than smoke simulation; its precise projection or shading operation remains unknown."
+    "interpretation": "The Materials/hero divergence is unchanged with smoke density zero. Combined with matching active fire-primitive fingerprints and the near-exact emitter-disabled control, this isolates the visible discrepancy to downstream fire rendering rather than smoke simulation. The camera matrix differs across profiles, but its causal contribution has not been proven by matrix substitution."
   },
   "summary": {
     "exact_pairs": 10,
@@ -351,5 +351,23 @@
     },
     "active_primitive_bytes_match": true,
     "interpretation": "Counts, bounds and the FNV-1a fingerprint of active CPU-generated fire primitive bytes match across profiles, while the rendered capture remains different. This moves the divergence downstream of fire primitive generation; it does not identify whether the remaining source is camera/global precision, simulation state or shader thresholding."
+  },
+  "camera_matrix_profile_probe": {
+    "date": "2026-10-19",
+    "scene": "assets/scenes/materials.json",
+    "camera": "hero",
+    "aspect_ratio": "640 / 360",
+    "method": "A temporary Rust probe loaded the validated Scene and called Camera::matrix(aspect), then printed column-major f32 bit patterns for the view-projection matrix and its inverse in debug and release profiles.",
+    "view_proj_f32_bits_hex": {
+      "debug": ["3f98cf83", "bef45ae0", "bef4627a", "bef438c5", "00000000", "4012dc1e", "bec0043c", "bebfe377", "bf375f69", "bf4ba112", "bf4ba767", "bf4b84a5", "3ef47f06", "c01f13dc", "418da5ea", "418e5a8a"],
+      "release": ["3f98cf84", "bef45ae2", "bef4627a", "bef438c5", "00000000", "4012dc1f", "bec0043c", "bebfe377", "bf375f6a", "bf4ba114", "bf4ba767", "bf4b84a5", "3ef47f08", "c01f13dd", "418da5ea", "418e5a8a"]
+    },
+    "inverse_view_proj_f32_bits_hex": {
+      "debug": ["3f1dac5d", "36399aa7", "bebd34df", "34b99aa7", "bd9f8c81", "3ebfc8d2", "be04f5ac", "80000000", "c29fe4c1", "c297e61d", "c30be829", "c11fe4c1", "429f0bd7", "4297402b", "430b3488", "41200010"],
+      "release": ["3f1dac54", "36399a9d", "bebd34d5", "34b99a9d", "bd9f8d32", "3ebfc8c7", "be04f5a5", "80000000", "c29fe4bb", "c297e617", "c30be823", "c11fe4ba", "429f0bd1", "42974026", "430b3483", "4120000a"]
+    },
+    "different_view_proj_slots": 7,
+    "inverse_view_proj_different_slots": 15,
+    "interpretation": "The camera CPU calculation itself is profile-dependent for Materials/hero at this aspect ratio. This is a concrete downstream-of-fire-generation difference and a plausible cause of the sparse flame-edge output mismatch, but the experiment did not substitute matrices in the renderer and does not prove causality. No render-path change was made."
   }
 }

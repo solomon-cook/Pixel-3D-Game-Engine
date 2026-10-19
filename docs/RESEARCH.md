@@ -1140,9 +1140,14 @@ fingerprint, counts, bounds and particle lights across profiles, so the remainin
 difference is downstream of CPU fire-primitive generation. Setting smoke density
 to zero leaves all 87 changed pixels, while disabling the emitter reduces the
 result to four one-level differences; this isolates the outlier to downstream
-fire rendering. The exact projection or shading operation is not isolated.
-Keep the selected grid and renderer defaults;
-record no broad debug/release identity claim until the edge case is understood.
+fire rendering. A direct Rust probe of the same Materials/hero camera at aspect
+640/360 finds 7 of 16 view-projection f32 slots and 15 of 16 inverse-matrix slots
+differ across debug and release profiles. This supplies a concrete profile-
+dependent camera input and makes it a plausible source of the edge discrepancy,
+but it does not prove causality because the two matrices were not substituted in
+a capture. Keep the selected grid and renderer defaults; record no broad debug/
+release identity claim until the edge case is understood. The exact matrices and
+method are in the [parity report](measurements-debug-release-profile-parity.json).
 The captures are offscreen and single-adapter, not native playback or
 cross-vendor determinism evidence. See the [report](measurements-debug-release-profile-parity.json)
 and [contact sheet](measurements-debug-release-profile-parity-contact.png).
