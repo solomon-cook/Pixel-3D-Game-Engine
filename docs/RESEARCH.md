@@ -1075,11 +1075,18 @@ late GPU samples. Two-emitter paired medians: frame work −0.016 ms, GPU render
 −0.046 ms, CPU tile-list encoding +0.040 ms. Heavy-plume medians: frame work
 −0.398 ms, GPU render −0.070 ms, CPU tile-list encoding +0.012 ms; one GPU-render
 pair regressed. These M1 Max/Metal offscreen results vary by stage and workload.
-Native playback, continuous owner review, Windows/DX12, and other adapters
-remain open. See
+A current-release native recheck completes three alternating 120-second pairs
+on the dual-emitter clearing route. Cached-minus-direct paired medians are
++0.144 FPS, −0.004 ms CPU native-frame work and +0.039 ms atmosphere/fire GPU
+time; this does not establish a whole-window benefit. A current-release tick-300
+capture confirms the cache is enabled only in the candidate, with byte-identical
+pixels and tile metrics. Keep the cache disabled by default. Windows/DX12 and
+other-adapter validation remain open. See
 [current check](measurements-o03-smoke-candidate-invalidation-recheck.json) and
 [current sustained report](measurements-o03-smoke-candidate-sustained-current-build.json),
-[runner](../scripts/smoke_candidate_invalidation_study.py).
+[native report](measurements-o03-smoke-candidate-native-current-build.json),
+[correctness runner](../scripts/smoke_candidate_invalidation_study.py) and
+[native runner](../scripts/smoke_candidate_native_study.py).
 
 ## O02/O07 source-specific point-shadow contribution (19 October 2026)
 

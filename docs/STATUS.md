@@ -559,8 +559,14 @@ once per dirty rendered state and shares them between tile building and shading.
 The direct path remains selected by default: two 120-second paired workloads
 found small/mixed GPU-render changes, about 0.04 ms added CPU tile-list encoding,
 and whole-frame regressions in the earlier implementation-revision comparison.
-Exact same-tick direct/cached output matches on
-M1 Max/Metal; DX12, other adapters and native playback remain open. See
+Exact same-tick direct/cached output matches on M1 Max/Metal. A current-release
+native study completes three alternating 120-second pairs on the dual-emitter
+clearing orbit; cached-minus-direct paired medians are +0.144 FPS, −0.004 ms CPU
+native-frame work and +0.039 ms atmosphere/fire GPU time. These small mixed
+deltas do not establish a whole-window win, so keep the cache disabled by default.
+A tick-300 current-release capture confirms the cache is enabled in the candidate
+and disabled in the baseline while both image and tile metrics match exactly.
+Windows/DX12 and other-adapter qualification remain open. See
 [candidate report](measurements-o03-smoke-candidates.json).
 The 19 October current-build check adds seven matched direct/cached serve-session
 checkpoints spanning fixed-step advance, emitter and linked-light edits,
@@ -582,8 +588,11 @@ scenes, with complete 7,200/7,200 timing coverage and no skipped or late samples
 Median frame-work/GPU-render deltas were −0.016/−0.046 ms for two-emitter and
 −0.398/−0.070 ms for heavy plume. CPU tile-list encoding increased +0.040 ms on
 two-emitter and +0.012 ms on heavy plume; one heavy GPU-render pair regressed.
-These offscreen M1 Max/Metal gains are modest and route-dependent, so the cache
-remains disabled by default. See the [current sustained report](measurements-o03-smoke-candidate-sustained-current-build.json).
+These offscreen M1 Max/Metal gains are modest and route-dependent. The separate
+native report reaches the same disposition: the cache remains disabled by
+default. See the [current sustained report](measurements-o03-smoke-candidate-sustained-current-build.json),
+[native report](measurements-o03-smoke-candidate-native-current-build.json) and
+[native runner](../scripts/smoke_candidate_native_study.py).
 
 Four exact-tick view sets (hero perspective, close smoke, orthographic and glass
 close-up) matched byte-for-byte among tiled, exhaustive and forced-fallback modes.
