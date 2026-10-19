@@ -1116,6 +1116,10 @@ decisions and unresolved visual/backend gates are consolidated in the
   The full GPU verifier was rerun after adding O03 smoke-candidate dispatch/skip
   metrics and the on-demand fire-primitive fingerprint; all 42 Rust unit tests
   and the renderer checks passed on the instrumented build.
+  A source-parity audit at current HEAD `14a58e2` found no engine crate, shader,
+  asset, dependency-lock or toolchain changes since the GPU report revision
+  `178a041`; this ties that report to the current source but adds no new runtime
+  or hardware evidence. See [source audit](measurements-gpu-verification-source-audit.json).
   A separate current-build RG16 fallback study also forced RGBA16F effect-depth
   and smoke targets: two scenes and all 120 sampled frames from tick 120 through
   477 matched native-RG16 output byte-for-byte, with 2,101,248 additional known

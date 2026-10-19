@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "purpose": "Confirm whether the recorded current-build GPU verification covers the current engine source after documentation-only follow-up commits.",
+  "gpu_verification_report": "measurements-gpu-verification-current-build.json",
+  "gpu_verification_source_revision": "178a0418fcf6d4970fe0891cff79c7f3c6750e0d",
+  "audited_head_revision": "14a58e230f6ddd83b4bde92d8f3ceca7b28a0a2c",
+  "scope": [
+    "crates",
+    "Cargo.lock",
+    "rust-toolchain.toml",
+    "shaders",
+    "assets"
+  ],
+  "command": "git diff --name-only <gpu_verification_source_revision>..<audited_head_revision> -- crates Cargo.lock rust-toolchain.toml shaders assets",
+  "changed_paths": [],
+  "result": "no_engine_source_changes",
+  "limitations": [
+    "Source parity only; does not rerun or extend GPU, native-window, visual, performance, Windows/DX12, or other-adapter verification."
+  ]
+}
