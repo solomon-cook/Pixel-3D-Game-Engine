@@ -1131,10 +1131,10 @@ decisions and unresolved visual/backend gates are consolidated in the
   The full GPU verifier was rerun after adding O03 smoke-candidate dispatch/skip
   metrics and the on-demand fire-primitive fingerprint; all 42 Rust unit tests
   and the renderer checks passed on the instrumented build.
-  A source-parity audit anchored at HEAD `f8ca9a9` found no engine crate, shader,
-  asset, dependency-lock or toolchain changes since the recorded GPU, Windows
-  GNU/MSVC and native verification revisions. This ties their results to the
-  current source but adds no new runtime or hardware evidence. See
+  A source-parity audit was refreshed at HEAD `ae9ca80`. It found no engine
+  crate, shader, asset, dependency-lock or toolchain changes since the recorded
+  GPU, Windows GNU/MSVC and native verification revisions. This ties those
+  results to the current source but adds no new runtime or hardware evidence. See
   [source audit](measurements-validation-source-audit.json).
   A separate current-build RG16 fallback study also forced RGBA16F effect-depth
   and smoke targets: two scenes and all 120 sampled frames from tick 120 through

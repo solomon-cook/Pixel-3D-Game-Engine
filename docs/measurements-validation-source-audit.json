@@ -2,7 +2,7 @@
   "version": 1,
   "date": "2026-10-19",
   "purpose": "Audit whether the recorded GPU, Windows cross-target, and native verification runs cover current engine sources after later documentation commits.",
-  "audited_head_revision": "f8ca9a9a5774dbf256c78070ce436a1fabbd6c31",
+  "audited_head_revision": "ae9ca80d93db94e0872928cf2ed04f368acaca2e",
   "scope": [
     "crates",
     "Cargo.lock",
@@ -20,7 +20,8 @@
         "python3 scripts/verify.py --gpu"
       ],
       "engine_source_changes_since_report": [],
-      "current_source_match": true
+      "current_source_match": true,
+      "rechecked_head_revision": "ae9ca80d93db94e0872928cf2ed04f368acaca2e"
     },
     {
       "name": "Windows GNU release build and MSVC target check",
@@ -34,7 +35,10 @@
       ],
       "msvc_check_checkout_revision": "438b444c8a612a3719ad5ffdf01576cb36225710",
       "engine_source_changes_since_report": [],
-      "current_source_match": true
+      "current_source_match": true,
+      "rechecked_head_revision": "ae9ca80d93db94e0872928cf2ed04f368acaca2e",
+      "msvc_engine_source_changes_since_check": [],
+      "msvc_current_source_match": true
     },
     {
       "name": "native lifecycle and idle GPU verification",
@@ -45,7 +49,8 @@
         "python3 scripts/verify.py --gpu"
       ],
       "engine_source_changes_since_report": [],
-      "current_source_match": true
+      "current_source_match": true,
+      "rechecked_head_revision": "ae9ca80d93db94e0872928cf2ed04f368acaca2e"
     }
   ],
   "limitations": [
