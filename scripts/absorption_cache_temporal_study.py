@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import date
 import json
 import os
 from pathlib import Path
@@ -12,7 +13,7 @@ import subprocess
 
 from PIL import Image, ImageChops, ImageDraw
 
-from absorption_cache_study import ROOT, SOURCE, make_scenes, sha256
+from absorption_cache_study import ROOT, SOURCE, git_source_state, make_scenes, sha256
 
 
 def rgb_mae(image: Image.Image) -> tuple[float, int]:
@@ -75,8 +76,9 @@ def summarize(output: Path, binary: Path, frames: int, stride: int, start_tick: 
     ordered_temporal = sorted(temporal_mae)
     p95_index = lambda values: int(0.95 * (len(values) - 1))
     return {
-        "date": "2026-10-18",
+        "date": date.today().isoformat(),
         "workstream": f"O05 direct versus {cache_resolution}-cubed cached absorption temporal comparison",
+        "source_state": git_source_state(),
         "method": f"Matched fixed-tick route frames compare direct sampling and the {cache_resolution}-cubed cache. Temporal change magnitude compares absolute per-channel RGB movement between adjacent frames; it does not represent motion direction or replace playback review.",
         "host": {"device": "Apple M1 Max", "backend": "Metal"},
         "resolution": [640, 360],
@@ -90,7 +92,10 @@ def summarize(output: Path, binary: Path, frames: int, stride: int, start_tick: 
         "direct_scene_sha256": sha256(direct_path),
         "cached_scene_sha256": sha256(cache_path),
         "binary_sha256": direct["binary_sha256"],
+        "binary_path": str(binary),
+        "binary_file_sha256": sha256(binary),
         "capture_script_sha256": direct["capture_script_sha256"],
+        "temporal_study_script_sha256": sha256(Path(__file__).resolve()),
         "fire_and_effect_count_fields_match_every_frame": state_match,
         "frame_rgb_mae_mean": statistics.mean(frame_mae),
         "frame_rgb_mae_median": statistics.median(frame_mae),

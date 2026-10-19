@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+from datetime import date
 import hashlib
 import json
 import math
@@ -23,6 +24,17 @@ ORBIT_START_RADIANS = math.pi / 4
 
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def git_source_state() -> dict:
+    revision = subprocess.run(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, capture_output=True, text=True
+    ).stdout.strip()
+    dirty_paths = subprocess.run(
+        ["git", "status", "--porcelain=v1", "--untracked-files=all"],
+        cwd=ROOT, check=True, capture_output=True, text=True,
+    ).stdout.splitlines()
+    return {"revision": revision, "dirty_paths": dirty_paths}
 
 
 def orbit_keyframes(offset: list[float]) -> list[dict]:
@@ -140,10 +152,19 @@ def main() -> int:
     if not binary.is_file():
         subprocess.run(["cargo", "build", "--release", "-p", "engine-lab"], cwd=ROOT, check=True)
     source = json.loads(SOURCE.read_text())
+    source_state = git_source_state()
     scenes = make_scenes(output, source)
     report = {
         "workstream": "O05 smoke absorption cache size study",
-        "date": "2026-10-18",
+        "date": date.today().isoformat(),
+        "provenance": {
+            **source_state,
+            "binary_path": str(binary),
+            "binary_sha256": sha256(binary),
+            "study_script_sha256": sha256(Path(__file__).resolve()),
+            "profile_compare_script_sha256": sha256(ROOT / "scripts/profile_compare.py"),
+            "capture_motion_script_sha256": sha256(ROOT / "scripts/capture_motion.py"),
+        },
         "host": None,
         "seed": 42,
         "simulation_start_tick": 300,
@@ -194,6 +215,18 @@ def main() -> int:
                     ], cwd=ROOT, check=True)
                 comparison_path = comparison_dir / "comparison.json"
                 comparison = json.loads(comparison_path.read_text())
+                expected_binary_sha256 = report["provenance"]["binary_sha256"]
+                for pair in range(1, 4):
+                    for variant in ("baseline", "candidate"):
+                        run_path = comparison_dir / f"pair-{pair:02d}-{variant}.json"
+                        run = json.loads(run_path.read_text())
+                        actual_binary_sha256 = run.get("provenance", {}).get("binary_sha256")
+                        if actual_binary_sha256 != expected_binary_sha256:
+                            raise RuntimeError(
+                                f"{run_path} has binary SHA-256 {actual_binary_sha256!r}; "
+                                f"expected current binary {expected_binary_sha256}. "
+                                "Rerun with --benchmark before summarizing sustained performance."
+                            )
                 baseline_run = json.loads((comparison_dir / "pair-01-baseline.engine.json").read_text())
                 candidate_run = json.loads((comparison_dir / "pair-01-candidate.engine.json").read_text())
                 candidate_runs = [json.loads((comparison_dir / f"pair-{pair:02d}-candidate.engine.json").read_text()) for pair in range(1, 4)]

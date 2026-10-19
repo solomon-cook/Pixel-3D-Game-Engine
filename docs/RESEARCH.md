@@ -1,8 +1,9 @@
 # Rendering research
 
 Every variant remains independently selectable. Baseline defaults remain in
-place pending visual review and Mac/Windows qualification. No technique here is
-claimed as an unprecedented invention.
+place; experimental variants are not promoted without visual review and
+Mac/Windows qualification. No technique here is claimed as an unprecedented
+invention.
 
 ## Pixel-cluster lighting
 

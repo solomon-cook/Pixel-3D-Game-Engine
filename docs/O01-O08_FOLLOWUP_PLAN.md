@@ -372,13 +372,17 @@ raw captures remain under ignored `artifacts/o04/goal-recheck/slow-orbit/`.
    flicker, paused captures, four moving-ember checkpoints, shader reload and reset.
    Fire state matches at all 13 checkpoints per size; see
    [measurements-o05-invalidation.json](measurements-o05-invalidation.json).
-   The 16³ cache now has a matched 400-frame 20 fps temporal comparison at the
-   medium-smoke scale, including frame and temporal-change-magnitude RGB error.
+   The saved 16³ 400-frame, 20 fps temporal comparison at the medium-smoke scale
+   includes frame and temporal-change-magnitude RGB error, but its executable is
+   older than the current release and it is not valid for current-build visual
+   acceptance. The [source audit](measurements-o05-current-review-source-audit.json)
+   records this mismatch; do not request playback review of that stale movie.
+   Regenerate current-build frames if promotion is reconsidered.
    A native `run --agent-stdio` check confirms direct and 16³ captures stay
    bit-identical while paused for two wall-clock seconds. During the two-second
    resume, they advanced 121 and 120 ticks under host scheduling, then were
-   stepped to tick 540 and matched fire state exactly. The full
-   movie still needs human playback review. The matched 8³ temporal route now
+   stepped to tick 540 and matched fire state exactly. That historical movie
+   cannot establish current-build visual acceptance. The matched 8³ temporal route now
    covers the same 400 ticks at medium smoke: mean frame RGB MAE is 0.285/255,
    p95 0.426/255, maximum channel difference 39/255, and mean temporal-change
    magnitude error 0.183/255; exact tick and effect-count parity holds. This is
@@ -390,8 +394,11 @@ raw captures remain under ignored `artifacts/o04/goal-recheck/slow-orbit/`.
    At the aligned tick, 12,451/230,400 pixels differ; per-channel mean absolute
    errors are 0.092/0.052/0.049 and channel maxima 17/11/12. This is the cache's
    expected approximation error, not stale state; the cache remains off by
-   default because its measured total-render cost did not improve. Human playback
-   review and other-adapter acceptance remain open. See
+   default because historical total-render timing did not improve. The explicit-
+   source sustained report predates 13 engine/shader changes, and the current-build
+   invalidation recheck measures correctness only. Current-source sustained
+   performance remains open; keep the cache disabled pending that matched run.
+   Other-adapter acceptance remains open. See
    [16³ temporal](measurements-o05-temporal.json),
    [8³ temporal](measurements-o05-temporal-cache8.json) and
    [two-second pause/resume](measurements-o05-pause-resume.json) plus
@@ -407,14 +414,16 @@ freshness/approximation evidence, not performance or continuous-playback
 acceptance. See
 [current-build report](measurements-o05-invalidation-current-build.json).
 
-**Exit gate — closed as a non-promoted experiment (18 October 2026):** the tested
-8³/16³ single-emitter workloads and the sustained two-emitter route show no
-whole-render benefit over direct sampling. Keep the cache selectable for research
-but disabled by default. Its fixed-tick, invalidation, replay and temporal image
-behavior are characterized on M1 Max/Metal; human continuous-playback review and
-other-adapter validation remain acceptance gates for any future promotion, not
-prerequisites for closing this negative performance decision. Reopen only with a
-new workload or backend measurement that demonstrates a total-cost opportunity.
+**Decision — keep unpromoted and disabled by default:** historical 8³/16³
+single-emitter workloads and the sustained two-emitter route showed no
+whole-render benefit over direct sampling. Current-source sustained timing is
+still required to validate that negative decision against the present renderer;
+the existing 400-frame O05 files also use an older executable, so they cannot
+support current-build playback acceptance. Fixed-tick invalidation and temporal
+behavior are characterized on M1 Max/Metal, but current-source sustained timing,
+current-build playback review if promotion is reconsidered, and other-adapter
+validation remain open. Keep direct sampling selected unless new evidence changes
+the total-cost decision.
 
 ### 5. O06 opaque lighting reuse
 

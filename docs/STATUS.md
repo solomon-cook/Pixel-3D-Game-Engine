@@ -158,7 +158,11 @@ comparisons. The 18 October runs did not show a useful total-render win, so keep
 the cache off by default. However, the explicit-source sustained dual-emitter
 report is from revision `4e57d5f`, before 13 engine/shader changes; the later
 19 October invalidation check does not measure sustained cost. Current-source
-O05 performance remains unverified. See [source audit](measurements-o05-current-review-source-audit.json),
+O05 performance remains unverified. The capture scripts now record binary hashes,
+source revision, dirty paths and runner hashes, and the sustained-run summarizer
+rejects timing records without a matching binary hash. This makes future
+measurements attributable; it does not substitute for the pending GPU run. See
+[source audit](measurements-o05-current-review-source-audit.json),
 [measurements-o05.json](measurements-o05.json) and the detailed
 [size study](measurements-o05-size-study.json). A 400-frame, 20 fps medium-smoke
 route compares direct and 16³ cache output: mean frame RGB MAE is 0.096/255 and
