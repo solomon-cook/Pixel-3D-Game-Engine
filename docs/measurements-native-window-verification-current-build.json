@@ -85,6 +85,58 @@
         ]
       },
       "interpretation": "Bundling the current release binary does not change the minimization result. The fullscreen-restored window was occluded when sampled; that is not minimization evidence."
+    },
+    {
+      "name": "current release native lifecycle with focus diagnostics",
+      "command": "python3 scripts/verify_native.py --binary target/release/engine-lab --minimize-timeout 8",
+      "verifier_default_minimize_timeout_seconds": 5,
+      "resize": true,
+      "fullscreen_entry": true,
+      "fullscreen_exit": true,
+      "fixed_tick_capture": true,
+      "window_states": {
+        "initial": {
+          "focused": false,
+          "minimized": false,
+          "occluded": false,
+          "physical_size": [
+            2560,
+            1600
+          ],
+          "scale_factor": 2.0
+        },
+        "after_resize": {
+          "focused": true,
+          "minimized": false,
+          "occluded": false,
+          "physical_size": [
+            1800,
+            1200
+          ],
+          "scale_factor": 2.0
+        },
+        "after_minimize_request_and_8s_poll": {
+          "focused": false,
+          "minimized": false,
+          "occluded": false,
+          "physical_size": [
+            1800,
+            1200
+          ],
+          "scale_factor": 2.0
+        },
+        "after_fullscreen_restore": {
+          "focused": true,
+          "minimized": false,
+          "occluded": false,
+          "physical_size": [
+            5120,
+            2880
+          ],
+          "scale_factor": 2.0
+        }
+      },
+      "interpretation": "The window was focused after resize. After set_window minimized=true, focus was lost, but the OS did not report minimized or occluded within eight seconds. The owner reported concurrent desktop use during these checks, so other UI activity may have changed focus; treat this minimize result as inconclusive and repeat in an isolated native session."
     }
   ],
   "native_live_review": {
@@ -97,6 +149,7 @@
     "macOS automated minimization and restore",
     "owner acceptance of continuous native playback",
     "Windows/DX12 rendering",
-    "another GPU adapter"
+    "another GPU adapter",
+    "isolated native verification of macOS minimization and restore"
   ]
 }

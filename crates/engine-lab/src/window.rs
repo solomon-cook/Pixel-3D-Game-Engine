@@ -635,7 +635,7 @@ impl Native {
         if let Ok(request) = serde_json::from_str::<Request>(line) {
             let result: Result<Value> = match request.method.as_str() {
                 "get_window" => Ok(
-                    json!({"physical_size":[self.window.inner_size().width,self.window.inner_size().height],"scale_factor":self.window.scale_factor(),"minimized":self.window.is_minimized(),"occluded":self.occluded,"fullscreen":self.window.fullscreen().is_some()}),
+                    json!({"physical_size":[self.window.inner_size().width,self.window.inner_size().height],"scale_factor":self.window.scale_factor(),"focused":self.window.has_focus(),"minimized":self.window.is_minimized(),"occluded":self.occluded,"fullscreen":self.window.fullscreen().is_some()}),
                 ),
                 "set_window" => {
                     #[derive(serde::Deserialize)]

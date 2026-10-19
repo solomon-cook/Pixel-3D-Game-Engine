@@ -1024,8 +1024,12 @@ decisions and unresolved visual/backend gates are consolidated in the
   capture, command handling and shutdown passed. The same minimization request
   was retried through the current release Session and by running that release
   binary from a temporary signed app bundle; both returned `minimized: false`
-  and `occluded: false` after the request. The bundle run also returned
-  `occluded: true` after fullscreen restore, which is a separate window state.
+  and `occluded: false` after the request. A focus-instrumented release run,
+  polled for eight seconds, showed `focused: true` after resize then
+  `focused: false` with `minimized: false` and `occluded: false` after the
+  minimize request. The owner reported concurrent desktop use during these
+  checks, so focus may have changed due to other UI activity. Treat minimization
+  as inconclusive and repeat the lifecycle check in an isolated native session.
   The tick-120 scene capture was inspected. Keep minimization and restore open;
   do not substitute occlusion for minimization. The current release viewport was
   also inspected live at tick 423 with the 640×360 grid; the smoke still reads as

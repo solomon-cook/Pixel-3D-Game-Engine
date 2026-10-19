@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--binary", type=Path, default=ROOT / "target/debug/engine-lab")
+    parser.add_argument("--minimize-timeout", type=float, default=5.0)
     args = parser.parse_args()
     (ROOT / "artifacts").mkdir(exist_ok=True)
     with (ROOT / "artifacts/native-check.log").open("w") as log:
@@ -55,7 +56,7 @@ def main():
                 resized = request("get_window")
             resize_verified = resized["physical_size"] != initial["physical_size"]
             request("set_window", minimized=True)
-            minimized = wait_for_state("minimized", True, timeout=2.0)
+            minimized = wait_for_state("minimized", True, timeout=args.minimize_timeout)
             minimization_verified = minimized["minimized"] is True
             request("set_window", minimized=False)
             request("set_window", fullscreen=True)

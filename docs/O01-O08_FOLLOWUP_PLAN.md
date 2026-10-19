@@ -1054,8 +1054,11 @@ finishes. A compile or a passing unit test does not close visual or hardware gat
 The unlocked-host retry passed resize, fullscreen entry and exit, deterministic
 tick-120 capture, command handling and shutdown on M1 Max/Metal. A current
 release Session and a full verification run from a temporary app bundle both
-acknowledged `set_window minimized=true` but left `minimized=false`; occlusion
-remained false after the request. A live current-release viewport showed a
+acknowledged `set_window minimized=true` but left `minimized=false`; an
+8-second focus-instrumented poll showed focus lost while `minimized` and
+`occluded` stayed false. The owner reported using the desktop concurrently, so
+other UI activity may have changed focus; this minimize result is inconclusive.
+Repeat the lifecycle check in an isolated native session. A live current-release viewport showed a
 moving tick-423 scene at 640×360, with the same tall, regular smoke-puff stack.
 This is sampled playback evidence, not owner acceptance or a temporal-quality
 measurement. Automated minimization and owner visual acceptance remain open.

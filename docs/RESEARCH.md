@@ -1098,9 +1098,13 @@ suite confirms resize, fullscreen entry/exit, request handling, shutdown and a
 fixed tick-120 capture. Minimization remains unverified: `set_window` returned
 `requested: true`, while `is_minimized` stayed false in the current release
 Session and in a full native verifier run using a temporary signed app bundle
-with the current release executable. That bundle run sampled `occluded: true`
-after fullscreen restore, but occlusion is reported separately and does not
-satisfy minimization. A live current-release native viewport reported tick 423
+with the current release executable. A focus-instrumented release recheck waited
+eight seconds: focus changed from true after resize to false after the minimize
+request, while `is_minimized` and `occluded` both stayed false. The longer wait
+did not resolve the gate. The owner reported using the desktop concurrently;
+other UI activity may have changed focus, making the minimize result
+inconclusive. Repeat in an isolated native session before diagnosing the engine
+request path. A live current-release native viewport reported tick 423
 running at 640×360; the smoke still forms a tall regular stack of rounded puffs.
 This is an observed visual concern, not owner acceptance or a temporal score.
 Keep the macOS minimize/restore, owner playback, DX12 and another-adapter gates
