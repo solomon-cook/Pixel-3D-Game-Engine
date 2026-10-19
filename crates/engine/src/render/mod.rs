@@ -439,14 +439,18 @@ fn shadow_face_mask_for_bounds(
     matrices: &[Mat4],
 ) -> (Vec<bool>, bool) {
     let mut dirty = vec![false; matrices.len()];
+    let frusta = matrices
+        .iter()
+        .map(|matrix| Frustum::from_view_projection(*matrix))
+        .collect::<Option<Vec<_>>>();
+    let Some(frusta) = frusta else {
+        return (vec![true; matrices.len()], true);
+    };
     for bound in bounds {
         let Some(bound) = bound else {
             return (vec![true; matrices.len()], true);
         };
-        for (index, matrix) in matrices.iter().enumerate() {
-            let Some(frustum) = Frustum::from_view_projection(*matrix) else {
-                return (vec![true; matrices.len()], true);
-            };
+        for (index, frustum) in frusta.iter().enumerate() {
             dirty[index] |= frustum.intersects(bound);
         }
     }
