@@ -861,15 +861,17 @@ pairs on M1 Max/Metal now cover clearing and profiling-heavy routes, with
 ten-second warm-ups and >99% render and smoke-compute timestamp coverage. Compute
 coverage is divided by actual fixed ticks, not the nominal 7,200 ticks. Clearing
 paired medians remain +0.124 FPS, -0.045 ms CPU native frame, -0.006 ms CPU
-upload and +0.006 ms atmosphere/fire GPU time. Profiling-heavy medians are
--0.070 FPS, +0.001 ms CPU native frame, +0.004 ms CPU upload and -0.014 ms
-atmosphere/fire GPU. Material Atelier medians are +0.069 FPS, +0.011 ms CPU
-native frame, -0.017 ms CPU upload and -0.007 ms atmosphere/fire GPU. Two-emitter
-medians are +0.044 FPS, -0.019 ms CPU native frame, -0.004 ms CPU upload and
--0.004 ms atmosphere/fire GPU. Pair signs differ by route. Profiling-heavy
-counters show about 1.38 fewer Globals writes and 1,173 fewer uploaded bytes per
-rendered frame. This remains a traffic reduction without a general throughput
-claim. Windows/DX12 and other-adapter acceptance remain open. See the
+upload, -0.017 ms CPU simulation encode and +0.006 ms atmosphere/fire GPU time.
+Profiling-heavy medians are -0.070 FPS, +0.001 ms CPU native frame, +0.004 ms
+CPU upload, +0.014 ms CPU simulation encode and -0.014 ms atmosphere/fire GPU.
+Material Atelier medians are +0.069 FPS, +0.011 ms CPU native frame, -0.017 ms
+CPU upload, -0.014 ms CPU simulation encode and -0.007 ms atmosphere/fire GPU.
+Two-emitter medians are +0.044 FPS, -0.019 ms CPU native frame, -0.004 ms CPU
+upload, +0.008 ms CPU simulation encode and -0.004 ms atmosphere/fire GPU. Pair
+signs differ by route. Profiling-heavy counters show about 1.38 fewer Globals
+writes and 1,173 fewer uploaded bytes per rendered frame. This remains a traffic
+reduction without a general throughput claim. Windows/DX12 and other-adapter
+acceptance remain open. See the
 [clearing report](measurements-o08-globals-upload-native.json),
 [profiling-heavy report](measurements-o08-globals-upload-native-profiling-heavy.json),
 [Material Atelier report](measurements-o08-globals-upload-native-materials.json),

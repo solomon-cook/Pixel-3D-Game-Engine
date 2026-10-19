@@ -470,10 +470,12 @@ ten-second warm-ups and >99% render and smoke-compute timestamp coverage measure
 against actual fixed ticks. The profiling-heavy route removes about 1.38 Globals
 writes and 1,173 upload bytes per rendered frame; optimized-minus-legacy paired
 median FPS is -0.070, CPU-frame +0.001 ms, CPU-upload +0.004 ms and
-atmosphere/fire GPU -0.014 ms. Material Atelier has median deltas of +0.069 FPS,
-+0.011 ms CPU-frame, -0.017 ms CPU-upload and -0.007 ms atmosphere/fire GPU.
-Two-emitter medians are +0.044 FPS, -0.019 ms CPU-frame, -0.004 ms CPU-upload
-and -0.004 ms atmosphere/fire GPU. Pair signs vary across the workload matrix;
+atmosphere/fire GPU -0.014 ms; CPU simulation-encode median delta is +0.014 ms.
+Material Atelier has median deltas of +0.069 FPS, +0.011 ms CPU-frame,
+-0.017 ms CPU-upload, -0.014 ms CPU simulation-encode and -0.007 ms
+atmosphere/fire GPU. Two-emitter medians are +0.044 FPS, -0.019 ms CPU-frame,
+-0.004 ms CPU-upload, +0.008 ms CPU simulation-encode and -0.004 ms
+atmosphere/fire GPU. Pair signs vary across the workload matrix;
 together the routes support a traffic reduction without a whole-window speedup
 claim. Windows/DX12 and other-adapter checks remain open. See
 [clearing report](measurements-o08-globals-upload-native.json),

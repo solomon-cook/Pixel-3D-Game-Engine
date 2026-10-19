@@ -92,6 +92,25 @@ change consistently. Keep the layout for its reduced bind-command count, without
 a general timing, GPU-render or native-window claim. See
 [the report](measurements-o08-smoke-bind-layout.json).
 
+## O08 smoke-step Globals upload cleanup
+
+Hypothesis: `update_globals` should not queue the render-only Globals uniform
+write during smoke compute, because the advection shader reads fixed-step inputs
+from its source-local configuration. Tick-120 clearing and two-emitter captures
+remain byte-identical. Four native M1 Max/Metal three-pair routes now confirm
+about 1.37–1.38 fewer Globals writes and 1.16–1.17 KB fewer uploaded bytes per
+rendered frame. CPU simulation-encode median deltas are mixed across
+clearing/profiling-heavy/Material Atelier/two-emitter: -0.017/+0.014/-0.014/
++0.008 ms. FPS and other stage results also vary; keep this as verified upload
+traffic reduction, without a throughput claim. The reports distinguish native
+CPU spans and use actual fixed ticks for smoke-compute timestamp coverage. See
+[clearing](measurements-o08-globals-upload-native.json),
+[profiling-heavy](measurements-o08-globals-upload-native-profiling-heavy.json),
+[Material Atelier](measurements-o08-globals-upload-native-materials.json),
+[two-emitter](measurements-o08-globals-upload-native-two-emitter.json), the
+[offscreen report](measurements-o08-globals-upload.json) and the
+[reproducible runner](../scripts/globals_upload_native_study.py).
+
 
 ## Accepted visual direction from this session
 

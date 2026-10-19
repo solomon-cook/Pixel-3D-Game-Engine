@@ -124,6 +124,14 @@ def main() -> int:
                     candidate.get("cpu_native_frame", {}), baseline.get("cpu_native_frame", {}), "median_ms"
                 ),
                 "cpu_upload_ms": median_delta(candidate.get("cpu_upload", {}), baseline.get("cpu_upload", {}), "median_ms"),
+                "cpu_simulation_encode_ms": median_delta(
+                    candidate.get("cpu_simulation_encode", {}),
+                    baseline.get("cpu_simulation_encode", {}), "median_ms"
+                ),
+                "cpu_simulation_submit_ms": median_delta(
+                    candidate.get("cpu_simulation_submit", {}),
+                    baseline.get("cpu_simulation_submit", {}), "median_ms"
+                ),
                 "gpu_atmosphere_fire_ms": median_delta(
                     candidate.get("gpu_stages", {}).get("atmosphere_fire", {}),
                     baseline.get("gpu_stages", {}).get("atmosphere_fire", {}), "median_ms"
@@ -141,6 +149,8 @@ def main() -> int:
                 "fixed_ticks": baseline["simulation_accounting"]["fixed_ticks"],
                 "smoke_compute_timestamp_coverage": runs["legacy_compute_coverage"],
                 "cpu_upload": metric(baseline, ("cpu_upload",)),
+                "cpu_simulation_encode": metric(baseline, ("cpu_simulation_encode",)),
+                "cpu_simulation_submit": metric(baseline, ("cpu_simulation_submit",)),
                 "mean_globals_uploads_per_frame": mean_sample(baseline, "globals_uploads"),
                 "mean_globals_upload_bytes_per_frame": mean_sample(baseline, "globals_upload_bytes"),
                 "report": f"pair-{pair:02d}-legacy.engine.json",
@@ -154,6 +164,8 @@ def main() -> int:
                 "fixed_ticks": candidate["simulation_accounting"]["fixed_ticks"],
                 "smoke_compute_timestamp_coverage": runs["optimized_compute_coverage"],
                 "cpu_upload": metric(candidate, ("cpu_upload",)),
+                "cpu_simulation_encode": metric(candidate, ("cpu_simulation_encode",)),
+                "cpu_simulation_submit": metric(candidate, ("cpu_simulation_submit",)),
                 "mean_globals_uploads_per_frame": mean_sample(candidate, "globals_uploads"),
                 "mean_globals_upload_bytes_per_frame": mean_sample(candidate, "globals_upload_bytes"),
                 "report": f"pair-{pair:02d}-optimized.engine.json",
@@ -163,7 +175,8 @@ def main() -> int:
         print(json.dumps({"pair": pair, "order": order, "deltas": pairs[-1]["deltas_optimized_minus_legacy"]}))
 
     fields = (
-        "frames_per_second", "cpu_native_frame_ms", "cpu_upload_ms", "gpu_atmosphere_fire_ms",
+        "frames_per_second", "cpu_native_frame_ms", "cpu_upload_ms",
+        "cpu_simulation_encode_ms", "cpu_simulation_submit_ms", "gpu_atmosphere_fire_ms",
         "globals_uploads_per_frame", "globals_upload_bytes_per_frame",
     )
     paired = {}

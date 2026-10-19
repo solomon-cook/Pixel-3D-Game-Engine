@@ -16,16 +16,23 @@
   ],
   "duration_seconds_per_run": 120.0,
   "warmup_seconds": 10.0,
-  "native_reports_resumed": false,
-  "resumed_report_files": [],
-  "git_revision": "1424c3b27e992861764a952204797b987797a0bf",
+  "native_reports_resumed": true,
+  "resumed_report_files": [
+    "pair-01-optimized.engine.json",
+    "pair-01-legacy.engine.json",
+    "pair-02-legacy.engine.json",
+    "pair-02-optimized.engine.json",
+    "pair-03-optimized.engine.json",
+    "pair-03-legacy.engine.json"
+  ],
+  "git_revision": "9c47fc6c633d845c5c67b046bc5347768ed56168",
   "binary_sha256": "d22ac996ceed21e07022ca6cdb3aaa35abfd30996711979b4f693251c875bcd5",
   "source_sha256": {
     "crates/engine-lab/src/main.rs": "b67e404db13490d7549174a9710fd295a3c0e86ed778c9e9db569c822a6bbd30",
     "crates/engine-lab/src/window.rs": "aaea6adf975c0a04729c756b366107c89da4d3cf73ebb865746b700d81e58fa2",
     "crates/engine/src/render/mod.rs": "a9d0ee1fef025b6a086983b163ea10b10f9bdc6b5bde851a431e8847b11da0e3",
     "crates/engine/src/render/shaders/smoke.wgsl": "feeb69f77c6ab62547ddaa791fb9b32f48682f96aeab74ada2123e57b5331c85",
-    "scripts/globals_upload_native_study.py": "a2508ab0623516d6dc7bad0546202b3bcbd34cab08afcbc7653323425d159cc7"
+    "scripts/globals_upload_native_study.py": "b3ee4e0ebd1353ba59bee8785304da50477b9faf6bccc68c946ab6478f662c8e"
   },
   "pairs": [
     {
@@ -38,6 +45,8 @@
         "frames_per_second": -0.21757535123720118,
         "cpu_native_frame_ms": -0.049083999999998795,
         "cpu_upload_ms": -0.032374000000000014,
+        "cpu_simulation_encode_ms": -0.019042000000000003,
+        "cpu_simulation_submit_ms": -0.02612500000000001,
         "gpu_atmosphere_fire_ms": -0.012165999999999677,
         "globals_uploads_per_frame": -1.3782075833014171,
         "globals_upload_bytes_per_frame": -1168.7200306396016
@@ -72,6 +81,16 @@
         "cpu_upload": {
           "median_ms": 0.286833,
           "p95_ms": 2.2964999999999995,
+          "samples": 5222
+        },
+        "cpu_simulation_encode": {
+          "median_ms": 0.249417,
+          "p95_ms": 3.8713749999999996,
+          "samples": 5222
+        },
+        "cpu_simulation_submit": {
+          "median_ms": 0.294584,
+          "p95_ms": 4.340958,
           "samples": 5222
         },
         "mean_globals_uploads_per_frame": 2.378207583301417,
@@ -111,6 +130,16 @@
           "p95_ms": 2.1752510000000003,
           "samples": 5195
         },
+        "cpu_simulation_encode": {
+          "median_ms": 0.230375,
+          "p95_ms": 3.802332,
+          "samples": 5195
+        },
+        "cpu_simulation_submit": {
+          "median_ms": 0.268459,
+          "p95_ms": 4.207833,
+          "samples": 5195
+        },
         "mean_globals_uploads_per_frame": 1,
         "mean_globals_upload_bytes_per_frame": 848,
         "report": "pair-01-optimized.engine.json",
@@ -127,6 +156,8 @@
         "frames_per_second": 0.2659851555039978,
         "cpu_native_frame_ms": -0.01908300000000196,
         "cpu_upload_ms": -0.003583999999999976,
+        "cpu_simulation_encode_ms": 0.028708999999999985,
+        "cpu_simulation_submit_ms": 0.02920800000000001,
         "gpu_atmosphere_fire_ms": -0.003916999999999948,
         "globals_uploads_per_frame": -1.3708405462588957,
         "globals_upload_bytes_per_frame": -1162.4727832275437
@@ -161,6 +192,16 @@
         "cpu_upload": {
           "median_ms": 0.283043,
           "p95_ms": 2.438625,
+          "samples": 5199
+        },
+        "cpu_simulation_encode": {
+          "median_ms": 0.22649999999999998,
+          "p95_ms": 3.8905409999999994,
+          "samples": 5199
+        },
+        "cpu_simulation_submit": {
+          "median_ms": 0.263334,
+          "p95_ms": 4.236083,
           "samples": 5199
         },
         "mean_globals_uploads_per_frame": 2.3708405462588957,
@@ -200,6 +241,16 @@
           "p95_ms": 1.9885390000000005,
           "samples": 5232
         },
+        "cpu_simulation_encode": {
+          "median_ms": 0.25520899999999996,
+          "p95_ms": 3.477916,
+          "samples": 5232
+        },
+        "cpu_simulation_submit": {
+          "median_ms": 0.292542,
+          "p95_ms": 3.85475,
+          "samples": 5232
+        },
         "mean_globals_uploads_per_frame": 1,
         "mean_globals_upload_bytes_per_frame": 848,
         "report": "pair-02-optimized.engine.json",
@@ -216,6 +267,8 @@
         "frames_per_second": 0.04419966763611427,
         "cpu_native_frame_ms": 0.04112499999999919,
         "cpu_upload_ms": 0.012958999999999998,
+        "cpu_simulation_encode_ms": 0.007875000000000021,
+        "cpu_simulation_submit_ms": 0.013832999999999984,
         "gpu_atmosphere_fire_ms": 0.013999000000000095,
         "globals_uploads_per_frame": -1.3816749903956973,
         "globals_upload_bytes_per_frame": -1171.6603918555513
@@ -250,6 +303,16 @@
         "cpu_upload": {
           "median_ms": 0.26841600000000004,
           "p95_ms": 2.3518359999999996,
+          "samples": 5206
+        },
+        "cpu_simulation_encode": {
+          "median_ms": 0.270292,
+          "p95_ms": 3.956666,
+          "samples": 5206
+        },
+        "cpu_simulation_submit": {
+          "median_ms": 0.31208400000000003,
+          "p95_ms": 4.397167,
           "samples": 5206
         },
         "mean_globals_uploads_per_frame": 2.3816749903956973,
@@ -289,6 +352,16 @@
           "p95_ms": 2.2552909999999997,
           "samples": 5209
         },
+        "cpu_simulation_encode": {
+          "median_ms": 0.278167,
+          "p95_ms": 3.663292,
+          "samples": 5209
+        },
+        "cpu_simulation_submit": {
+          "median_ms": 0.325917,
+          "p95_ms": 4.1205419999999995,
+          "samples": 5209
+        },
         "mean_globals_uploads_per_frame": 1,
         "mean_globals_upload_bytes_per_frame": 848,
         "report": "pair-03-optimized.engine.json",
@@ -300,6 +373,8 @@
     "frames_per_second": 0.04419966763611427,
     "cpu_native_frame_ms": -0.01908300000000196,
     "cpu_upload_ms": -0.003583999999999976,
+    "cpu_simulation_encode_ms": 0.007875000000000021,
+    "cpu_simulation_submit_ms": 0.013832999999999984,
     "gpu_atmosphere_fire_ms": -0.003916999999999948,
     "globals_uploads_per_frame": -1.3782075833014171,
     "globals_upload_bytes_per_frame": -1168.7200306396016

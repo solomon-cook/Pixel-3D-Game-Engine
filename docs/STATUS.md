@@ -407,11 +407,12 @@ optimized/legacy pairs and ten-second warm-ups. All runs exceed 99% render and
 smoke-compute timestamp coverage when compute coverage is divided by actual fixed
 ticks. Optimized-minus-legacy medians in route order are +0.124/-0.070/+0.069/
 +0.044 FPS, -0.045/+0.001/+0.011/-0.019 ms CPU native frame,
--0.006/+0.004/-0.017/-0.004 ms CPU upload and +0.006/-0.014/-0.007/-0.004 ms
-atmosphere/fire GPU. Pair signs vary, so the evidence supports traffic reduction,
-not a whole-window speedup. Profiling-heavy counters show about 1.38 fewer
-`Globals` writes and 1,173 fewer uploaded bytes per rendered frame. Windows/DX12
-and other-adapter validation remain open. See the
+-0.006/+0.004/-0.017/-0.004 ms CPU upload, -0.017/+0.014/-0.014/+0.008 ms CPU
+simulation encode, and +0.006/-0.014/-0.007/-0.004 ms atmosphere/fire GPU.
+Pair signs vary, so the evidence supports traffic reduction, not a whole-window
+speedup. Profiling-heavy counters show about 1.38 fewer `Globals` writes and
+1,173 fewer uploaded bytes per rendered frame. Windows/DX12 and other-adapter
+validation remain open. See the
 [clearing report](measurements-o08-globals-upload-native.json),
 [profiling-heavy report](measurements-o08-globals-upload-native-profiling-heavy.json)
 [Material Atelier report](measurements-o08-globals-upload-native-materials.json),
