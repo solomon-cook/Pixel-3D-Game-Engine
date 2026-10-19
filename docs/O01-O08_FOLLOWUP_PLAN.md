@@ -1052,11 +1052,14 @@ finishes. A compile or a passing unit test does not close visual or hardware gat
 ### Native window control gate (19 October 2026)
 
 The unlocked-host retry passed resize, fullscreen entry and exit, deterministic
-tick-120 capture, command handling and shutdown on M1 Max/Metal. The captured
-scene was inspected. The minimize request still left both `minimized` and
-`occluded` false after two seconds, so automated macOS minimization remains open;
-this is not explained by the earlier locked desktop. See
-[native verification](measurements-native-window-verification-current-build.json).
+tick-120 capture, command handling and shutdown on M1 Max/Metal. A current
+release Session and a full verification run from a temporary app bundle both
+acknowledged `set_window minimized=true` but left `minimized=false`; occlusion
+remained false after the request. A live current-release viewport showed a
+moving tick-423 scene at 640×360, with the same tall, regular smoke-puff stack.
+This is sampled playback evidence, not owner acceptance or a temporal-quality
+measurement. Automated minimization and owner visual acceptance remain open.
+See [native verification](measurements-native-window-verification-current-build.json) and its [tick-120 capture](measurements-native-window-verification-current-build.png).
 
 These dispositions close measured decisions where the evidence is sufficient; they
 do not convert unresolved visual or platform acceptance into a pass. The overall

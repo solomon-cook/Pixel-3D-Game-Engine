@@ -1090,3 +1090,18 @@ performance, owner visual acceptance or cross-adapter validation. Reproduce with
 [the report](measurements-multi-emitter-shadow-contribution.json), [the contact
 sheet](measurements-multi-emitter-shadow-contribution-contact.png) and [the
 runner](../scripts/two_emitter_shadow_contribution_study.py).
+
+## Native lifecycle and live playback recheck (19 October 2026)
+
+On the unlocked M1 Max/Metal host, the GPU verifier still passes. The native
+suite confirms resize, fullscreen entry/exit, request handling, shutdown and a
+fixed tick-120 capture. Minimization remains unverified: `set_window` returned
+`requested: true`, while `is_minimized` stayed false in the current release
+Session and in a full native verifier run using a temporary signed app bundle
+with the current release executable. That bundle run sampled `occluded: true`
+after fullscreen restore, but occlusion is reported separately and does not
+satisfy minimization. A live current-release native viewport reported tick 423
+running at 640×360; the smoke still forms a tall regular stack of rounded puffs.
+This is an observed visual concern, not owner acceptance or a temporal score.
+Keep the macOS minimize/restore, owner playback, DX12 and another-adapter gates
+open. See [native verification](measurements-native-window-verification-current-build.json) and its [tick-120 capture](measurements-native-window-verification-current-build.png).

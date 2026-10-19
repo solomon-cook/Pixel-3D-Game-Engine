@@ -1021,12 +1021,16 @@ decisions and unresolved visual/backend gates are consolidated in the
 - **Native verification on 19 October, Mac unlocked:** `python3 scripts/verify.py
   --gpu --native` passed all GPU checks, then exited nonzero only at the
   minimization assertion. Native resize, fullscreen entry/exit, fixed tick-120
-  capture, command handling and shutdown passed. The scene capture was inspected.
-  After the two-second poll, macOS reported both `minimized: false` and
-  `occluded: false`; the request therefore does not verify minimization. Keep
-  that gate open and do not substitute occlusion for minimization. The tracked
-  summary is [native verification](measurements-native-window-verification-current-build.json);
-  raw JSON and PNG remain in ignored `artifacts/`.
+  capture, command handling and shutdown passed. The same minimization request
+  was retried through the current release Session and by running that release
+  binary from a temporary signed app bundle; both returned `minimized: false`
+  and `occluded: false` after the request. The bundle run also returned
+  `occluded: true` after fullscreen restore, which is a separate window state.
+  The tick-120 scene capture was inspected. Keep minimization and restore open;
+  do not substitute occlusion for minimization. The current release viewport was
+  also inspected live at tick 423 with the 640×360 grid; the smoke still reads as
+  a tall regular stack of puffs, so owner playback acceptance remains open. The
+  tracked results are in [native verification](measurements-native-window-verification-current-build.json), including the [tick-120 capture](measurements-native-window-verification-current-build.png). The runner's original raw files remain under ignored `artifacts/`.
 - The verifier used the selected 640×360 scene grid and same-device Metal
   rendering. It does not verify Windows/DX12, another adapter, or target-PC
   performance.

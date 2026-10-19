@@ -1,42 +1,102 @@
 {
   "date": "2026-10-19",
+  "source_revision": "c0e6c00ae93ce469164394dd987b024be67bf6b0",
   "host": {
     "device": "Apple M1 Max",
     "backend": "Metal",
     "gpu": "IntegratedGpu"
   },
-  "command": "python3 scripts/verify.py --gpu --native",
-  "gpu_verification": "passed",
-  "native_window": {
-    "overall_verified": false,
-    "resize_verified": true,
-    "fullscreen_entry_verified": true,
-    "fullscreen_exit_verified": true,
-    "fixed_tick_capture_verified": true,
-    "capture_camera": "hero",
-    "resolution": [
-      640,
-      360
-    ],
-    "seed": 42,
-    "tick": 120,
-    "minimization_verified": false,
-    "minimize_request_state": {
-      "fullscreen": false,
-      "minimized": false,
-      "occluded": false,
-      "physical_size": [
-        1800,
-        1200
-      ],
-      "scale_factor": 2.0
-    },
-    "interpretation": "The native control request returned, but macOS reported minimized=false and occluded=false after the two-second poll. This does not verify minimization; do not substitute occlusion for it."
+  "pixel_resolution": [
+    640,
+    360
+  ],
+  "release_build": {
+    "command": "cargo build --release --locked",
+    "result": "passed",
+    "executable_sha256": "c631f966e18ffaec522026de949bdd87d133a73689d4190770756203e32f56a9"
   },
-  "visual_review": "The fixed-tick rendered scene capture was inspected. This is a capture review, not owner acceptance of continuous native playback.",
-  "artifacts": {
-    "ignored_runtime_report": "artifacts/native-verification.json",
-    "ignored_capture": "artifacts/native-acceptance.png",
-    "runner": "scripts/verify_native.py"
-  }
+  "runs": [
+    {
+      "name": "debug GPU plus native verifier",
+      "command": "python3 scripts/verify.py --gpu --native",
+      "gpu_verification": "passed",
+      "native_verification": "failed only at minimization assertion",
+      "resize": true,
+      "fullscreen_entry": true,
+      "fullscreen_exit": true,
+      "fixed_tick_capture": true,
+      "capture": {
+        "camera": "hero",
+        "seed": 42,
+        "tick": 120,
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "minimize_request_state": {
+        "minimized": false,
+        "occluded": false
+      },
+      "result": "Resize, fullscreen, fixed-tick capture, request handling and shutdown passed. OS minimization was not observed."
+    },
+    {
+      "name": "current release direct native Session control",
+      "command": "target/release/engine-lab run --agent-stdio; get_window; set_window minimized=true; get_window",
+      "initial_window": {
+        "physical_size": [
+          2560,
+          1600
+        ],
+        "scale_factor": 2.0,
+        "minimized": false,
+        "occluded": false
+      },
+      "set_window_response": {
+        "requested": true
+      },
+      "state_after_minimize_request": {
+        "minimized": false,
+        "occluded": false
+      },
+      "result": "The current release Session acknowledged the request, but the OS-reported state remained unminimized."
+    },
+    {
+      "name": "current release verifier from temporary signed app bundle",
+      "command": "python3 scripts/verify_native.py --binary <temporary Pixel Engine Lab.app>/Contents/MacOS/engine-lab",
+      "source_executable_sha256": "c631f966e18ffaec522026de949bdd87d133a73689d4190770756203e32f56a9",
+      "signed_bundle_executable_sha256": "bdf71f86e73f39179601ab3d6a91155895d9c092001e4cf5422f867fb7b681cc",
+      "result": {
+        "resize": true,
+        "fullscreen_entry": true,
+        "fullscreen_exit": true,
+        "fixed_tick_capture": true,
+        "minimized": false,
+        "occluded_after_minimize_request": false,
+        "occluded_after_fullscreen_restore": true
+      },
+      "capture": {
+        "camera": "hero",
+        "seed": 42,
+        "tick": 120,
+        "resolution": [
+          640,
+          360
+        ]
+      },
+      "interpretation": "Bundling the current release binary does not change the minimization result. The fullscreen-restored window was occluded when sampled; that is not minimization evidence."
+    }
+  ],
+  "native_live_review": {
+    "source": "current release binary in a temporary app bundle populated with current assets and shaders; the distribution bundle was not modified",
+    "observed_ui": "Pixel Engine Lab inspector reported Tick 423 running and Pixel grid 640 x 360",
+    "visual_observation": "The moving plume remains a tall, regular stack of separated rounded puffs. This is a sampled visual finding, not owner acceptance or a temporal-quality measurement.",
+    "fixed_tick_capture_inspected": "measurements-native-window-verification-current-build.png"
+  },
+  "open_gates": [
+    "macOS automated minimization and restore",
+    "owner acceptance of continuous native playback",
+    "Windows/DX12 rendering",
+    "another GPU adapter"
+  ]
 }
