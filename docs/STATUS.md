@@ -1103,9 +1103,12 @@ decisions and unresolved visual/backend gates are consolidated in the
 - The verifier used the selected 640×360 scene grid and same-device Metal
   rendering. It does not verify Windows/DX12, another adapter, or target-PC
   performance.
-- macOS ARM64 and Windows x64 GNU release builds succeeded. Windows PE executable
-  was cross-compiled here. Initial repository CI passed on both hosted platforms;
-  that result predates this effect-profile update and is not a visual GPU test.
+- macOS ARM64 and Windows x64 GNU release builds succeed. The current source,
+  including the native minimize-button diagnostic, cross-checks and links as a
+  Windows x64 PE executable; see [current Windows build report](measurements-windows-build-current.json).
+  This Mac cross-build does not execute Windows or establish DX12 rendering,
+  image/motion quality or target-hardware performance. Initial repository CI
+  passed on both hosted platforms, but predates this current source revision.
 - Matched stills were inspected. Original puff shapes and child bubbles remain;
   contact normals/ink and shared density-grid shadowing are approximate. The
   current art still has an overly regular stacked silhouette. Owner acceptance
