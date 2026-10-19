@@ -1078,7 +1078,7 @@
     "The absorption lookup cost is included in atmosphere/fire GPU timing and is not separately timestamped.",
     "Native-window and non-Metal acceptance are not established.",
     "Offscreen serial benchmarks exclude native presentation, inspector, vsync and native window scheduling.",
-    "The user-authorized idle native engine-lab window remained open; no native-window performance result is claimed.",
+    "A separate native engine-lab window remained open during the offscreen study; no native-window performance result is claimed.",
     "One Apple M1 Max/Metal host only; Windows/DX12 and other adapters remain unverified.",
     "Three pairs per condition are evidence for this workload, not a general adaptive-cache threshold or target-hardware guarantee."
   ],
