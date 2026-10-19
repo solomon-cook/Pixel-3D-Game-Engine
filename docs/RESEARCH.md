@@ -917,8 +917,13 @@ tick/camera and fire/effect-count parity held over 400 frames. Mean frame RGB
 MAE was 0.096/255 (p95 0.177/255, maximum channel difference 19/255). Mean error
 in per-channel frame-to-frame change magnitude was 0.104/255. The metric omits
 change direction and is not a substitute for continuous playback review; sampled
-contact sheets show small smoke-region differences. No total-render win follows
-from this quality study, and the cache remains disabled by default.
+contact sheets show small smoke-region differences. The saved 400-frame sequences
+use binary hash `e18956da749438f3d4ce0d2706497adc61670b8e2b15d4d65edc0b0f191ec9a4`,
+which differs from the current verified release hash. Do not treat those frames
+as current-build owner acceptance; refresh them only if reconsidering promotion.
+See the [capture currentness audit](measurements-o05-current-review-source-audit.json).
+No total-render win follows from this quality study, and the cache remains
+disabled by default.
 
 The same route at 8³ also held tick/camera and fire/effect-count parity over 400
 frames. Mean frame RGB MAE was 0.285/255 (p95 0.426/255, maximum channel

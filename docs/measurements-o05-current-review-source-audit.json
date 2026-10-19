@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "purpose": "Verify whether saved O05 temporal frames are suitable for current-build owner visual review.",
+  "audited_head_revision": "7dd046084f73b06f459681be6e71f6d5577dc9f0",
+  "current_release_binary": "target/release/engine-lab",
+  "current_release_binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+  "temporal_measurement_report": "measurements-o05-temporal.json",
+  "temporal_measurement_binary_sha256": "e18956da749438f3d4ce0d2706497adc61670b8e2b15d4d65edc0b0f191ec9a4",
+  "saved_sequences": {
+    "direct": {
+      "sequence_path": "artifacts/o05/continuous/direct-20fps/sequence.json",
+      "sequence_sha256": "a92e5d75003ad43ba421f3ced4a68305463466fd43041fb82d4a5e0c473ba047",
+      "binary_sha256": "e18956da749438f3d4ce0d2706497adc61670b8e2b15d4d65edc0b0f191ec9a4",
+      "frames": 400,
+      "fps": 20.0,
+      "start_tick": 300,
+      "frame_stride_ticks": 3,
+      "scene_sha256": "8c8e452998490b9c13107fd9e6d98f36ae65bc8fab1814ffe53ed219ea86a5f2"
+    },
+    "cache16": {
+      "sequence_path": "artifacts/o05/continuous/cache16-20fps/sequence.json",
+      "sequence_sha256": "f1937d8eca30f5bdd854f08f78737d627c9599acdb15aea7ca73c5c8e02b1b4f",
+      "binary_sha256": "e18956da749438f3d4ce0d2706497adc61670b8e2b15d4d65edc0b0f191ec9a4",
+      "frames": 400,
+      "fps": 20.0,
+      "start_tick": 300,
+      "frame_stride_ticks": 3,
+      "scene_sha256": "614e3fa36a06032354ce88d699fa324df85b22c7e8b6a871b593641f5ae17155"
+    }
+  },
+  "result": "saved_frames_are_from_an_older_binary",
+  "review_disposition": "Do not use the saved O05 sequences for current-build visual acceptance; recapture with the current verified release before requesting owner playback review.",
+  "limitations": [
+    "Binary hash mismatch establishes different executables, not the visual magnitude of any difference.",
+    "No GPU rendering, motion capture, native playback, or performance measurement was run by this audit."
+  ]
+}

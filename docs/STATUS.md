@@ -178,6 +178,13 @@ per-channel absolute error 0.092/0.052/0.049 and maximum 17/11/12. This is a
 small approximation difference after state alignment, not evidence of a stale
 cache; total-render cost still does not justify enabling it. See
 [extended pause/resume evidence](measurements-o05-pause-resume-extended.json).
+The saved 400-frame direct/16³ sequence uses binary hash
+`e18956da749438f3d4ce0d2706497adc61670b8e2b15d4d65edc0b0f191ec9a4`, while
+the current verified release uses `740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c`.
+It is therefore not used for current-build owner visual acceptance. The cache
+remains off by default because the measured total-render cost does not improve;
+refresh the clip only if reconsidering promotion. See the
+[capture currentness audit](measurements-o05-current-review-source-audit.json).
 Continuous human playback review, Windows/DX12 and other-GPU qualification remain
 open. Both cache sizes passed 13 discrete
 direct/cache checkpoints spanning paused density edits, primary-light changes,
