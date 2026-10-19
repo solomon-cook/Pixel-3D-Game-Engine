@@ -127,14 +127,16 @@ effectively flat FPS; portability remains open after the accepted offscreen
 visual review. Keep LOD
 disabled by default. See
 [current-release sustained report](measurements-o04-sustained-current-release.json).
-The 19 October 14-checkpoint fire-state recheck uses binary hash
-`4247485106ee2d30…`, with no binary path or source revision; it is not proven to
-match the current release. Its full-detail and reduced-detail image comparisons
-remain exact-build evidence only. The separate 400-frame current-release route
-was visually accepted across all three profiles. Rerun the threshold-state
-matrix on the current release before closing that correctness gate. See the
+The earlier 14-checkpoint fire-state recheck uses binary hash
+`4247485106ee2d30…`, with no binary path or source revision, so it remains
+exact-build evidence only. A current-release rerun now compares the full/detail
+state fields at all 14 threshold, hysteresis and return checkpoints; all match
+on the audited release binary. The separate 400-frame current-release route was
+visually accepted across all three profiles. This closes fixed-tick threshold
+state parity, not native playback or cross-adapter review. See the
+[current-release matrix](measurements-o04-threshold-state-current-release.json),
 [artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json)
-and [recheck report](measurements-o04-current-build-recheck.json).
+and [historical recheck](measurements-o04-current-build-recheck.json).
 The same-tick default-scene capture also confirms projected detail, absorption
 cache, optical reuse, optical no-copy, compact HDR and projected-fire-bound
 precompute are disabled; the absorption cache reports zero bytes. The smoke- and
@@ -746,13 +748,15 @@ behavior remain open. See the [offscreen report](measurements-o03-fire-projected
 [current-release native report](measurements-o03-fire-projected-bounds-native-current-build.json),
 [offscreen runner](../scripts/fire_bounds_precompute_study.py), and
 [native runner](../scripts/fire_bounds_native_study.py).
-The 19 October 21-view fire-bound check and paused Session toggle use the
-untraceable `4247485106ee2d30…` binary; they are not proven current-release
-correctness. The current release has exact output/tile parity in one fixed
-camera and a three-pair native timing study, but a current-release 21-view matrix
-remains open. Its old three two-second pairs are protocol checks, not sustained
-performance evidence. See the [recheck](measurements-o03-fire-projected-bounds-recheck.json)
-and [artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json).
+The earlier 21-view report and paused Session toggle use the untraceable
+`4247485106ee2d30…` binary. A current-release correctness-only recheck now
+matches pixels, tile memberships, overflow counts and maximum occupancy across
+all 21 views in four workloads, including the natural all-overflow camera-inside
+case. The live Session direct/precompute toggle also preserves tick, image and
+tile metrics. This replaces the earlier-source correctness gap but does not
+repeat route timing. See the [current-release matrix](measurements-o03-fire-projected-bounds-current-release.json),
+[historical recheck](measurements-o03-fire-projected-bounds-recheck.json) and
+[artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json).
 The two-emitter maximum-budget correctness runner now generates separate
 camera-inside-plume and near-plane-intersection scenes. Both tiled images match
 exhaustive output exactly; the inside-plume view overflows the fire list in all

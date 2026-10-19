@@ -116,6 +116,7 @@ def main() -> int:
     parser.add_argument("--warmup", type=float, default=10.0)
     parser.add_argument("--pairs", type=int, default=3)
     parser.add_argument("--reuse-paired-runs", action="store_true", help="reuse existing comparison reports when they match this exact protocol and setting matrix")
+    parser.add_argument("--correctness-only", action="store_true", help="run fixed-tick view and Session toggle parity without sustained route timing")
     args = parser.parse_args()
     binary, output, report_path = (path.resolve() for path in (args.binary, args.output, args.report))
     if not binary.is_file():
@@ -164,7 +165,12 @@ def main() -> int:
         parity = fixed_tick_views[camera]
         paired_dir = workload_dir / "paired-runs"
         comparison_path = paired_dir / "comparison.json"
-        if args.reuse_paired_runs and comparison_path.is_file():
+        paired = None
+        run_validity = []
+        first_run = None
+        if args.correctness_only:
+            paired_dir.mkdir(parents=True, exist_ok=True)
+        elif args.reuse_paired_runs and comparison_path.is_file():
             paired = json.loads(comparison_path.read_text())
             config = paired["configuration"]
             expected = {
@@ -191,26 +197,29 @@ def main() -> int:
                 "--binary", str(binary),
             ], cwd=ROOT, check=True)
             paired = json.loads(comparison_path.read_text())
-        first_run_id = next(iter(paired["runs"]["baseline"]))
-        first_run = json.loads((paired_dir / f"{first_run_id}.engine.json").read_text())
-        run_validity = []
-        for variant, run_ids in paired["runs"].items():
-            for run_id in run_ids:
-                run = json.loads((paired_dir / f"{run_id}.engine.json").read_text())
-                expected_precompute = variant == "candidate"
-                overflow = run["tile_lists"]["overflow_by_category"]["fire_primitives"]
-                coverage = run["timing_coverage"]
-                run_validity.append({
-                    "run": run_id,
-                    "variant": variant,
-                    "precompute_setting_matches": run["tile_lists"]["fire_bounds_precompute"] is expected_precompute,
-                    "frames_complete": coverage["rendered_frames"] == int(round(args.duration * 60)),
-                    "gpu_timestamps_complete": run["gpu_render"]["samples"] == coverage["rendered_frames"],
-                    "fire_fallback_rate": overflow["fallback_rate"],
-                    "expected_overflow_behavior": workload_id != "camera-inside-overflow" or overflow["fallback_rate"] == 1.0,
-                    "skipped_samples": coverage["skipped_samples"],
-                    "late_samples": coverage["late_samples"],
-                })
+        if not args.correctness_only:
+            first_run_id = next(iter(paired["runs"]["baseline"]))
+            first_run = json.loads((paired_dir / f"{first_run_id}.engine.json").read_text())
+            for variant, run_ids in paired["runs"].items():
+                for run_id in run_ids:
+                    run = json.loads((paired_dir / f"{run_id}.engine.json").read_text())
+                    expected_precompute = variant == "candidate"
+                    overflow = run["tile_lists"]["overflow_by_category"]["fire_primitives"]
+                    coverage = run["timing_coverage"]
+                    run_validity.append({
+                        "run": run_id,
+                        "variant": variant,
+                        "precompute_setting_matches": run["tile_lists"]["fire_bounds_precompute"] is expected_precompute,
+                        "frames_complete": coverage["rendered_frames"] == int(round(args.duration * 60)),
+                        "gpu_timestamps_complete": run["gpu_render"]["samples"] == coverage["rendered_frames"],
+                        "fire_fallback_rate": overflow["fallback_rate"],
+                        "expected_overflow_behavior": workload_id != "camera-inside-overflow" or overflow["fallback_rate"] == 1.0,
+                        "skipped_samples": coverage["skipped_samples"],
+                        "late_samples": coverage["late_samples"],
+                    })
+        sample_image_metadata = json.loads(Path(parity["direct"]["image"]).with_suffix(".json").read_text())
+        adapter = first_run["capabilities"]["name"] if first_run else sample_image_metadata["capabilities"]["name"]
+        backend = first_run["capabilities"]["backend"] if first_run else sample_image_metadata["capabilities"]["backend"]
         workloads.append({
             "id": workload_id,
             "scene": str(source_scene.relative_to(ROOT)),
@@ -220,13 +229,13 @@ def main() -> int:
             "camera": camera,
             "route": route,
             "paired_reports_dir": str(paired_dir),
-            "adapter": first_run["capabilities"]["name"],
-            "backend": first_run["capabilities"]["backend"],
+            "adapter": adapter,
+            "backend": backend,
             "fixed_tick_parity": parity,
             "fixed_tick_views": fixed_tick_views,
-            "paired_comparison": paired["comparison"],
+            "paired_comparison": paired["comparison"] if paired else None,
             "runs": run_validity,
-            "pair_protocol_passed": args.pairs >= 3 and len(run_validity) == args.pairs * 2 and all(
+            "pair_protocol_passed": None if args.correctness_only else args.pairs >= 3 and len(run_validity) == args.pairs * 2 and all(
                 all(run[key] for key in ("precompute_setting_matches", "frames_complete", "gpu_timestamps_complete"))
                 and run["skipped_samples"] == 0
                 and run["late_samples"] == 0
@@ -258,7 +267,7 @@ def main() -> int:
                     "pixel_identical", "same_tick", "same_tile_candidates", "same_overflow_tiles", "same_max_occupancy"
                 )) for view in workload["fixed_tick_views"].values()) for workload in workloads
             ),
-            "paired_protocol_all_workloads": all(workload["pair_protocol_passed"] for workload in workloads),
+            "paired_protocol_all_workloads": None if args.correctness_only else all(workload["pair_protocol_passed"] for workload in workloads),
             "session_api_toggle_parity": all(api_check[key] for key in (
                 "same_tick", "pixel_identical", "tile_candidates_identical", "tile_overflow_identical",
                 "tile_max_occupancy_identical",
@@ -268,7 +277,13 @@ def main() -> int:
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps({"report": str(report_path), "acceptance": report["acceptance"]}))
-    return 0 if all(report["acceptance"].values()) else 1
+    required_acceptance = [
+        report["acceptance"]["fixed_tick_parity_all_workloads"],
+        report["acceptance"]["session_api_toggle_parity"],
+    ]
+    if not args.correctness_only:
+        required_acceptance.append(report["acceptance"]["paired_protocol_all_workloads"])
+    return 0 if all(required_acceptance) else 1
 
 
 if __name__ == "__main__":

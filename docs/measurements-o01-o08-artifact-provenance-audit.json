@@ -163,6 +163,28 @@
       "runner_sha256": "e0918b7e11e24e037f6ef9d1520855509e0b57cce74d799b8d32493f31bb0cfa",
       "matches_current_release_binary": true,
       "disposition": "native window forced fallback initialized on M1 Max/Metal at tick 120 and its capture matches the headless forced-fallback PNG byte-for-byte"
+    },
+    {
+      "workstream": "O03 projected fire bounds fixed-tick current-release parity matrix",
+      "report": "docs/measurements-o03-fire-projected-bounds-current-release.json",
+      "binary_path": "target/release/engine-lab",
+      "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+      "workspace_revision_at_run": "3eb3d62c7dff6555c89e6eb8031a3ea277da9131",
+      "engine_source_worktree_status": [],
+      "runner_sha256": "82ea01b293f34fc894ab8ed4a8cebb977b51f2305dc47e441edb06c0d0fd3c8e",
+      "matches_current_release_binary": true,
+      "disposition": "current-release M1 Max/Metal correctness-only rerun matches pixels, tick, candidate membership, overflow and maximum occupancy across all 21 views in four workloads; Session direct/precompute toggle also matches"
+    },
+    {
+      "workstream": "O04 projected detail threshold-state current-release parity matrix",
+      "report": "docs/measurements-o04-threshold-state-current-release.json",
+      "binary_path": "target/release/engine-lab",
+      "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+      "workspace_revision_at_run": "3eb3d62c7dff6555c89e6eb8031a3ea277da9131",
+      "engine_source_worktree_status": [],
+      "runner_sha256": "d57fced926e2d54fe088ecd9a52bedce160fb3338c61fb7b281501d868060ef8",
+      "matches_current_release_binary": true,
+      "disposition": "current-release M1 Max/Metal projected-detail experiment matches inspected fire-state fields at all 14 threshold and return checkpoints; continuous visual acceptance is documented separately"
     }
   ],
   "conclusion": "The O04, O06xO08 and O07 full-orbit review reports, the O03 current native fire-bound report, and the 400-frame O06xO08 artifact correctness audit carry the current audited release hash. The current-release O05 invalidation rerun closes discrete cache freshness, and the current-release O05 sustained size study uses the same audited release binary and closes the offscreen sustained-timing gate on M1 Max/Metal. Only the 16-cubed screen-filling condition shows a repeatable GPU-render reduction; whole-frame work is effectively flat, so keep direct sampling default and caching opt-in. The 4247485106ee2d30... fixed-tick report group remains untraceable and is not present among current binaries; the older O08 RG16 fallback report predates renderer/session/window source changes, but a current-release offscreen and native rerun now match the audited release binary. Keep older records as exact-build evidence, not current-release proof. Recheck remaining untraceable O03/O04/O06xO08 fixed-tick claims as needed. Windows/DX12, other adapters and native-window platform gates remain open.",

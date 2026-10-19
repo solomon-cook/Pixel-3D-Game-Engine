@@ -1,0 +1,1552 @@
+{
+  "version": 1,
+  "workstream": "O03 once-per-frame projected fire bounds",
+  "date": "2026-10-19",
+  "binary": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/release/engine-lab",
+  "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+  "workspace_revision_at_run": "3eb3d62c7dff6555c89e6eb8031a3ea277da9131",
+  "engine_source_worktree_status": [],
+  "runner_sha256": "82ea01b293f34fc894ab8ed4a8cebb977b51f2305dc47e441edb06c0d0fd3c8e",
+  "profile_compare_sha256": "d1bcbd63cc63cc3063859df94e21faa8d3bec2728d452f7091991214ad053855",
+  "duration_seconds": 120.0,
+  "warmup_seconds": 10.0,
+  "pairs": 3,
+  "resolution": [
+    640,
+    360
+  ],
+  "workloads": [
+    {
+      "id": "clearing",
+      "scene": "assets/scenes/clearing.json",
+      "scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+      "generated_scene": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/clearing/scene.json",
+      "generated_scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+      "camera": "hero",
+      "route": "clearing-orbit",
+      "paired_reports_dir": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/clearing/paired-runs",
+      "adapter": "Apple M1 Max",
+      "backend": "Metal",
+      "fixed_tick_parity": {
+        "pixel_identical": true,
+        "same_tick": true,
+        "same_tile_candidates": true,
+        "same_overflow_tiles": true,
+        "same_max_occupancy": true,
+        "direct": {
+          "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/clearing/fixed-tick-parity/hero/direct.png",
+          "sha256": "2dff062612f8b8ab832c331d0a207e8af26362f6e308e6d3098861f93915da68",
+          "tick": 300,
+          "fire_bounds_precompute": false,
+          "tile_candidates": [
+            351,
+            921,
+            920,
+            645
+          ],
+          "tile_overflow_tiles": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tile_max_occupancy": [
+            46,
+            12,
+            1,
+            12
+          ],
+          "fire_projected_bounds_bytes": 8192
+        },
+        "precomputed": {
+          "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/clearing/fixed-tick-parity/hero/precomputed.png",
+          "sha256": "2dff062612f8b8ab832c331d0a207e8af26362f6e308e6d3098861f93915da68",
+          "tick": 300,
+          "fire_bounds_precompute": true,
+          "tile_candidates": [
+            351,
+            921,
+            920,
+            645
+          ],
+          "tile_overflow_tiles": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tile_max_occupancy": [
+            46,
+            12,
+            1,
+            12
+          ],
+          "fire_projected_bounds_bytes": 8192
+        }
+      },
+      "fixed_tick_views": {
+        "hero": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/clearing/fixed-tick-parity/hero/direct.png",
+            "sha256": "2dff062612f8b8ab832c331d0a207e8af26362f6e308e6d3098861f93915da68",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              351,
+              921,
+              920,
+              645
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              46,
+              12,
+              1,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/clearing/fixed-tick-parity/hero/precomputed.png",
+            "sha256": "2dff062612f8b8ab832c331d0a207e8af26362f6e308e6d3098861f93915da68",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              351,
+              921,
+              920,
+              645
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              46,
+              12,
+              1,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        },
+        "smoke-close": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/clearing/fixed-tick-parity/smoke-close/direct.png",
+            "sha256": "b375ce559971ebb3cd66bf8f483de7d39860c4f156052066b54e5e9c3e73a852",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              793,
+              1523,
+              920,
+              1913
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              45,
+              14,
+              1,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/clearing/fixed-tick-parity/smoke-close/precomputed.png",
+            "sha256": "b375ce559971ebb3cd66bf8f483de7d39860c4f156052066b54e5e9c3e73a852",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              793,
+              1523,
+              920,
+              1913
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              45,
+              14,
+              1,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        },
+        "orthographic": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/clearing/fixed-tick-parity/orthographic/direct.png",
+            "sha256": "3f2b97c4b67fd5b63f38d38dc900429347229bf951cfd079a3d6c87e8b063301",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              273,
+              561,
+              920,
+              405
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              50,
+              18,
+              1,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/clearing/fixed-tick-parity/orthographic/precomputed.png",
+            "sha256": "3f2b97c4b67fd5b63f38d38dc900429347229bf951cfd079a3d6c87e8b063301",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              273,
+              561,
+              920,
+              405
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              50,
+              18,
+              1,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        },
+        "fire-study": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/clearing/fixed-tick-parity/fire-study/direct.png",
+            "sha256": "a68223f7703540ed867517667097b6e60e3a0175006a59f9f64a98a4b0200a0c",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              1465,
+              838,
+              920,
+              4915
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              41,
+              9,
+              1,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/clearing/fixed-tick-parity/fire-study/precomputed.png",
+            "sha256": "a68223f7703540ed867517667097b6e60e3a0175006a59f9f64a98a4b0200a0c",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              1465,
+              838,
+              920,
+              4915
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              41,
+              9,
+              1,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        }
+      },
+      "paired_comparison": null,
+      "runs": [],
+      "pair_protocol_passed": null
+    },
+    {
+      "id": "heavy-plume",
+      "scene": "assets/scenes/profiling-heavy.json",
+      "scene_sha256": "f736a0779a868d11c22d761b46a0920eb1b154db6241088c9d09a9fa1ca8a05b",
+      "generated_scene": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/heavy-plume/scene.json",
+      "generated_scene_sha256": "f736a0779a868d11c22d761b46a0920eb1b154db6241088c9d09a9fa1ca8a05b",
+      "camera": "hero",
+      "route": "clearing-orbit",
+      "paired_reports_dir": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/heavy-plume/paired-runs",
+      "adapter": "Apple M1 Max",
+      "backend": "Metal",
+      "fixed_tick_parity": {
+        "pixel_identical": true,
+        "same_tick": true,
+        "same_tile_candidates": true,
+        "same_overflow_tiles": true,
+        "same_max_occupancy": true,
+        "direct": {
+          "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/heavy-plume/fixed-tick-parity/hero/direct.png",
+          "sha256": "3fd0fd8ce023781727221c5f31e6cb867b44717f2ec28506fe748f30c8d0fb61",
+          "tick": 300,
+          "fire_bounds_precompute": false,
+          "tile_candidates": [
+            351,
+            921,
+            7360,
+            645
+          ],
+          "tile_overflow_tiles": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tile_max_occupancy": [
+            46,
+            12,
+            8,
+            12
+          ],
+          "fire_projected_bounds_bytes": 8192
+        },
+        "precomputed": {
+          "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/heavy-plume/fixed-tick-parity/hero/precomputed.png",
+          "sha256": "3fd0fd8ce023781727221c5f31e6cb867b44717f2ec28506fe748f30c8d0fb61",
+          "tick": 300,
+          "fire_bounds_precompute": true,
+          "tile_candidates": [
+            351,
+            921,
+            7360,
+            645
+          ],
+          "tile_overflow_tiles": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tile_max_occupancy": [
+            46,
+            12,
+            8,
+            12
+          ],
+          "fire_projected_bounds_bytes": 8192
+        }
+      },
+      "fixed_tick_views": {
+        "hero": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/heavy-plume/fixed-tick-parity/hero/direct.png",
+            "sha256": "3fd0fd8ce023781727221c5f31e6cb867b44717f2ec28506fe748f30c8d0fb61",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              351,
+              921,
+              7360,
+              645
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              46,
+              12,
+              8,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/heavy-plume/fixed-tick-parity/hero/precomputed.png",
+            "sha256": "3fd0fd8ce023781727221c5f31e6cb867b44717f2ec28506fe748f30c8d0fb61",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              351,
+              921,
+              7360,
+              645
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              46,
+              12,
+              8,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        },
+        "smoke-close": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/heavy-plume/fixed-tick-parity/smoke-close/direct.png",
+            "sha256": "028ff6417cfcd7ceef004b11173776fa026a5ba43794779528395780d5bc915b",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              793,
+              1523,
+              7360,
+              1913
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              45,
+              14,
+              8,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/heavy-plume/fixed-tick-parity/smoke-close/precomputed.png",
+            "sha256": "028ff6417cfcd7ceef004b11173776fa026a5ba43794779528395780d5bc915b",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              793,
+              1523,
+              7360,
+              1913
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              45,
+              14,
+              8,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        },
+        "orthographic": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/heavy-plume/fixed-tick-parity/orthographic/direct.png",
+            "sha256": "4d1bbae1db34daf45b6002e11e6a0dbb7f55605bc97e9c0e8568c1526732dd24",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              273,
+              561,
+              7360,
+              405
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              50,
+              18,
+              8,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/heavy-plume/fixed-tick-parity/orthographic/precomputed.png",
+            "sha256": "4d1bbae1db34daf45b6002e11e6a0dbb7f55605bc97e9c0e8568c1526732dd24",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              273,
+              561,
+              7360,
+              405
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              50,
+              18,
+              8,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        },
+        "fire-study": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/heavy-plume/fixed-tick-parity/fire-study/direct.png",
+            "sha256": "de04a1a44bc2c5264253a2b441d0affe5c0dddc4e97d4c1221d7830e4f50ef53",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              1465,
+              838,
+              7360,
+              4915
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              41,
+              9,
+              8,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/heavy-plume/fixed-tick-parity/fire-study/precomputed.png",
+            "sha256": "de04a1a44bc2c5264253a2b441d0affe5c0dddc4e97d4c1221d7830e4f50ef53",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              1465,
+              838,
+              7360,
+              4915
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              41,
+              9,
+              8,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        }
+      },
+      "paired_comparison": null,
+      "runs": [],
+      "pair_protocol_passed": null
+    },
+    {
+      "id": "material-atelier",
+      "scene": "assets/scenes/materials.json",
+      "scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
+      "generated_scene": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/material-atelier/scene.json",
+      "generated_scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
+      "camera": "hero",
+      "route": "material-orbit",
+      "paired_reports_dir": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/material-atelier/paired-runs",
+      "adapter": "Apple M1 Max",
+      "backend": "Metal",
+      "fixed_tick_parity": {
+        "pixel_identical": true,
+        "same_tick": true,
+        "same_tile_candidates": true,
+        "same_overflow_tiles": true,
+        "same_max_occupancy": true,
+        "direct": {
+          "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/material-atelier/fixed-tick-parity/hero/direct.png",
+          "sha256": "de9d01785553a2dabd28774da4b334e68f338bdcef84e38a22ada50ebbbfa363",
+          "tick": 300,
+          "fire_bounds_precompute": false,
+          "tile_candidates": [
+            116,
+            442,
+            2760,
+            115
+          ],
+          "tile_overflow_tiles": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tile_max_occupancy": [
+            26,
+            15,
+            3,
+            5
+          ],
+          "fire_projected_bounds_bytes": 8192
+        },
+        "precomputed": {
+          "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/material-atelier/fixed-tick-parity/hero/precomputed.png",
+          "sha256": "de9d01785553a2dabd28774da4b334e68f338bdcef84e38a22ada50ebbbfa363",
+          "tick": 300,
+          "fire_bounds_precompute": true,
+          "tile_candidates": [
+            116,
+            442,
+            2760,
+            115
+          ],
+          "tile_overflow_tiles": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "tile_max_occupancy": [
+            26,
+            15,
+            3,
+            5
+          ],
+          "fire_projected_bounds_bytes": 8192
+        }
+      },
+      "fixed_tick_views": {
+        "hero": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/material-atelier/fixed-tick-parity/hero/direct.png",
+            "sha256": "de9d01785553a2dabd28774da4b334e68f338bdcef84e38a22ada50ebbbfa363",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              116,
+              442,
+              2760,
+              115
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              26,
+              15,
+              3,
+              5
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/material-atelier/fixed-tick-parity/hero/precomputed.png",
+            "sha256": "de9d01785553a2dabd28774da4b334e68f338bdcef84e38a22ada50ebbbfa363",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              116,
+              442,
+              2760,
+              115
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              26,
+              15,
+              3,
+              5
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        },
+        "metal-close": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/material-atelier/fixed-tick-parity/metal-close/direct.png",
+            "sha256": "0196aef78025ee18d57410c4540996002ea3b9df78f9b74e655ca23717a767aa",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              0,
+              961,
+              2760,
+              231
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              0,
+              3,
+              3,
+              5
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/material-atelier/fixed-tick-parity/metal-close/precomputed.png",
+            "sha256": "0196aef78025ee18d57410c4540996002ea3b9df78f9b74e655ca23717a767aa",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              0,
+              961,
+              2760,
+              231
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              0,
+              3,
+              3,
+              5
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        },
+        "glass-close": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/material-atelier/fixed-tick-parity/glass-close/direct.png",
+            "sha256": "c04831e657fabaf0059bbe8e7cbcbec861aa14a4f70de78bf4c007496886b12c",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              45,
+              227,
+              2760,
+              158
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              9,
+              12,
+              3,
+              5
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/material-atelier/fixed-tick-parity/glass-close/precomputed.png",
+            "sha256": "c04831e657fabaf0059bbe8e7cbcbec861aa14a4f70de78bf4c007496886b12c",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              45,
+              227,
+              2760,
+              158
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              9,
+              12,
+              3,
+              5
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        },
+        "subsurface-close": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/material-atelier/fixed-tick-parity/subsurface-close/direct.png",
+            "sha256": "2e9e2fa433aab078c7e8375b6c0d221d51766f4e8af111e4b6f503ba40802f39",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              0,
+              0,
+              2760,
+              0
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              0,
+              0,
+              3,
+              0
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/material-atelier/fixed-tick-parity/subsurface-close/precomputed.png",
+            "sha256": "2e9e2fa433aab078c7e8375b6c0d221d51766f4e8af111e4b6f503ba40802f39",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              0,
+              0,
+              2760,
+              0
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              0,
+              0,
+              3,
+              0
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        },
+        "orthographic": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/material-atelier/fixed-tick-parity/orthographic/direct.png",
+            "sha256": "2c9d9028bb6033c666c1d5ec26f8a3db86f3d51c609a385281dad4b390d48d78",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              193,
+              811,
+              2760,
+              238
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              26,
+              15,
+              3,
+              5
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/material-atelier/fixed-tick-parity/orthographic/precomputed.png",
+            "sha256": "2c9d9028bb6033c666c1d5ec26f8a3db86f3d51c609a385281dad4b390d48d78",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              193,
+              811,
+              2760,
+              238
+            ],
+            "tile_overflow_tiles": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              26,
+              15,
+              3,
+              5
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        }
+      },
+      "paired_comparison": null,
+      "runs": [],
+      "pair_protocol_passed": null
+    },
+    {
+      "id": "camera-inside-overflow",
+      "scene": "assets/scenes/two-emitter-overflow-stress.json",
+      "scene_sha256": "544662419ca3bb9882f2d59e83db5ef059eb1f4c8da4787c78092c6d9fa31772",
+      "generated_scene": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/scene.json",
+      "generated_scene_sha256": "4f4f6eecbeb2d31cb9b0bf05b74dce3af37c37e1ff25dc20a6641f0bc07e5631",
+      "camera": "camera-inside-plume",
+      "route": "camera-inside-hold",
+      "paired_reports_dir": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/paired-runs",
+      "adapter": "Apple M1 Max",
+      "backend": "Metal",
+      "fixed_tick_parity": {
+        "pixel_identical": true,
+        "same_tick": true,
+        "same_tile_candidates": true,
+        "same_overflow_tiles": true,
+        "same_max_occupancy": true,
+        "direct": {
+          "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/fixed-tick-parity/camera-inside-plume/direct.png",
+          "sha256": "53589a9296a5d45e04a967d6cdd393286fb82d2c2026a6a3980cb7364a9743b7",
+          "tick": 300,
+          "fire_bounds_precompute": false,
+          "tile_candidates": [
+            323556,
+            18172,
+            7360,
+            10488
+          ],
+          "tile_overflow_tiles": [
+            920,
+            0,
+            0,
+            0
+          ],
+          "tile_max_occupancy": [
+            354,
+            48,
+            8,
+            12
+          ],
+          "fire_projected_bounds_bytes": 8192
+        },
+        "precomputed": {
+          "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/fixed-tick-parity/camera-inside-plume/precomputed.png",
+          "sha256": "53589a9296a5d45e04a967d6cdd393286fb82d2c2026a6a3980cb7364a9743b7",
+          "tick": 300,
+          "fire_bounds_precompute": true,
+          "tile_candidates": [
+            323556,
+            18172,
+            7360,
+            10488
+          ],
+          "tile_overflow_tiles": [
+            920,
+            0,
+            0,
+            0
+          ],
+          "tile_max_occupancy": [
+            354,
+            48,
+            8,
+            12
+          ],
+          "fire_projected_bounds_bytes": 8192
+        }
+      },
+      "fixed_tick_views": {
+        "hero": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/fixed-tick-parity/hero/direct.png",
+            "sha256": "1253a9315dd357b5bbc818b1a2bd70e045b23bfd7db0eb6c73990855f26bec19",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              4962,
+              1832,
+              7360,
+              869
+            ],
+            "tile_overflow_tiles": [
+              29,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              199,
+              24,
+              8,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/fixed-tick-parity/hero/precomputed.png",
+            "sha256": "1253a9315dd357b5bbc818b1a2bd70e045b23bfd7db0eb6c73990855f26bec19",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              4962,
+              1832,
+              7360,
+              869
+            ],
+            "tile_overflow_tiles": [
+              29,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              199,
+              24,
+              8,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        },
+        "smoke-close": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/fixed-tick-parity/smoke-close/direct.png",
+            "sha256": "4c85d9302420567f33c5fcfd98216f4aad62eb002ef3e3d1101f7bc25e44e2dd",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              12763,
+              3076,
+              7360,
+              2632
+            ],
+            "tile_overflow_tiles": [
+              82,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              160,
+              29,
+              8,
+              11
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/fixed-tick-parity/smoke-close/precomputed.png",
+            "sha256": "4c85d9302420567f33c5fcfd98216f4aad62eb002ef3e3d1101f7bc25e44e2dd",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              12763,
+              3076,
+              7360,
+              2632
+            ],
+            "tile_overflow_tiles": [
+              82,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              160,
+              29,
+              8,
+              11
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        },
+        "orthographic": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/fixed-tick-parity/orthographic/direct.png",
+            "sha256": "04ff94d9638bdac700c6ff4af674bc3007d7c9a56d3f03445fa10d34da890ce1",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              3306,
+              1117,
+              7222,
+              552
+            ],
+            "tile_overflow_tiles": [
+              19,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              231,
+              35,
+              8,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/fixed-tick-parity/orthographic/precomputed.png",
+            "sha256": "04ff94d9638bdac700c6ff4af674bc3007d7c9a56d3f03445fa10d34da890ce1",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              3306,
+              1117,
+              7222,
+              552
+            ],
+            "tile_overflow_tiles": [
+              19,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              231,
+              35,
+              8,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        },
+        "fire-study": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/fixed-tick-parity/fire-study/direct.png",
+            "sha256": "5f6d0dae0881c6c0eb6f8a40399cbc56e272afc108a2a61ccac8cfd7e7999246",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              28370,
+              1712,
+              7360,
+              5055
+            ],
+            "tile_overflow_tiles": [
+              171,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              148,
+              18,
+              8,
+              11
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/fixed-tick-parity/fire-study/precomputed.png",
+            "sha256": "5f6d0dae0881c6c0eb6f8a40399cbc56e272afc108a2a61ccac8cfd7e7999246",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              28370,
+              1712,
+              7360,
+              5055
+            ],
+            "tile_overflow_tiles": [
+              171,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              148,
+              18,
+              8,
+              11
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        },
+        "dual-wide": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/fixed-tick-parity/dual-wide/direct.png",
+            "sha256": "563a2b2646a2cc839ae3e6731b69b00653716e4a47af64e796242a8cd14df086",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              2720,
+              802,
+              6624,
+              432
+            ],
+            "tile_overflow_tiles": [
+              16,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              245,
+              31,
+              8,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/fixed-tick-parity/dual-wide/precomputed.png",
+            "sha256": "563a2b2646a2cc839ae3e6731b69b00653716e4a47af64e796242a8cd14df086",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              2720,
+              802,
+              6624,
+              432
+            ],
+            "tile_overflow_tiles": [
+              16,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              245,
+              31,
+              8,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        },
+        "stress-close": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/fixed-tick-parity/stress-close/direct.png",
+            "sha256": "79b74585c7deb6125e8abb472e9f11907b921adf417c3898275992f9dc321ff4",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              14561,
+              1279,
+              7360,
+              3236
+            ],
+            "tile_overflow_tiles": [
+              74,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              148,
+              17,
+              8,
+              11
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/fixed-tick-parity/stress-close/precomputed.png",
+            "sha256": "79b74585c7deb6125e8abb472e9f11907b921adf417c3898275992f9dc321ff4",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              14561,
+              1279,
+              7360,
+              3236
+            ],
+            "tile_overflow_tiles": [
+              74,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              148,
+              17,
+              8,
+              11
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        },
+        "camera-inside-plume": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/fixed-tick-parity/camera-inside-plume/direct.png",
+            "sha256": "53589a9296a5d45e04a967d6cdd393286fb82d2c2026a6a3980cb7364a9743b7",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              323556,
+              18172,
+              7360,
+              10488
+            ],
+            "tile_overflow_tiles": [
+              920,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              354,
+              48,
+              8,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/fixed-tick-parity/camera-inside-plume/precomputed.png",
+            "sha256": "53589a9296a5d45e04a967d6cdd393286fb82d2c2026a6a3980cb7364a9743b7",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              323556,
+              18172,
+              7360,
+              10488
+            ],
+            "tile_overflow_tiles": [
+              920,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              354,
+              48,
+              8,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        },
+        "near-plane-intersection": {
+          "pixel_identical": true,
+          "same_tick": true,
+          "same_tile_candidates": true,
+          "same_overflow_tiles": true,
+          "same_max_occupancy": true,
+          "direct": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/fixed-tick-parity/near-plane-intersection/direct.png",
+            "sha256": "d7d35792db3b4452a6b2d26b87c297d1b2eee450fa20e2e1767a89098093353c",
+            "tick": 300,
+            "fire_bounds_precompute": false,
+            "tile_candidates": [
+              212915,
+              42320,
+              7360,
+              10440
+            ],
+            "tile_overflow_tiles": [
+              920,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              265,
+              46,
+              8,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          },
+          "precomputed": {
+            "image": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o03/current-release-fire-bounds-correctness/camera-inside-overflow/fixed-tick-parity/near-plane-intersection/precomputed.png",
+            "sha256": "d7d35792db3b4452a6b2d26b87c297d1b2eee450fa20e2e1767a89098093353c",
+            "tick": 300,
+            "fire_bounds_precompute": true,
+            "tile_candidates": [
+              212915,
+              42320,
+              7360,
+              10440
+            ],
+            "tile_overflow_tiles": [
+              920,
+              0,
+              0,
+              0
+            ],
+            "tile_max_occupancy": [
+              265,
+              46,
+              8,
+              12
+            ],
+            "fire_projected_bounds_bytes": 8192
+          }
+        }
+      },
+      "paired_comparison": null,
+      "runs": [],
+      "pair_protocol_passed": null
+    }
+  ],
+  "session_api_toggle_parity": {
+    "toggle_on_response": {
+      "id": 1,
+      "result": {
+        "enabled": true,
+        "force_overflow": false,
+        "precompute_fire_bounds": true
+      }
+    },
+    "toggle_off_response": {
+      "id": 3,
+      "result": {
+        "enabled": true,
+        "force_overflow": false,
+        "precompute_fire_bounds": false
+      }
+    },
+    "direct_flag": false,
+    "precomputed_flag": true,
+    "same_tick": true,
+    "pixel_identical": true,
+    "tile_candidates_identical": true,
+    "tile_overflow_identical": true,
+    "tile_max_occupancy_identical": true,
+    "direct_sha256": "7918f80029ce0413058a39e3f91f82e093477ad8d053f132e13cb69ebfdb6f63",
+    "precomputed_sha256": "7918f80029ce0413058a39e3f91f82e093477ad8d053f132e13cb69ebfdb6f63"
+  },
+  "acceptance": {
+    "fixed_tick_parity_all_workloads": true,
+    "paired_protocol_all_workloads": null,
+    "session_api_toggle_parity": true
+  },
+  "measurement_mode": "correctness_only",
+  "benchmark_executed": false,
+  "limitations": [
+    "This release-matched run checks 21 fixed-tick views and a live Session toggle; it does not repeat route timing.",
+    "The separately recorded current-release native study provides three paired 120-second route runs but covers the clearing orbit only.",
+    "M1 Max/Metal only; Windows/DX12 and other adapters remain unverified."
+  ]
+}

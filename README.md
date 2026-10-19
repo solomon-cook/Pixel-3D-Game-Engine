@@ -21,9 +21,11 @@ fallbacks. Other memory layout work remains proposed. Measurements are recorded 
 [docs/measurements-o02-native-shadow-cache.json](docs/measurements-o02-native-shadow-cache.json),
 [docs/measurements-o03.json](docs/measurements-o03.json),
 [docs/measurements-o03-native-tile-lists.json](docs/measurements-o03-native-tile-lists.json),
+[docs/measurements-o03-fire-projected-bounds-current-release.json](docs/measurements-o03-fire-projected-bounds-current-release.json),
 [docs/measurements-o04.json](docs/measurements-o04.json),
 [docs/measurements-o04-sustained-profiles.json](docs/measurements-o04-sustained-profiles.json),
 [docs/measurements-o04-transition-temporal.json](docs/measurements-o04-transition-temporal.json) and
+[docs/measurements-o04-threshold-state-current-release.json](docs/measurements-o04-threshold-state-current-release.json),
 [docs/measurements-o05.json](docs/measurements-o05.json),
 [docs/measurements-o05-size-current-release.json](docs/measurements-o05-size-current-release.json),
 [docs/measurements-o05-temporal.json](docs/measurements-o05-temporal.json),

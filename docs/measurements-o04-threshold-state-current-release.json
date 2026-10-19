@@ -1,0 +1,402 @@
+{
+  "workstream": "O04 projected detail slow orbit",
+  "date": "2026-10-19",
+  "binary_path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/release/engine-lab",
+  "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
+  "workspace_revision_at_run": "3eb3d62c7dff6555c89e6eb8031a3ea277da9131",
+  "engine_source_worktree_status": [],
+  "runner_path": "scripts/projected_detail_orbit_study.py",
+  "runner_sha256": "d57fced926e2d54fe088ecd9a52bedce160fb3338c61fb7b281501d868060ef8",
+  "seed": 42,
+  "simulation_start_tick": 300,
+  "camera_route": "20-second circular orbit, repeated six times in the 120-second benchmark",
+  "resolution": [
+    640,
+    360
+  ],
+  "profile": "clearing scene with branching tongues and ember lights",
+  "threshold_checkpoints": [
+    {
+      "label": "close-smoke",
+      "same_fire_state": true,
+      "baseline_projected_detail": {
+        "enabled": false,
+        "primitives_full": 75,
+        "primitives_rendered": 75,
+        "projected_height_px": 120.00001525878906,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "candidate_projected_detail": {
+        "enabled": true,
+        "primitives_full": 75,
+        "primitives_rendered": 75,
+        "projected_height_px": 120.00001525878906,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "capture_sha256": {
+        "baseline": "679f60c0968e06fc1132f4a4cae886a07cdf8ebc668500bcdb748ba10b3f0b18",
+        "candidate": "679f60c0968e06fc1132f4a4cae886a07cdf8ebc668500bcdb748ba10b3f0b18"
+      }
+    },
+    {
+      "label": "tier0-before-40",
+      "same_fire_state": true,
+      "baseline_projected_detail": {
+        "enabled": false,
+        "primitives_full": 78,
+        "primitives_rendered": 78,
+        "projected_height_px": 40.30000305175781,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "candidate_projected_detail": {
+        "enabled": true,
+        "primitives_full": 78,
+        "primitives_rendered": 78,
+        "projected_height_px": 40.30000305175781,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "capture_sha256": {
+        "baseline": "ea66a273a9c1437a414c765fc0808d0c2a4b479e970167bbe8af14ae87669726",
+        "candidate": "ea66a273a9c1437a414c765fc0808d0c2a4b479e970167bbe8af14ae87669726"
+      }
+    },
+    {
+      "label": "tier1-after-40",
+      "same_fire_state": true,
+      "baseline_projected_detail": {
+        "enabled": false,
+        "primitives_full": 81,
+        "primitives_rendered": 81,
+        "projected_height_px": 39.70000457763672,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "candidate_projected_detail": {
+        "enabled": true,
+        "primitives_full": 81,
+        "primitives_rendered": 71,
+        "projected_height_px": 39.70000457763672,
+        "segments_full": 6,
+        "segments_rendered": 4,
+        "tier": 1
+      },
+      "capture_sha256": {
+        "baseline": "12903db817877e9db0e8cebc37637b89d4a702ee9ea8e87d0440c28ec4a66230",
+        "candidate": "12903db817877e9db0e8cebc37637b89d4a702ee9ea8e87d0440c28ec4a66230"
+      }
+    },
+    {
+      "label": "tier1-before-48",
+      "same_fire_state": true,
+      "baseline_projected_detail": {
+        "enabled": false,
+        "primitives_full": 81,
+        "primitives_rendered": 81,
+        "projected_height_px": 47.70000076293945,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "candidate_projected_detail": {
+        "enabled": true,
+        "primitives_full": 81,
+        "primitives_rendered": 71,
+        "projected_height_px": 47.70000076293945,
+        "segments_full": 6,
+        "segments_rendered": 4,
+        "tier": 1
+      },
+      "capture_sha256": {
+        "baseline": "fc69485d1925e3fdc51d87f2bd9fb93aae8f7accbbe8623adf85d76429b94f8e",
+        "candidate": "9bb62b64d84b3050b8a9b5b35a70e601b5776eba3a602da28aa85aceabb7a4a7"
+      }
+    },
+    {
+      "label": "tier0-after-48",
+      "same_fire_state": true,
+      "baseline_projected_detail": {
+        "enabled": false,
+        "primitives_full": 81,
+        "primitives_rendered": 81,
+        "projected_height_px": 48.29999923706055,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "candidate_projected_detail": {
+        "enabled": true,
+        "primitives_full": 81,
+        "primitives_rendered": 81,
+        "projected_height_px": 48.29999923706055,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "capture_sha256": {
+        "baseline": "ba07ca6e2dcd08af620a841f931c018d7ba80e09c01cf92308772bd93adcbf9f",
+        "candidate": "ba07ca6e2dcd08af620a841f931c018d7ba80e09c01cf92308772bd93adcbf9f"
+      }
+    },
+    {
+      "label": "medium",
+      "same_fire_state": true,
+      "baseline_projected_detail": {
+        "enabled": false,
+        "primitives_full": 80,
+        "primitives_rendered": 80,
+        "projected_height_px": 28.000001907348633,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "candidate_projected_detail": {
+        "enabled": true,
+        "primitives_full": 80,
+        "primitives_rendered": 70,
+        "projected_height_px": 28.000001907348633,
+        "segments_full": 6,
+        "segments_rendered": 4,
+        "tier": 1
+      },
+      "capture_sha256": {
+        "baseline": "7398a67f59a4d07ae8595350d1c7a055deec128648b8dfc9d4e4c94664fb09e5",
+        "candidate": "47998cba42ffb995560ab7b0a31e7280be87767897fb915420c2fbf750817740"
+      }
+    },
+    {
+      "label": "tier1-before-20",
+      "same_fire_state": true,
+      "baseline_projected_detail": {
+        "enabled": false,
+        "primitives_full": 81,
+        "primitives_rendered": 81,
+        "projected_height_px": 20.30000114440918,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "candidate_projected_detail": {
+        "enabled": true,
+        "primitives_full": 81,
+        "primitives_rendered": 71,
+        "projected_height_px": 20.30000114440918,
+        "segments_full": 6,
+        "segments_rendered": 4,
+        "tier": 1
+      },
+      "capture_sha256": {
+        "baseline": "340fcd672d564afb5650a7f750c3fda5a68f98c1b54c844cba6220e2086598a2",
+        "candidate": "d51548b85ab823f410a7049bc0f344f9d79f6dca7d0b1fea12da756b0b5fc708"
+      }
+    },
+    {
+      "label": "tier2-after-20",
+      "same_fire_state": true,
+      "baseline_projected_detail": {
+        "enabled": false,
+        "primitives_full": 81,
+        "primitives_rendered": 81,
+        "projected_height_px": 19.700000762939453,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "candidate_projected_detail": {
+        "enabled": true,
+        "primitives_full": 81,
+        "primitives_rendered": 66,
+        "projected_height_px": 19.700000762939453,
+        "segments_full": 6,
+        "segments_rendered": 3,
+        "tier": 2
+      },
+      "capture_sha256": {
+        "baseline": "c09fcae46a4388efd7f5eafc1032571c07f6bc21eaff6920353af3f98777303e",
+        "candidate": "86f41463c70cce487c8ce2f5234805a409a8ae814deac63f632acc283bdb086d"
+      }
+    },
+    {
+      "label": "tier2-before-24",
+      "same_fire_state": true,
+      "baseline_projected_detail": {
+        "enabled": false,
+        "primitives_full": 81,
+        "primitives_rendered": 81,
+        "projected_height_px": 23.700002670288086,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "candidate_projected_detail": {
+        "enabled": true,
+        "primitives_full": 81,
+        "primitives_rendered": 66,
+        "projected_height_px": 23.700002670288086,
+        "segments_full": 6,
+        "segments_rendered": 3,
+        "tier": 2
+      },
+      "capture_sha256": {
+        "baseline": "7ccc6c032ce8b5a8fb59070b331983df5ed17eba163f88b4519f14cdd337e194",
+        "candidate": "616499bb3ad1297f20aa65bd1403a17aa2db60a7515af210d2e4d018a37479f0"
+      }
+    },
+    {
+      "label": "tier1-after-24",
+      "same_fire_state": true,
+      "baseline_projected_detail": {
+        "enabled": false,
+        "primitives_full": 81,
+        "primitives_rendered": 81,
+        "projected_height_px": 24.299999237060547,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "candidate_projected_detail": {
+        "enabled": true,
+        "primitives_full": 81,
+        "primitives_rendered": 71,
+        "projected_height_px": 24.299999237060547,
+        "segments_full": 6,
+        "segments_rendered": 4,
+        "tier": 1
+      },
+      "capture_sha256": {
+        "baseline": "7c401f348ab04325b33666ee8e2affc1310d5cd0bf3007dd39ec5101a8642b80",
+        "candidate": "2d891c44b4fdad3bd6198279e9ef5b496fc52ff5e3b640ddea8770e7b0e88835"
+      }
+    },
+    {
+      "label": "tier1-before-48-return",
+      "same_fire_state": true,
+      "baseline_projected_detail": {
+        "enabled": false,
+        "primitives_full": 81,
+        "primitives_rendered": 81,
+        "projected_height_px": 17.0,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "candidate_projected_detail": {
+        "enabled": true,
+        "primitives_full": 81,
+        "primitives_rendered": 66,
+        "projected_height_px": 17.0,
+        "segments_full": 6,
+        "segments_rendered": 3,
+        "tier": 2
+      },
+      "capture_sha256": {
+        "baseline": "ac4290a8669e30191735052dca741f89c279c000b3c234c1c823087010f0e626",
+        "candidate": "fce7d8f0a36d22a94bfdc0643cc025484071254f9432162b5183a9ef1390a4bd"
+      }
+    },
+    {
+      "label": "tier0-return",
+      "same_fire_state": true,
+      "baseline_projected_detail": {
+        "enabled": false,
+        "primitives_full": 81,
+        "primitives_rendered": 81,
+        "projected_height_px": 49.000003814697266,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "candidate_projected_detail": {
+        "enabled": true,
+        "primitives_full": 81,
+        "primitives_rendered": 81,
+        "projected_height_px": 49.000003814697266,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "capture_sha256": {
+        "baseline": "623b0130a236bdb4fbc325d95b31cb1ce5d2264edbef3817a311aa55efd5fc83",
+        "candidate": "623b0130a236bdb4fbc325d95b31cb1ce5d2264edbef3817a311aa55efd5fc83"
+      }
+    },
+    {
+      "label": "tier2-return",
+      "same_fire_state": true,
+      "baseline_projected_detail": {
+        "enabled": false,
+        "primitives_full": 80,
+        "primitives_rendered": 80,
+        "projected_height_px": 19.0,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "candidate_projected_detail": {
+        "enabled": true,
+        "primitives_full": 80,
+        "primitives_rendered": 65,
+        "projected_height_px": 19.0,
+        "segments_full": 6,
+        "segments_rendered": 3,
+        "tier": 2
+      },
+      "capture_sha256": {
+        "baseline": "762c765a488404af1eb96e487a4139bcba6490913f85680e072842af3048a0a4",
+        "candidate": "49a96b178e85564bf1a9ff7280b06173bff0a4b39730f56dbc912155270ce64e"
+      }
+    },
+    {
+      "label": "close-seam",
+      "same_fire_state": true,
+      "baseline_projected_detail": {
+        "enabled": false,
+        "primitives_full": 81,
+        "primitives_rendered": 81,
+        "projected_height_px": 120.00001525878906,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "candidate_projected_detail": {
+        "enabled": true,
+        "primitives_full": 81,
+        "primitives_rendered": 81,
+        "projected_height_px": 120.00001525878906,
+        "segments_full": 6,
+        "segments_rendered": 6,
+        "tier": 0
+      },
+      "capture_sha256": {
+        "baseline": "8b118daeacc87e72e90b1f4ddca303fd8d1a6178b2989b5fdaac7e88efbeed22",
+        "candidate": "8b118daeacc87e72e90b1f4ddca303fd8d1a6178b2989b5fdaac7e88efbeed22"
+      }
+    }
+  ],
+  "state_comparison_fields": [
+    "counts",
+    "bounds_min",
+    "bounds_max",
+    "lighting",
+    "particle_lights"
+  ],
+  "state_parity_all_checkpoints": true,
+  "heat_note": "inspect_effects does not expose the heat field directly; projected detail is applied after deterministic FireFrame simulation, while counts, bounds, lighting and particle lights are compared here",
+  "scenes": {
+    "baseline": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o04/current-release-threshold-orbit/baseline/scene.json",
+    "candidate": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/artifacts/o04/current-release-threshold-orbit/candidate/scene.json"
+  },
+  "benchmark": null,
+  "limitations": [
+    "captures are discrete checkpoints, not a continuous movie",
+    "native-window and Windows/DX12 acceptance are not established"
+  ]
+}

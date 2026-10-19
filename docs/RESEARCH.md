@@ -328,12 +328,24 @@ See
 under ignored `artifacts/o03/fire-projected-bounds/` and
 `artifacts/o03/fire-bounds-native/`.
 
-A 19 October 21-view recheck reports exact image/tile parity and a paused Session
-toggle, but its `4247485106ee2d30…` binary has no source revision/path and is not
-proven current-release evidence. The generated camera-inside route reports 100%
-fire fallback; the three two-second pairs are protocol evidence, not sustained
-performance. A current-release fixed-tick comparison covers one camera only, so
-the 21-view current-source check remains open. See [the recheck](measurements-o03-fire-projected-bounds-recheck.json)
+**Current-release fixed-tick recheck (19 October):** the release binary with
+hash `740bc2c4…` now matches pixels, tile membership, overflow and maximum
+occupancy in all 21 views across clearing, heavy-plume, Material Atelier and
+camera-inside stress workloads. The live Session toggle from direct to
+precomputed bounds and back also preserves tick, image and tile metrics. This
+correctness-only run does not repeat route timing; the separately documented
+current-release native clearing study remains the timing evidence. The opt-in
+stays disabled by default because native full-window benefit is not reliable.
+Windows/DX12 and other-adapter validation remain open. See the
+[current-release matrix](measurements-o03-fire-projected-bounds-current-release.json)
+and [provenance audit](measurements-o01-o08-artifact-provenance-audit.json).
+
+An earlier 19 October 21-view recheck reports exact image/tile parity and a
+paused Session toggle, but its `4247485106ee2d30…` binary has no source
+revision/path and is not proven current-release evidence. Its three two-second
+pairs are protocol evidence, not sustained performance. The full current-release
+matrix is now recorded above; retain the historical report as exact-build
+evidence. See [the recheck](measurements-o03-fire-projected-bounds-recheck.json)
 and [artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json).
 
 ## Material response beneath pixel treatment (16 October)
@@ -893,13 +905,15 @@ profiles; this does not establish native performance. See the [full-orbit visual
 report](measurements-o04-owner-full-orbit-current-build.json) and
 [current-release sustained report](measurements-o04-sustained-current-release.json).
 
-A 19 October 14-checkpoint recheck at seed 42 and 640×360 reports fire-state and
-image parity, but its `4247485106ee2d30…` binary has no source revision/path and
-is not proven current-release evidence. The separate current-release 400-frame
-route was accepted for motion and continuity across all profiles and makes no
-threshold-state claim. Rerun the 14 checkpoints on the current release before
-closing that correctness gate. Continuous playback and non-Metal acceptance
-remain open. See [the recheck](measurements-o04-current-build-recheck.json) and
+A 19 October threshold recheck on the audited release now compares fire-state
+fields at all 14 seed-42, 640×360 threshold, hysteresis and return checkpoints;
+all match. This closes fixed-tick state parity. The separate current-release
+400-frame route was accepted for motion and continuity across all profiles and
+supplies continuous offscreen review; native playback and non-Metal acceptance
+remain open. The earlier `4247485106ee2d30…` recheck still has no source
+revision/path and is exact-build evidence only. See the
+[current-release threshold matrix](measurements-o04-threshold-state-current-release.json),
+[historical recheck](measurements-o04-current-build-recheck.json) and
 [artifact provenance audit](measurements-o01-o08-artifact-provenance-audit.json).
 The accompanying seed-42/tick-300 default-scene capture confirms the renderer
 keeps the measured opt-in paths off, including projected detail, absorption
