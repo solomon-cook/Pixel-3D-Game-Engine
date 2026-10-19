@@ -309,11 +309,19 @@ savings do not make the whole-frame p95 uniformly better. A separate three-pair
 native clearing-orbit study on M1 Max/Metal lowers atmosphere/fire GPU-stage
 median by 0.291–0.328 ms (paired median 0.319 ms) and native-frame CPU median by
 0.056 ms. FPS deltas vary (−0.029, +0.205, +0.202; paired median +0.202 FPS),
-which does not establish a reliable whole-window win. Native results keep the
-candidate opt-in; owner visual review and Windows/DX12 or other-adapter evidence
-remain open. The all-overflow camera retains 100% fire fallback. See
+which does not establish a reliable whole-window win. The all-overflow camera
+retains 100% fire fallback. A current-release native recheck completes three
+alternating 120-second clearing-orbit pairs: paired medians are +0.009 FPS,
++0.003 ms CPU native-frame work and −0.296 ms atmosphere/fire GPU time. The
+small full-window deltas support keeping the candidate opt-in without claiming
+a frame-rate gain. A same-binary tick-300 `fire-study` capture matches pixels,
+tile candidates, overflow and occupancy exactly. The owner accepted motion and
+visual continuity in the reviewed offscreen clearing-orbit preview; this is not
+native playback acceptance. Windows/DX12 and other-adapter evidence remain open.
+See
 [offscreen measurements](measurements-o03-fire-projected-bounds.json),
 [native measurements](measurements-o03-fire-projected-bounds-native.json), the
+[current-release native measurements](measurements-o03-fire-projected-bounds-native-current-build.json),
 [offscreen runner](../scripts/fire_bounds_precompute_study.py), the
 [native runner](../scripts/fire_bounds_native_study.py), and raw paired reports
 under ignored `artifacts/o03/fire-projected-bounds/` and

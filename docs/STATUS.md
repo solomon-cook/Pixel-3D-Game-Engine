@@ -620,9 +620,16 @@ native clearing-orbit comparison lowers atmosphere/fire GPU-stage median by
 0.291–0.328 ms (paired median 0.319 ms) and native-frame CPU median by 0.056 ms.
 FPS deltas vary (−0.029 to +0.205; paired median +0.202), so no reliable
 whole-window win is established. Keep it opt-in; native M1 Max/Metal measurement
-is recorded, while owner visual review and Windows/DX12 or other-adapter
-acceptance remain open. See the [offscreen report](measurements-o03-fire-projected-bounds.json),
-[native report](measurements-o03-fire-projected-bounds-native.json),
+is recorded. A current-release native rerun uses three alternating 120-second
+pairs on the same route: the paired median atmosphere/fire GPU change is −0.296 ms,
+while FPS changes +0.009 and CPU native-frame work +0.003 ms. The candidate
+remains opt-in without a whole-window frame-rate claim. A tick-300 `fire-study`
+capture from the same release binary matches pixels and tile metrics exactly.
+The owner accepted motion and visual continuity in the offscreen clearing-orbit
+preview; it is not native playback acceptance. Windows/DX12 and other-adapter
+behavior remain open. See the [offscreen report](measurements-o03-fire-projected-bounds.json),
+[prior native report](measurements-o03-fire-projected-bounds-native.json),
+[current-release native report](measurements-o03-fire-projected-bounds-native-current-build.json),
 [offscreen runner](../scripts/fire_bounds_precompute_study.py), and
 [native runner](../scripts/fire_bounds_native_study.py).
 The 19 October current-build check also matches all 21 fixed-tick views and the
