@@ -132,16 +132,22 @@ Keep LOD disabled by default. A current-release native quiet-profile comparison
 adds three alternating 120-second pairs with full timing coverage: paired medians
 are -0.079 ms atmosphere/fire GPU time, -0.0067 ms native-frame time, -0.039 fps
 and +0.153 ms renderer-encode time. The GPU stage improves in two pairs, but
-there is no whole-window gain. Bonfire native timing remains open: two attempts became
-occluded, and a 20-second current-release pilot produced 0/0 rendered/timed direct
-frames. The native benchmark now writes an explicit aborted report and exits
-nonzero on occlusion. One release check collected 69 frames, only 68 timed, before
-aborting after about 1.14 seconds; the final-source check aborted before any frame.
-Both are invalid performance evidence. Repeat only when the window stays foreground
-for the full route and reaches at least 99% timing coverage. See the [pilot disposition](measurements-o04-native-bonfire-foreground-attempt.json)
-and [occlusion-guard check](measurements-native-benchmark-occlusion-guard.json).
-Other adapters also remain open. See the [campfire report](measurements-o04-native-current-release.json) and
-[quiet report](measurements-o04-native-quiet-current-release.json).
+there is no whole-window gain. Three alternating 120-second native bonfire pairs
+are now recorded at 640×360 on M1 Max/Metal; all six runs reached at least 99%
+timing coverage. LOD-minus-direct paired medians are −0.0012 fps, −0.0145 ms
+native-frame time, +0.0309 ms renderer-encode time, +0.000084 ms projected-detail
+CPU time, and −0.0485 ms atmosphere/fire GPU time. GPU-stage time improves in two
+pairs, but FPS is mixed and there is no whole-window gain; keep LOD disabled by
+default. An opt-in `benchmark-native --wait-for-foreground` mode and the study
+runner's `--foreground-app` launcher wait for a focused, visible, non-minimized
+window before warmup and timing. The existing occlusion abort remains active after
+timing starts. One undercovered attempt (3210/3327 timed frames, 96.5%) was
+excluded and retained under `artifacts/o04/bonfire-native-current-release/`.
+See the [current-release report](measurements-o04-native-bonfire-current-release.json),
+[occlusion-guard check](measurements-native-benchmark-occlusion-guard.json),
+[campfire report](measurements-o04-native-current-release.json) and
+[quiet report](measurements-o04-native-quiet-current-release.json). Other adapters,
+minimization and non-Metal qualification remain open.
 The earlier 14-checkpoint fire-state recheck uses binary hash
 `4247485106ee2d30…`, with no binary path or source revision, so it remains
 exact-build evidence only. A current-release rerun now compares the full/detail
@@ -263,13 +269,16 @@ normal/view-based interface orientation and total-internal-reflection fallback.
 M1 Max/Metal fixed-tick inside-glass and near-plane camera stress pairs match
 direct/reuse captures byte-for-byte; see
 [measurements-o06-camera-stress.json](measurements-o06-camera-stress.json).
-A current-release deterministic 40-pose camera sweep now moves from inside the
-transmissive sphere through its surface and around to the outside at tick 300.
-Direct and reuse captures match byte-for-byte at all 40 poses; their per-frame
-temporal deltas also match across all 39 transitions. The owner review of this
-specific path is pending, so image parity does not yet close the continuous
-visual gate. See [report](measurements-o06-camera-sweep-current-release.json)
-and [side-by-side playback](../artifacts/o06/camera-sweep-current-release/direct-vs-reuse.gif).
+A deterministic 40-pose camera sweep moves from inside the transmissive sphere
+through its surface and around to the outside at tick 300. The sweep was rerun
+with the current release binary at source revision `7fffba4`: direct and reuse
+captures match byte-for-byte at all 40 poses, and their per-frame temporal deltas
+match across all 39 transitions. The owner reviewed the exact current-build playback and accepted motion and
+visual continuity through the camera-inside to camera-outside transition; see
+[owner-review record](measurements-o06-camera-sweep-owner-review-current-build.json), [current-build report](measurements-o06-camera-sweep-occlusion-guard-current-build.json)
+and [playback](../artifacts/o06/camera-sweep-occlusion-guard-current-build/direct-vs-reuse.gif);
+the earlier provenance is retained in
+[the prior report](measurements-o06-camera-sweep-current-release.json).
 Three paired 120-second M1 Max/Metal routes in both Material Atelier and a mixed
 smoke/fire/material scene reduced GPU-render medians by 0.169 ms and 0.081 ms,
 respectively; optical-resolve medians fell by 0.166 ms and 0.076 ms. CPU frame-work
@@ -1138,14 +1147,23 @@ ms. The 2,208-object GPU render stage improved by 0.096 ms while whole-frame wor
 increased by 0.202 ms. Keep the current path; no more complex draw submission is
 justified. Full run summaries, paired deltas, shadow counters, scene hashes and
 limitations are in [static scale evidence](measurements-o07-scale-study.json) and
-[moving-caster evidence](measurements-o07-moving-caster.json). Native-window
-measurement is complete on this Mac, with mixed whole-window results. The
+[moving-caster evidence](measurements-o07-moving-caster.json). The historical 18 October native-window matrix covers 72 runs across tiers and modes, with mixed whole-window results. A provenance audit found that its source revision (`b9788d6`) and binary (`9b39385a…`) predate the current release (`7fffba4`, `ec4b9601…`); 16 engine/lab source files or shaders differ. Treat those native timings as historical rather than current-release evidence. A focused current-release tier-276 native refresh has five valid runs: pairs 1 and 2 are complete, and pair-3 baseline passes. The original pair-2 baseline was rejected after `window_occluded` at 88.795 seconds; a subsequent baseline completed. Two pair-3 candidate attempts were rejected after `window_occluded`, one at 32.527 seconds with 1,950/1,950 timed frames and one before the first frame. The current runner revalidated all five saved reports against provenance, duration and timing coverage. Three older accepted reports lack retained raw samples; the two new baselines retain raw reports. One candidate run remains, so no whole-window conclusion is supported. The owner reports the desktop is in use; defer retry until an unobstructed foreground interval is available. See [partial report](measurements-o07-native-current-release-partial.json) and [provenance audit](measurements-o07-native-provenance-audit-current.json). The
 fixed-tick moving-caster image route is recorded in
 [continuous-motion evidence](measurements-o07-continuous-motion.json). A new
 20-second, 400-frame side-by-side MP4 covers all three geometry modes; the owner
 accepted the moving-rock shadow placement and full motion in this offscreen
-segment. Native playback/performance and non-Metal validation remain separate.
-See [review metadata](measurements-o07-owner-continuous-current-build.json),
+segment. A new current-release full-route capture covers all 120 seconds at 20 fps
+(2,400 poses per mode) across baked, instancing-only and culling+instancing.
+Camera, simulation tick and rock position match for every pose; all 11 recorded
+fire/ember/particle-light counts match across modes for all 2,400 frames.
+Instancing-only and culling+instancing images are identical throughout. Baked-to-
+instance motion differs on a median of 9 pixels/frame (maximum 161; mean RGB error
+0.000326/255). The 211/255 peak is one pixel at 98.3 seconds near the fire-ground
+boundary; see the [peak diagnostic](../artifacts/o07/full-orbit-current-release/peak-difference-frame-1966.png). A supplemental inspection of the 12 contact-sheet stills and peak diagnostic found no obvious broad scene pop or mode-wide image mismatch; the maximum error is localized to one fire-ground boundary pixel. The owner accepted motion, moving-rock shadow placement, and continuity in the exact full two-minute three-mode playback; this is offscreen review only. Native-window timing and non-Metal validation remain separate. See
+[full-route report](measurements-o07-full-route-current-build.json), [owner-review record](measurements-o07-full-route-owner-review-current-build.json), [review
+playback](../artifacts/o07/full-orbit-current-release/owner-review-full-route-current-build.mp4),
+[contact sheet](../artifacts/o07/full-orbit-current-release/owner-review-full-route-contact.png),
+[20-second review metadata](measurements-o07-owner-continuous-current-build.json),
 [shadow freshness](measurements-o07-shadow-freshness-current-release.json) and
 [source-separated shadow mask](measurements-o07-shadow-projection-mask-current-build.json).
 
@@ -1187,6 +1205,26 @@ Atelier comparison scene are implemented. See MATERIALS.md for explicit limits.
 The O01–O08 completion audit remains open beyond M1 Max/Metal. Per-track measured
 decisions and unresolved visual/backend gates are consolidated in the
 [follow-up exit-gate table](O01-O08_FOLLOWUP_PLAN.md#current-exit-gate-dispositions-19-october-2026).
+
+- **19 October 2026, current worktree / Apple M1 Max / Metal:**
+  `python3 scripts/verify.py --gpu` passed formatting, warning-denied Clippy,
+  all 42 Rust engine tests, locked build, scene validation, GPU agent-protocol
+  and replay checks, material GPU checks and pixel-fire GPU checks. The verifier
+  reports `gpu=true`, `native=false`. The working tree includes the foreground-
+  wait native benchmark changes in `engine-lab`; this result validates their
+  build and the offscreen renderer path, but not native-window presentation or
+  performance. A repeat while the Mac was locked passed the six profile-
+  comparison tests, all eleven native-runner validation tests, formatting,
+  warning-denied Clippy, all 42 engine tests, locked build, scene validation,
+  GPU protocol/replay and material/pixel-fire GPU checks. The new runner test
+  uses a fake native process to verify a rejected zero-frame abort retains its
+  raw report, return code, provenance and journal entry. The verifier still
+  reports `native=false`; native-window acceptance remains open. See the
+  [verification record](measurements-o01-o08-verification-current-worktree.json).
+  The provenance ledger check found 12 of 13 historical mutable target/debug
+  or target/release paths now contain different binaries; their reports retain
+  the run-time hashes, but the exact older executables are no longer available
+  from those paths. See [artifact provenance ledger](measurements-o01-o08-artifact-provenance-audit.json).
 
 - **19 October 2026, Apple M1 Max / Metal:** `python3 scripts/verify.py --gpu`
   passed formatting, Clippy with warnings denied, 41 Rust unit tests, build,
@@ -1395,10 +1433,11 @@ motion capture measured effect CPU sampling/upload at a median 0.0103 ms; see me
 ## Outstanding gates
 
 - Actual Windows DX12 rendering, image/motion review and performance on an RTX
-  3060-class/16 GB PC. `cargo check --locked --workspace --target
-  x86_64-pc-windows-gnu` passed on 19 October from the current worktree on this
-  Mac; this verifies target compilation only, not Windows execution, DX12
-  rendering, image/motion quality or performance.
+  3060-class/16 GB PC. Both `x86_64-pc-windows-gnu` and
+  `x86_64-pc-windows-msvc` locked workspace checks pass from the current
+  worktree on this Mac; this verifies target compilation only, not Windows
+  execution, DX12 rendering, image/motion quality or performance. See the
+  [current-worktree target check](measurements-windows-cross-check-current-worktree.json).
 - Base M1/16 GB measurement and native presentation/UI timing. The provisional
   target remains 60 fps at 1080p with a selected 480×270 scene buffer.
 - Native programmatic minimization on the macOS 27.0.1 host is dispositioned as
@@ -1413,8 +1452,17 @@ motion capture measured effect CPU sampling/upload at a median 0.0103 ms; see me
   this remains further work. Basic thermal controls/independent cooling now run,
   while heat-driven persistent smoke billows are still proposed. FIRE_FIELDS.md
   specifies the transported-fire/shallow-volume alternative; it is not implemented.
-- Owner visual review, including silhouettes, self-shadowing, camera motion,
-  temporal stability and all three experimental comparisons.
+- The owner accepted motion, shadow placement, and continuity in the exact full
+  120-second O07 moving-caster route; see the [owner-review record](measurements-o07-full-route-owner-review-current-build.json).
+  This offscreen review does not establish native presentation or performance.
+  Earlier 20-second O07 shadow motion, O04 projected-detail, O05 cache, O06
+  optical-reuse/camera-sweep and O08 comparison playback also have accepted
+  offscreen reviews. The current-release O07 native refresh is
+  partial: five runs pass (pairs 1 and 2 complete, plus pair-3 baseline). The
+  pair-3 candidate was rejected twice for `window_occluded`: after 32.527 seconds
+  with 1,950 timed frames, then before the first frame. One valid candidate run
+  remains. The two newer baselines retain raw reports; three earlier compact
+  reports have no retained raw samples. No whole-window conclusion is supported.
 
 Development Mac app and Windows executable bundles include editable assets/WGSL,
 launch instructions and dependency notices. Mac signing is ad hoc; Windows is

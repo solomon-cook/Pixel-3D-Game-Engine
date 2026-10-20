@@ -9,8 +9,11 @@ import json
 import math
 import os
 from pathlib import Path
+import plistlib
 import statistics
 import subprocess
+import sys
+from datetime import date, datetime
 
 from geometry_scale_study import COUNTS, ROOT, save_scenes
 
@@ -82,15 +85,103 @@ def compact_report(report: dict) -> dict:
     return {key: report[key] for key in keys if key in report}
 
 
+def validate_saved_run(report: dict, path: Path, raw_path: Path, provenance: dict, expected_duration: float) -> None:
+    if report.get("provenance") != provenance:
+        raise RuntimeError(f"refusing to use {path}: per-run binary/source/scene/configuration provenance does not match")
+    if raw_path.is_file():
+        if report.get("raw_report_sha256") != sha256(raw_path):
+            raise RuntimeError(f"refusing to use {path}: retained raw native report hash does not match")
+        if report.get("raw_report_path") not in (None, str(raw_path)):
+            raise RuntimeError(f"refusing to use {path}: raw report path does not match")
+        raw = json.loads(raw_path.read_text())
+        compact = compact_report(raw)
+        if any(report.get(key) != value for key, value in compact.items()):
+            raise RuntimeError(f"refusing to use {path}: compact report differs from retained raw report")
+        report["raw_report_path"] = str(raw_path)
+        report["raw_report_retained"] = True
+    else:
+        raw_hash = report.get("raw_report_sha256")
+        if not isinstance(raw_hash, str) or len(raw_hash) != 64:
+            raise RuntimeError(f"refusing to use {path}: compact report lacks a valid raw-report hash")
+        report["raw_report_retained"] = False
+
+    coverage = report.get("timing_coverage", {})
+    rendered_frames = coverage.get("rendered_frames", 0)
+    timed_frames = coverage.get("timed_render_frames", 0)
+    actual_seconds = report.get("actual_measured_seconds")
+    if (
+        not coverage.get("gpu_timestamps_supported")
+        or not rendered_frames
+        or timed_frames / rendered_frames < 0.99
+        or not isinstance(actual_seconds, (int, float))
+        or not math.isfinite(actual_seconds)
+        or actual_seconds < expected_duration * 0.99
+    ):
+        actual_seconds = actual_seconds if isinstance(actual_seconds, (int, float)) else 0.0
+        raise RuntimeError(
+            f"{path}: incomplete native run; timed GPU frames {timed_frames}/{rendered_frames}, "
+            f"duration {actual_seconds:.3f}/{expected_duration:.3f}s"
+        )
+
+
+def rejected_attempt_record(
+    raw_path: Path,
+    provenance: dict,
+    expected_duration: float,
+    error: str,
+    return_code: int | None,
+) -> dict:
+    attempt = {
+        "recorded_at": datetime.now().astimezone().isoformat(timespec="seconds"),
+        "provenance": provenance,
+        "expected_duration_seconds": expected_duration,
+        "runner_error": error,
+        "process_return_code": return_code,
+        "disposition": "rejected; excluded from paired measurements",
+    }
+    if not raw_path.is_file():
+        attempt["raw_report_retained"] = False
+        return attempt
+
+    attempt["raw_report_path"] = str(raw_path)
+    attempt["raw_report_sha256"] = sha256(raw_path)
+    attempt["raw_report_retained"] = True
+    try:
+        raw = json.loads(raw_path.read_text())
+    except (OSError, json.JSONDecodeError) as error_value:
+        attempt["raw_report_parse_error"] = str(error_value)
+        return attempt
+
+    coverage = raw.get("timing_coverage", {})
+    attempt.update({
+        "abort_reason": raw.get("abort_reason"),
+        "actual_measured_seconds": raw.get("actual_measured_seconds"),
+        "rendered_frames": coverage.get("rendered_frames"),
+        "timed_render_frames": coverage.get("timed_render_frames"),
+        "gpu_timestamps_supported": coverage.get("gpu_timestamps_supported"),
+    })
+    return attempt
+
+
+def append_rejected_attempt(path: Path, attempt: dict) -> None:
+    attempts = json.loads(path.read_text()) if path.is_file() else []
+    attempts.append(attempt)
+    temporary_path = path.with_suffix(path.suffix + ".tmp")
+    temporary_path.write_text(json.dumps(attempts, indent=2) + "\n")
+    temporary_path.replace(path)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--binary", type=Path, default=ROOT / "target/release" / ("engine-lab.exe" if os.name == "nt" else "engine-lab"))
     parser.add_argument("--output", type=Path, default=ROOT / "artifacts/o07/native-moving-caster-scale-study")
+    parser.add_argument("--foreground-app", type=Path, help="macOS app bundle containing the exact benchmark binary; launch via LaunchServices and wait for foreground")
     parser.add_argument("--moving-caster", default="rock-0")
     parser.add_argument("--duration", type=float, default=120.0)
     parser.add_argument("--warmup", type=float, default=10.0)
     parser.add_argument("--pairs", type=int, default=3)
     parser.add_argument("--tiers", default=",".join(map(str, COUNTS)), help="comma-separated object counts")
+    parser.add_argument("--comparisons", default=",".join(COMPARISONS), help="comma-separated comparison keys")
     parser.add_argument("--resume", action="store_true", help="reuse completed compact run reports")
     args = parser.parse_args()
     if not 1 <= args.pairs <= 3:
@@ -101,6 +192,9 @@ def main() -> int:
         parser.error("--tiers must be comma-separated object counts")
     if not tiers or any(tier not in COUNTS for tier in tiers) or len(set(tiers)) != len(tiers):
         parser.error(f"--tiers must contain unique values from {COUNTS}")
+    comparisons = args.comparisons.split(",")
+    if not comparisons or any(name not in COMPARISONS for name in comparisons) or len(set(comparisons)) != len(comparisons):
+        parser.error(f"--comparisons must be unique keys from {tuple(COMPARISONS)}")
     if not math.isfinite(args.duration) or not 0.1 <= args.duration <= 600:
         parser.error("--duration must be between 0.1 and 600 seconds")
     if not math.isfinite(args.warmup) or not 0 <= args.warmup <= 120:
@@ -108,13 +202,48 @@ def main() -> int:
     if not args.binary.is_file():
         parser.error(f"engine-lab binary does not exist: {args.binary}")
 
+    foreground_app = None
+    foreground_app_info = None
+    if args.foreground_app:
+        if sys.platform != "darwin":
+            parser.error("--foreground-app is supported only on macOS")
+        foreground_app = args.foreground_app.resolve()
+        info_path = foreground_app / "Contents" / "Info.plist"
+        if not info_path.is_file():
+            parser.error(f"not a macOS app bundle: {foreground_app}")
+        info = plistlib.loads(info_path.read_bytes())
+        executable = foreground_app / "Contents" / "MacOS" / info.get("CFBundleExecutable", "")
+        if not executable.is_file():
+            parser.error(f"app executable is missing: {executable}")
+        binary_sha = sha256(args.binary.resolve())
+        executable_sha = sha256(executable)
+        if executable_sha != binary_sha:
+            parser.error("foreground app executable SHA-256 must match --binary")
+        foreground_app_info = {
+            "bundle_path": str(foreground_app),
+            "bundle_executable": str(executable),
+            "executable_sha256": executable_sha,
+            "launch_method": "/usr/bin/open -n -W -a <app> --args ... --wait-for-foreground",
+        }
+
     args.output = args.output.resolve()
     scenes, tier_metadata = save_scenes(args.output)
     run_root = args.output / "runs"
     run_root.mkdir(parents=True, exist_ok=True)
+    rejected_attempts_path = run_root / "rejected-attempts.json"
+    rejected_attempts = json.loads(rejected_attempts_path.read_text()) if rejected_attempts_path.is_file() else []
+    source_sha256 = {
+        str(path.relative_to(ROOT)): sha256(path)
+        for source_root in (ROOT / "crates/engine/src", ROOT / "crates/engine-lab/src")
+        for path in sorted(source_root.rglob("*"))
+        if path.is_file() and path.suffix in (".rs", ".wgsl")
+    }
+    git_revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    source_worktree_dirty = bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).strip())
+    binary_sha256 = sha256(args.binary.resolve())
     report = {
         "workstream": "O07 native-window moving-caster scene-scale study",
-        "date": "2026-10-18",
+        "date": date.today().isoformat(),
         "host": {"gpu": "Apple M1 Max", "backend": "Metal", "os": "macOS"},
         "resolution": [640, 360],
         "camera": "hero",
@@ -122,14 +251,13 @@ def main() -> int:
         "seed": 42,
         "moving_caster": {"object_id": args.moving_caster, "orbit_radius": 5.0, "orbit_period_seconds": 20.0},
         "timing": {"duration_seconds_per_run": args.duration, "warmup_seconds": args.warmup, "pairs": args.pairs, "presentation": "native window; present mode and vsync recorded per run"},
-        "binary_sha256": sha256(args.binary.resolve()),
-        "git_revision": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
-        "source_sha256": {
-            str(path.relative_to(ROOT)): sha256(path)
-            for source_root in (ROOT / "crates/engine/src", ROOT / "crates/engine-lab/src")
-            for path in sorted(source_root.rglob("*"))
-            if path.is_file() and path.suffix in (".rs", ".wgsl")
-        },
+        "binary_sha256": binary_sha256,
+        "git_revision": git_revision,
+        "source_worktree_dirty": source_worktree_dirty,
+        "foreground_app": foreground_app_info,
+        "comparisons_selected": comparisons,
+        "source_sha256": source_sha256,
+        "rejected_attempts": rejected_attempts,
         "tiers": {},
         "limitations": ["Native-window runs include surface acquisition, UI encoding, submission and present; CPU spans can overlap.", "Offscreen and native-window timing results must remain separate.", "Non-Metal adapters remain unverified."],
     }
@@ -139,7 +267,8 @@ def main() -> int:
         tier_report = dict(tier_metadata[tier])
         tier_report["scene_sha256"] = sha256(scene_path)
         tier_report["benchmarks"] = {}
-        for name, flags in COMPARISONS.items():
+        for name in comparisons:
+            flags = COMPARISONS[name]
             baseline_no_culling, baseline_no_instancing, candidate_no_culling, candidate_no_instancing = flags
             directory = run_root / str(tier) / name
             directory.mkdir(parents=True, exist_ok=True)
@@ -147,16 +276,44 @@ def main() -> int:
             runs = []
             for run_index, variant in enumerate(order, start=1):
                 path = directory / f"pair-{(run_index + 1) // 2:02d}-{variant}.json"
+                raw_path = path.with_suffix(".engine.json")
+                is_baseline = variant == "baseline"
+                no_culling = baseline_no_culling if is_baseline else candidate_no_culling
+                no_instancing = baseline_no_instancing if is_baseline else candidate_no_instancing
+                provenance = {
+                    "binary_sha256": binary_sha256,
+                    "git_revision": git_revision,
+                    "source_worktree_dirty": source_worktree_dirty,
+                    "source_sha256": source_sha256,
+                    "scene_sha256": tier_report["scene_sha256"],
+                    "tier": tier,
+                    "comparison": name,
+                    "variant": variant,
+                    "run_index": run_index,
+                    "geometry_flags": {"disable_object_culling": no_culling, "disable_instancing": no_instancing},
+                    "duration_seconds": args.duration,
+                    "warmup_seconds": args.warmup,
+                    "seed": 42,
+                    "camera": "hero",
+                    "resolution": [640, 360],
+                    "route": "clearing-orbit",
+                    "moving_caster": args.moving_caster,
+                    "foreground_app_executable_sha256": foreground_app_info["executable_sha256"] if foreground_app_info else None,
+                }
                 if args.resume and path.is_file():
                     run_report = json.loads(path.read_text())
                     run_report["variant"] = variant
                     run_report["run_index"] = run_index
+                    validate_saved_run(run_report, path, raw_path, provenance, args.duration)
                     runs.append(run_report)
                     continue
-                is_baseline = variant == "baseline"
-                no_culling = baseline_no_culling if is_baseline else candidate_no_culling
-                no_instancing = baseline_no_instancing if is_baseline else candidate_no_instancing
-                raw_path = path.with_suffix(".engine.json")
+                if raw_path.exists():
+                    incomplete_dir = directory / "incomplete"
+                    incomplete_dir.mkdir(parents=True, exist_ok=True)
+                    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+                    archived_path = incomplete_dir / f"{raw_path.stem}-{stamp}.engine.json"
+                    raw_path.replace(archived_path)
+                    print(f"archived incomplete raw run to {archived_path}", flush=True)
                 command = [
                     str(args.binary.resolve()), "benchmark-native", "--scene", str(scene_path.resolve()),
                     "--seed", "42", "--camera", "hero", "--resolution", "640x360",
@@ -168,15 +325,41 @@ def main() -> int:
                     command.append("--disable-object-culling")
                 if no_instancing:
                     command.append("--disable-instancing")
+                if foreground_app:
+                    command.append("--wait-for-foreground")
                 print(f"tier {tier} {name} pair {(run_index + 1) // 2}/{args.pairs} {variant}", flush=True)
-                subprocess.run(command, cwd=ROOT, check=True)
-                raw = json.loads(raw_path.read_text())
-                run_report = compact_report(raw)
-                run_report["variant"] = variant
-                run_report["run_index"] = run_index
-                run_report["geometry_flags"] = {"disable_object_culling": no_culling, "disable_instancing": no_instancing}
+                launch_command = command
+                if foreground_app:
+                    launch_command = ["/usr/bin/open", "-n", "-W", "-a", str(foreground_app), "--args", *command[1:]]
+                completed = None
+                try:
+                    completed = subprocess.run(launch_command, cwd=ROOT, check=False)
+                    if completed.returncode != 0:
+                        raise RuntimeError(f"native benchmark process exited with status {completed.returncode}")
+                    raw = json.loads(raw_path.read_text())
+                    run_report = compact_report(raw)
+                    run_report["raw_report_sha256"] = sha256(raw_path)
+                    run_report["raw_report_path"] = str(raw_path)
+                    run_report["variant"] = variant
+                    run_report["run_index"] = run_index
+                    run_report["geometry_flags"] = {"disable_object_culling": no_culling, "disable_instancing": no_instancing}
+                    run_report["provenance"] = provenance
+                    validate_saved_run(run_report, path, raw_path, provenance, args.duration)
+                except Exception as error:
+                    attempt = rejected_attempt_record(
+                        raw_path,
+                        provenance,
+                        args.duration,
+                        str(error),
+                        completed.returncode if completed is not None else None,
+                    )
+                    rejected_attempts.append(attempt)
+                    append_rejected_attempt(rejected_attempts_path, attempt)
+                    print(f"rejected native run recorded in {rejected_attempts_path}", flush=True)
+                    raise RuntimeError(
+                        f"tier {tier} {name} run {run_index} was rejected and recorded at {rejected_attempts_path}: {error}"
+                    ) from error
                 path.write_text(json.dumps(run_report, indent=2) + "\n")
-                raw_path.unlink()
                 runs.append(run_report)
 
             pair_reports = []

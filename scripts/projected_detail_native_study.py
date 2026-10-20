@@ -50,6 +50,11 @@ def difference(candidate: dict, baseline: dict, *keys: str) -> float | None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--binary", type=Path, default=ROOT / "target/release/engine-lab")
+    parser.add_argument(
+        "--foreground-app",
+        type=Path,
+        help="launch the benchmark through a macOS .app bundle with LaunchServices",
+    )
     parser.add_argument("--scene", type=Path, default=ROOT / "assets/scenes/projected-detail-motion-review.json")
     parser.add_argument("--camera", default="hero")
     parser.add_argument("--route", default="projected-detail-review-orbit")
@@ -62,9 +67,27 @@ def main() -> int:
     parser.add_argument("--resume", action="store_true", help="reuse completed native reports in the output directory")
     args = parser.parse_args()
     binary, source = args.binary.resolve(), args.scene.resolve()
+    foreground_app = args.foreground_app.resolve() if args.foreground_app else None
     output, report_path = args.output.resolve(), args.report.resolve()
     if not binary.is_file() or not source.is_file():
         parser.error("binary and scene must exist")
+    app_executable = None
+    if foreground_app:
+        if platform.system() != "Darwin" or not foreground_app.is_dir():
+            parser.error("--foreground-app requires an existing macOS .app bundle")
+        info_path = foreground_app / "Contents" / "Info.plist"
+        if not info_path.is_file():
+            parser.error("--foreground-app is missing Contents/Info.plist")
+        import plistlib
+
+        with info_path.open("rb") as info_file:
+            app_info = plistlib.load(info_file)
+        executable_name = app_info.get("CFBundleExecutable")
+        app_executable = foreground_app / "Contents" / "MacOS" / str(executable_name)
+        if not executable_name or not app_executable.is_file():
+            parser.error("--foreground-app executable is missing")
+        if sha256(app_executable) != sha256(binary):
+            parser.error("--foreground-app executable does not match --binary")
     if args.pairs < 1 or args.duration <= 0 or args.warmup < 0:
         parser.error("pairs and duration must be positive; warmup cannot be negative")
 
@@ -99,8 +122,16 @@ def main() -> int:
                     "--duration", str(args.duration), "--warmup", str(args.warmup),
                     "--output", str(path),
                 ]
+                if foreground_app:
+                    command.append("--wait-for-foreground")
+                launch_command = command
+                if foreground_app:
+                    launch_command = [
+                        "/usr/bin/open", "-n", "-W", "-a", str(foreground_app),
+                        "--args", *command[1:],
+                    ]
                 with (output / f"pair-{pair_number:02d}-{variant}.log").open("w") as log:
-                    subprocess.run(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, check=True)
+                    subprocess.run(launch_command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, check=True)
             run = json.loads(path.read_text())
             expected = variant == "lod"
             if run.get("scene", {}).get("render", {}).get("experiments", {}).get("projected_detail_lod") is not expected:
@@ -156,6 +187,11 @@ def main() -> int:
         "warmup_seconds": args.warmup,
         "git_revision": subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, check=True, text=True, stdout=subprocess.PIPE).stdout.strip(),
         "binary_sha256": sha256(binary),
+        "foreground_app": {
+            "bundle_path": str(foreground_app),
+            "executable_sha256": sha256(app_executable),
+            "launch_command": "/usr/bin/open -n -W -a <app> --args ... --wait-for-foreground",
+        } if foreground_app else None,
         "source_sha256": {item: sha256(ROOT / item) for item in SOURCES},
         "pairs": pairs,
         "paired_medians_lod_minus_direct": paired,

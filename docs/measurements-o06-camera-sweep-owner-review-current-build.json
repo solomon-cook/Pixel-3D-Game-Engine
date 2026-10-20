@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "workstream": "O06 current-release inside-to-outside glass camera sweep owner visual review",
+  "source_revision": "7fffba4ad0b85575cbd445772fc62d0b7ebf3b2e",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "binary_sha256": "3c9dce999ee733ea421f07da18e53c45f277b32b6734693e85a9faf7bedd49c5",
+  "scene": "assets/scenes/materials.json",
+  "scene_sha256": "8f42369be3a780d60e48c78cdb7eab04527d89d8ac5cbc27a9eb0f14e63af37f",
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "tick": 300,
+  "camera_path": {
+    "frames": 40,
+    "center": [
+      0.0,
+      1.35,
+      1.7000000000000002
+    ],
+    "radius_start": 0.75,
+    "radius_end": 1.25,
+    "sphere_world_radius": 1.05,
+    "motion": "one horizontal orbit while camera radius moves linearly from inside to outside the transmissive sphere; camera always targets sphere center"
+  },
+  "comparison": {
+    "variants": [
+      "direct",
+      "reuse"
+    ],
+    "poses": 40,
+    "identical_pixels_per_pose": true,
+    "identical_temporal_deltas": true
+  },
+  "owner_review": {
+    "status": "accepted",
+    "date": "2026-10-19",
+    "response": "Acceptable",
+    "scope": "Owner accepted motion and visual continuity through the camera-inside to camera-outside transition in the exact current-build 40-pose playback. This is offscreen review only and does not verify native playback performance or another adapter."
+  },
+  "preview": {
+    "path": "artifacts/o06/camera-sweep-occlusion-guard-current-build/direct-vs-reuse.gif",
+    "sha256": "66eeff6b56b3515f4cfb0fa5f8c9c1e10469587399b899526737badd6dcdd381",
+    "width": 1280,
+    "height": 360,
+    "layout": "direct and reuse views side by side"
+  },
+  "limitations": [
+    "Offscreen real-renderer playback; native presentation and performance are not verified.",
+    "One M1 Max/Metal adapter only; Windows/DX12 and other adapters remain open."
+  ]
+}

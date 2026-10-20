@@ -169,6 +169,9 @@ enum Command {
         duration: f32,
         #[arg(long, default_value_t = 10.)]
         warmup: f32,
+        /// Wait for a focused, visible native window before starting warmup and timing.
+        #[arg(long)]
+        wait_for_foreground: bool,
         #[arg(long, default_value = "artifacts/native-benchmark.json")]
         output: PathBuf,
     },
@@ -359,6 +362,7 @@ fn start() -> Result<()> {
             route,
             duration,
             warmup,
+            wait_for_foreground,
             output,
         } => window::benchmark_native(
             options,
@@ -366,6 +370,7 @@ fn start() -> Result<()> {
                 route,
                 duration,
                 warmup,
+                wait_for_foreground,
                 output,
                 force_shadow_redraw,
                 tile_lists_enabled: !disable_tile_lists,

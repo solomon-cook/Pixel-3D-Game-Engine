@@ -23,6 +23,7 @@ def main():
     parser.add_argument("--native", action="store_true")
     args = parser.parse_args()
     run(sys.executable, "scripts/test_profile_compare.py")
+    run(sys.executable, "scripts/test_geometry_scale_native_study.py")
     cargo = shutil.which("cargo") or str(Path.home() / ".cargo/bin/cargo")
     for command in [("fmt", "--all", "--check"), ("clippy", "--workspace", "--all-targets", "--", "-D", "warnings"), ("test", "--workspace"), ("build", "--locked")]:
         run(cargo, *command)

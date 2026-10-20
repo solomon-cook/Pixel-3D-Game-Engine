@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "workstream": "O01-O08 current-worktree repository and GPU verification",
+  "source_revision": "7fffba4ad0b85575cbd445772fc62d0b7ebf3b2e",
+  "engine_source_worktree_status": [
+    "crates/engine-lab/src/main.rs",
+    "crates/engine-lab/src/window.rs"
+  ],
+  "binary_path": "target/debug/engine-lab",
+  "binary_sha256": "47932598d64ffa6ecdc7d54c4c63d30793b74bab988c374b3351773f6727967d",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false
+  },
+  "command": "python3 scripts/verify.py --gpu",
+  "result": {
+    "passed": true,
+    "cargo_fmt_check": true,
+    "clippy_workspace_all_targets_warnings_denied": true,
+    "cargo_test_workspace": {
+      "passed": true,
+      "pixel_engine_unit_tests": 42
+    },
+    "locked_build": true,
+    "scene_validation": true,
+    "agent_protocol_and_replay_gpu_checks": true,
+    "material_gpu_verification": true,
+    "pixel_fire_gpu_verification": true,
+    "gpu": true,
+    "native": false
+  },
+  "limitations": [
+    "This verifies the current host's offscreen Metal renderer and GPU/protocol paths; it does not verify native-window presentation or native performance.",
+    "It does not close Windows/DX12, other-adapter, physical unsupported-format, sustained native route, or full-route owner-review gates."
+  ],
+  "latest_repeat_verification": {
+    "timestamp_utc": "2026-10-19T16:54:59Z",
+    "command": "python3 scripts/verify.py --gpu",
+    "source_revision": "7fffba4ad0b85575cbd445772fc62d0b7ebf3b2e",
+    "binary_sha256": "47932598d64ffa6ecdc7d54c4c63d30793b74bab988c374b3351773f6727967d",
+    "result": "passed",
+    "python_test_profile_compare": "6 passed",
+    "python_test_geometry_scale_native_study": {
+      "result": "11 passed",
+      "script_sha256": "da5965799b0a9e269d311159d6fde9d141ae02629806848cea6eb6ed82cc03c2"
+    },
+    "cargo_fmt_check": "passed",
+    "cargo_clippy_workspace_all_targets_warnings_denied": "passed",
+    "cargo_test_workspace": "passed; 42 pixel_engine unit tests",
+    "locked_build": "passed",
+    "scene_validation": "passed",
+    "protocol_replay_and_gpu_material_pixel_fire_checks": "passed",
+    "gpu": true,
+    "native": false,
+    "limitations": [
+      "Headless Metal/GPU and protocol verification only; does not measure native-window presentation or performance.",
+      "The foreground access check still reports the Mac locked, so native foreground and visual-owner gates remain open.",
+      "Does not qualify Windows/DX12, another adapter, or physical unsupported-format fallback."
+    ],
+    "rejected_attempt_journaling_tested": true,
+    "runner_sha256": "d3ba7700fe3551a89b862c7831c8595d2b4769e62ab0d59255ad2fc69a9cfcd8",
+    "rejected_attempt_journaling_cli_integration": "passed; fake native process emitted a zero-frame foreground_wait_timeout report and exited nonzero; runner retained raw report, return status, provenance and journal entry"
+  }
+}

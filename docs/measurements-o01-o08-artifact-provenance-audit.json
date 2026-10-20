@@ -21,7 +21,8 @@
       "binary_path": null,
       "source_revision": null,
       "matches_current_release_binary": false,
-      "disposition": "not independently attributable to current source: report has no binary path/source revision and hash matches no available current binary"
+      "disposition": "not independently attributable to current source: report has no binary path/source revision and hash matches no available current binary",
+      "binary_artifact_latest_check": "no binary path recorded in this audit row"
     },
     {
       "workstream": "O04 projected-detail fixed-tick recheck",
@@ -30,7 +31,8 @@
       "binary_path": null,
       "source_revision": null,
       "matches_current_release_binary": false,
-      "disposition": "not independently attributable to current source: report has no binary path/source revision and hash matches no available current binary"
+      "disposition": "not independently attributable to current source: report has no binary path/source revision and hash matches no available current binary",
+      "binary_artifact_latest_check": "no binary path recorded in this audit row"
     },
     {
       "workstream": "O05 absorption invalidation fixed-tick recheck",
@@ -39,7 +41,8 @@
       "binary_path": null,
       "source_revision": null,
       "matches_current_release_binary": false,
-      "disposition": "not independently attributable to current source: report has no binary path/source revision and hash matches no available current binary"
+      "disposition": "not independently attributable to current source: report has no binary path/source revision and hash matches no available current binary",
+      "binary_artifact_latest_check": "no binary path recorded in this audit row"
     },
     {
       "workstream": "O06xO08 factorial fixed-tick recheck",
@@ -48,7 +51,8 @@
       "binary_path": null,
       "source_revision": null,
       "matches_current_release_binary": false,
-      "disposition": "not independently attributable to current source: report has no binary path/source revision and hash matches no available current binary"
+      "disposition": "not independently attributable to current source: report has no binary path/source revision and hash matches no available current binary",
+      "binary_artifact_latest_check": "no binary path recorded in this audit row"
     },
     {
       "workstream": "O08 RG16 forced fallback recheck",
@@ -63,7 +67,8 @@
         "crates/engine/src/render/mod.rs",
         "crates/engine/src/session.rs"
       ],
-      "disposition": "source-stale relative to current release: report names an earlier source revision and renderer/session/window changes follow it"
+      "disposition": "source-stale relative to current release: report names an earlier source revision and renderer/session/window changes follow it",
+      "binary_artifact_latest_check": "no binary path recorded in this audit row"
     },
     {
       "workstream": "O03 native fire-bound current release",
@@ -71,7 +76,8 @@
       "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
       "source_revision": null,
       "binary_matches_current_release": true,
-      "disposition": "attributable to current audited release binary"
+      "disposition": "attributable to current audited release binary",
+      "binary_artifact_latest_check": "no binary path recorded in this audit row"
     },
     {
       "workstream": "O04 full-orbit owner review",
@@ -79,7 +85,8 @@
       "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
       "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
       "binary_matches_current_release": true,
-      "disposition": "attributable to current audited release binary"
+      "disposition": "attributable to current audited release binary",
+      "binary_artifact_latest_check": "no binary path recorded in this audit row"
     },
     {
       "workstream": "O04 current-release sustained run",
@@ -87,7 +94,8 @@
       "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
       "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
       "binary_matches_current_release": true,
-      "disposition": "attributable to current audited release binary"
+      "disposition": "attributable to current audited release binary",
+      "binary_artifact_latest_check": "no binary path recorded in this audit row"
     },
     {
       "workstream": "O06xO08 full-orbit owner review",
@@ -95,7 +103,8 @@
       "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
       "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
       "binary_matches_current_release": true,
-      "disposition": "attributable to current audited release binary"
+      "disposition": "attributable to current audited release binary",
+      "binary_artifact_latest_check": "no binary path recorded in this audit row"
     },
     {
       "workstream": "O07 continuous owner review",
@@ -103,7 +112,8 @@
       "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
       "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
       "binary_matches_current_release": true,
-      "disposition": "attributable to current audited release binary"
+      "disposition": "attributable to current audited release binary",
+      "binary_artifact_latest_check": "no binary path recorded in this audit row"
     },
     {
       "workstream": "O07 shadow freshness recheck",
@@ -111,7 +121,8 @@
       "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
       "source_revision": "178a0418fcf6d4970fe0891cff79c7f3c6750e0d",
       "binary_matches_current_release": true,
-      "disposition": "attributable to current audited release binary"
+      "disposition": "attributable to current audited release binary",
+      "binary_artifact_latest_check": "no binary path recorded in this audit row"
     },
     {
       "workstream": "O06xO08 400-frame current-release artifact correctness audit",
@@ -119,7 +130,8 @@
       "binary_sha256": "740bc2c4e79e571b599abd685734d1c4386098a32cec65bc5f9505d35995138c",
       "source_revision": "7b2a005748a6beb810fc8275ecc051486183879a",
       "binary_matches_current_release": true,
-      "disposition": "current-release artifact audit verifies tick/camera alignment, effect-count parity and copy/no-copy byte identity across all four path/format pairs"
+      "disposition": "current-release artifact audit verifies tick/camera alignment, effect-count parity and copy/no-copy byte identity across all four path/format pairs",
+      "binary_artifact_latest_check": "no binary path recorded in this audit row"
     },
     {
       "workstream": "O05 absorption-cache current-release invalidation rerun",
@@ -129,7 +141,13 @@
       "workspace_revision_at_run": "1cddb80a5c926852ec23d366c4c05d815c56a28e",
       "engine_source_worktree_status": [],
       "matches_current_release_binary": true,
-      "disposition": "current-release discrete invalidation comparison: fire state matches at all 13 checkpoints for both 8-cubed and 16-cubed cache sizes; this does not establish sustained performance or continuous visual acceptance"
+      "disposition": "current-release discrete invalidation comparison: fire state matches at all 13 checkpoints for both 8-cubed and 16-cubed cache sizes; this does not establish sustained performance or continuous visual acceptance",
+      "binary_artifact_latest_check": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/release/engine-lab",
+        "current_path_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+        "matches_recorded_binary": false,
+        "disposition": "mutable target path now contains a different binary; historical binary not retained there"
+      }
     },
     {
       "workstream": "O05 absorption-cache current-release sustained size study",
@@ -140,7 +158,13 @@
       "engine_source_worktree_status": [],
       "runner_sha256": "00114a9262445bf9dff522387e2f3d03942505662f37c10aa4520479109e8d0d",
       "matches_current_release_binary": true,
-      "disposition": "current-release Metal sustained size study: all 36 runs use the audited release binary; 16-cubed screen-filling cache reduces GPU-render time in all three pairs, while whole-frame work is flat and other cache/scale conditions are mixed"
+      "disposition": "current-release Metal sustained size study: all 36 runs use the audited release binary; 16-cubed screen-filling cache reduces GPU-render time in all three pairs, while whole-frame work is flat and other cache/scale conditions are mixed",
+      "binary_artifact_latest_check": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/release/engine-lab",
+        "current_path_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+        "matches_recorded_binary": false,
+        "disposition": "mutable target path now contains a different binary; historical binary not retained there"
+      }
     },
     {
       "workstream": "O05 current-release 400-frame direct-versus-16-cubed temporal capture",
@@ -151,7 +175,13 @@
       "engine_source_worktree_status": [],
       "runner_sha256": "184c800c72a5a126e3af673af258cfc8e2161df1b9b8dc602f4e0f2b5299b40b",
       "matches_current_release_binary": true,
-      "disposition": "400-frame current-release Metal capture has exact fire/effect-count parity and low image/temporal-change error; owner accepted motion/continuity in general playback review, while native performance and other adapters remain open"
+      "disposition": "400-frame current-release Metal capture has exact fire/effect-count parity and low image/temporal-change error; owner accepted motion/continuity in general playback review, while native performance and other adapters remain open",
+      "binary_artifact_latest_check": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/release/engine-lab",
+        "current_path_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+        "matches_recorded_binary": false,
+        "disposition": "mutable target path now contains a different binary; historical binary not retained there"
+      }
     },
     {
       "workstream": "O04 current-release native-window projected-detail LOD sustained comparison",
@@ -162,7 +192,13 @@
       "engine_source_worktree_status": [],
       "runner_sha256": "512e0970c34316292c3a51322e6e9654f64ece14f4b227ce864570ba3e649ece",
       "matches_current_release_binary": true,
-      "disposition": "three alternating 120-second campfire native-window pairs at 640x360 have complete GPU timing coverage; atmosphere/fire GPU median improves 0.047 ms in two pairs, but native FPS is lower in all three and there is no whole-window gain; quiet/bonfire and non-Metal coverage remain open"
+      "disposition": "three alternating 120-second campfire native-window pairs at 640x360 have complete GPU timing coverage; atmosphere/fire GPU median improves 0.047 ms in two pairs, but native FPS is lower in all three and there is no whole-window gain; quiet/bonfire and non-Metal coverage remain open",
+      "binary_artifact_latest_check": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/release/engine-lab",
+        "current_path_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+        "matches_recorded_binary": false,
+        "disposition": "mutable target path now contains a different binary; historical binary not retained there"
+      }
     },
     {
       "workstream": "O04 current-release native-window projected-detail LOD quiet-profile comparison",
@@ -173,7 +209,13 @@
       "engine_source_worktree_status": [],
       "runner_sha256": "512e0970c34316292c3a51322e6e9654f64ece14f4b227ce864570ba3e649ece",
       "matches_current_release_binary": true,
-      "disposition": "three alternating 120-second quiet native-window pairs at 640x360 have full timing coverage; atmosphere/fire GPU median improves 0.079 ms in two of three pairs while native FPS falls 0.039 and renderer-encode time rises 0.153 ms; no whole-window gain is established; bonfire and non-Metal remain open"
+      "disposition": "three alternating 120-second quiet native-window pairs at 640x360 have full timing coverage; atmosphere/fire GPU median improves 0.079 ms in two of three pairs while native FPS falls 0.039 and renderer-encode time rises 0.153 ms; no whole-window gain is established; bonfire and non-Metal remain open",
+      "binary_artifact_latest_check": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/release/engine-lab",
+        "current_path_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+        "matches_recorded_binary": false,
+        "disposition": "mutable target path now contains a different binary; historical binary not retained there"
+      }
     },
     {
       "workstream": "O06 current-release deterministic inside-to-outside glass camera sweep",
@@ -184,7 +226,13 @@
       "engine_source_worktree_status": [],
       "runner_sha256": "7d4d9a46ea6385d0abb82e0b9905bc6ae967f6272c947b9fdfa386e6465af030",
       "matches_current_release_binary": true,
-      "disposition": "40 fixed-tick M1 Max/Metal camera poses orbit from inside to outside transmissive glass; direct and reuse captures are byte-identical at all poses and temporal deltas are identical across all 39 transitions; owner motion review and adapter qualification remain open"
+      "disposition": "40 fixed-tick M1 Max/Metal camera poses orbit from inside to outside transmissive glass; direct and reuse captures are byte-identical at all poses and temporal deltas are identical across all 39 transitions; owner motion review and adapter qualification remain open",
+      "binary_artifact_latest_check": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/release/engine-lab",
+        "current_path_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+        "matches_recorded_binary": false,
+        "disposition": "mutable target path now contains a different binary; historical binary not retained there"
+      }
     },
     {
       "workstream": "O05 current-release native-window sustained direct-versus-16-cubed comparison",
@@ -195,18 +243,30 @@
       "engine_source_worktree_status": [],
       "runner_sha256": "06839e6f0843426d5fe41a7c37ebde965af24371b3366bcb5d9b26a48e15285b",
       "matches_current_release_binary": true,
-      "disposition": "three alternating 120-second native M1 Max/Metal pairs have full GPU-timing coverage; atmosphere/fire median improves 0.049 ms, but native-frame median rises 0.0013 ms and frame rate falls 0.043 fps, so no whole-window win is established"
+      "disposition": "three alternating 120-second native M1 Max/Metal pairs have full GPU-timing coverage; atmosphere/fire median improves 0.049 ms, but native-frame median rises 0.0013 ms and frame rate falls 0.043 fps, so no whole-window win is established",
+      "binary_artifact_latest_check": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/release/engine-lab",
+        "current_path_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+        "matches_recorded_binary": false,
+        "disposition": "mutable target path now contains a different binary; historical binary not retained there"
+      }
     },
     {
-      "workstream": "current-source M1 Max/Metal full GPU verifier",
+      "workstream": "Earlier M1 Max/Metal GPU verifier provenance correction",
       "report": "docs/measurements-gpu-verification-current-release.json",
       "binary_path": "target/debug/engine-lab",
-      "binary_sha256": "f3c8b4b1108f490173d94033ed377c7afa3e5b1ee8cc5d9935df45e881344baf",
-      "source_revision": "58e287d7a9d1893ebf27d198cc4df216edd4dbfe",
+      "binary_sha256": "fac34432750f33a8e97f5375cec192ba6e71c060343106c254213db074edb576",
+      "source_revision": "1eb7f1d30090f60f6ffebda93d9fcd86fd3dfb78",
       "engine_source_worktree_status": [],
       "runner_sha256": "d5cb93830141843de1d309cd02756f818d03306da74510850785755ccec56eee",
-      "matches_current_source": true,
-      "disposition": "python3 scripts/verify.py --gpu passed 42 Rust tests, formatting, warning-denied Clippy, locked build, scene validation and headless GPU/protocol/material/fire checks; native=false and no Windows/DX12 or other-adapter validation"
+      "matches_current_source": false,
+      "disposition": "The referenced report itself records source revision 1eb7f1d and debug binary SHA-256 fac34432\u2026; the previous ledger entry incorrectly recorded source 58e287d and binary f3c8b4b. Treat it as historical to that recorded run. A later current-worktree verification is recorded separately.",
+      "binary_artifact_latest_check": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/debug/engine-lab",
+        "current_path_sha256": "47932598d64ffa6ecdc7d54c4c63d30793b74bab988c374b3351773f6727967d",
+        "matches_recorded_binary": false,
+        "disposition": "mutable target path now contains a different binary; historical binary not retained there"
+      }
     },
     {
       "workstream": "O08 RG16 forced-fallback offscreen current-release recheck",
@@ -217,7 +277,13 @@
       "engine_source_worktree_status": [],
       "runner_sha256": "c51052e50213661894b7b888f37adea283dca6f516ee0b1cb6c6822d22ae88f3",
       "matches_current_release_binary": true,
-      "disposition": "current-release M1 Max/Metal forced fallback: two fixed-tick scenes and all 120 sampled moving-route frames match native RG16 images byte-for-byte; adds 2,101,248 known bytes; does not verify physically unsupported hardware"
+      "disposition": "current-release M1 Max/Metal forced fallback: two fixed-tick scenes and all 120 sampled moving-route frames match native RG16 images byte-for-byte; adds 2,101,248 known bytes; does not verify physically unsupported hardware",
+      "binary_artifact_latest_check": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/release/engine-lab",
+        "current_path_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+        "matches_recorded_binary": false,
+        "disposition": "mutable target path now contains a different binary; historical binary not retained there"
+      }
     },
     {
       "workstream": "O08 RG16 forced-fallback native-window current-release recheck",
@@ -228,7 +294,13 @@
       "engine_source_worktree_status": [],
       "runner_sha256": "e0918b7e11e24e037f6ef9d1520855509e0b57cce74d799b8d32493f31bb0cfa",
       "matches_current_release_binary": true,
-      "disposition": "native window forced fallback initialized on M1 Max/Metal at tick 120 and its capture matches the headless forced-fallback PNG byte-for-byte"
+      "disposition": "native window forced fallback initialized on M1 Max/Metal at tick 120 and its capture matches the headless forced-fallback PNG byte-for-byte",
+      "binary_artifact_latest_check": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/release/engine-lab",
+        "current_path_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+        "matches_recorded_binary": false,
+        "disposition": "mutable target path now contains a different binary; historical binary not retained there"
+      }
     },
     {
       "workstream": "O03 projected fire bounds fixed-tick current-release parity matrix",
@@ -239,7 +311,13 @@
       "engine_source_worktree_status": [],
       "runner_sha256": "82ea01b293f34fc894ab8ed4a8cebb977b51f2305dc47e441edb06c0d0fd3c8e",
       "matches_current_release_binary": true,
-      "disposition": "current-release M1 Max/Metal correctness-only rerun matches pixels, tick, candidate membership, overflow and maximum occupancy across all 21 views in four workloads; Session direct/precompute toggle also matches"
+      "disposition": "current-release M1 Max/Metal correctness-only rerun matches pixels, tick, candidate membership, overflow and maximum occupancy across all 21 views in four workloads; Session direct/precompute toggle also matches",
+      "binary_artifact_latest_check": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/release/engine-lab",
+        "current_path_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+        "matches_recorded_binary": false,
+        "disposition": "mutable target path now contains a different binary; historical binary not retained there"
+      }
     },
     {
       "workstream": "O04 projected detail threshold-state current-release parity matrix",
@@ -250,12 +328,144 @@
       "engine_source_worktree_status": [],
       "runner_sha256": "d57fced926e2d54fe088ecd9a52bedce160fb3338c61fb7b281501d868060ef8",
       "matches_current_release_binary": true,
-      "disposition": "current-release M1 Max/Metal projected-detail experiment matches inspected fire-state fields at all 14 threshold and return checkpoints; continuous visual acceptance is documented separately"
+      "disposition": "current-release M1 Max/Metal projected-detail experiment matches inspected fire-state fields at all 14 threshold and return checkpoints; continuous visual acceptance is documented separately",
+      "binary_artifact_latest_check": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/release/engine-lab",
+        "current_path_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+        "matches_recorded_binary": false,
+        "disposition": "mutable target path now contains a different binary; historical binary not retained there"
+      }
+    },
+    {
+      "workstream": "Current dirty-worktree M1 Max/Metal GPU verifier repeat",
+      "report": "docs/measurements-o01-o08-verification-current-worktree.json",
+      "binary_path": "target/debug/engine-lab",
+      "binary_sha256": "47932598d64ffa6ecdc7d54c4c63d30793b74bab988c374b3351773f6727967d",
+      "source_revision": "7fffba4ad0b85575cbd445772fc62d0b7ebf3b2e",
+      "engine_source_worktree_status": [
+        "crates/engine-lab/src/main.rs",
+        "crates/engine-lab/src/window.rs"
+      ],
+      "matches_current_release_binary": false,
+      "matches_current_worktree_verification": true,
+      "disposition": "The latest 19 October repeat python3 scripts/verify.py --gpu passed for the recorded current dirty worktree on M1 Max/Metal, including 42 Rust tests, six profile-comparison tests and ten native-runner validation tests. It uses a debug binary and reports native=false; native presentation/performance and non-Metal gates remain open.",
+      "binary_artifact_latest_check": {
+        "path": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/debug/engine-lab",
+        "current_path_sha256": "47932598d64ffa6ecdc7d54c4c63d30793b74bab988c374b3351773f6727967d",
+        "matches_recorded_binary": true,
+        "disposition": "recorded binary retained at path"
+      }
     }
   ],
-  "conclusion": "The O04, O06xO08 and O07 full-orbit review reports, the O03 current native fire-bound report, and the 400-frame O06xO08 artifact correctness audit carry the current audited release hash. The O04 current-release native campfire study also matches the release binary and runner; its GPU stage improves in two of three pairs, but FPS falls slightly in all three and no whole-window gain is established. Keep O04 LOD disabled by default. Current-release native quiet timing also shows a GPU-stage reduction with lower FPS and higher encode cost; O06 current-release inside-to-outside glass camera captures match direct/reuse at all 40 poses and 39 temporal transitions. Owner review, bonfire native timing and non-Metal gates remain open. The current-release O05 invalidation rerun closes discrete cache freshness, and the current-release O05 sustained size study uses the same audited release binary and closes the offscreen sustained-timing gate on M1 Max/Metal. Only the 16-cubed screen-filling condition shows a repeatable GPU-render reduction; whole-frame work is effectively flat, so keep direct sampling default and caching opt-in. A current-release 400-frame temporal capture now matches fire/effect state throughout; the owner accepted motion and continuity in general playback review. Current-release native O05 timing shows no whole-window win, so direct sampling remains default; Windows/DX12 and other-adapter acceptance remain open. The 4247485106ee2d30... fixed-tick report group remains untraceable and is not present among current binaries; the older O08 RG16 fallback report predates renderer/session/window source changes, but a current-release offscreen and native rerun now match the audited release binary. Keep older records as exact-build evidence, not current-release proof. Recheck remaining untraceable O03/O04/O06xO08 fixed-tick claims as needed. Windows/DX12, other adapters and native-window platform gates remain open.",
+  "conclusion": "The O04, O06xO08 and O07 full-orbit review reports, the O03 current native fire-bound report, and the 400-frame O06xO08 artifact correctness audit carry the current audited release hash. The O04 current-release native campfire study also matches the release binary and runner; its GPU stage improves in two of three pairs, but FPS falls slightly in all three and no whole-window gain is established. Keep O04 LOD disabled by default. Current-release native quiet timing also shows a GPU-stage reduction with lower FPS and higher encode cost; O06 current-release inside-to-outside glass camera captures match direct/reuse at all 40 poses and 39 temporal transitions. Owner review and bonfire native timing were open when this audit was created; dated follow-up records now close the specific O06 glass-sweep visual review and provide valid O04 native bonfire timing. A subsequent O07 full-route capture covers the complete route and awaits owner review; the existing native O07 matrix is now explicitly classified as historical-source evidence pending a current-release refresh. Non-Metal gates remain open. The current-release O05 invalidation rerun closes discrete cache freshness, and the current-release O05 sustained size study uses the same audited release binary and closes the offscreen sustained-timing gate on M1 Max/Metal. Only the 16-cubed screen-filling condition shows a repeatable GPU-render reduction; whole-frame work is effectively flat, so keep direct sampling default and caching opt-in. A current-release 400-frame temporal capture now matches fire/effect state throughout; the owner accepted motion and continuity in general playback review. Current-release native O05 timing shows no whole-window win, so direct sampling remains default; Windows/DX12 and other-adapter acceptance remain open. The 4247485106ee2d30... fixed-tick report group remains untraceable and is not present among current binaries; the older O08 RG16 fallback report predates renderer/session/window source changes, but a current-release offscreen and native rerun now match the audited release binary. Keep older records as exact-build evidence, not current-release proof. Recheck remaining untraceable O03/O04/O06xO08 fixed-tick claims as needed. Windows/DX12, other adapters and native-window platform gates remain open. The top-level current source/binary fields describe the original audit snapshot (58e287d / 740bc2c); the latest worktree context is 7fffba4 with release binary ec4b9601\u2026 and debug verification binary 47932598\u2026. All 25 ledger record/report JSON pairs are internally consistent after correcting one earlier record; this does not prove reproducibility of old runs from retained binaries. A separate binary-path retention check found 12 of 13 recorded mutable build paths had since been overwritten; only the latest current-worktree debug verifier binary remains byte-identical at its recorded path. Historical report hashes remain available, but those executables cannot be launched from the recorded paths.",
   "limitations": [
     "Hash/source audit only; no renderer or adapter execution occurred.",
-    "Current-source release parity is established for the current release binary only; Windows/DX12 and other adapters remain unverified."
-  ]
+    "Current-source release parity is established for the current release binary only; Windows/DX12 and other adapters remain unverified.",
+    "A latest binary-path retention audit found that 12 of 13 recorded target/debug or target/release paths now contain different binaries; only the latest current-worktree debug binary still matches its report. The original report hashes remain, but exact historical executables are not retained at those mutable paths."
+  ],
+  "subsequent_updates": [
+    {
+      "date": "2026-10-19",
+      "workstream": "O04 native bonfire timing",
+      "report": "measurements-o04-native-bonfire-current-release.json",
+      "disposition": "Three alternating 120-second M1 Max/Metal pairs now have at least 99% timing coverage in all six runs. No whole-window gain; keep projected-detail LOD disabled by default."
+    },
+    {
+      "date": "2026-10-19",
+      "workstream": "O06 current-release glass sweep owner review",
+      "report": "measurements-o06-camera-sweep-owner-review-current-build.json",
+      "disposition": "Owner accepted motion and visual continuity through the inside-to-outside camera transition in the exact current-build 40-pose playback. Native performance and cross-adapter behavior remain open."
+    },
+    {
+      "date": "2026-10-19",
+      "workstream": "O07 full-route continuous playback",
+      "report": "measurements-o07-full-route-current-build.json",
+      "disposition": "A current-release 120-second, 2,400-frame-per-mode offscreen capture now covers the complete route; paired effects and input state are verified. Owner visual review is pending. This does not measure native presentation/performance or qualify other adapters."
+    },
+    {
+      "date": "2026-10-19",
+      "workstream": "O07 native timing source provenance",
+      "report": "measurements-o07-native-provenance-audit-current.json",
+      "disposition": "The 18 October 72-run native matrix remains historical evidence for its binary/source revision; 16 engine/lab source files or shaders differ from current release. Current-source native O07 timing remains open."
+    },
+    {
+      "date": "2026-10-19",
+      "workstream": "O01-O08 current-worktree GPU verification",
+      "report": "measurements-o01-o08-verification-current-worktree.json",
+      "disposition": "The current dirty worktree passes formatting, warning-denied Clippy, 42 Rust engine tests, locked build, scene validation, GPU agent-protocol/replay checks, material and pixel-fire GPU verification on M1 Max/Metal. Native window verification remains false."
+    },
+    {
+      "date": "2026-10-19",
+      "workstream": "Current-worktree Windows target compile checks",
+      "report": "measurements-windows-cross-check-current-worktree.json",
+      "disposition": "Locked workspace cargo check passes for both GNU and MSVC Windows targets with the current engine-lab window changes; Windows execution, DX12 rendering, presentation and performance remain unverified."
+    },
+    {
+      "date": "2026-10-19",
+      "workstream": "O07 current-release native timing partial attempt",
+      "report": "measurements-o07-native-current-release-partial.json",
+      "disposition": "Three of six native runs passed 99% timed-frame and duration thresholds. A second-pair baseline aborted window_occluded at 88.795 seconds and was excluded; remaining runs await foreground availability. No whole-window conclusion."
+    },
+    {
+      "date": "2026-10-19",
+      "workstream": "O07 native resume retry and saved-run preflight",
+      "report": "measurements-o07-native-current-release-partial.json",
+      "disposition": "The three saved compact successes revalidated against embedded provenance, duration and timed-frame coverage. An attempted pair-2 baseline found the Mac locked, timed out before measurement with 0/0 frames, and was excluded; raw report and SHA-256 are retained. Three valid runs remain, with no whole-window conclusion."
+    },
+    {
+      "date": "2026-10-19",
+      "workstream": "O01-O08 current-worktree headless Metal verification repeat",
+      "report": "measurements-o01-o08-verification-current-worktree.json",
+      "disposition": "python3 scripts/verify.py --gpu passed the six profile-comparison tests, eight native-runner validation tests, formatting, warning-denied Clippy, 42 Rust engine tests, locked build, scene checks and headless Metal protocol/replay/material/pixel-fire checks. Native was false because the Mac remained locked; native presentation/performance and non-Metal gates remain open."
+    },
+    {
+      "date": "2026-10-19",
+      "workstream": "Provenance ledger consistency recheck",
+      "report": "measurements-o01-o08-artifact-provenance-audit.json",
+      "disposition": "Checked all 24 prior ledger report paths and embedded binary hashes; all reports exist. Found one current-source GPU-verifier ledger record that disagreed with its report source/binary fields, corrected it to the report\u2019s recorded provenance, and added a separate record for the latest current-worktree repeat."
+    },
+    {
+      "date": "2026-10-19",
+      "workstream": "Latest worktree provenance overlay and ledger integrity check",
+      "report": "measurements-o01-o08-artifact-provenance-audit.json",
+      "disposition": "Verified target/release hash ec4b9601\u2026 against the latest O07 provenance audit, target/debug hash 47932598\u2026 against the current-worktree GPU report, and HEAD 7fffba4 against both reports. All 25 ledger report pairs match recorded binary/source fields when present; the original audit baseline fields remain preserved and labeled as historical."
+    },
+    {
+      "date": "2026-10-19",
+      "workstream": "Historical binary artifact retention audit",
+      "report": "measurements-o01-o08-artifact-provenance-audit.json",
+      "disposition": "Checked 13 report binary paths against recorded hashes: 1 still match, 12 paths now hold different bytes, and 0 paths are absent. Exact historical executables are not retained at the overwritten mutable target paths; their report hashes remain recorded."
+    },
+    {
+      "date": "2026-10-19",
+      "workstream": "O07 rejected-attempt journal and verifier repeat",
+      "report": "measurements-o07-native-current-release-partial.json; measurements-o01-o08-verification-current-worktree.json",
+      "disposition": "The native runner now journals rejected attempts with provenance, raw-report hash, abort reason, and coverage; ten focused tests pass. A full python3 scripts/verify.py --gpu repeat also passed (6 profile tests, 10 runner tests, 42 Rust tests, clippy, build, protocol and Metal checks); native=false because the host is locked."
+    }
+  ],
+  "latest_followup_context": {
+    "source_revision": "7fffba4ad0b85575cbd445772fc62d0b7ebf3b2e",
+    "worktree_dirty": true,
+    "release_binary_path": "target/release/engine-lab",
+    "release_binary_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+    "debug_verification_binary_path": "target/debug/engine-lab",
+    "debug_verification_binary_sha256": "47932598d64ffa6ecdc7d54c4c63d30793b74bab988c374b3351773f6727967d",
+    "release_source_provenance_report": "docs/measurements-o07-native-provenance-audit-current.json",
+    "headless_gpu_verification_report": "docs/measurements-o01-o08-verification-current-worktree.json",
+    "note": "The top-level current_validation_source_revision and current_release_binary_sha256 fields are the baseline snapshot for the original audit, not the latest worktree. Use this follow-up context for current status."
+  },
+  "latest_ledger_integrity_recheck": {
+    "date": "2026-10-19",
+    "records_checked": 25,
+    "missing_reports": 0,
+    "record_vs_report_binary_hash_mismatches": 0,
+    "record_vs_report_source_revision_mismatches": 0,
+    "method": "For each ledger record, loaded the linked JSON report and compared recorded binary_sha256 and source_revision against matching embedded fields when present. This checks report consistency, not underlying source/binary reproducibility.",
+    "result": "passed",
+    "binary_paths_checked": 13,
+    "recorded_binaries_still_matching_path": 1,
+    "recorded_binary_paths_overwritten": 12,
+    "recorded_binary_paths_missing": 0,
+    "artifact_retention_result": "Only the latest current-worktree debug binary remains at its recorded target/debug path; the other recorded mutable binary paths now contain different bytes. Reports retain their original binary hashes, but the exact historical executables are not retained at those paths."
+  }
 }

@@ -12,6 +12,7 @@ from pathlib import Path
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
+MAX_CAPTURE_FRAMES = 3600  # Support full two-minute, 30 fps route captures.
 
 
 def route_camera_at(route, base_camera, seconds):
@@ -53,8 +54,8 @@ def main():
     parser.add_argument('--output', type=Path, default=ROOT / 'artifacts/fire-motion')
     parser.add_argument('--gif', action='store_true')
     args = parser.parse_args()
-    if not 1 <= args.frames <= 600 or not 1 <= args.stride <= 60 or not 0 <= args.start_tick <= 36000:
-        parser.error('frames 1..600, stride 1..60, start-tick 0..36000')
+    if not 1 <= args.frames <= MAX_CAPTURE_FRAMES or not 1 <= args.stride <= 60 or not 0 <= args.start_tick <= 36000:
+        parser.error(f'frames 1..{MAX_CAPTURE_FRAMES}, stride 1..60, start-tick 0..36000')
     if not math.isfinite(args.route_start) or args.route_start < 0:
         parser.error('--route-start must be finite and nonnegative')
     if not args.scene.is_file():

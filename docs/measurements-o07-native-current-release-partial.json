@@ -1,0 +1,395 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "workstream": "O07 current-release native scene-scale comparison, partial attempt",
+  "status": "incomplete; refresh deferred until manual unlock and foreground availability return",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": true
+  },
+  "source_revision": "7fffba4ad0b85575cbd445772fc62d0b7ebf3b2e",
+  "binary_path": "target/release/engine-lab",
+  "binary_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+  "scene": "artifacts/o07/native-moving-caster-current-release-tier276/scenes/objects-276.json",
+  "scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "camera": "hero",
+  "route": "clearing-orbit",
+  "moving_caster": {
+    "object_id": "rock-0",
+    "orbit_radius": 5.0,
+    "orbit_period_seconds": 20.0
+  },
+  "comparison": "instancing_only_vs_culling_instancing",
+  "tier_object_count": 276,
+  "timing_plan": {
+    "pairs": 3,
+    "duration_seconds_per_run": 120,
+    "warmup_seconds": 10,
+    "required_timed_gpu_frame_fraction": 0.99,
+    "required_duration_fraction": 0.99
+  },
+  "valid_runs": [
+    {
+      "report": "artifacts/o07/native-moving-caster-current-release-tier276/runs/276/instancing_only_vs_culling_instancing/pair-01-baseline.json",
+      "variant": "baseline",
+      "run_index": 1,
+      "raw_report_sha256": "86c18169568e1ad87853bb0d9b639cc8078dd28823cf8ecf05ed1620e3409692",
+      "raw_report_retained": false,
+      "binary_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+      "source_revision": "7fffba4ad0b85575cbd445772fc62d0b7ebf3b2e",
+      "scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+      "actual_measured_seconds": 119.986073208,
+      "frames_per_second": 60.00696420424187,
+      "cpu_native_frame": {
+        "median_ms": 16.617165999999997,
+        "p95_ms": 18.309583,
+        "samples": 7200
+      },
+      "cpu_renderer_encode": {
+        "median_ms": 0.5932919999999999,
+        "p95_ms": 1.7913750000000002,
+        "samples": 7200
+      },
+      "cpu_queue_submit": {
+        "median_ms": 0.296666,
+        "p95_ms": 0.6139169999999999,
+        "samples": 7200
+      },
+      "timing_coverage": {
+        "counter_scope": "skipped and late counters are cumulative for the native session, including warm-up",
+        "gpu_presentation_ui_reason": null,
+        "gpu_timestamps_supported": true,
+        "late_render_samples": 10,
+        "native_presentation_ui_samples": 7200,
+        "rendered_frames": 7200,
+        "skipped_compute_samples": 0,
+        "skipped_native_presentation_ui_samples": 0,
+        "skipped_render_samples": 0,
+        "smoke_compute_samples": 7200,
+        "timed_render_frames": 7200
+      },
+      "geometry_flags": {
+        "disable_object_culling": true,
+        "disable_instancing": false
+      }
+    },
+    {
+      "report": "artifacts/o07/native-moving-caster-current-release-tier276/runs/276/instancing_only_vs_culling_instancing/pair-01-candidate.json",
+      "variant": "candidate",
+      "run_index": 2,
+      "raw_report_sha256": "eda8b39ce0a0533d0bc479cb153fd4c332b9a62a8c8a2efad24601683411ed65",
+      "raw_report_retained": false,
+      "binary_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+      "source_revision": "7fffba4ad0b85575cbd445772fc62d0b7ebf3b2e",
+      "scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+      "actual_measured_seconds": 119.98659458399999,
+      "frames_per_second": 59.99836919248623,
+      "cpu_native_frame": {
+        "median_ms": 16.595499999999998,
+        "p95_ms": 17.7535,
+        "samples": 7199
+      },
+      "cpu_renderer_encode": {
+        "median_ms": 0.549374,
+        "p95_ms": 1.8075829999999997,
+        "samples": 7199
+      },
+      "cpu_queue_submit": {
+        "median_ms": 0.322083,
+        "p95_ms": 0.682791,
+        "samples": 7199
+      },
+      "timing_coverage": {
+        "counter_scope": "skipped and late counters are cumulative for the native session, including warm-up",
+        "gpu_presentation_ui_reason": null,
+        "gpu_timestamps_supported": true,
+        "late_render_samples": 13,
+        "native_presentation_ui_samples": 7199,
+        "rendered_frames": 7199,
+        "skipped_compute_samples": 0,
+        "skipped_native_presentation_ui_samples": 0,
+        "skipped_render_samples": 0,
+        "smoke_compute_samples": 7200,
+        "timed_render_frames": 7199
+      },
+      "geometry_flags": {
+        "disable_object_culling": false,
+        "disable_instancing": false
+      }
+    },
+    {
+      "report": "artifacts/o07/native-moving-caster-current-release-tier276/runs/276/instancing_only_vs_culling_instancing/pair-02-candidate.json",
+      "variant": "candidate",
+      "run_index": 3,
+      "raw_report_sha256": "843fb25693f86b2b268f803a8f62c9f6de578e5ada15b842762bfa267ea6db03",
+      "raw_report_retained": false,
+      "binary_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+      "source_revision": "7fffba4ad0b85575cbd445772fc62d0b7ebf3b2e",
+      "scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+      "actual_measured_seconds": 119.98405037500001,
+      "frames_per_second": 59.99964143150805,
+      "cpu_native_frame": {
+        "median_ms": 16.5865,
+        "p95_ms": 18.070166,
+        "samples": 7199
+      },
+      "cpu_renderer_encode": {
+        "median_ms": 0.554584,
+        "p95_ms": 2.000375,
+        "samples": 7199
+      },
+      "cpu_queue_submit": {
+        "median_ms": 0.319418,
+        "p95_ms": 0.700251,
+        "samples": 7199
+      },
+      "timing_coverage": {
+        "counter_scope": "skipped and late counters are cumulative for the native session, including warm-up",
+        "gpu_presentation_ui_reason": null,
+        "gpu_timestamps_supported": true,
+        "late_render_samples": 25,
+        "native_presentation_ui_samples": 7199,
+        "rendered_frames": 7199,
+        "skipped_compute_samples": 0,
+        "skipped_native_presentation_ui_samples": 0,
+        "skipped_render_samples": 0,
+        "smoke_compute_samples": 7200,
+        "timed_render_frames": 7199
+      },
+      "geometry_flags": {
+        "disable_object_culling": false,
+        "disable_instancing": false
+      }
+    },
+    {
+      "report": "artifacts/o07/native-moving-caster-current-release-tier276/runs/276/instancing_only_vs_culling_instancing/pair-02-baseline.json",
+      "variant": "baseline",
+      "run_index": 4,
+      "raw_report_sha256": "1d63b58dad0471b838008ca2c0f5dfa7e70ba98e86ec36b89ce5fc43e68fb84a",
+      "raw_report_retained": true,
+      "binary_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+      "source_revision": "7fffba4ad0b85575cbd445772fc62d0b7ebf3b2e",
+      "scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+      "actual_measured_seconds": 119.992666541,
+      "frames_per_second": 59.98699926833056,
+      "cpu_native_frame": {
+        "median_ms": 16.596375,
+        "p95_ms": 18.867292,
+        "samples": 7198
+      },
+      "cpu_renderer_encode": {
+        "median_ms": 0.5828739999999999,
+        "p95_ms": 2.284374,
+        "samples": 7198
+      },
+      "cpu_queue_submit": {
+        "median_ms": 0.351418,
+        "p95_ms": 0.8200000000000001,
+        "samples": 7198
+      },
+      "timing_coverage": {
+        "counter_scope": "skipped and late counters are cumulative for the native session, including warm-up",
+        "gpu_presentation_ui_reason": null,
+        "gpu_timestamps_supported": true,
+        "late_render_samples": 8,
+        "native_presentation_ui_samples": 7198,
+        "rendered_frames": 7198,
+        "skipped_compute_samples": 0,
+        "skipped_native_presentation_ui_samples": 0,
+        "skipped_render_samples": 0,
+        "smoke_compute_samples": 7200,
+        "timed_render_frames": 7198
+      },
+      "geometry_flags": {
+        "disable_object_culling": true,
+        "disable_instancing": false
+      }
+    },
+    {
+      "report": "artifacts/o07/native-moving-caster-current-release-tier276/runs/276/instancing_only_vs_culling_instancing/pair-03-baseline.json",
+      "variant": "baseline",
+      "run_index": 5,
+      "raw_report_sha256": "53d72ecedc2e6488262b91abfc24efba920b71a8f2e1842eaabaa7dc87b704b3",
+      "raw_report_retained": true,
+      "binary_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+      "source_revision": "7fffba4ad0b85575cbd445772fc62d0b7ebf3b2e",
+      "scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+      "actual_measured_seconds": 119.991532458,
+      "frames_per_second": 59.98756622697088,
+      "cpu_native_frame": {
+        "median_ms": 16.580417,
+        "p95_ms": 18.425375000000003,
+        "samples": 7198
+      },
+      "cpu_renderer_encode": {
+        "median_ms": 1.2743749999999998,
+        "p95_ms": 2.496124,
+        "samples": 7198
+      },
+      "cpu_queue_submit": {
+        "median_ms": 0.412208,
+        "p95_ms": 0.8944160000000001,
+        "samples": 7198
+      },
+      "timing_coverage": {
+        "counter_scope": "skipped and late counters are cumulative for the native session, including warm-up",
+        "gpu_presentation_ui_reason": null,
+        "gpu_timestamps_supported": true,
+        "late_render_samples": 9,
+        "native_presentation_ui_samples": 7198,
+        "rendered_frames": 7198,
+        "skipped_compute_samples": 0,
+        "skipped_native_presentation_ui_samples": 0,
+        "skipped_render_samples": 0,
+        "smoke_compute_samples": 7200,
+        "timed_render_frames": 7198
+      },
+      "geometry_flags": {
+        "disable_object_culling": true,
+        "disable_instancing": false
+      }
+    }
+  ],
+  "pair_status": {
+    "pair_1": "complete; both runs pass duration and timing-coverage gates",
+    "pair_2": "complete; both runs pass duration and timing-coverage gates",
+    "pair_3": "incomplete; baseline passes; two candidate attempts rejected (window_occluded after 32.527 seconds with 1950/1950 timed frames, then window_occluded before the first frame)"
+  },
+  "preliminary_pair_1_delta_fps_candidate_minus_baseline": -0.008595011755637927,
+  "rejected_attempt": {
+    "raw_report": "artifacts/o07/native-moving-caster-current-release-tier276/runs/276/instancing_only_vs_culling_instancing/pair-02-baseline.engine.json",
+    "raw_report_sha256": "d0e56629509b7410328ca6fb6bfb7ebbb280a78eeb977ed5249845c310953e18",
+    "abort_reason": "window_occluded",
+    "actual_measured_seconds": 88.795373459,
+    "rendered_frames": 5326,
+    "timed_render_frames": 5326,
+    "planned_duration_seconds": 120,
+    "disposition": "excluded; does not meet the planned duration gate",
+    "raw_report_retained": true,
+    "raw_report_hash_verified": true
+  },
+  "conclusion": "No whole-window O07 conclusion yet. Five of six required runs pass the duration, timing-coverage and provenance gates: pairs 1 and 2 are complete and pair-3 baseline is valid. Two pair-3 candidate attempts were rejected for window_occluded. One valid candidate run remains.",
+  "limitations": [
+    "The first three successful runs retain compact metrics and SHA-256 digests of their raw reports, but their original raw reports were deleted; the two later successful reports retain raw samples.",
+    "One pair-3 candidate attempt was occluded after 32.527 seconds (1950 rendered and timed frames) and another was occluded before the first frame; both are retained and excluded.",
+    "Native timings are M1 Max/Metal only and do not verify Windows/DX12 or another adapter."
+  ],
+  "followup": "Run only the missing pair-3 candidate after the desktop can keep the Pixel Engine benchmark window unobstructed for the full 120-second measurement; the resume runner revalidates and reuses the five passing runs and journals any rejected attempt.",
+  "runner_validation": {
+    "date": "2026-10-19",
+    "runner": "scripts/geometry_scale_native_study.py",
+    "runner_sha256": "d3ba7700fe3551a89b862c7831c8595d2b4769e62ab0d59255ad2fc69a9cfcd8",
+    "tests": "scripts/test_geometry_scale_native_study.py",
+    "tests_sha256": "da5965799b0a9e269d311159d6fde9d141ae02629806848cea6eb6ed82cc03c2",
+    "unit_test_command": "python3 scripts/test_geometry_scale_native_study.py",
+    "unit_test_result": "passed; 11 tests",
+    "syntax_check": "python3 -m py_compile scripts/geometry_scale_native_study.py scripts/test_geometry_scale_native_study.py; passed",
+    "help_smoke_check": "python3 scripts/geometry_scale_native_study.py --help; passed",
+    "diff_check": "git diff --check; passed",
+    "rejected_attempt_journal": {
+      "path": "artifacts/o07/native-moving-caster-current-release-tier276/runs/rejected-attempts.json",
+      "implemented": "append rejected subprocess/validation attempts atomically with provenance, raw report hash, abort reason, duration and timing coverage",
+      "integration_tested": "zero-frame abort details and journal append are unit-tested; end-to-end CLI test runs a fake native process that emits foreground_wait_timeout and exits nonzero, then verifies the retained raw report, process status, provenance and journal entry"
+    }
+  },
+  "latest_foreground_access_check": {
+    "date": "2026-10-20",
+    "result": "CUA confirmed the Mac unlocked and the benchmark app launched; two pair-3 candidate attempts then aborted with window_occluded.",
+    "meaning": "The remaining native run requires the benchmark window to remain unobstructed for the full 120-second measurement."
+  },
+  "foreground_wait_timeout_attempt": {
+    "raw_report": "artifacts/o07/native-moving-caster-current-release-tier276/runs/276/instancing_only_vs_culling_instancing/pair-02-baseline.engine.json",
+    "raw_report_sha256": "7513c129723c70c16e62c78b4cada6bf166e6c3c28fd7554fbfb33b4b5a38f74",
+    "abort_reason": "foreground_wait_timeout",
+    "actual_measured_seconds": 0.0,
+    "rendered_frames": 0,
+    "timed_render_frames": 0,
+    "planned_duration_seconds": 120,
+    "host_state": "Mac locked; foreground state unavailable to CUA",
+    "disposition": "excluded; no measured frames; wait for manual unlock before retry"
+  },
+  "resume_validation": {
+    "date": "2026-10-19",
+    "method": "current validate_saved_run helper; each report validated against its embedded provenance and 120-second duration/timing coverage gates",
+    "result": "passed",
+    "validated_saved_reports": [
+      {
+        "report": "artifacts/o07/native-moving-caster-current-release-tier276/runs/276/instancing_only_vs_culling_instancing/pair-01-baseline.json",
+        "report_sha256": "2ebc4460c31e4cc7c091cc7c7aff72a227ac756daafcd12c803d04ee21e23855",
+        "variant": "baseline",
+        "run_index": 1,
+        "provenance_match": true,
+        "duration_gate": "passed",
+        "timed_frame_coverage_gate": "passed",
+        "raw_report_retained": false
+      },
+      {
+        "report": "artifacts/o07/native-moving-caster-current-release-tier276/runs/276/instancing_only_vs_culling_instancing/pair-01-candidate.json",
+        "report_sha256": "661be8067537be4ae9d618ed03bd2592b102daf1d2e2f0385add335042aa7f12",
+        "variant": "candidate",
+        "run_index": 2,
+        "provenance_match": true,
+        "duration_gate": "passed",
+        "timed_frame_coverage_gate": "passed",
+        "raw_report_retained": false
+      },
+      {
+        "report": "artifacts/o07/native-moving-caster-current-release-tier276/runs/276/instancing_only_vs_culling_instancing/pair-02-candidate.json",
+        "report_sha256": "93b85cd31e25688bd4524f05ae6fee1077b6c02e5553ec49e9528d393391c36b",
+        "variant": "candidate",
+        "run_index": 3,
+        "provenance_match": true,
+        "duration_gate": "passed",
+        "timed_frame_coverage_gate": "passed",
+        "raw_report_retained": false
+      }
+    ],
+    "limitation": "Raw sample reports from these prior successful runs were deleted by the earlier runner; validation uses compact summaries and their recorded raw-report SHA-256 values."
+  },
+  "latest_host_state_check": {
+    "timestamp_utc": "2026-10-20T08:39:12Z",
+    "native_app_access": "Mac unlocked; benchmark launches, but the native window was occluded during pair-3 candidate timing",
+    "o07_benchmark_process_active": false,
+    "disposition": "await user confirmation of an uninterrupted, unobstructed foreground interval before retrying the final candidate"
+  },
+  "latest_resume_attempts_2026_10_20": [
+    {
+      "raw_report": "artifacts/o07/native-moving-caster-current-release-tier276/runs/276/instancing_only_vs_culling_instancing/incomplete/pair-03-candidate.engine-20261020-093702.engine.json",
+      "raw_report_sha256": "4cf0141e701701a5f48ad3ef53546b8e925f42fded995f73a4adbb62427b39e4",
+      "abort_reason": "window_occluded",
+      "actual_measured_seconds": 32.527033958,
+      "rendered_frames": 1950,
+      "timed_render_frames": 1950,
+      "planned_duration_seconds": 120.0,
+      "disposition": "rejected; duration below 99% threshold; raw report retained in incomplete archive"
+    },
+    {
+      "raw_report": "artifacts/o07/native-moving-caster-current-release-tier276/runs/276/instancing_only_vs_culling_instancing/pair-03-candidate.engine.json",
+      "raw_report_sha256": "82dfa35141220f5404012e5bad16e4802cf2113960c6518a338b656c37444a74",
+      "abort_reason": "window_occluded",
+      "actual_measured_seconds": 0.0,
+      "rendered_frames": 0,
+      "timed_render_frames": 0,
+      "planned_duration_seconds": 120.0,
+      "disposition": "rejected; window occluded before first frame; raw report retained"
+    }
+  ],
+  "owner_review": {
+    "status": "accepted",
+    "date": "2026-10-20",
+    "response": "Looks acceptable",
+    "reviewed_video_sha256": "c6c76038dec11c3f23396684f0aeb7b1d03cb19094543d340ef03558eb8c8519",
+    "scope": "Owner accepted motion, moving-rock shadow placement, and visual continuity across the complete two-minute offscreen route comparison. This review does not assess native presentation or performance."
+  },
+  "latest_user_availability": {
+    "date": "2026-10-20",
+    "response": "Wait; desktop is in use",
+    "disposition": "Do not retry the remaining native candidate until the user reports the desktop is available for an uninterrupted foreground run."
+  }
+}

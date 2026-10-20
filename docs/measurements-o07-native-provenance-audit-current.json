@@ -1,0 +1,212 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "workstream": "O07 native benchmark provenance audit",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "os": "macOS-27.0.1-arm64-arm-64bit"
+  },
+  "historical_report": "docs/measurements-o07-native-scale-study.json",
+  "historical_measurement_date": "2026-10-18",
+  "historical_source_revision": "b9788d6e47f62771f3471f32521861b72c0d9b58",
+  "historical_binary_sha256": "9b39385ad8b3f7656d8fa0239fb7a24749d454c428570cdf3e4797ac8c0ab46a",
+  "historical_run_scope": {
+    "duration_seconds_per_run": 120.0,
+    "warmup_seconds": 10.0,
+    "pairs": 3,
+    "presentation": "native window; present mode and vsync recorded per run"
+  },
+  "current_source_revision": "7fffba4ad0b85575cbd445772fc62d0b7ebf3b2e",
+  "current_release_binary": "target/release/engine-lab",
+  "current_release_binary_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+  "current_source_worktree_dirty": true,
+  "source_files_changed_since_historical_native_study": [
+    {
+      "path": "crates/engine-lab/src/main.rs",
+      "old_sha256": "28d1ed6160fc2531b515add4eb557063cc0a09b510bb474a0f9f7ebb8c2b5df4",
+      "current_sha256": "9f2971797c2a1a7d4afbe632f7291a879968cd25c0f2e5f3c1011f0f87249ff6",
+      "status": "changed"
+    },
+    {
+      "path": "crates/engine-lab/src/window.rs",
+      "old_sha256": "127f66367e16da025542a17b08c625ba9b43afdd1bd31639d830fdfbd3e84abd",
+      "current_sha256": "49ec638fcd8bb6f4e778b64c2af2cd73019cc45cb08738706228fc07c14d729b",
+      "status": "changed"
+    },
+    {
+      "path": "crates/engine/src/diagnostics.rs",
+      "old_sha256": "30b2f629d15f69c70ab9f8d22848e2d730ce0da83a452e29a9dd48854659f776",
+      "current_sha256": "a4bb82b11152aba25fa1e2d0b29b1dbfba8e1d20209965965cb087066107fb52",
+      "status": "changed"
+    },
+    {
+      "path": "crates/engine/src/effects.rs",
+      "old_sha256": "bed8f627238b65b02acecd7ad5bfa4397bcd329f7741d68fdd524d75b99eafd7",
+      "current_sha256": "8cb9be3e7cf715c42132ba9de405c85828d3f36a537f3de646d6339667226ff2",
+      "status": "changed"
+    },
+    {
+      "path": "crates/engine/src/render/mod.rs",
+      "old_sha256": "168a0ae0cd22001ed9aa310956d760ee077eb035f537f2e7f34c79adb354ece5",
+      "current_sha256": "a7f01169d367c93a19c81c1816828f96740d7cda3ebd78d18fea7bc27970678b",
+      "status": "changed"
+    },
+    {
+      "path": "crates/engine/src/render/shaders/absorption.wgsl",
+      "old_sha256": "402ea6ab3a444e2047de08e9097fc73aa13cc0420b084287552db62d26ec7957",
+      "current_sha256": "17f4d526e40b6fd78eca049dc99f26b9cf8dcdba5a96ba58f33e61695c478c50",
+      "status": "changed"
+    },
+    {
+      "path": "crates/engine/src/render/shaders/common.wgsl",
+      "old_sha256": "4294fdd0f6a9ca6989bc9ba5847d0f29cc54ed5e03179670dbe3df348cad559b",
+      "current_sha256": "15a17ca863215d03ad73f89bdff32ab5c06b303056c7e2e8f33365eacf571538",
+      "status": "changed"
+    },
+    {
+      "path": "crates/engine/src/render/shaders/fire.wgsl",
+      "old_sha256": "07e4c7e6c49c00d563994faea8fb6e618fdfd3eb14a55e483ab0b1841fc85f48",
+      "current_sha256": "7a5d92dd3b5220effc9f8f2e2f0f98170da7ff6e883bf6e748384294466171ab",
+      "status": "changed"
+    },
+    {
+      "path": "crates/engine/src/render/shaders/optical.wgsl",
+      "old_sha256": "2a946bc823df1a588046155d2d66c78aca8d33f246aa73e25c9a2aef8b5453ad",
+      "current_sha256": "5dcff7826ffc79479843a173477c4187f2e094070ded21bbf942b7ed21f9e690",
+      "status": "changed"
+    },
+    {
+      "path": "crates/engine/src/render/shaders/post.wgsl",
+      "old_sha256": "45fa7a3d24294a4fe09c6ba7d12be457cf8cfd092a7501d53440d4bb545da967",
+      "current_sha256": "53743da60fe7b2f2309c76e69c8c8ba3bd839b0150f07e8865353f0307ea5be6",
+      "status": "changed"
+    },
+    {
+      "path": "crates/engine/src/render/shaders/smoke.wgsl",
+      "old_sha256": "fc7d23a8902a8a781dd2a58630ea2d325fcd3c6af8bdd0a836422a0aaf9a73b5",
+      "current_sha256": "feeb69f77c6ab62547ddaa791fb9b32f48682f96aeab74ada2123e57b5331c85",
+      "status": "changed"
+    },
+    {
+      "path": "crates/engine/src/render/shaders/tile_build.wgsl",
+      "old_sha256": "6464ffedafd2c8a61d3d4dcb3770082ba6dd0bb30dbab0a44d2e6ed03222669e",
+      "current_sha256": "f47cb1f1ae7d3bcdd8cb52cb69283f276cfe24ae569733ef2731a14262189938",
+      "status": "changed"
+    },
+    {
+      "path": "crates/engine/src/render/shaders/volume.wgsl",
+      "old_sha256": "126af20b6748d8c856725631ab09881dd597613765d08e38cbe3b3639a13c53f",
+      "current_sha256": "2d95dbbd9468fb42cf6c0609d397bd58b8fbba8a38e6a763bb3bfedbad6bee1f",
+      "status": "changed"
+    },
+    {
+      "path": "crates/engine/src/render/shaders/world.wgsl",
+      "old_sha256": "e137bb5f3abec83a1d0b5ad1c7581d3461d8ae198f537c0c642a903ba34cd8ed",
+      "current_sha256": "d46fa8eac927ee81e1d6f7980d26a287864596fa6a782fdf8013c41ac77ecdc0",
+      "status": "changed"
+    },
+    {
+      "path": "crates/engine/src/scene.rs",
+      "old_sha256": "06e7954fab1ed722b0ac5ffe5a437c4eec5bb2386c510f2e89c60566b0e999a4",
+      "current_sha256": "165309489b1580ff7313dbedc7cd1cce234b449127a875bdc5804607b6e948a9",
+      "status": "changed"
+    },
+    {
+      "path": "crates/engine/src/session.rs",
+      "old_sha256": "715a8369a6f5e49354799902df1d6a7bcb25863c0d15f064e5bba54828952c8c",
+      "current_sha256": "41c392ec1c4544b84eb127fca3f9a29182c1e785ea066db76942842fa0f2c4a0",
+      "status": "changed"
+    }
+  ],
+  "conclusion": "The historical 72-run matrix is valid for its recorded 18 October binary/source revision. The current release differs. A representative current-release native refresh was started: three of six runs pass coverage and duration gates. The first pair-2 baseline was aborted with window_occluded after 88.795 seconds and rejected; a resumed retry timed out after 300 seconds waiting for foreground while the Mac was locked and recorded 0/0 frames. The partial result is insufficient for a whole-window performance conclusion; three valid runs remain after manual unlock.",
+  "limitations": [
+    "A source/binary hash comparison establishes provenance drift, not the direction or magnitude of timing changes.",
+    "The partial current-release refresh contains one complete pair, one additional unpaired candidate run, and two rejected pair-2 baseline attempts; no aggregate whole-window conclusion is supported.",
+    "The three completed runs retain compact metrics and raw-report hashes, but the runner version used for that attempt deleted the three raw reports. The rejected raw report is retained.",
+    "Windows/DX12 and other-adapter acceptance remain separate.",
+    "A retry encountered a locked Mac, timed out before measurement, and is retained as a zero-frame raw report."
+  ],
+  "followup_runner": {
+    "path": "scripts/geometry_scale_native_study.py",
+    "sha256": "d3ba7700fe3551a89b862c7831c8595d2b4769e62ab0d59255ad2fc69a9cfcd8",
+    "supports": {
+      "foreground_launch_with_hash_match": true,
+      "wait_for_foreground": true,
+      "selectable_comparison_and_tier": true,
+      "matching_provenance_required_for_resume": true,
+      "minimum_duration_and_timed_frame_coverage_gates": true,
+      "raw_engine_report_retention_for_new_runs": true,
+      "archives_incomplete_raw_runs_before_retry": true,
+      "rejected_attempt_journaling_with_raw_provenance_and_coverage": true
+    },
+    "validation": {
+      "unit_tests": "11 passed, including CLI-level rejected-attempt journal integration",
+      "syntax_check": "passed",
+      "help_smoke_check": "passed",
+      "diff_check": "passed",
+      "evidence_report": "docs/measurements-o07-native-current-release-partial.json",
+      "tests_sha256": "da5965799b0a9e269d311159d6fde9d141ae02629806848cea6eb6ed82cc03c2",
+      "runner_sha256": "d3ba7700fe3551a89b862c7831c8595d2b4769e62ab0d59255ad2fc69a9cfcd8"
+    }
+  },
+  "current_host_foreground_bundle": {
+    "path": "/tmp/pixel-engine-bonfire-benchmark.app",
+    "executable_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+    "matches_current_release_binary": true
+  },
+  "planned_representative_refresh": {
+    "tiers": [
+      276
+    ],
+    "comparison": "instancing_only_vs_culling_instancing",
+    "pairs": 3,
+    "duration_seconds_per_run": 120,
+    "warmup_seconds": 10,
+    "status": "partial attempt; latest retry timed out before measurement because the Mac was locked; continuation deferred until manual unlock and foreground availability return",
+    "estimated_run_count": 6,
+    "successful_runs": 3,
+    "rejected_runs": 2,
+    "remaining_valid_runs": 3,
+    "partial_report": "docs/measurements-o07-native-current-release-partial.json",
+    "incomplete_attempt": {
+      "abort_reason": "window_occluded",
+      "actual_measured_seconds": 88.795373459,
+      "disposition": "rejected by the planned 99% duration threshold"
+    },
+    "additional_rejected_attempt": {
+      "abort_reason": "foreground_wait_timeout",
+      "raw_report": "artifacts/o07/native-moving-caster-current-release-tier276/runs/276/instancing_only_vs_culling_instancing/pair-02-baseline.engine.json",
+      "raw_report_sha256": "7513c129723c70c16e62c78b4cada6bf166e6c3c28fd7554fbfb33b4b5a38f74",
+      "actual_measured_seconds": 0.0,
+      "rendered_frames": 0,
+      "timed_render_frames": 0,
+      "disposition": "excluded; host locked during foreground wait"
+    }
+  },
+  "latest_refresh_progress_2026_10_20": {
+    "valid_runs": 5,
+    "pair_1": "complete",
+    "pair_2": "complete",
+    "pair_3": "baseline valid; candidate pending",
+    "rejected_pair_3_candidate_attempts": [
+      {
+        "abort_reason": "window_occluded",
+        "duration_seconds": 32.527033958,
+        "rendered_frames": 1950,
+        "timed_render_frames": 1950,
+        "disposition": "rejected below duration gate"
+      },
+      {
+        "abort_reason": "window_occluded",
+        "duration_seconds": 0.0,
+        "rendered_frames": 0,
+        "timed_render_frames": 0,
+        "disposition": "rejected before first frame"
+      }
+    ],
+    "saved_run_validation": "all five reports revalidated for provenance, 120-second duration, and 99% timed-frame coverage; two raw reports retained, three older raw reports unavailable",
+    "owner_full_route_review": "accepted; exact full two-minute offscreen preview; no native performance claim",
+    "remaining": "one valid pair-3 candidate run, then disposition whole-window timing; Windows/DX12 and other-adapter rendering remain separate gates"
+  }
+}

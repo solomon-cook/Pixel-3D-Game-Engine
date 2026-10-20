@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "date": "2026-10-20",
+  "workstream": "O07 full-route moving-caster owner visual review",
+  "source_revision": "7fffba4ad0b85575cbd445772fc62d0b7ebf3b2e",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false,
+    "os": "macOS-27.0.1-arm64-arm-64bit"
+  },
+  "resolution": [
+    640,
+    360
+  ],
+  "route": "clearing-orbit",
+  "duration_seconds": 120,
+  "frames_per_mode": 2400,
+  "comparison_modes": [
+    "baked",
+    "instancing-only",
+    "culling+instancing"
+  ],
+  "owner_review": {
+    "status": "accepted",
+    "date": "2026-10-20",
+    "response": "Looks acceptable",
+    "reviewed_video_sha256": "c6c76038dec11c3f23396684f0aeb7b1d03cb19094543d340ef03558eb8c8519",
+    "scope": "Owner accepted motion, moving-rock shadow placement, and visual continuity across the complete two-minute offscreen route comparison. This review does not assess native presentation or performance."
+  },
+  "limitations": [
+    "Offscreen real-renderer playback only; it does not assess native-window presentation or performance.",
+    "Windows/DX12 and other-adapter validation remain open."
+  ]
+}

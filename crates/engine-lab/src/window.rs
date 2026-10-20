@@ -76,6 +76,7 @@ struct NativeBenchmarkConfig {
     moving_caster: Option<String>,
     caster_orbit_radius: f32,
     caster_orbit_period: f32,
+    wait_for_foreground: bool,
     launch_started: Instant,
 }
 pub struct NativeBenchmarkSettings {
@@ -93,6 +94,7 @@ pub struct NativeBenchmarkSettings {
     pub moving_caster: Option<String>,
     pub caster_orbit_radius: f32,
     pub caster_orbit_period: f32,
+    pub wait_for_foreground: bool,
 }
 struct NativeBenchmark {
     config: NativeBenchmarkConfig,
@@ -100,7 +102,7 @@ struct NativeBenchmark {
     base_camera: Camera,
     moving_caster: Option<(String, f32)>,
     orbit_center_xz: [f32; 2],
-    started: Instant,
+    started: Option<Instant>,
     setup_seconds: f64,
     samples: Vec<Value>,
     gpu_samples: Vec<render::GpuTimingSample>,
@@ -286,6 +288,7 @@ pub fn benchmark_native(options: Options, settings: NativeBenchmarkSettings) -> 
             moving_caster: settings.moving_caster,
             caster_orbit_radius: settings.caster_orbit_radius,
             caster_orbit_period: settings.caster_orbit_period,
+            wait_for_foreground: settings.wait_for_foreground,
             launch_started: Instant::now(),
         }),
     )
@@ -459,13 +462,14 @@ impl App {
                 orbit_center_xz,
             )?;
             let setup_seconds = config.launch_started.elapsed().as_secs_f64();
+            let started = (!config.wait_for_foreground).then(Instant::now);
             Some(NativeBenchmark {
                 config,
                 route,
                 base_camera: session.camera.clone(),
                 moving_caster,
                 orbit_center_xz,
-                started: Instant::now(),
+                started,
                 setup_seconds,
                 samples: Vec::new(),
                 gpu_samples: Vec::new(),
@@ -564,7 +568,11 @@ impl ApplicationHandler for App {
             WindowEvent::Occluded(occluded) => {
                 n.occluded = occluded;
                 n.last = Instant::now();
-                if occluded && n.benchmark.is_some() {
+                if occluded
+                    && n.benchmark
+                        .as_ref()
+                        .is_some_and(|benchmark| benchmark.started.is_some())
+                {
                     let abort_result = n.abort_benchmark("window_occluded");
                     self.error = Some(match abort_result {
                         Ok(()) => "native benchmark aborted because its window became occluded"
@@ -645,18 +653,48 @@ impl ApplicationHandler for App {
     }
     fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
         if let Some(n) = &mut self.native {
+            let minimized = n.window.is_minimized().unwrap_or(false);
+            let foreground_ready = !n.occluded && !minimized && n.window.has_focus();
+            if foreground_ready {
+                if let Some(benchmark) = &mut n.benchmark {
+                    if benchmark.config.wait_for_foreground && benchmark.started.is_none() {
+                        benchmark.started = Some(Instant::now());
+                        n.last = Instant::now();
+                        n.accumulator = 0.;
+                        diagnostics::log(
+                            "native_benchmark_foreground_ready",
+                            "starting warmup and timing",
+                        );
+                    }
+                }
+            }
             let benchmark_timed_out = n.benchmark.as_ref().is_some_and(|benchmark| {
-                !benchmark.finished
-                    && benchmark.started.elapsed()
+                if benchmark.finished {
+                    return false;
+                }
+                if let Some(started) = benchmark.started {
+                    started.elapsed()
                         >= Duration::from_secs_f64(
                             benchmark.config.warmup + benchmark.config.duration + 10.0,
                         )
+                } else {
+                    benchmark.config.launch_started.elapsed() >= Duration::from_secs(300)
+                }
             });
             if benchmark_timed_out {
-                let abort_result = n.abort_benchmark("frame_timeout");
+                let waiting_for_foreground = n
+                    .benchmark
+                    .as_ref()
+                    .is_some_and(|benchmark| benchmark.started.is_none());
+                let reason = if waiting_for_foreground {
+                    "foreground_wait_timeout"
+                } else {
+                    "frame_timeout"
+                };
+                let abort_result = n.abort_benchmark(reason);
                 self.error = Some(match abort_result {
-                    Ok(()) => "native benchmark aborted because no frame completed before its deadline"
-                        .to_owned(),
+                    Ok(()) if waiting_for_foreground => "native benchmark aborted because its window did not become foreground within 300 seconds".to_owned(),
+                    Ok(()) => "native benchmark aborted because no frame completed before its deadline".to_owned(),
                     Err(error) => format!(
                         "native benchmark exceeded its frame deadline and writing its incomplete report failed: {error:#}"
                     ),
@@ -693,10 +731,13 @@ impl ApplicationHandler for App {
                     }
                 }
             }
-            if !n.occluded && !n.window.is_minimized().unwrap_or(false) {
+            let waiting_for_foreground = n.benchmark.as_ref().is_some_and(|benchmark| {
+                benchmark.config.wait_for_foreground && benchmark.started.is_none()
+            });
+            if !n.occluded && !minimized && (!waiting_for_foreground || n.window.has_focus()) {
                 n.window.request_redraw();
             }
-            if (n.occluded || n.window.is_minimized().unwrap_or(false))
+            if (n.occluded || minimized || waiting_for_foreground && !n.window.has_focus())
                 && n.benchmark
                     .as_ref()
                     .is_some_and(|benchmark| !benchmark.finished)
@@ -821,13 +862,23 @@ impl Native {
     }
 
     fn draw(&mut self) -> Result<()> {
+        let waiting_for_foreground = self.benchmark.as_ref().is_some_and(|benchmark| {
+            benchmark.config.wait_for_foreground && benchmark.started.is_none()
+        });
         if self.occluded
             || self.window.is_minimized().unwrap_or(false)
+            || waiting_for_foreground && !self.window.has_focus()
             || self.window.inner_size().width == 0
             || self.window.inner_size().height == 0
         {
             self.last = Instant::now();
             return Ok(());
+        }
+        if waiting_for_foreground {
+            if let Some(benchmark) = &mut self.benchmark {
+                benchmark.started = Some(Instant::now());
+            }
+            self.accumulator = 0.;
         }
         let native_frame_started = Instant::now();
         if let Some(timer) = &mut self.native_gpu_timing {
@@ -840,7 +891,8 @@ impl Native {
         let benchmark_elapsed_at_start = self
             .benchmark
             .as_ref()
-            .map(|benchmark| benchmark.started.elapsed().as_secs_f64());
+            .and_then(|benchmark| benchmark.started)
+            .map(|started| started.elapsed().as_secs_f64());
         self.session.begin_measurement_frame();
         let dt = self.last.elapsed().as_secs_f64().min(0.1);
         self.last = Instant::now();
@@ -1037,7 +1089,10 @@ impl Native {
             benchmark
                 .gpu_presentation_samples
                 .extend(presentation_timings);
-            let elapsed = benchmark.started.elapsed().as_secs_f64();
+            let elapsed = benchmark
+                .started
+                .map(|started| started.elapsed().as_secs_f64())
+                .unwrap_or(0.);
             let warmup_end = benchmark.config.warmup;
             let benchmark_end = warmup_end + benchmark.config.duration;
             let sample_elapsed = benchmark_elapsed_at_start.unwrap_or(elapsed);

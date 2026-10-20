@@ -1,0 +1,246 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "workstream": "O07 full-route deterministic moving-caster capture",
+  "host": {
+    "device": "Apple M1 Max",
+    "backend": "Metal",
+    "native_window": false,
+    "os": "macOS-27.0.1-arm64-arm-64bit"
+  },
+  "scene": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/assets/scenes/clearing.json",
+  "scene_sha256": "41c978517d222fd45e20fe5a39b4137dfa0ac0c5104f1b6dd52befaa5a60bad2",
+  "binary": "/Users/Solomon/Documents/Pixel-3D-Game-Engine/target/release/engine-lab",
+  "binary_sha256": "ec4b96014fdc7722459fe68e83cf1ad11f91f5ce64d907cbcc6a6bc5f7b57516",
+  "capture_script": "scripts/capture_motion.py",
+  "capture_script_sha256": "dbbf7f53f9411e960a5e22356e1e3cd3064aec274ac4fe9cb7175e77a1d99ffa",
+  "source_revision": "7fffba4ad0b85575cbd445772fc62d0b7ebf3b2e",
+  "resolution": [
+    640,
+    360
+  ],
+  "seed": 42,
+  "camera": "hero",
+  "route": "clearing-orbit",
+  "route_duration_seconds": 120,
+  "route_start_seconds": 0.0,
+  "start_tick": 300,
+  "stride_ticks": 3,
+  "capture_fps": 20.0,
+  "frames_per_mode": 2400,
+  "duration_seconds": 120,
+  "moving_caster": {
+    "id": "rock-0",
+    "radius": 5.0,
+    "period_seconds": 20.0
+  },
+  "modes": {
+    "baked": {
+      "sequence": "artifacts/o07/full-orbit-current-release/baked/sequence.json",
+      "sequence_sha256": "8f67320096b97b9658c5db82bfefc78a151d944031da12f8ed730a4b2e3855a4",
+      "mode": "baked",
+      "frames": 2400
+    },
+    "instancing-only": {
+      "sequence": "artifacts/o07/full-orbit-current-release/instancing-only/sequence.json",
+      "sequence_sha256": "1f9cc38fc7c669faf6601a9729c9bbc37c7c561a6a6772d291ea04d27e864fb4",
+      "mode": "instancing-only",
+      "frames": 2400
+    },
+    "culling-instancing": {
+      "sequence": "artifacts/o07/full-orbit-current-release/culling-instancing/sequence.json",
+      "sequence_sha256": "1dc83205af9da3b0c1294ecba11b8dcd3d2b6261c8701902914fbb045ef1625d",
+      "mode": "culling-instancing",
+      "frames": 2400
+    }
+  },
+  "paired_schedule_identical": true,
+  "paired_tick_camera_caster_parity": true,
+  "comparisons": {
+    "baked_vs_instancing_only": {
+      "frames": 2400,
+      "identical_frames": 42,
+      "changed_pixels_per_frame": {
+        "min": 0,
+        "median": 9,
+        "max": 161
+      },
+      "mean_absolute_rgb_error_0_255": 0.00032559678819444444,
+      "maximum_channel_error_0_255": 211
+    },
+    "baked_vs_culling_instancing": {
+      "frames": 2400,
+      "identical_frames": 42,
+      "changed_pixels_per_frame": {
+        "min": 0,
+        "median": 9,
+        "max": 161
+      },
+      "mean_absolute_rgb_error_0_255": 0.00032559678819444444,
+      "maximum_channel_error_0_255": 211
+    },
+    "instancing_only_vs_culling_instancing": {
+      "frames": 2400,
+      "identical_frames": 2400,
+      "changed_pixels_per_frame": {
+        "min": 0,
+        "median": 0,
+        "max": 0
+      },
+      "mean_absolute_rgb_error_0_255": 0.0,
+      "maximum_channel_error_0_255": 0
+    }
+  },
+  "artifacts": {
+    "owner_review_video": {
+      "path": "artifacts/o07/full-orbit-current-release/owner-review-full-route-current-build.mp4",
+      "sha256": "c6c76038dec11c3f23396684f0aeb7b1d03cb19094543d340ef03558eb8c8519",
+      "frames": 1200,
+      "duration_seconds": 120,
+      "fps": 10,
+      "resolution": [
+        1920,
+        360
+      ],
+      "layout": "baked, instancing-only, culling+instancing",
+      "codec": "H.264",
+      "bitrate_bits_per_second": 3000000,
+      "source": "Every second captured PNG frame from the same three full-route sequences; 10 fps review sample."
+    },
+    "contact_sheet": {
+      "path": "artifacts/o07/full-orbit-current-release/owner-review-full-route-contact.png",
+      "sha256": "f4c07a69051dce755b1af86709d447066ee581a3c2b07f61e5ce969dae57eb8b",
+      "sample_seconds": [
+        0,
+        10,
+        20,
+        30,
+        40,
+        50,
+        60,
+        70,
+        80,
+        90,
+        100,
+        110
+      ]
+    },
+    "gif_preview": {
+      "path": "artifacts/o07/full-orbit-current-release/owner-review-full-route-current-build.gif",
+      "sha256": "e69c7a7980928894390933ed253360fd43a1a6b384e1c5e30c728ed143c57855",
+      "frames": 1200,
+      "duration_seconds": 120,
+      "fps": 10,
+      "resolution": [
+        1920,
+        360
+      ],
+      "layout": "baked, instancing-only, culling+instancing"
+    }
+  },
+  "owner_review": {
+    "status": "accepted",
+    "date": "2026-10-20",
+    "response": "Looks acceptable",
+    "reviewed_video_sha256": "c6c76038dec11c3f23396684f0aeb7b1d03cb19094543d340ef03558eb8c8519",
+    "scope": "Owner accepted motion, moving-rock shadow placement, and visual continuity across the complete two-minute offscreen route comparison. This review does not assess native presentation or performance."
+  },
+  "limitations": [
+    "Offscreen fixed-tick captures use the real Metal renderer but do not measure native presentation or performance.",
+    "One M1 Max/Metal adapter only; Windows/DX12 and other adapters remain open."
+  ],
+  "source_worktree_state": {
+    "git_head": "7fffba4ad0b85575cbd445772fc62d0b7ebf3b2e",
+    "dirty": true,
+    "note": "The release binary and capture-script hashes are recorded per run; the workspace had local changes when this full-route report was assembled."
+  },
+  "source_sha256": {
+    "crates/engine-lab/src/main.rs": "9f2971797c2a1a7d4afbe632f7291a879968cd25c0f2e5f3c1011f0f87249ff6",
+    "crates/engine-lab/src/window.rs": "49ec638fcd8bb6f4e778b64c2af2cd73019cc45cb08738706228fc07c14d729b",
+    "scripts/capture_motion.py": "dbbf7f53f9411e960a5e22356e1e3cd3064aec274ac4fe9cb7175e77a1d99ffa"
+  },
+  "route_camera_pose_sha256": "c34a020291681cde69cc57baf9204f511d6f6a9e7c8e05265547531bc42dce13",
+  "analysis_method": "Per-frame RGB channel differences computed from the captured PNGs with Pillow ImageChops; paired schedules and caster transforms asserted across all three sequence manifests. Camera pose hash is derived from the scene route keyframes using capture_motion.route_camera_at semantics.",
+  "effect_count_parity": {
+    "all_2400_frames_match_across_modes": true,
+    "fields": {
+      "embers": {
+        "min": 12,
+        "max": 18
+      },
+      "fire_primitives": {
+        "min": 75,
+        "max": 81
+      },
+      "fire_primitives_full": {
+        "min": 75,
+        "max": 81
+      },
+      "fire_primitives_rendered": {
+        "min": 75,
+        "max": 81
+      },
+      "fire_segments_full": {
+        "min": 6,
+        "max": 6
+      },
+      "fire_segments_rendered": {
+        "min": 6,
+        "max": 6
+      },
+      "flame_fragments": {
+        "min": 2,
+        "max": 3
+      },
+      "particle_lights": {
+        "min": 12,
+        "max": 12
+      },
+      "particle_lights_dropped": {
+        "min": 3,
+        "max": 9
+      },
+      "effect_events_dropped": {
+        "min": 0,
+        "max": 0
+      },
+      "branch_segments_dropped": {
+        "min": 0,
+        "max": 0
+      }
+    }
+  },
+  "peak_error_sample": {
+    "pair": "baked_vs_instancing_only",
+    "frame": 1966,
+    "route_time_seconds": 98.3,
+    "tick": 6198,
+    "pixel_xy": [
+      320,
+      319
+    ],
+    "maximum_channel_error_0_255": 211,
+    "baked_rgb": [
+      28,
+      37,
+      56
+    ],
+    "instancing_rgb": [
+      239,
+      197,
+      65
+    ],
+    "count_at_peak_value": 1,
+    "diagnostic_image": {
+      "path": "artifacts/o07/full-orbit-current-release/peak-difference-frame-1966.png",
+      "sha256": "e7780a0ab6b49af10d003afe6f94e89c330381649f4e17d2f3dab3d37f6de7a7"
+    }
+  },
+  "contact_sheet_visual_inspection": {
+    "inspector": "Codex visual inspection",
+    "artifact": "artifacts/o07/full-orbit-current-release/owner-review-full-route-contact.png",
+    "scope": "12 sampled stills at 10-second intervals; three geometry modes side by side; peak-error diagnostic still",
+    "finding": "No obvious broad scene-pop or mode-wide continuity defect is visible in the sampled route. The three modes retain matching composition and effect silhouettes. The peak diagnostic localizes the maximum baked/instance difference to one fire-ground boundary pixel; it does not show a broad image mismatch.",
+    "disposition": "supplemental sampled-still inspection only; owner review of full playback remains pending, and this does not verify native presentation or performance"
+  }
+}

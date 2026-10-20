@@ -1101,6 +1101,17 @@ See the [measurement](measurements-o06-camera-sweep-current-release.json),
 [runner](../scripts/optical_camera_sweep_study.py) and
 [side-by-side playback](../artifacts/o06/camera-sweep-current-release/direct-vs-reuse.gif).
 
+**Current release with the native benchmark occlusion guard (19 October 2026):**
+the same 40-pose sweep was repeated with the release binary built from source
+revision `7fffba4`. Direct and reuse output remains pixel-identical at every
+pose and across all 39 temporal transitions. The release binary hash is
+`3c9dce99…49c5`; the full report and a separate playback/contact sheet are in
+[the current-build measurement](measurements-o06-camera-sweep-occlusion-guard-current-build.json)
+and `artifacts/o06/camera-sweep-occlusion-guard-current-build/`. This refresh
+closes provenance for the sweep on the current release; it still does not
+establish owner visual approval, native playback performance, Windows/DX12 or
+other-adapter behavior.
+
 ## Opaque heat cue over low terrain (18 October)
 
 The two-source opaque heat A/B initially produced identical images with the
@@ -1360,16 +1371,17 @@ and its [tick-120 capture](measurements-native-window-verification-current-build
 
 ## Current Windows compile gate (19 October 2026)
 
-The current checkout passes locked workspace checks for
-`x86_64-pc-windows-gnu` and `x86_64-pc-windows-msvc`, plus a release link for
-the GNU target. The resulting Windows x64 PE matches the previously recorded
-artifact because engine source, lockfile and toolchain are unchanged since that
-link. `engine-lab describe` also emits valid JSON with the required
-shared operations and current scene schema on the Mac host. This advances source
-and protocol validation only: the MSVC target was type-checked, not linked.
-Windows execution, DX12 device creation, rendered image/motion review and
-target-hardware performance remain open. See the
-[current Windows build report](measurements-windows-build-current.json).
+The current worktree passes locked workspace checks for
+`x86_64-pc-windows-gnu` and `x86_64-pc-windows-msvc`; the current engine-lab
+foreground-wait changes are included in both checks. A previously recorded GNU
+release link and Windows x64 PE predate these engine-lab changes and are not
+treated as a current binary. `engine-lab describe` also emits valid JSON with
+the required shared operations and current scene schema on the Mac host. These
+checks advance source and protocol validation only: they do not verify Windows
+execution, DX12 device creation, rendered image/motion, native presentation or
+target-hardware performance. See the
+[current-worktree target check](measurements-windows-cross-check-current-worktree.json)
+and [earlier Windows build report](measurements-windows-build-current.json).
 
 **Isolated minimization follow-up (19 October 2026):** the native `get_window`
 result now includes whether the OS currently enables the minimize button. The
@@ -1512,3 +1524,115 @@ and neither meets the study's full-duration and 99% coverage requirements. This
 verifies invalid-run handling only; valid foreground timing and platform
 qualification remain open. See the [focused check](measurements-native-benchmark-occlusion-guard.json)
 and implementation in [window.rs](../crates/engine-lab/src/window.rs).
+
+
+## O04 native bonfire timing and foreground wait (19 October 2026)
+
+Three alternating 120-second direct/LOD pairs were measured at 640×360 on
+M1 Max/Metal, with 10-second warm-ups. All six runs met the 99% timing-coverage
+gate. Paired LOD-minus-direct medians are −0.0012 fps, −0.0145 ms native-frame
+time, +0.0309 ms renderer-encode time, +0.000084 ms projected-detail CPU time,
+and −0.0485 ms atmosphere/fire GPU time. The GPU stage improves in two pairs;
+FPS varies and the result does not establish a whole-window gain. Keep projected
+detail disabled by default. The report records source revision `7fffba4`, binary
+SHA-256 `ec4b9601…7516`, scene/profile, per-run coverage and report hashes:
+[measurement](measurements-o04-native-bonfire-current-release.json).
+
+To make the native run reproducible when launched processes are initially
+backgrounded, `benchmark-native --wait-for-foreground` waits up to five minutes
+for focus, visibility and non-minimized state before warmup/timing. The Python
+runner's `--foreground-app` option checks the packaged executable hash against
+`--binary` and uses LaunchServices to start/focus it. The existing occlusion
+abort remains in force during measurement. A short 10-second pilot completed
+601/601 frames, followed by the six full bonfire runs. One 96.5%-coverage run was
+excluded and retained under `artifacts/o04/bonfire-native-current-release/undercoverage-attempts/`.
+Formatting, warning-denied Clippy, 42 Rust tests, GPU verification and replay /
+protocol checks passed; GPU verification reports `native: false`, so it does not
+certify native window behavior. Minimization and non-Metal/platform acceptance
+remain open.
+
+
+**Owner visual review (19 October 2026):** the current-build 40-pose playback was
+opened for review; the owner accepted motion and continuity through the camera's
+inside-to-outside transition. This closes the specific visual review for this
+sweep only. The response is recorded with the reviewed artifact hash in the
+[owner-review measurement](measurements-o06-camera-sweep-owner-review-current-build.json). It does not establish native playback performance or cross-adapter
+behavior.
+
+
+## O07 full-route moving-caster review capture (19 October 2026)
+
+The current release binary captured the complete 120-second `clearing-orbit` at
+20 fps and fixed 640×360 pixels with seed 42, starting tick 300, and the same
+five-unit, 20-second `rock-0` orbit across baked, instancing-only and
+culling+instancing. Each mode has 2,400 frames; camera, tick and caster position
+match at every pose. Instancing-only and culling+instancing images are identical
+for all 2,400 frames. Baked-to-instance comparison has a median of 9 changed
+pixels/frame (maximum 161), mean RGB error 0.000326/255 and maximum channel error
+211. The full route preview samples at 10 fps to keep review playback manageable;
+a 12-point contact sheet samples every ten seconds. The owner accepted motion, moving-rock shadow placement and continuity in the
+exact full two-minute three-way playback; the recorded response is in the
+[owner-review report](measurements-o07-full-route-owner-review-current-build.json).
+A supplemental inspection of the contact-sheet stills and peak-difference
+diagnostic found no obvious broad scene pop or mode-wide image mismatch; the
+maximum baked/instance error is localized to one fire-ground boundary pixel.
+This remains offscreen review and does not measure native presentation or
+performance or qualify another adapter. See [report](measurements-o07-full-route-current-build.json),
+[playback](../artifacts/o07/full-orbit-current-release/owner-review-full-route-current-build.mp4)
+and [contact sheet](../artifacts/o07/full-orbit-current-release/owner-review-full-route-contact.png).
+
+
+## O07 native timing source-provenance refresh (19 October 2026)
+
+The available 72-run O07 native-window matrix spans four geometry tiers and
+three comparisons with three 120-second pairs per comparison. It was measured
+on 18 October from source revision `b9788d6` and binary SHA-256 prefix
+`9b39385a`. The current release uses source revision `7fffba4`, binary hash
+`ec4b9601…`, and differs in 16 engine/lab source files or WGSL modules,
+including render, session, effects, window and shader code. The older matrix
+remains valid evidence for its recorded build, but cannot establish current-
+release O07 native timing. See the [hash comparison](measurements-o07-native-provenance-audit-current.json).
+
+A representative current-release native refresh is still required before
+claiming current-source whole-window timing. A focused tier-276,
+instancing-only versus culling+instancing study was started on M1 Max/Metal with
+three alternating 120-second pairs and 10-second warm-ups. That initial attempt
+produced three valid runs: pair 1 complete and pair-2 candidate unpaired. Its
+pair-2 baseline occluded at 88.795 seconds, and a locked-host retry had 0/0
+frames. The study later resumed: pair-2 baseline and pair-3 baseline now pass,
+bringing the valid total to five. Two pair-3 candidate attempts were then
+rejected for `window_occluded`, after 32.527 seconds with full per-frame timing
+and before the first frame. One candidate run remains and no whole-window
+conclusion is supported. The three earliest accepted reports retain compact
+metrics and hashes but no raw samples; the two new baselines preserve raw data.
+See the
+[partial current-release report](measurements-o07-native-current-release-partial.json)
+and [provenance audit](measurements-o07-native-provenance-audit-current.json).
+Other-adapter and Windows/DX12 validation remain independent gates.
+
+
+The native runner now supports selecting one comparison/tier and an optional
+hash-verified foreground app bundle. With `--foreground-app`, it launches through
+LaunchServices and enables `benchmark-native --wait-for-foreground`; the bundle
+executable must hash-match `--binary`. The current host bundle matches release
+SHA-256 `ec4b9601…`. The tier-276
+`instancing_only_vs_culling_instancing` refresh remains incomplete: five valid
+runs now pass (pairs 1 and 2 complete, plus pair-3 baseline). The pair-3 candidate
+was rejected twice with `window_occluded`, after 32.527 seconds with 1,950/1,950
+timed frames and before its first frame. One candidate run remains; no whole-window
+conclusion is supported. The current runner revalidated all five reports against
+embedded provenance,
+duration and timed-frame coverage before resuming; their original raw samples
+were deleted by the earlier runner. The runner provenance/coverage checks and
+raw-report retention and machine-readable rejected-attempt journaling are
+implemented; eleven focused validation tests now pass, including a CLI-level
+fake-process failure that verifies the abort report, return status, provenance
+and journal entry. The full headless GPU verifier passed earlier with all eleven runner tests
+and 42 engine tests; it reports `gpu=true`, `native=false`. The latest native
+session was unlocked, but the benchmark window became occluded. The owner now
+reports the desktop is in use, so the remaining candidate is deferred. The owner
+has accepted full-route motion and continuity; native performance and Windows/DX12
+remain open. See
+the [partial report](measurements-o07-native-current-release-partial.json),
+[provenance audit](measurements-o07-native-provenance-audit-current.json) and
+[runner](../scripts/geometry_scale_native_study.py).

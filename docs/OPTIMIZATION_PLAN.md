@@ -649,13 +649,19 @@ records shadow-pass timing and invalidation counters. Culling lowers the GPU
 shadow-map stage by 0.022–0.309 ms versus instancing-only, but the complete-frame
 result is mixed and is slower at 2,208 objects. The gain does not justify adding
 indirect or occlusion drawing. Native culling/instancing/moving-caster controls
-and a resumable four-tier matrix runner are implemented. Sustained native-window
-measurement is complete on this Mac. A 120-frame fixed-tick moving-caster
+and a resumable four-tier matrix runner are implemented. The historical 18 October native-window matrix covers 72 runs but does not match the current release: its source revision is `b9788d6`, its binary hash begins `9b39385a`, and 16 engine/lab source files or shaders have changed. A current-release native refresh remains open. See the [provenance audit](measurements-o07-native-provenance-audit-current.json). A 120-frame fixed-tick moving-caster
 comparison now covers baked, instancing-only and culling+instancing output on
 M1 Max/Metal; culling adds no
 pixel changes to instancing-only, while sparse baked/instanced pixel differences
-remain. Owner continuous-playback review and non-Metal acceptance remain open.
+remain. The owner accepted the 20-second, 400-frame moving-caster playback.
+A current-release full-route capture now covers all 120 seconds at 20 fps across
+all three geometry modes; full-route owner review is pending. The instancing
+variants match at all 2,400 frames, effect counts match across modes, and the
+baked/instance difference remains sparse. Historical native timing is recorded but a current-release refresh is open;
+Windows/DX12 and other-adapter acceptance remain open.
 See the [continuous-motion report](measurements-o07-continuous-motion.json),
+[full-route report](measurements-o07-full-route-current-build.json),
+[full-route preview](../artifacts/o07/full-orbit-current-release/owner-review-full-route-current-build.mp4),
 [static measurements](measurements-o07-scale-study.json) and
 [moving-caster measurements](measurements-o07-moving-caster.json).
 

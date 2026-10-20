@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "date": "2026-10-19",
+  "workstream": "Windows target cross-compilation check for current worktree",
+  "source_revision": "7fffba4ad0b85575cbd445772fc62d0b7ebf3b2e",
+  "engine_lab_source_worktree_status": [
+    "crates/engine-lab/src/main.rs",
+    "crates/engine-lab/src/window.rs"
+  ],
+  "host": {
+    "device": "Apple M1 Max",
+    "os": "macOS",
+    "native_windows": false
+  },
+  "commands": [
+    {
+      "command": "cargo check --locked --workspace --target x86_64-pc-windows-gnu",
+      "passed": true
+    },
+    {
+      "command": "cargo check --locked --workspace --target x86_64-pc-windows-msvc",
+      "passed": true
+    }
+  ],
+  "limitations": [
+    "These checks type-check and compile workspace targets only; no Windows executable was run.",
+    "They do not verify DX12 device creation, rendered output, native presentation, performance, or target hardware."
+  ],
+  "latest_repeat_verification": {
+    "timestamp_utc": "2026-10-19T16:56:37Z",
+    "commands": [
+      {
+        "command": "cargo check --locked --workspace --target x86_64-pc-windows-gnu",
+        "result": "passed"
+      },
+      {
+        "command": "cargo check --locked --workspace --target x86_64-pc-windows-msvc",
+        "result": "passed"
+      }
+    ],
+    "source_revision": "7fffba4ad0b85575cbd445772fc62d0b7ebf3b2e",
+    "engine_lab_worktree_source_sha256": {
+      "crates/engine-lab/src/main.rs": "9f2971797c2a1a7d4afbe632f7291a879968cd25c0f2e5f3c1011f0f87249ff6",
+      "crates/engine-lab/src/window.rs": "49ec638fcd8bb6f4e778b64c2af2cd73019cc45cb08738706228fc07c14d729b"
+    },
+    "limitations": [
+      "Checks include the current foreground-wait source changes and type-check both Windows targets only.",
+      "No Windows executable was run; DX12 device creation, rendered output, presentation, performance and target hardware remain unverified."
+    ]
+  }
+}
